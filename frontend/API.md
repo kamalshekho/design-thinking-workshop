@@ -7,13 +7,16 @@ without a meeting.
 Terminology follows [`../CONTEXT.md`](../CONTEXT.md). Behaviour and copy follow
 [`DESIGN.md`](./DESIGN.md).
 
-Status: **agreed with the backend**. The decisions are collected at the end.
+Status: **requires renewed agreement with the backend**. This revision replaces
+the previously agreed static category enum. The decisions are collected at the
+end.
 
 ## Scope
 
-One public page: the German applicant form. Two endpoints, both unauthenticated
-and both write-only. The form never reads application data back, and there is no
-endpoint the form needs in order to render.
+One public page: the German applicant form. Three endpoints, all
+unauthenticated. The form reads the active application categories, but never
+reads application data back. It writes applications and anonymous route
+selections.
 
 The form is served as static files. Both parts sit behind one reverse proxy on
 the same machine — `/` serves the form, `/api/` proxies to Spring Boot — so
@@ -21,22 +24,66 @@ requests are same-origin and **there is no CORS to configure**. The form sends
 no cookie, no credentials and no custom request headers, so nothing else needs
 a preflight either.
 
-## Only four of six routes submit anything
+## Two fixed routes and backend-managed categories
 
-The first field of the form offers six routes. Two of them never reach this API
-as an application, because they need no staff involvement at all:
+The first field combines two fixed routes with the active categories returned
+by the backend. The fixed routes never reach this API as an application because
+they need no staff involvement at all:
 
-| Route selected by the applicant           | What happens                                |
+| Fixed route                               | What happens                                |
 | ----------------------------------------- | ------------------------------------------- |
 | Bei #ichbinhier mitmachen (Aktionsgruppe) | Panel with an external link. No submission. |
 | Fördermitglied werden                     | Panel with an external link. No submission. |
-| Social Media                              | Application                                 |
-| Redaktion / Öffentlichkeitsarbeit         | Application                                 |
-| Rechtliche Unterstützung                  | Application                                 |
-| Etwas anderes                             | Application                                 |
 
-So `category` in an application is always one of four values. The two bypass
-routes are only reported to `POST /api/v1/route-selections` (see below).
+Every category opens an application. Staff members can create, rename, reorder
+and deactivate categories in the backend (`A12`). The initial data, in display
+order, is Social Media, Redaktion / Öffentlichkeitsarbeit, Rechtliche
+Unterstützung and Etwas anderes. The two fixed routes remain frontend copy and
+are not categories; this preserves the distinction in
+[`../CONTEXT.md`](../CONTEXT.md).
+
+## GET /api/v1/categories
+
+Returns the categories currently accepting applications.
+
+### Response — 200 OK
+
+```json
+{
+  "categories": [
+    {
+      "id": "a3f1c0de-4cde-4d61-830b-4af475f5727b",
+      "label": "Social Media"
+    }
+  ]
+}
+```
+
+| Field   | Type   | Constraint                                     |
+| ------- | ------ | ---------------------------------------------- |
+| `id`    | string | stable UUID                                    |
+| `label` | string | German, 1–120 characters after trimming (`A6`) |
+
+The response contains only active categories, already arranged in display
+order. There is no pagination. Category labels are the one applicant-facing
+German value owned by the backend rather than `src/content/de.ts`, because
+staff members maintain them (`A12`).
+
+An empty list is valid:
+
+```json
+{ "categories": [] }
+```
+
+It means that the association is not accepting applications for Vereinsarbeit.
+The two fixed routes remain available. A network failure or non-`2xx` response
+is different: the frontend shows a temporary loading error and offers a retry.
+It must not substitute a built-in category list, because that could allow an
+application for a category the backend has deactivated.
+
+The response uses `Cache-Control: no-cache`. A browser may store it, but must
+revalidate it before reuse. The frontend loads the list once when the page
+opens and does not refresh it in the background.
 
 ## POST /api/v1/applications
 
@@ -47,7 +94,7 @@ Creates one application.
 ```json
 {
   "submissionId": "6f9619ff-8b86-d011-b42d-00c04fc964ff",
-  "category": "SOCIAL_MEDIA",
+  "categoryId": "a3f1c0de-4cde-4d61-830b-4af475f5727b",
   "name": "Anna Müller",
   "email": "anna@example.de",
   "weeklyTime": "HOURS_1_2",
@@ -61,7 +108,7 @@ Creates one application.
 | Field                | Type    | Required | Constraint                                             |
 | -------------------- | ------- | -------- | ------------------------------------------------------ |
 | `submissionId`       | string  | yes      | UUID v4, generated by the client                       |
-| `category`           | enum    | yes      | see below                                              |
+| `categoryId`         | string  | yes      | UUID of an active category returned by the backend     |
 | `name`               | string  | yes      | 1–120 characters after trimming                        |
 | `email`              | string  | yes      | max 254 characters, must parse as an address           |
 | `weeklyTime`         | enum    | yes      | see below                                              |
@@ -72,16 +119,7 @@ Creates one application.
 
 JSON is `camelCase` — the Jackson default, so no configuration is needed.
 
-### Enums
-
-`category`, four values:
-
-| Wire value      | German label on the form          | `CONTEXT.md` term |
-| --------------- | --------------------------------- | ----------------- |
-| `SOCIAL_MEDIA`  | Social Media                      | Category          |
-| `EDITORIAL`     | Redaktion / Öffentlichkeitsarbeit | Category          |
-| `LEGAL_SUPPORT` | Rechtliche Unterstützung          | Category          |
-| `OTHER`         | Etwas anderes                     | Category          |
+### Enum
 
 `weeklyTime`, four values:
 
@@ -92,9 +130,8 @@ JSON is `camelCase` — the Jackson default, so no configuration is needed.
 | `HOURS_5_PLUS` | mehr als 5 Stunden         |
 | `IRREGULAR`    | unregelmäßig, projektweise |
 
-The wire values are machine codes on purpose. German labels live only in the
-frontend's copy module, so the copy can be corrected without a database
-migration — and `IRREGULAR` is why `weeklyTime` is not a number of hours.
+The wire values are machine codes on purpose. `IRREGULAR` is why `weeklyTime`
+is not a number of hours.
 
 ### Response — 201 Created
 
@@ -119,7 +156,10 @@ mobile connection dropping after the request was received. Without it, staff
 find duplicates in the dashboard, which is exactly the wasted time this project
 exists to remove.
 
-A unique index on `submissionId` is enough.
+A unique index on `submissionId` is enough. The backend checks for an existing
+`submissionId` before validating whether its category is still active. If the
+first request created an application and the category was then deactivated, a
+retry still returns the original `201` response.
 
 ### Honeypot
 
@@ -151,7 +191,10 @@ is worth nothing as a record.
 
 ## POST /api/v1/route-selections
 
-Reports which of the six routes an applicant picked, at the moment they pick it.
+Reports which fixed route or category an applicant picked, at the moment they
+pick it.
+
+For a fixed route:
 
 ```json
 { "route": "COMMUNITY" }
@@ -161,17 +204,28 @@ Reports which of the six routes an applicant picked, at the moment they pick it.
 | ------------------- | ----------------------------------------- |
 | `COMMUNITY`         | Bei #ichbinhier mitmachen (Aktionsgruppe) |
 | `SUPPORTING_MEMBER` | Fördermitglied werden                     |
-| `SOCIAL_MEDIA`      | Social Media                              |
-| `EDITORIAL`         | Redaktion / Öffentlichkeitsarbeit         |
-| `LEGAL_SUPPORT`     | Rechtliche Unterstützung                  |
-| `OTHER`             | Etwas anderes                             |
+
+For a category:
+
+```json
+{
+  "route": "CATEGORY",
+  "categoryId": "a3f1c0de-4cde-4d61-830b-4af475f5727b"
+}
+```
 
 Response: `202 Accepted`, empty body. The frontend sends this fire-and-forget
 and ignores both the response and any failure — a broken counter must never
 affect an applicant.
 
-**No personal data, no identifier, no IP association, no cookie.** One counter
-per route value is the entire feature.
+**No personal data, no applicant identifier, no IP association, no cookie.**
+The category UUID identifies backend-owned reference data, not a person. One
+counter per fixed route or category is the entire feature.
+
+A selection of an existing category is counted even if that category has been
+deactivated since the form loaded. An unknown `categoryId` is ignored. In both
+cases the endpoint answers `202`, because a broken counter must never affect an
+applicant.
 
 ### Why this endpoint is worth its cost
 
@@ -200,10 +254,12 @@ Spring Boot 3 produces this shape natively via `ProblemDetail`.
 }
 ```
 
-The frontend renders German text looked up by `code`, and places each entry in
-`errors` under the named field. **Do not send German messages** — the wording is
-specified in `DESIGN.md` and reviewed in one place in the frontend; a message
-composed in Java would bypass that review and drift in tone.
+The frontend renders German error text looked up by `code`, and places each
+entry in `errors` under the named field. **Do not send German error messages** —
+the wording is specified in `DESIGN.md` and reviewed in one place in the
+frontend; an error message composed in Java would bypass that review and drift
+in tone. Dynamic category labels are the explicit exception described under
+`GET /api/v1/categories`.
 
 Field codes the frontend handles:
 
@@ -211,10 +267,16 @@ Field codes the frontend handles:
 | --------------------------------------------------- | ---------------- |
 | `NAME_REQUIRED`, `NAME_TOO_LONG`                    | `name`           |
 | `EMAIL_REQUIRED`, `EMAIL_INVALID`, `EMAIL_TOO_LONG` | `email`          |
-| `CATEGORY_REQUIRED`, `CATEGORY_UNKNOWN`             | `category`       |
+| `CATEGORY_REQUIRED`, `CATEGORY_UNKNOWN`             | `categoryId`     |
+| `CATEGORY_UNAVAILABLE`                              | `categoryId`     |
 | `WEEKLY_TIME_REQUIRED`, `WEEKLY_TIME_UNKNOWN`       | `weeklyTime`     |
 | `ABOUT_TOO_LONG`                                    | `about`          |
 | `CONSENT_REQUIRED`                                  | `privacyConsent` |
+
+`CATEGORY_UNKNOWN` means that the UUID does not identify a category.
+`CATEGORY_UNAVAILABLE` means that it identifies a category which is no longer
+active. On `CATEGORY_UNAVAILABLE`, the frontend keeps the entered values,
+reloads the category list and asks the applicant to choose again.
 
 Top-level codes:
 
@@ -236,13 +298,13 @@ the entered values. An applicant never loses what they typed.
 Worth stating explicitly, because it removes work from the backend and it
 changes what `DESIGN.md` originally asked for.
 
-The confirmation screen shows one fixed text for all four categories, plus the
-email address the applicant entered. The **concrete next step lives in the
+The confirmation screen shows one fixed text for all categories, plus the email
+address the applicant entered. The **concrete next step lives in the
 auto-reply email**, not on the screen. That means the backend owns:
 
 - the date of the next intro session,
-- the different wording for `LEGAL_SUPPORT` (an individual appointment rather
-  than the intro session),
+- the category-specific wording for Rechtliche Unterstützung (an individual
+  appointment rather than the intro session),
 - the honest waitlist message when there is no room.
 
 The frontend cannot express any of these — the screen has no branch for them.
@@ -259,7 +321,8 @@ the screen is unbacked. If the email cannot be ready for the demo, the copy in
 `DESIGN.md` sections 15 and 30 has to change first.
 
 There is deliberately no endpoint for reading the next intro session date. The
-form must render and submit with the backend's read side completely absent.
+category list is the only backend read the form needs in order to render and
+submit.
 
 ## Configuration
 
@@ -275,10 +338,12 @@ exists.
 
 ## Decisions
 
-Agreed with the backend team:
+Proposed for renewed agreement with the backend team:
 
-1. **The paths stand.** `POST /api/v1/applications` and
-   `POST /api/v1/route-selections`, with `v1` in the path.
+1. **The existing `v1` changes in place.** The contract is not yet implemented,
+   so adding a compatibility version would create work without preserving a
+   deployed consumer. The three paths are `GET /api/v1/categories`,
+   `POST /api/v1/applications` and `POST /api/v1/route-selections`.
 2. **The backend owns rate limiting.** The frontend contributes the honeypot
    field and nothing else. On `429` the form shows one general message and
    keeps the entered values, so the applicant can retry.
@@ -290,6 +355,12 @@ Agreed with the backend team:
    home a reader can find.
 5. **`POST /api/v1/route-selections` will be built.** It is the only
    measurement of `A5` this project will produce.
+6. **The backend owns application categories (`A12`).** It returns active
+   categories in display order, and the application carries their stable UUID.
+   The two fixed bypass routes remain frontend-owned.
+7. **Category meaning is stable.** Staff members may correct a label, but a new
+   field of work gets a new category. A used category can only be deactivated;
+   an unused category may be deleted.
 
 ## Deployment shape
 

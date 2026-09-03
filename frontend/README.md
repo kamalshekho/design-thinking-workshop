@@ -172,12 +172,14 @@ face actually rendered before chasing a spacing bug.
 
 ## Copy
 
-All applicant-facing German lives in `src/content/de.ts`. No German string
-appears in a component.
+All applicant-facing German lives in `src/content/de.ts`, except the dynamic
+category labels returned by the backend as specified in `API.md`. No German
+string appears in a component.
 
-The point is reviewability: the whole copy of the form can be read against
+The point is reviewability: the fixed copy of the form can be read against
 `DESIGN.md` in one file. `DESIGN.md` section 49 forbids rewriting the specified
-wording, so a copy change is a change to both files in one commit.
+wording, so a copy change is a change to both files in one commit. Category
+labels are backend-owned data because staff members can maintain them (`A12`).
 
 Some strings — most error messages — were written for this implementation and
 are **not yet in `DESIGN.md`**. They are marked in `de.ts` and still need a copy
@@ -196,7 +198,7 @@ zod / server  →  error code  →  errorText(code)  →  German text
 
 Codes are machine-readable (`EMAIL_INVALID`, `CONSENT_REQUIRED`) and listed in
 `features/application-form/errors.ts`. The backend sends the same codes and
-never German text — see `API.md`.
+never German error text — see `API.md`.
 
 Adding a code without adding its German text is a type error, which is
 intentional.
