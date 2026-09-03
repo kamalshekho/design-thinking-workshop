@@ -190,6 +190,22 @@ personal.
   reputational reasons. In the prototype this exists only as a role and an
   assignment field, not as a working matching mechanism.
 
+### A12 — Staff members may maintain application categories
+
+We propose that staff members can create, rename, reorder and deactivate the
+categories for Vereinsarbeit without a frontend release. The platform starts
+with Social Media, Redaktion / Öffentlichkeitsarbeit, Rechtliche Unterstützung
+and Sonstiges, but that list is not treated as permanent.
+
+- **Confidence:** low — this is our response to `C1`, not a capability requested
+  or validated by the association.
+- **Why it matters:** the association can correct our initial model after the
+  workshop without asking a developer to change the form.
+- **What breaks if wrong:** loading categories from the backend adds a new
+  dependency to the form without giving staff a process they will actually use.
+  The initial four categories would be simpler and more reliable as frontend
+  data.
+
 ---
 
 ## Open questions we cannot answer ourselves
