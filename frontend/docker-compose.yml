@@ -1,0 +1,13 @@
+# Prototype deployment. Merges into a root-level compose file once the backend
+# exists in ../backend/.
+services:
+  frontend:
+    build:
+      context: .
+    image: ichbinhier-form:local
+    ports:
+      - '8081:80'
+    restart: unless-stopped
+
+# The backend joins here as a service named `backend` on port 8080, which is
+# what nginx.conf proxies to.
