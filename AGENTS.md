@@ -1,15 +1,28 @@
 # Working in this repo
 
-This repo holds the design record of a three-week school workshop: a volunteer
-intake platform for "Ich bin hier e.V.". There is no application code yet — the
-artefacts are documents, and a document is the deliverable until a skeleton
-exists.
+This repo holds the design record of a three-week school workshop — a volunteer
+intake platform for "Ich bin hier e.V." — and the frontend that implements the
+applicant form.
 
 - [`CONTEXT.md`](./CONTEXT.md) — the domain vocabulary
 - [`docs/CASE.md`](./docs/CASE.md) — the client's situation, problem statement, Team Canvas
 - [`docs/ASSUMPTIONS.md`](./docs/ASSUMPTIONS.md) — every number and process step, each with an id and a confidence
 - [`docs/DISNEY.md`](./docs/DISNEY.md) — Dreamer / Realist / Critic pass, and the surviving scope
-- [`references/`](./references/) — screenshots of the applicant form, one per UI state
+- [`docs/adr/`](./docs/adr/) — decisions that are hard to reverse, one file each
+- [`frontend/`](./frontend/) — the applicant form: specification, API contract, React project
+- [`frontend/references/`](./frontend/references/) — screenshots of the applicant form, one per UI state
+
+## Working on the frontend
+
+[`frontend/README.md`](./frontend/README.md) holds the code conventions,
+component rules and the porting workflow, and it takes precedence over this
+file for anything inside `frontend/`. Three rules are worth naming here because
+they are easy to break from the outside:
+
+- applicant-facing German lives only in `frontend/src/content/de.ts`;
+- literal colours and sizes live only in `frontend/src/styles/tokens.css`;
+- the wording specified in `frontend/DESIGN.md` is not rewritten in passing —
+  code and specification change in the same commit.
 
 ## Vocabulary is binding
 
