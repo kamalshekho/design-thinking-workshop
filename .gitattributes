@@ -1,0 +1,12 @@
+# Line endings are identical on every machine. Two things depend on it: the
+# pre-commit hook is a shell script and will not run with CRLF, and Prettier
+# rejects CRLF outright, so a Windows checkout would fail the format check
+# while CI on Linux passes.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

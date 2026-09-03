@@ -1,0 +1,5 @@
+# Formatting and auto-fixable lint only. Typecheck, stylelint in full and the
+# test suite run in CI — a hook that takes half a minute gets bypassed with
+# --no-verify, and then it protects nothing.
+cd frontend || exit 0
+npx lint-staged
