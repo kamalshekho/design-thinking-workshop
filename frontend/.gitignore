@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+.vite/
+*.local
+.husky/_/
+public/fonts/brand-*
+.htpasswd

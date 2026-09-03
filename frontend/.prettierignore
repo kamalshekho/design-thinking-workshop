@@ -1,0 +1,8 @@
+dist/
+coverage/
+node_modules/
+public/mockServiceWorker.js
+package-lock.json
+references/
+token.json
+DESIGN.md

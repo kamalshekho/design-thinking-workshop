@@ -1,0 +1,105 @@
+/**
+ * Design tokens — the only file in the codebase allowed to hold literal
+ * colours, sizes and shadows.
+ *
+ * Primitive values are taken from the live site (https://www.ichbinhier.eu/)
+ * and are marked "confirmed" in ../../token.json. Do not change a primitive
+ * without changing token.json in the same commit: token.json is what Figma
+ * reads, this file is what the browser reads, and they describe the same thing.
+ *
+ * Component CSS must reference these variables and never a literal value.
+ * Stylelint enforces that for every file except this one.
+ */
+
+:root {
+  /* Brand primitives — confirmed from the site CSS */
+  --color-fuut-purple: #8437b6;
+  --color-fuut-lila: #dcbae6;
+  --color-fuut-red: #e31119;
+  --color-fuut-gray: #4f4f4f;
+  --color-fuut-creme: #f6f5f1;
+
+  /* WordPress font-size presets exposed by the site */
+  --wp--preset--font-size--small: 13px;
+  --wp--preset--font-size--medium: 20px;
+  --wp--preset--font-size--large: 36px;
+  --wp--preset--font-size--x-large: 42px;
+
+  /* WordPress spacing presets exposed by the site */
+  --wp--preset--spacing--20: 0.44rem;
+  --wp--preset--spacing--30: 0.67rem;
+  --wp--preset--spacing--40: 1rem;
+  --wp--preset--spacing--50: 1.5rem;
+  --wp--preset--spacing--60: 2.25rem;
+  --wp--preset--spacing--70: 3.38rem;
+  --wp--preset--spacing--80: 5.06rem;
+
+  /* WordPress shadow presets. The form uses --shadow-form-card instead; these
+     are kept so a component that has to match the surrounding site can. */
+  --wp--preset--shadow--natural: 6px 6px 9px rgb(0 0 0 / 20%);
+  --wp--preset--shadow--deep: 12px 12px 50px rgb(0 0 0 / 40%);
+  --wp--preset--shadow--sharp: 6px 6px 0 rgb(0 0 0 / 20%);
+  --wp--preset--shadow--outlined:
+    6px 6px 0 -3px rgb(255 255 255), 6px 6px rgb(0 0 0);
+  --wp--preset--shadow--crisp: 6px 6px 0 rgb(0 0 0);
+
+  /* Semantic aliases. Components use these, not the primitives above. */
+
+  /* Nunito is the self-hosted stand-in used when the hotlinked brand face
+     fails to load; see base.css. */
+  --font-primary: 'Akhand Soft', 'Nunito', arial, sans-serif;
+  --color-page-bg: var(--color-fuut-creme);
+  --color-surface: #fff;
+  --color-text: var(--color-fuut-gray);
+  --color-text-muted: #777;
+  --color-text-inverse: #fff;
+  --color-primary: var(--color-fuut-red);
+  --color-secondary: var(--color-fuut-purple);
+  --color-accent-soft: var(--color-fuut-lila);
+  --color-border: #b9b9b9;
+  --color-border-hover: #8e8e8e;
+  --color-focus: var(--color-fuut-purple);
+  --color-focus-ring: rgb(132 55 182 / 14%);
+  --color-error: var(--color-fuut-red);
+
+  /* Route-specific surfaces. Blue belongs to the community panel only; it is
+     not a new brand colour (DESIGN.md section 28). */
+  --color-route-blue-bg: #e9f4fc;
+  --color-route-blue-text: #2e72ad;
+  --color-route-purple-bg: #f2e9f6;
+
+  --radius-control: 4px;
+  --radius-card: 8px;
+  --radius-panel: 8px;
+  --shadow-form-card: 0 8px 28px rgb(79 79 79 / 10%);
+
+  --container-max: 1280px;
+  --form-max: 960px;
+  --form-content-max: 760px;
+
+  --page-gutter: 48px;
+  --field-height: 56px;
+  --button-height: 56px;
+  --textarea-min-height: 144px;
+  --form-card-padding: var(--wp--preset--spacing--70);
+
+  --sticky-submit-reserve: 72px;
+  --transition-control: 120ms ease;
+  --transition-reveal: 180ms ease-out;
+}
+
+/* Tablet — DESIGN.md section 42 */
+@media (width <= 1024px) {
+  :root {
+    --page-gutter: 32px;
+    --form-card-padding: var(--wp--preset--spacing--60);
+  }
+}
+
+/* Mobile — DESIGN.md section 42 */
+@media (width <= 640px) {
+  :root {
+    --page-gutter: 20px;
+    --form-card-padding: var(--wp--preset--spacing--50);
+  }
+}
