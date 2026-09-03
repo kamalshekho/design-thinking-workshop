@@ -1,0 +1,45 @@
+/**
+ * Shared control surface for input, select and textarea. Consumed with
+ * `composes` so the three controls cannot drift apart visually.
+ */
+
+.control {
+  width: 100%;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  transition:
+    border-color var(--transition-control),
+    box-shadow var(--transition-control);
+}
+
+.control::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.control:hover {
+  border-color: var(--color-border-hover);
+}
+
+.control:focus {
+  border-color: var(--color-focus);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+
+.control:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Error state is set by the field, never inferred inside the control */
+.invalid {
+  border-color: var(--color-error);
+}
+
+.singleLine {
+  min-height: var(--field-height);
+  padding: 0 var(--wp--preset--spacing--40);
+}

@@ -1,0 +1,112 @@
+/**
+ * Reset and document defaults. Everything else lives in a component's own
+ * CSS module — this file must not grow component classes.
+ */
+
+/**
+ * Brand face, served from our own origin.
+ *
+ * The file is provisioned outside the repository, so a checkout does not carry
+ * it and CI does not build with it. Without the file the browser falls through
+ * to Nunito below, which is the intended behaviour and not an error.
+ */
+@font-face {
+  font-family: Akhand Soft;
+  src: url('/fonts/brand-regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+/**
+ * Nunito — the closest free substitute for Akhand Soft: the same geometric
+ * sans skeleton with rounded terminals and a tall x-height. Served from our own
+ * origin, so it cannot fail the way the face above can, and licensed under
+ * SIL OFL (see public/fonts/OFL.txt).
+ *
+ * Only weight 400 exists here, matching the single confirmed Akhand Soft
+ * weight (DESIGN.md section 5). Subsets carry their unicode-range from Google
+ * Fonts, so a German page downloads the latin file alone.
+ */
+@font-face {
+  font-family: Nunito;
+  src: url('/fonts/nunito-latin-400.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: Nunito;
+  src: url('/fonts/nunito-latin-ext-400.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-primary);
+  color: var(--color-text);
+  background: var(--color-page-bg);
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  font-family: var(--font-primary);
+  font-size: var(--wp--preset--font-size--medium);
+  line-height: 1.4;
+  color: var(--color-text);
+  background: var(--color-page-bg);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.14em;
+}
+
+/* Only the Regular weight of Akhand Soft is confirmed to exist
+   (DESIGN.md section 5). Hierarchy comes from size, colour and spacing —
+   never from a bold weight the font file cannot provide. */
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 400;
+}
+
+@media (width <= 640px) {
+  body {
+    font-size: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

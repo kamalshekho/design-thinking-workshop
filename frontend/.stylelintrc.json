@@ -1,0 +1,41 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "custom-property-pattern": null,
+    "selector-class-pattern": [
+      "^[a-z][a-zA-Z0-9]+$",
+      {
+        "message": "CSS module classes are camelCase so they can be read as styles.someClass"
+      }
+    ],
+    "color-no-hex": [
+      true,
+      {
+        "message": "Use a design token from src/styles/tokens.css instead of a literal colour"
+      }
+    ],
+    "declaration-property-value-disallowed-list": {
+      "/^color$|^background|^border/": ["/^rgb\\(/", "/^rgba\\(/", "/^hsl/"]
+    },
+    "at-rule-no-vendor-prefix": true,
+    "property-no-vendor-prefix": true,
+    "no-descending-specificity": null,
+    "custom-property-empty-line-before": null
+  },
+  "overrides": [
+    {
+      "files": ["src/styles/tokens.css"],
+      "rules": {
+        "color-no-hex": null,
+        "declaration-property-value-disallowed-list": null
+      }
+    },
+    {
+      "files": ["src/styles/base.css"],
+      "rules": {
+        "font-family-name-quotes": null,
+        "declaration-no-important": null
+      }
+    }
+  ]
+}
