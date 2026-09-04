@@ -14,4 +14,26 @@ export const links = {
   communityGroup: 'https://www.ichbinhier.eu/engagement/',
   /** DESIGN.md section 35 — the supporting membership application */
   supportingMembership: 'https://www.ichbinhier.eu/spende/',
+  /** DESIGN.md section 12 — header navigation, confirmed against the live site */
+  nav: {
+    about: 'https://www.ichbinhier.eu/ichbinhier/verein',
+    engagement: 'https://www.ichbinhier.eu/engagement/',
+    education: 'https://www.ichbinhier.eu/bildung/',
+    news: 'https://www.ichbinhier.eu/neuigkeiten/',
+    events: 'https://www.ichbinhier.eu/veranstaltungen/',
+    donate: 'https://www.ichbinhier.eu/engagement/spende',
+  },
+  /** Section 11 footer — none of these is confirmed with the association yet */
+  footer: {
+    talkToUs: 'https://www.ichbinhier.eu/kontakt/',
+    impressum: 'https://www.ichbinhier.eu/impressum/',
+    donate: 'https://www.ichbinhier.eu/engagement/spende',
+    social: {
+      facebook: 'https://www.facebook.com/ichbinhier',
+      instagram: 'https://www.instagram.com/ichbinhier.online',
+      linkedin: 'https://www.linkedin.com/company/ichbinhier',
+      bluesky: 'https://bsky.app/profile/ichbinhier.online',
+      tiktok: 'https://www.tiktok.com/@ichbinhier',
+    },
+  },
 } as const;

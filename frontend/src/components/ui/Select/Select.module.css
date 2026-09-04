@@ -1,0 +1,39 @@
+.container {
+  position: relative;
+}
+
+.select {
+  display: block;
+  padding-right: calc(var(--control-padding-inline) * 2);
+  font-family: var(--font-input);
+  font-size: var(--wp--preset--font-size--medium);
+  line-height: normal;
+  appearance: none;
+  cursor: pointer;
+}
+
+.select.select:hover {
+  border-color: var(--color-border);
+}
+
+.select:invalid {
+  color: var(--color-text-muted);
+}
+
+.select.select:disabled {
+  cursor: not-allowed;
+  color: var(--color-text-disabled);
+}
+
+.indicator {
+  position: absolute;
+  top: 50%;
+  right: var(--select-arrow-inset);
+  width: var(--select-arrow-size);
+  height: var(--select-arrow-size);
+  font-size: var(--select-arrow-size);
+  line-height: 1;
+  color: var(--color-text);
+  pointer-events: none;
+  transform: translateY(-50%);
+}

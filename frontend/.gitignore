@@ -6,3 +6,6 @@ coverage/
 .husky/_/
 public/fonts/brand-*
 .htpasswd
+
+*storybook.log
+storybook-static

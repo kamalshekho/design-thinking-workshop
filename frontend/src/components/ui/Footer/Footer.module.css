@@ -1,0 +1,160 @@
+.footer {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--footer-padding-block);
+  background: var(--color-primary);
+
+  /* Bold white text on the saturated red background renders visibly
+     thinner under subpixel antialiasing (most noticeable on macOS); force
+     grayscale smoothing so the weight actually reads as bold. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--footer-row-gap);
+  width: 100%;
+  max-width: var(--container-max);
+  padding-inline: var(--page-gutter);
+}
+
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--footer-row-gap);
+  flex-wrap: wrap;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--footer-column-gap);
+  color: var(--color-text-inverse);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-button);
+  font-size: var(--wp--preset--font-size--medium);
+  font-weight: var(--font-weight-button);
+}
+
+.link {
+  color: var(--color-text-inverse);
+  font-family: var(--font-button);
+  font-size: var(--footer-text-size);
+  text-decoration: underline;
+}
+
+.address {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-button);
+  font-size: var(--footer-text-size);
+  font-style: normal;
+}
+
+.aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--footer-aside-gap);
+}
+
+.donateRow {
+  display: flex;
+  align-items: center;
+  gap: var(--footer-donate-gap);
+  color: var(--color-text-inverse);
+  text-decoration: none;
+}
+
+.donateLabel {
+  font-family: var(--font-button);
+  font-size: var(--wp--preset--font-size--small);
+  font-weight: var(--font-weight-button);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.donateIcon {
+  display: block;
+  width: var(--footer-icon-size);
+  height: var(--footer-icon-size);
+  object-fit: contain;
+}
+
+.socialRow {
+  display: flex;
+  align-items: center;
+  gap: var(--footer-social-gap);
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.socialIcon {
+  display: block;
+  width: var(--footer-icon-size);
+  height: var(--footer-icon-size);
+}
+
+.divider {
+  height: var(--border-width-default);
+  background: var(--footer-divider-color);
+}
+
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--footer-column-gap);
+}
+
+.copyright {
+  margin: 0;
+  color: var(--color-text-inverse);
+  font-family: var(--font-button);
+  font-size: var(--wp--preset--font-size--small);
+}
+
+.backToTop {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--footer-back-to-top-size);
+  height: var(--footer-back-to-top-size);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.backToTopIcon {
+  display: block;
+  width: var(--footer-back-to-top-icon-size);
+  height: var(--footer-back-to-top-icon-size);
+}
+
+@media (width <= 640px) {
+  .topRow {
+    flex-direction: column;
+  }
+
+  .aside {
+    align-items: flex-start;
+  }
+
+  .bottomRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

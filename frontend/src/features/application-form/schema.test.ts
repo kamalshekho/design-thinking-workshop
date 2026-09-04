@@ -16,6 +16,8 @@ function codesFor(values: unknown): string[] {
     : result.error.issues.map((issue) => issue.message);
 }
 
+const CATEGORY_ID = '11111111-1111-4111-8111-111111111111';
+
 describe('form schema', () => {
   it('requires a route before anything else', () => {
     expect(codesFor(emptyFormValues)).toEqual(['ROUTE_REQUIRED']);
@@ -29,7 +31,7 @@ describe('form schema', () => {
   });
 
   it('requires the four application fields on a Vereinsarbeit route', () => {
-    expect(codesFor({ ...emptyFormValues, route: 'SOCIAL_MEDIA' })).toEqual([
+    expect(codesFor({ ...emptyFormValues, route: CATEGORY_ID })).toEqual([
       'NAME_REQUIRED',
       'EMAIL_REQUIRED',
       'WEEKLY_TIME_REQUIRED',
@@ -37,11 +39,17 @@ describe('form schema', () => {
     ]);
   });
 
+  it('rejects a route that is not a fixed route and does not look like a category id', () => {
+    expect(codesFor({ ...emptyFormValues, route: 'SOCIAL_MEDIA' })).toEqual([
+      'CATEGORY_UNKNOWN',
+    ]);
+  });
+
   it('rejects an address it could not reply to', () => {
     expect(
       codesFor({
         ...emptyFormValues,
-        route: 'SOCIAL_MEDIA',
+        route: CATEGORY_ID,
         name: 'Anna Müller',
         email: 'anna@',
         weeklyTime: 'HOURS_1_2',
@@ -54,7 +62,7 @@ describe('form schema', () => {
     expect(
       codesFor({
         ...emptyFormValues,
-        route: 'LEGAL_SUPPORT',
+        route: CATEGORY_ID,
         name: 'Anna Müller',
         email: 'anna@example.de',
         weeklyTime: 'IRREGULAR',

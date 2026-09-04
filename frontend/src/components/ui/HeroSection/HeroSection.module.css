@@ -1,0 +1,239 @@
+/*
+ * Every offset below is a percentage of the Figma frame (node 59:142,
+ * 1413 x 482px) rather than a token — it is this illustration's one-off
+ * composition math, not a reusable design value.
+ */
+
+.hero {
+  display: flex;
+  justify-content: center;
+  background: var(--color-fuut-purple);
+}
+
+.frame {
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  max-width: var(--hero-strip-max-width);
+  aspect-ratio: var(--hero-strip-aspect);
+  overflow: hidden;
+}
+
+.dots {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 118%;
+  max-width: none;
+  margin-top: -9%;
+  pointer-events: none;
+  transform: rotate(-13deg);
+}
+
+.megaphone {
+  position: absolute;
+  top: 28.42%;
+  left: 10.31%;
+  width: 24.91%;
+  height: 76.56%;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0;
+  animation: megaphone-rise 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes megaphone-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.heart {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0;
+  animation-duration: 540ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+/* Delays follow the speaker's burst order (not DOM order): the first heart
+   appears as it rises, then the rest emerge in a measured sequence. This
+   keeps the entrance as one authored moment, not per-heart flair. */
+@keyframes heart-pop-1 {
+  from {
+    opacity: 0;
+    transform: translateY(6%) rotate(80deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(80deg);
+  }
+}
+
+@keyframes heart-pop-2 {
+  from {
+    opacity: 0;
+    transform: translateY(6%) rotate(70deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(70deg);
+  }
+}
+
+@keyframes heart-pop-3 {
+  from {
+    opacity: 0;
+    transform: translateY(6%) rotate(20deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(20deg);
+  }
+}
+
+@keyframes heart-pop-4 {
+  from {
+    opacity: 0;
+    transform: translateY(6%) rotate(99deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(99deg);
+  }
+}
+
+@keyframes heart-pop-5 {
+  from {
+    opacity: 0;
+    transform: translateY(6%) rotate(-30deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(-30deg);
+  }
+}
+
+@keyframes heart-pop-6 {
+  from {
+    opacity: 0;
+    transform: translateY(6%) rotate(99deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(99deg);
+  }
+}
+
+@keyframes heart-pop-7 {
+  from {
+    opacity: 0;
+    transform: translateY(6%) rotate(20deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(20deg);
+  }
+}
+
+.heart1 {
+  top: 30.7%;
+  left: 30.2%;
+  width: 5.87%;
+  height: 19.51%;
+  animation-name: heart-pop-1;
+  animation-delay: 710ms;
+}
+
+.heart2 {
+  top: 17.49%;
+  left: 35.1%;
+  width: 5.27%;
+  height: 14.92%;
+  animation-name: heart-pop-2;
+  animation-delay: 820ms;
+}
+
+.heart3 {
+  top: 26.6%;
+  left: 43.23%;
+  width: 3.11%;
+  height: 9.13%;
+  animation-name: heart-pop-3;
+  animation-delay: 1150ms;
+}
+
+.heart4 {
+  top: 37.38%;
+  left: 37.65%;
+  width: 4.63%;
+  height: 13.82%;
+  animation-name: heart-pop-4;
+  animation-delay: 1040ms;
+}
+
+.heart5 {
+  top: 24.81%;
+  left: 28.89%;
+  width: 2.55%;
+  height: 7.47%;
+  animation-name: heart-pop-5;
+  animation-delay: 600ms;
+}
+
+.heart6 {
+  top: 51.19%;
+  left: 36.33%;
+  width: 1.7%;
+  height: 4.98%;
+  animation-name: heart-pop-6;
+  animation-delay: 930ms;
+}
+
+.heart7 {
+  top: 22.28%;
+  left: 49.54%;
+  width: 1.7%;
+  height: 4.98%;
+  animation-name: heart-pop-7;
+  animation-delay: 1260ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .megaphone,
+  .heart {
+    animation-delay: 0ms;
+  }
+}
+
+.tagline {
+  position: absolute;
+  top: 75%;
+  left: 37%;
+  right: 8%;
+  margin: 0;
+  color: var(--color-text-inverse);
+  font-family: var(--font-primary);
+  font-size: 4.22cqw;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-align: right;
+  white-space: nowrap;
+  transform: translateX(-6px);
+}

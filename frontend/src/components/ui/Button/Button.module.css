@@ -1,0 +1,104 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wp--preset--spacing--30);
+  min-height: var(--button-height);
+  padding: 0 var(--button-padding-inline);
+  border: var(--border-width-none) solid var(--color-transparent);
+  border-radius: var(--radius-button);
+  color: var(--color-text-inverse);
+  font-family: var(--font-button);
+  font-size: var(--button-font-size);
+  font-weight: var(--font-weight-button);
+  line-height: normal;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--transition-control);
+}
+
+.arrow {
+  flex: none;
+  width: var(--wp--preset--spacing--40);
+  height: var(--wp--preset--spacing--40);
+}
+
+.fullWidth {
+  display: flex;
+  width: 100%;
+}
+
+.primary {
+  background-color: var(--color-primary);
+}
+
+.secondary {
+  background-color: var(--color-secondary);
+  transition: background-color var(--transition-control-slow);
+}
+
+.routeBlue,
+.routePurple {
+  border-radius: var(--radius-pill);
+}
+
+.routeBlue {
+  background-color: var(--color-route-blue-action);
+}
+
+.routePurple {
+  background-color: var(--color-secondary);
+}
+
+.primary:hover {
+  background-color: var(--color-action-primary-hover);
+}
+
+.secondary:hover {
+  background-color: var(--color-action-secondary-hover-dull);
+}
+
+.routePurple:hover {
+  background-color: var(--color-action-secondary-hover);
+}
+
+.routeBlue:hover {
+  background-color: var(--color-route-blue-action-hover);
+}
+
+.button:focus-visible {
+  outline: var(--border-width-focus) solid var(--color-focus);
+  outline-offset: var(--wp--preset--spacing--20);
+}
+
+.primary:disabled {
+  background-color: var(--color-action-primary-disabled);
+}
+
+.secondary:disabled,
+.routePurple:disabled {
+  background-color: var(--color-action-secondary-disabled);
+}
+
+.routeBlue:disabled {
+  background-color: var(--color-route-blue-action-disabled);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: var(--button-spinner-size);
+  height: var(--button-spinner-size);
+  border: var(--border-width-default) solid var(--color-text-inverse);
+  border-top-color: var(--color-transparent);
+  border-radius: var(--radius-pill);
+  animation: spin var(--transition-spinner);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}

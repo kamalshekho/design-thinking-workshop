@@ -8,7 +8,12 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'coverage/**', 'public/mockServiceWorker.js'],
+    ignores: [
+      'dist/**',
+      'coverage/**',
+      'storybook-static/**',
+      'public/mockServiceWorker.js',
+    ],
   },
 
   js.configs.recommended,
@@ -88,9 +93,30 @@ export default tseslint.config(
     },
   },
 
+  /* Storybook metadata is the documented exception to named exports. */
+  {
+    files: ['src/**/*.stories.{ts,tsx}'],
+    rules: {
+      'no-restricted-exports': 'off',
+      'no-restricted-imports': 'off',
+    },
+  },
+
   /* Vite and Vitest resolve their config from a default export. */
   {
     files: ['vite.config.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      'no-restricted-exports': 'off',
+    },
+  },
+
+  /* Storybook's config is compiled separately and stays outside src/. */
+  {
+    files: ['.storybook/**/*.{ts,tsx}'],
+    extends: [tseslint.configs.disableTypeChecked],
     languageOptions: {
       globals: globals.node,
     },

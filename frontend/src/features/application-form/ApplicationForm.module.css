@@ -1,0 +1,132 @@
+.title {
+  margin: 0;
+  font-size: var(--wp--preset--font-size--x-large);
+  line-height: 1.05;
+  color: var(--color-primary);
+}
+
+.subtitle {
+  margin: var(--wp--preset--spacing--40) 0 0;
+  font-size: var(--wp--preset--font-size--medium);
+  line-height: 1.4;
+}
+
+.icon {
+  width: var(--form-icon-size);
+  height: var(--form-icon-size);
+  margin: var(--wp--preset--spacing--50) 0 0;
+}
+
+.divider {
+  margin: var(--wp--preset--spacing--50) 0 0;
+  border: 0;
+  border-top: var(--border-width-default) solid var(--color-divider);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wp--preset--spacing--50);
+  margin-top: var(--wp--preset--spacing--60);
+}
+
+.consentGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wp--preset--spacing--30);
+}
+
+.consentGroup a {
+  color: var(--color-primary);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--wp--preset--font-size--small);
+  line-height: 1.35;
+  color: var(--color-error);
+}
+
+/*
+ * A bot fills every field it finds; a person never sees this one. It stays
+ * perceivable to assistive tech (not display:none) because a screen reader's
+ * virtual cursor walks the DOM regardless of tab order, so the label is what
+ * tells that reader to leave it empty.
+ */
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.categoriesError {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wp--preset--spacing--30);
+  margin-top: calc(-1 * var(--wp--preset--spacing--30));
+}
+
+.categoriesEmpty {
+  margin: calc(-1 * var(--wp--preset--spacing--30)) 0 0;
+  font-size: var(--wp--preset--font-size--small);
+  line-height: 1.35;
+  color: var(--color-text-muted);
+}
+
+.submitRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wp--preset--spacing--30);
+  margin-top: var(--wp--preset--spacing--40);
+}
+
+.applicationFields {
+  display: contents;
+}
+
+.submitHelper {
+  margin: 0;
+  font-size: var(--wp--preset--font-size--small);
+  line-height: 1.35;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* Perceivable to assistive tech only — see .honeypot above for why not display:none. */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (width <= 640px) {
+  .title {
+    font-size: var(--wp--preset--font-size--large);
+  }
+
+  .applicationFields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--wp--preset--spacing--50);
+    padding-bottom: var(--sticky-submit-reserve);
+  }
+
+  .submitRow {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: var(--z-index-sticky-submit);
+    gap: var(--wp--preset--spacing--20);
+    padding: var(--wp--preset--spacing--30) var(--page-gutter)
+      calc(var(--wp--preset--spacing--30) + env(safe-area-inset-bottom));
+    border-top: var(--border-width-default) solid var(--color-divider);
+    background: var(--color-page-bg);
+  }
+}

@@ -1,40 +1,6 @@
-/**
- * Page shell. A placeholder until the design is brought over from Figma —
- * the first ported screen replaces the contents of the card.
- */
-
 .page {
+  max-width: var(--container-max);
+  margin-inline: auto;
   padding: var(--wp--preset--spacing--70) var(--page-gutter)
     var(--wp--preset--spacing--80);
-}
-
-.card {
-  width: min(100%, var(--form-max));
-  padding: var(--form-card-padding);
-  margin-inline: auto;
-  background: var(--color-surface);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-form-card);
-}
-
-.content {
-  max-width: var(--form-content-max);
-}
-
-.title {
-  margin: 0 0 var(--wp--preset--spacing--40);
-  font-size: var(--wp--preset--font-size--x-large);
-  line-height: 1.05;
-  color: var(--color-primary);
-}
-
-.note {
-  margin: 0;
-  color: var(--color-text-muted);
-}
-
-@media (width <= 640px) {
-  .title {
-    font-size: var(--wp--preset--font-size--large);
-  }
 }

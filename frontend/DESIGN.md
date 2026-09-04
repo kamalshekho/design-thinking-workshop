@@ -268,7 +268,7 @@ Recommended:
 ```text
 Input         4px
 Select        4px
-Button        4px
+Button        12px
 Main card     8px
 Info panel    8px
 ```
@@ -354,6 +354,14 @@ Mobile:
 - logo left;
 - compact menu icon right;
 - desktop navigation hidden.
+
+Activating the menu reveals the existing navigation, donation action and search
+action beneath the fixed header. Each navigation link closes the menu.
+
+The full navigation row is used only while it fits without compression. At
+`900px` and below, the header keeps the logo and menu control and moves every
+existing destination into the animated drawer; this is independent of the
+`640px` form-layout breakpoint.
 
 ---
 
@@ -446,16 +454,21 @@ No additional application fields should be introduced.
 
 ### Options
 
-Order is mandatory:
+Two fixed options plus the backend-owned Vereinsarbeit categories (`A12`, see
+API.md — `GET /api/v1/categories`), in this order:
 
 ```text
-1. Bei #ichbinhier mitmachen (Aktionsgruppe)
-2. Social Media
-3. Redaktion / Öffentlichkeitsarbeit
-4. Rechtliche Unterstützung
-5. Fördermitglied werden
-6. Etwas anderes
+1. Bei #ichbinhier mitmachen (Aktionsgruppe)     — fixed, this document
+2..n. one option per active category             — backend, display order
+n+1. Fördermitglied werden                        — fixed, this document
 ```
+
+Social Media, Redaktion / Öffentlichkeitsarbeit, Rechtliche Unterstützung and
+Etwas anderes are the initial categories, not permanent options: staff members
+can rename, reorder or deactivate them, and the label shown is whatever the
+backend returns. This document no longer specifies their wording or count —
+only that they sit between the two fixed options, in the order the backend
+sends them.
 
 This field is the central decision point of the experience.
 
@@ -621,7 +634,7 @@ Recommended primary button:
 Background       #e31119
 Text             #ffffff
 Height           56px
-Radius            4px
+Radius            12px (Figma Button component)
 Font size        20px
 ```
 
@@ -650,7 +663,7 @@ These are intentionally excluded to protect conversion.
 
 # 26. Required Figma States
 
-Create 8 frames/variants.
+Create 11 frames/variants.
 
 ```text
 01 Initial
@@ -661,9 +674,15 @@ Create 8 frames/variants.
 06 Loading
 07 Mobile 375
 08 Fördermitglied
+09 Categories Loading
+10 Categories Error
+11 Categories Empty
 ```
 
-The first four are mandatory for a complete design.
+The first four are mandatory for a complete design. 09–11 cover field 1
+before the applicant can do anything with it — see states 33a–33c — and are
+mandatory too, since the backend can return any of the three on page open
+(`A12`, API.md).
 
 ---
 
@@ -817,6 +836,57 @@ Requirements:
 
 ---
 
+# 33a. State 09 — Categories Loading
+
+Field 1 while `GET /api/v1/categories` is in flight (API.md). Not the same as
+State 06 — this happens once, on page open, before the applicant has touched
+anything.
+
+Requirements:
+
+- field 1 shows a single disabled option in place of the placeholder ("Lädt
+  …"), instead of the normal option list;
+- field 1 itself is disabled;
+- hint text stays visible;
+- the rest of the page is unaffected — nothing else waits on this request.
+
+---
+
+# 33b. State 10 — Categories Error
+
+A network failure or non-2xx response to `GET /api/v1/categories` (API.md).
+
+Requirements:
+
+- field 1 stays disabled;
+- field 1 shows a single disabled option in place of the placeholder
+  ("Nicht verfügbar" — needs a copy review), instead of the normal option
+  list, the same way State 09 does for "Lädt …";
+- an inline error message appears below field 1, stating the load failed and
+  what to do — never colour alone (section 32);
+- a retry action (button) is offered next to the error message;
+- the frontend never falls back to a built-in category list — this state has
+  no partial option list, only the two fixed routes are absent along with the
+  categories.
+
+---
+
+# 33c. State 11 — Categories Empty
+
+`GET /api/v1/categories` succeeds with `{ "categories": [] }` — the
+association is not currently accepting Vereinsarbeit applications (API.md).
+This is a normal state, not an error.
+
+Requirements:
+
+- field 1 is enabled and shows exactly the two fixed options (Aktionsgruppe,
+  Fördermitglied) — no category options, no error;
+- a short note near field 1 explains that no Vereinsarbeit categories are
+  currently open;
+- no retry action — there is nothing to retry.
+
+---
+
 # 34. State 07 — Mobile 375px
 
 Required frame:
@@ -944,12 +1014,19 @@ Use for:
 
 - `Bewerbung abschicken`
 
+Figma Button component values: `56px` height, `24px` horizontal padding,
+`12px` radius, Arimo Bold at `20px`. Its default and disabled primary colours
+are `#e31119` and `rgba(227,17,25,0.4)`; its hover colour is `#c00e15`.
+
 ## Secondary
 
 ```text
 Background #8437b6
 Text       #ffffff
 ```
+
+Figma Button component values: hover `#702e9c`, disabled
+`rgba(132,55,182,0.4)`.
 
 Use for secondary brand actions.
 
@@ -1006,6 +1083,10 @@ Use:
 - subtle top border;
 - no large floating shadow;
 - safe-area bottom padding.
+
+At the mobile breakpoint, this is a fixed viewport-bottom panel. The form
+reserves its height so the privacy copy and final field remain scrollable above
+the panel.
 
 ---
 
@@ -1161,6 +1242,11 @@ error
 required
 ```
 
+Figma Input component values: `56px` height, `16px` horizontal padding, and
+Arimo Regular at `20px`. Default, hover, focus, error, and disabled borders
+are `1px #b9b9b9`, `1px #8e8e8e`, `2px #8437b6`, `2px #e31119`, and
+`0.5px #b9b9b9`; disabled text is `#8b8b8b`.
+
 ---
 
 ## Select
@@ -1183,6 +1269,11 @@ placeholder
 hint
 ```
 
+Figma Select component values: `56px` height, `16px` horizontal padding, and
+a `16px` dropdown indicator. Default placeholder text is `#777`; the focus,
+error, and disabled borders use the same `2px #8437b6`, `2px #e31119`, and
+`0.5px #b9b9b9` treatment as Input.
+
 ---
 
 ## Textarea
@@ -1195,6 +1286,10 @@ focus
 error
 disabled
 ```
+
+Figma Textarea component values: `144px` minimum height, `16px` horizontal
+padding, and `12px` vertical padding. It uses Arimo Regular at `20px` and the
+same focus, error, and disabled borders as Input.
 
 ---
 
@@ -1210,6 +1305,11 @@ error
 disabled
 ```
 
+Figma Checkbox component values: `22px` square box, `12px` gap to the copy,
+and a `4px` radius. Checked is `#8437b6` with a white `✓`; focus has a `2px`
+purple border, error a `1px #e31119` border, and disabled content has 50%
+opacity.
+
 ---
 
 ## Button
@@ -1220,6 +1320,7 @@ Variants:
 type=primary
 type=secondary
 type=route-blue
+type=route-purple
 
 state=default
 state=hover
@@ -1241,6 +1342,39 @@ Variants:
 type=Aktionsgruppe
 type=Fördermitglied
 ```
+
+Figma Route Panel component values: `480px` desktop width, `8px` radius and
+`36px` padding. Both variants are horizontal (icon left, content right) and
+collapse to vertical below `640px`, sharing one `80px` icon size — Aktionsgruppe
+uses a `32px` icon-to-content gap, Fördermitglied `20px`. Both use `28px` Arimo
+Bold headings, `20px` body copy, `12px` content gaps, and the existing 56px
+Button — rendered as a pill (`999px` radius, no underline, `16px` label) in
+this component, blue for Aktionsgruppe and purple for Fördermitglied. The
+trailing `→` in the CTA copy renders as a drawn arrow icon, not the literal
+character, so it stays vertically centered against the label regardless of
+font metrics.
+
+---
+
+## Header
+
+Variants:
+
+```text
+type=Desktop
+type=Mobile
+```
+
+Figma Header component values (node 51:59): `96px` height desktop, `68px`
+mobile, page-gutter horizontal padding (`48`/`32`/`20px` matching section 42),
+white background. Logo mark is `154px` wide desktop, `120px` mobile, fixed
+4:1 aspect ratio. Desktop shows red Arimo `13px` uppercase nav links
+(`32px` gap), a `40px` gap to the actions group, the existing secondary
+Button as the `SPENDE` CTA, and a `24px` search icon; mobile shows the logo
+and a `24px` menu icon only. One markup tree serves both — the nav/actions
+row and menu button toggle by media query at the content-driven header
+breakpoint (`900px`), not by swapping components. The form keeps its separate
+section 42 mobile breakpoint (`640px`).
 
 ---
 
@@ -1429,6 +1563,8 @@ Field 1 is therefore the core structural element of the page, not merely the fir
 - [ ] Datenschutz checkbox is required
 - [ ] Errors are inline and specific
 - [ ] Loading prevents duplicate submission
+- [ ] Category load failure shows an inline error and a retry, never a built-in fallback list
+- [ ] Empty category list still allows Aktionsgruppe and Fördermitglied
 - [ ] Confirmation names the email address the applicant entered
 - [ ] Confirmation is identical for all four Vereinsarbeit categories
 - [ ] 375px mobile frame exists
