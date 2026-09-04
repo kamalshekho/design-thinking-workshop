@@ -49,9 +49,10 @@ an invented figure held openly beats an implied fact.
 
 ## Language split
 
-German for anything the applicant reads — form copy, auto-replies, templates
-(`A6`). English for the documents in this repo, the staff dashboard, and the
-presentation.
+German for anything a person outside the team reads — form copy, auto-replies,
+templates, and the staff dashboard UI, since staff members are German speakers
+(`A6`). English for the documents in this repo, the code, the specifications,
+and the presentation.
 
 ## Prose shape
 

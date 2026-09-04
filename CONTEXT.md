@@ -78,6 +78,12 @@ _Avoid_: Mentor, buddy, sponsor
 One applicant's request to volunteer, as it exists inside the platform.
 _Avoid_: Request, submission, ticket
 
+**Owner**:
+The staff member responsible for an Application. An Application may have no
+owner yet. Distinct from Peer onboarder, which is a separate, unimplemented
+role.
+_Avoid_: Assignee, handler
+
 **Inquiry**:
 An incoming message that asks a question rather than offering to volunteer. Not
 an application.

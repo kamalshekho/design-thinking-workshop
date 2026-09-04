@@ -131,7 +131,8 @@ about helping with *Vereinsarbeit*. Public communication is in German.
 - **Confidence:** high for the channel and the language, medium for the shape.
 - **Consequence:** the applicant-facing form is German-only. An English form on
   a German association's site would lose applicants — the same loss the project
-  exists to prevent. Our dashboard and presentation stay in English.
+  exists to prevent. The staff dashboard UI is German too, since staff members
+  are German speakers; only our documents, code and presentation stay English.
 
 ### A7 — The categories are the association's own four
 
@@ -159,8 +160,10 @@ regardless of whether the email itself was ever lost.
 
 ### A9 — The status flow
 
-`new → categorised → intro session booked → active` (plus `waitlisted` and
-`declined`) is **our** model. The association's real process is unknown to us.
+`new, in review, intro booked, active, waitlisted, declined` is **our** model.
+The association's real process is unknown to us. *Categorised* is not a status:
+every Application always carries a Category, so it cannot mark a step in the
+flow (superseded, see the staff dashboard issue tracker).
 
 - **Confidence:** low.
 - **Mitigation:** statuses are data rows, renameable without code changes.
