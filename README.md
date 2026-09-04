@@ -10,9 +10,20 @@ channel: a German-language web form that splits community members from
 applicants for association work, an instant reply carrying a concrete next step,
 and a staff dashboard that holds the applications.
 
-This repo holds the design record and the frontend. The applicant form is a
-React project in [`frontend/`](./frontend/); the Java backend will live in
-`backend/`.
+This repo holds the design record and the code. The applicant form is a React
+project in [`frontend/`](./frontend/), and the Spring Boot service behind it is
+in [`backend/`](./backend/).
+
+## Running the prototype
+
+```bash
+cp .env.example .env   # set DB_PASSWORD
+docker compose up -d --build
+```
+
+The form is then on <http://localhost:8081>
+
+`docker compose down` to stop services, with `-v` to drop the database
 
 ## Documents
 
@@ -33,6 +44,6 @@ Start with `docs/ASSUMPTIONS.md`. The client answered us once and has been silen
 since, so almost everything here is our own modelling — the assumptions document
 says which parts are theirs and which are ours.
 
-## Team
 
+## Team
 Kamal, Ilyas, Tarek, Leon, Bohdan, Anna, Lawrence.
