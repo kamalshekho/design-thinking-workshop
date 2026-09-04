@@ -34,6 +34,8 @@ services:
     image: ichbinhier-form:local
     ports:
       - '8081:80'
+    depends_on:
+      - backend
     restart: unless-stopped
 
 volumes:
