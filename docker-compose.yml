@@ -1,7 +1,7 @@
 # database, frontend and backend
 services:
   db:
-    image: postgres:17-alpine
+    image: docker.io/library/postgres:17-alpine
     environment:
       POSTGRES_DB: volunteer_form
       POSTGRES_USER: volunteer_form
