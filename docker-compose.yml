@@ -1,0 +1,40 @@
+# database, frontend and backend
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: volunteer_form
+      POSTGRES_USER: volunteer_form
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U volunteer_form -d volunteer_form' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    image: ichbinhier-volunteer-form-service:local
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/volunteer_form
+      DB_USERNAME: volunteer_form
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    image: ichbinhier-form:local
+    ports:
+      - '8081:80'
+    restart: unless-stopped
+
+volumes:
+  db-data:
