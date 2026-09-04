@@ -1,5 +1,8 @@
 import type { ErrorCode } from '../features/application-form/errors';
-import type { Route, WeeklyTime } from '../features/application-form/routes';
+import type {
+  FixedRoute,
+  WeeklyTime,
+} from '../features/application-form/routes';
 
 /**
  * Every German string the applicant can read. Nothing outside this file may
@@ -23,8 +26,18 @@ export const de = {
     ],
     donate: 'Spende',
     menuLabel: 'Menü öffnen',
+    menuCloseLabel: 'Menü schließen',
     searchLabel: 'Suche',
     logoAlt: 'ichbinhier e.V.',
+  },
+
+  /**
+   * Not yet in DESIGN.md — the brand-strip tagline from the Figma Hero
+   * Section (section 13), distinct from the page.title heading below it.
+   * Needs a copy review.
+   */
+  hero: {
+    tagline: 'ichbinhier, damit Liebe lauter ist',
   },
 
   /** DESIGN.md section 15 */
@@ -41,15 +54,27 @@ export const de = {
     hint: 'Danach zeigen wir dir nur, was für deinen Weg wirklich nötig ist.',
   },
 
-  /** DESIGN.md section 17 — order comes from ROUTES, not from this object */
+  /**
+   * DESIGN.md section 17 — the two fixed routes only. The four Vereinsarbeit
+   * categories in between are backend-owned data (`A12`), returned by
+   * GET /api/v1/categories, not held here (see API.md and CONTEXT.md,
+   * "Category").
+   */
   routeLabels: {
     COMMUNITY: 'Bei #ichbinhier mitmachen (Aktionsgruppe)',
-    SOCIAL_MEDIA: 'Social Media',
-    EDITORIAL: 'Redaktion / Öffentlichkeitsarbeit',
-    LEGAL_SUPPORT: 'Rechtliche Unterstützung',
     SUPPORTING_MEMBER: 'Fördermitglied werden',
-    OTHER: 'Etwas anderes',
-  } satisfies Record<Route, string>,
+  } satisfies Record<FixedRoute, string>,
+
+  /** Not yet in DESIGN.md — loading/error/empty states for field 1's
+   *  backend-owned categories. Needs a copy review. */
+  categoriesField: {
+    loadingOption: 'Lädt …',
+    errorOption: 'Nicht verfügbar',
+    error:
+      'Die Bereiche für Vereinsarbeit konnten nicht geladen werden. Bitte versuche es noch einmal.',
+    retry: 'Erneut versuchen',
+    empty: 'Aktuell keine offenen Bereiche für Vereinsarbeit.',
+  },
 
   /** DESIGN.md sections 19 to 23 */
   fields: {
@@ -93,18 +118,22 @@ export const de = {
       'Du erhältst sofort eine Bestätigungs-E-Mail mit allen weiteren Infos.',
   },
 
+  actions: {
+    next: 'Weiter',
+  },
+
   /** DESIGN.md section 28 */
   communityPanel: {
     title: 'Du bist sofort dabei.',
     body: 'Kein Warten und keine Rückmeldung nötig: Tritt der Aktionsgruppe bei, lies die Regeln und wähle deinen ersten Thread. Beim ersten Mal antwortest du gemeinsam mit anderen, nie allein.',
-    cta: 'Zur Aktionsgruppe →',
+    cta: 'Zur Aktionsgruppe',
   },
 
   /** DESIGN.md section 35 */
   supportingMemberPanel: {
     title: 'Du unterstützt uns direkt.',
     body: 'Ohne Bewerbung und ohne Wartezeit: Wenn du Fördermitglied werden möchtest, findest du hier alle Informationen und den kurzen Antrag. So hilfst du, digitale Zivilcourage langfristig möglich zu machen.',
-    cta: 'Zum Fördermitgliedsantrag →',
+    cta: 'Zum Fördermitgliedsantrag',
   },
 
   /** DESIGN.md section 30 */
@@ -127,6 +156,8 @@ export const de = {
     CATEGORY_REQUIRED: 'Bitte wähle aus, wie du uns helfen möchtest',
     CATEGORY_UNKNOWN:
       'Diese Auswahl kennen wir nicht — bitte wähle einen der Punkte aus der Liste',
+    CATEGORY_UNAVAILABLE:
+      'Dieser Bereich ist inzwischen nicht mehr verfügbar. Bitte wähle einen anderen Punkt aus der aktualisierten Liste.',
     NAME_REQUIRED: 'Bitte sag uns, wie wir dich ansprechen sollen',
     NAME_TOO_LONG: 'Bitte kürze deinen Namen auf 120 Zeichen',
     EMAIL_REQUIRED:
@@ -153,9 +184,37 @@ export const de = {
     'Das Abschicken hat gerade nicht funktioniert. Bitte versuche es noch einmal — deine Angaben bleiben stehen.',
 
   a11y: {
-    /** Announced when the reveal or the confirmation replaces content */
+    /** Announced via role="status" while the submit request is in flight */
     submitting: 'Deine Bewerbung wird abgeschickt.',
     honeypotLabel: 'Dieses Feld bitte leer lassen',
+  },
+
+  /**
+   * Not yet in DESIGN.md — section 11 only names the footer as "existing site
+   * continuation" without wording. Ported from the live site's footer, needs
+   * a copy review.
+   */
+  footer: {
+    kontakt: {
+      title: 'Kontakt',
+      talkToUs: 'Sprich mit uns',
+      address: ['Postfach 25588', '10129 Berlin', 'info@ichbinhier.online'],
+    },
+    rechtliches: {
+      title: 'Rechtliches',
+      impressum: 'Impressum',
+      datenschutz: 'Datenschutz',
+    },
+    donateLabel: 'SPENDE HIER',
+    socialLabels: {
+      facebook: 'Facebook',
+      instagram: 'Instagram',
+      linkedin: 'LinkedIn',
+      bluesky: 'Bluesky',
+      tiktok: 'TikTok',
+    },
+    copyright: 'Copyright 2026 ichbinhier e.V. – Alle Rechte vorbehalten.',
+    backToTopLabel: 'Nach oben',
   },
 } as const;
 

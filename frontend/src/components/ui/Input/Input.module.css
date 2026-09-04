@@ -1,0 +1,5 @@
+.input {
+  font-family: var(--font-input);
+  font-size: var(--wp--preset--font-size--medium);
+  line-height: normal;
+}

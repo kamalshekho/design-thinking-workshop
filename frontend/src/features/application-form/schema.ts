@@ -1,11 +1,7 @@
 import { z } from 'zod';
 
-import {
-  APPLICATION_CATEGORIES,
-  isApplicationCategory,
-  ROUTES,
-  WEEKLY_TIME_OPTIONS,
-} from './routes';
+import { isUuid } from '../../lib/uuid';
+import { isFixedRoute, WEEKLY_TIME_OPTIONS } from './routes';
 
 /**
  * Validation rules for the form. This schema is the only place a rule lives —
@@ -23,8 +19,15 @@ export const ABOUT_MAX = 2000;
 
 export const formSchema = z
   .object({
-    /** Empty until the applicant picks a route. */
-    route: z.literal('').or(z.enum(ROUTES)),
+    /**
+     * Empty until the applicant picks a route or a category. This only
+     * checks shape — a fixed route or something that looks like a category
+     * UUID. Whether a UUID names a category the backend actually still
+     * offers is checked against the loaded list at submit time (see
+     * useApplicationSubmit.ts), because that list is not known when this
+     * schema is built.
+     */
+    route: z.literal('').or(z.string()),
     name: z.string().trim().max(NAME_MAX, 'NAME_TOO_LONG'),
     email: z.string().trim().max(EMAIL_MAX, 'EMAIL_TOO_LONG'),
     weeklyTime: z.literal('').or(z.enum(WEEKLY_TIME_OPTIONS)),
@@ -48,7 +51,16 @@ export const formSchema = z
     }
 
     // The two bypass routes submit nothing, so none of the fields below apply.
-    if (!isApplicationCategory(values.route)) return;
+    if (isFixedRoute(values.route)) return;
+
+    if (!isUuid(values.route)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['route'],
+        message: 'CATEGORY_UNKNOWN',
+      });
+      return;
+    }
 
     if (values.name.length === 0) {
       ctx.addIssue({
@@ -103,11 +115,14 @@ export const emptyFormValues: FormValues = {
 
 /**
  * Narrowed view of the values once they belong to an application. Guarding on
- * this keeps the request builder free of empty-string cases that the form can
- * no longer be in by the time submit is reachable.
+ * this keeps the request builder free of empty-string and fixed-route cases
+ * that the form can no longer be in by the time submit is reachable. `route`
+ * is a category id here — whether it names a category the backend still
+ * offers is checked separately, against the loaded list (see
+ * useApplicationSubmit.ts).
  */
 export type ApplicationValues = FormValues & {
-  route: (typeof APPLICATION_CATEGORIES)[number];
+  route: string;
   weeklyTime: (typeof WEEKLY_TIME_OPTIONS)[number];
   privacyConsent: true;
 };
@@ -115,7 +130,7 @@ export type ApplicationValues = FormValues & {
 export function asApplicationValues(
   values: FormValues,
 ): ApplicationValues | null {
-  if (!isApplicationCategory(values.route)) return null;
+  if (values.route === '' || isFixedRoute(values.route)) return null;
   if (values.weeklyTime === '') return null;
   if (!values.privacyConsent) return null;
   return {

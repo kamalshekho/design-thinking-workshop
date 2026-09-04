@@ -3,10 +3,14 @@
 The public German form where someone says how they want to be involved with
 "Ich bin hier e.V.". One page, one submission, no authentication.
 
-This is the project shell: tooling, conventions and the backend contract are in
-place, and the screens themselves are ported over from Figma. Nothing here
-implements the form yet — [Porting a screen from Figma](#porting-a-screen-from-figma)
-is the entry point for that work.
+The form is implemented: all eight states from `DESIGN.md` (sections 27–35)
+are ported and covered by behavioural tests, plus the three category-loading
+states (loading/error/empty) the backend contract in `API.md` adds on top.
+State 07 (mobile 375px) is the one exception — it is the same markup under the
+responsive rules in `ApplicationForm.module.css`, not a separate branch, so it
+has no dedicated automated test and stays a manual check (see
+[Testing](#testing)). [Changing a screen](#changing-a-screen) is the entry
+point for touching an existing state or adding a new one.
 
 Read [`DESIGN.md`](./DESIGN.md) before writing a component and
 [`API.md`](./API.md) before touching a request. Vocabulary comes from
@@ -34,6 +38,8 @@ form is fully usable before the Java service exists.
 | `npm run stylelint` / `stylelint:fix` | Stylelint over CSS modules              |
 | `npm run format` / `format:check`     | Prettier                                |
 | `npm test` / `test:watch`             | Vitest                                  |
+| `npm run storybook`                   | Component workbench on port 6006        |
+| `npm run build-storybook`             | Static Storybook build                  |
 
 To point the form at a real backend:
 
@@ -113,10 +119,16 @@ Concretely:
 
 Other rules:
 
-- **Controls are wrapped in `Field`.** `Field` owns the label, the hint and the
-  inline error, and hands the control its `id`, `aria-describedby` and
-  `aria-invalid` through a function. That is what makes the wiring impossible
-  to forget. `Field/Field.tsx` is the reference for the pattern.
+- **Controls with labels, hints or inline errors are wrapped in `Field`.**
+  `Field` owns the label, the hint and the inline error, and hands the control
+  its `id`, `aria-describedby` and `aria-invalid` through a function. That is
+  what makes the wiring impossible to forget. `Field/Field.tsx` is the
+  reference for the pattern.
+- **A compound control outside `Field` owns the same wiring at its call
+  site.** The consent checkbox is the exception because its applicant-facing
+  copy includes a link. When it has an error, give the error a stable `id`,
+  pass that id through `aria-describedby`, set `aria-invalid`, and render the
+  error with `role="alert"`.
 - **A component does not validate.** Rules live in
   `features/application-form/schema.ts`, once. A component that re-checks a
   length will disagree with the schema eventually.
@@ -203,31 +215,35 @@ never German error text — see `API.md`.
 Adding a code without adding its German text is a type error, which is
 intentional.
 
-## Porting a screen from Figma
+## Changing a screen
 
-`DESIGN.md` sections 26 to 35 define eight states; `references/` holds a
-screenshot of each. Suggested order, smallest risk first:
+`DESIGN.md` sections 26 to 35 define the eight states this form ports from
+Figma; `references/` holds screenshots of form fragments and interactions, not
+one capture per state. All eight are built. This is the order they were built
+in, smallest risk first, and the order to follow again when a state changes or
+a new one is added:
 
-1. **Read the spec section** for the state you are porting. It gives exact copy,
-   exact spacing and the rules the design review will check.
-2. **Add the copy to `de.ts`** first, matching the spec word for word. If the
-   spec has no wording for something you need, write it, mark it as not yet in
-   `DESIGN.md`, and raise it — do not invent copy quietly.
-3. **Build the control in `components/ui/`** if it does not exist. Keep it
-   domain-free; take the variants from `DESIGN.md` section 45 so the Figma
-   component and the React component have the same states.
+1. **Read the spec section** for the state you are touching. It gives exact
+   copy, exact spacing and the rules the design review will check.
+2. **Update the copy in `de.ts`** first, matching the spec word for word. If
+   the spec has no wording for something you need, write it, mark it as not
+   yet in `DESIGN.md`, and raise it — do not invent copy quietly.
+3. **Build or adjust the control in `components/ui/`.** Keep it domain-free;
+   take the variants from `DESIGN.md` section 45 so the Figma component and
+   the React component have the same states.
 4. **Compose the screen in `features/application-form/`**, taking values from
    the schema and text from `de.ts`.
 5. **Use tokens for every value.** Where the design shows `36px`, use
    `var(--wp--preset--spacing--60)`. Stylelint will stop you otherwise.
-6. **Add a behavioural test** for the state — what the applicant sees, not how
-   the component is built. `schema.test.ts` shows the shape.
+6. **Add or update a behavioural test** for the state — what the applicant
+   sees, not how the component is built. `ApplicationForm.test.tsx` shows the
+   shape.
 7. **Walk the checklist** in `DESIGN.md` section 53 and the manual items below.
 
-Things the design deliberately forbids, worth knowing before you start: no
-progress steps, no floating labels, no icons inside inputs, no extra fields
-beyond the six, no generic error banner, no giant rounded cards. Section 52 has
-the full list.
+Things the design deliberately forbids, worth knowing before touching a
+screen: no progress steps, no floating labels, no icons inside inputs, no
+extra fields beyond the six, no generic error banner, no giant rounded cards.
+Section 52 has the full list.
 
 ## Testing
 

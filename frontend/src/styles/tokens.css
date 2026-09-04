@@ -58,33 +58,128 @@
   --color-accent-soft: var(--color-fuut-lila);
   --color-border: #b9b9b9;
   --color-border-hover: #8e8e8e;
+  --color-divider: #e5e5e5;
+  --color-text-disabled: #8b8b8b;
   --color-focus: var(--color-fuut-purple);
   --color-focus-ring: rgb(132 55 182 / 14%);
   --color-error: var(--color-fuut-red);
+  --color-action-primary-hover: #c00e15;
+  --color-action-secondary-hover: #702e9c;
+  --color-action-secondary-hover-dull: #a255d3;
+  --color-action-primary-disabled: rgb(227 17 25 / 40%);
+  --color-action-secondary-disabled: rgb(132 55 182 / 40%);
+  --color-transparent: transparent;
 
   /* Route-specific surfaces. Blue belongs to the community panel only; it is
      not a new brand colour (DESIGN.md section 28). */
   --color-route-blue-bg: #e9f4fc;
   --color-route-blue-text: #2e72ad;
+  --color-route-blue-action: #1a6fe0;
+  --color-route-blue-action-hover: #1558b3;
+  --color-route-blue-action-disabled: rgb(26 111 224 / 40%);
   --color-route-purple-bg: #f2e9f6;
 
+  --radius-none: 0;
   --radius-control: 4px;
+  --radius-button: 12px;
   --radius-card: 8px;
   --radius-panel: 8px;
+  --radius-pill: 999px;
+
+  --font-button: arimo, arial, sans-serif;
+  --font-input: arimo, arial, sans-serif;
+  --font-weight-button: 700;
   --shadow-form-card: 0 8px 28px rgb(79 79 79 / 10%);
 
-  --container-max: 1280px;
+  /* Boxed content width, confirmed from the live site's Impreza theme row
+     rule (`.ish-boxed [class^="ish-part_"]`, etc.) — was an unconfirmed
+     1280px guess before. */
+  --container-max: 1240px;
   --form-max: 960px;
   --form-content-max: 760px;
 
   --page-gutter: 48px;
   --field-height: 56px;
   --button-height: 56px;
+  --button-font-size: var(--wp--preset--font-size--medium);
+  --button-padding-inline: var(--wp--preset--spacing--50);
+  --button-spinner-size: var(--wp--preset--spacing--40);
+  --control-padding-inline: var(--wp--preset--spacing--40);
+  --select-arrow-size: var(--wp--preset--spacing--40);
+  --select-arrow-inset: var(--control-padding-inline);
+  --checkbox-size: 22px;
+  --checkbox-gap: 12px;
+  --route-panel-max-width: 480px;
+  --route-panel-community-gap: 32px;
+  --route-panel-supporting-member-gap: 20px;
+  --route-panel-content-gap: 12px;
+  --route-panel-icon: 80px;
+  --route-panel-heading-size: 28px;
+  --border-width-none: 0;
+  --border-width-disabled: 0.5px;
+  --border-width-default: 1px;
+  --border-width-focus: 2px;
   --textarea-min-height: 144px;
+  --textarea-padding-block: 12px;
   --form-card-padding: var(--wp--preset--spacing--70);
 
-  --sticky-submit-reserve: 72px;
+  /* Header height and logo size confirmed from the live site's CSS
+     (.header height, .logo max-height). Logo is sized by height (not
+     width) so it scales from its intrinsic 4:1 aspect ratio. */
+  --header-height: 120px;
+  --header-logo-height: 50px;
+  --header-gutter-left: 16px;
+  --header-gutter-right: 4px;
+  --header-nav-gap: 10px;
+  --header-links-gap: 0;
+  --header-nav-link-padding-block: 8px;
+  --header-nav-link-padding-inline: 10px;
+  --header-nav-link-font-size: 12px;
+  --icon-size-md: 24px;
+
+  /* Fixed header that shrinks on scroll-down and restores on scroll-up,
+     confirmed from the live site's CSS (position: fixed, z-index: 99). */
+  --header-height-scrolled: 50px;
+  --header-scroll-transition: 480ms cubic-bezier(0.65, 0, 0.35, 1);
+  --z-index-header: 99;
+  --icon-size-sm: 18px;
+  --form-icon-size: 100px;
+  --touch-target-min: 44px;
+
+  /* Header donate CTA — sized to match the live site's compact nav button
+     (ichbinhier.eu) rather than the larger 56px/20px Button component
+     default, which reads as oversized inside a 96px header. */
+  --header-donate-height: 40px;
+  --header-donate-padding-inline: 10px;
+  --header-donate-font-size: var(--wp--preset--font-size--small);
+  --header-donate-radius: 8px;
+  --header-actions-gap: 6px;
+
+  --hero-strip-max-width: 1280px;
+  --hero-strip-aspect: 1413 / 520;
+
+  --footer-padding-block: 56px 32px;
+  --footer-row-gap: 40px;
+  --footer-column-gap: var(--wp--preset--spacing--40);
+  --footer-donate-gap: 10px;
+  --footer-social-gap: var(--wp--preset--spacing--40);
+  --footer-aside-gap: 20px;
+  --footer-icon-size: 22px;
+  --footer-text-size: 14px;
+  --footer-divider-color: rgb(255 255 255 / 25%);
+  --footer-back-to-top-size: 48px;
+  --footer-back-to-top-icon-size: var(--wp--preset--spacing--40);
+
+  --z-index-sticky-submit: 98;
+  --sticky-submit-reserve: calc(
+    var(--button-height) + var(--wp--preset--font-size--small) * 3 +
+      var(--wp--preset--spacing--60) + env(safe-area-inset-bottom)
+  );
   --transition-control: 120ms ease;
+  --transition-control-slow: 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-menu: 260ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-menu-duration: 260ms;
+  --transition-spinner: 700ms linear infinite;
   --transition-reveal: 180ms ease-out;
 }
 
@@ -92,6 +187,8 @@
 @media (width <= 1024px) {
   :root {
     --page-gutter: 32px;
+    --header-gutter-left: 20px;
+    --header-gutter-right: 10px;
     --form-card-padding: var(--wp--preset--spacing--60);
   }
 }
@@ -100,6 +197,13 @@
 @media (width <= 640px) {
   :root {
     --page-gutter: 20px;
+    --header-gutter-left: 16px;
+    --header-gutter-right: 16px;
     --form-card-padding: var(--wp--preset--spacing--50);
+    --header-height: 68px;
+
+    /* 120px at the logo's 4:1 aspect ratio — same rendered size as before,
+       just re-expressed in the height unit the desktop rule now uses. */
+    --header-logo-height: 30px;
   }
 }

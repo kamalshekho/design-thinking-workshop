@@ -1,0 +1,12 @@
+.textarea {
+  min-height: var(--textarea-min-height);
+  padding: var(--textarea-padding-block) var(--control-padding-inline);
+  font-family: var(--font-input);
+  font-size: var(--wp--preset--font-size--medium);
+  line-height: normal;
+  resize: vertical;
+}
+
+.textarea.textarea:hover {
+  border-color: var(--color-border);
+}

@@ -1,0 +1,8 @@
+.card {
+  width: min(100%, var(--form-max));
+  padding: var(--form-card-padding);
+  margin-inline: auto;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-form-card);
+}

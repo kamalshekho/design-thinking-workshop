@@ -1,0 +1,239 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-index-header);
+  display: flex;
+  justify-content: center;
+  height: var(--header-height);
+  background: var(--color-surface);
+  transition: height var(--header-scroll-transition);
+}
+
+.header.scrolled {
+  height: var(--header-height-scrolled);
+}
+
+/* Keep the reserved flow height stable. Resizing it with the fixed header
+   changes scrollY and makes direction detection reverse during the animation. */
+.spacer {
+  height: var(--header-height);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: var(--container-max);
+  padding-left: var(--header-gutter-left);
+  padding-right: var(--header-gutter-right);
+}
+
+.logoLink {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+.logo {
+  display: block;
+  width: auto;
+  height: var(--header-logo-height);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--header-nav-gap);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--header-links-gap);
+}
+
+.navLink {
+  display: inline-block;
+  padding: var(--header-nav-link-padding-block)
+    var(--header-nav-link-padding-inline);
+  border-radius: var(--radius-none);
+  color: var(--color-primary);
+  font-family: var(--font-button);
+  font-size: var(--header-nav-link-font-size);
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--transition-control),
+    color var(--transition-control);
+}
+
+.navLink:hover {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--header-actions-gap);
+}
+
+.donateButton {
+  min-height: var(--header-donate-height);
+  padding-inline: var(--header-donate-padding-inline);
+  border-radius: var(--header-donate-radius);
+  font-size: var(--header-donate-font-size);
+  text-transform: uppercase;
+}
+
+.donateButton:hover {
+  background-color: var(--color-action-secondary-hover-dull);
+}
+
+.iconButton,
+.menuButton {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-control),
+    color var(--transition-control);
+}
+
+.iconButton {
+  border-radius: var(--radius-none);
+}
+
+.iconButton:hover {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.iconButton:focus-visible,
+.menuButton:focus-visible {
+  outline: var(--border-width-focus) solid var(--color-focus);
+  outline-offset: var(--wp--preset--spacing--20);
+}
+
+.menuButton {
+  display: none;
+  border-radius: var(--radius-pill);
+}
+
+.icon {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+}
+
+.menuButton rect {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity var(--transition-menu),
+    transform var(--transition-menu);
+}
+
+.menuButton[aria-expanded='true'] rect:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menuButton[aria-expanded='true'] rect:nth-child(2) {
+  opacity: 0;
+}
+
+.menuButton[aria-expanded='true'] rect:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.searchIcon {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+/* The full row loses its rhythm before the form's 640px mobile breakpoint.
+   Collapse navigation at the content-driven 900px threshold while preserving
+   the tablet form layout and all destinations in the drawer. */
+@media (width <= 900px) {
+  .right {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    width: 100%;
+    max-height: calc(100dvh - var(--header-height));
+    padding: var(--wp--preset--spacing--40) var(--page-gutter)
+      var(--wp--preset--spacing--50);
+    overflow-y: auto;
+    border-top: var(--border-width-default) solid var(--color-divider);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-form-card);
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--wp--preset--spacing--30)));
+    clip-path: inset(0 0 100% 0);
+    transition:
+      opacity var(--transition-menu),
+      transform var(--transition-menu),
+      clip-path var(--transition-menu),
+      visibility 0s linear var(--transition-menu-duration);
+  }
+
+  .header.scrolled .right {
+    max-height: calc(100dvh - var(--header-height-scrolled));
+  }
+
+  .right.menuOpen {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateY(0);
+    clip-path: inset(0 0 0 0);
+    transition-delay: 0s;
+  }
+
+  .nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navLink {
+    display: flex;
+    align-items: center;
+    min-height: var(--touch-target-min);
+    padding-inline: 0;
+  }
+
+  .actions {
+    justify-content: space-between;
+    padding-top: var(--wp--preset--spacing--30);
+    border-top: var(--border-width-default) solid var(--color-divider);
+  }
+
+  .donateButton {
+    flex: 1;
+  }
+
+  .iconButton {
+    margin-left: var(--wp--preset--spacing--30);
+  }
+
+  .menuButton {
+    display: flex;
+  }
+}

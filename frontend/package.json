@@ -19,7 +19,9 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepare": "cd .. && husky frontend/.husky || true"
+    "prepare": "cd .. && husky frontend/.husky || true",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -30,6 +32,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "@storybook/addon-a11y": "^10.6.0",
+    "@storybook/addon-docs": "^10.6.0",
+    "@storybook/react-vite": "^10.6.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
@@ -48,6 +53,7 @@
     "lint-staged": "^17.4.1",
     "msw": "^2.15.0",
     "prettier": "^3.9.6",
+    "storybook": "^10.6.0",
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",
     "typescript": "^6.0.3",

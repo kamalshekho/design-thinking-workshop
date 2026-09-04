@@ -43,10 +43,12 @@ member. Distinct from community participation.
 _Avoid_: Internal work, association work, staff work
 
 **Category**:
-The field of work an applicant selects for themselves on the form, taken from
-the association's own public calls for volunteers (`A7`). A category always
-names Vereinsarbeit — community participation and supporting membership are
-routes, not categories.
+The field of work an applicant selects for themselves on the form. Categories
+are backend-owned data that staff members maintain (`A12`); the initial set
+was seeded from the association's own public calls for volunteers (`A7`), but
+the backend — not the frontend — is the source of truth for which categories
+exist. A category always names Vereinsarbeit — community participation and
+supporting membership are routes, not categories.
 _Avoid_: Department, area, tag, position
 
 **Route**:
