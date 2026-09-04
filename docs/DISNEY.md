@@ -142,7 +142,8 @@ instead of one. Infrastructure is a real line item, not an afterthought.
 
 **Language split:** applicant-facing form in **German** (`A6`) — an English form
 on a German association's site loses applicants, which is the very loss we are
-fixing. Dashboard and presentation in English.
+fixing. The staff dashboard UI is German too, since staff members are German
+speakers; documents, code and the presentation stay in English.
 
 ### Scope
 
@@ -158,8 +159,9 @@ fixing. Dashboard and presentation in English.
    parsed request record. Uncertain messages default to *request* rather than
    noise, and land in a review lane instead of the main queue.
 4. **Staff dashboard — flow mode**: the week's new requests, filterable by
-   category and age, with the status flow `new → categorised → intro booked →
-   active` (plus `waitlisted`, `declined`). Statuses are data, renameable
+   category and age, with the status flow `new, in review, intro booked,
+   active, waitlisted, declined` (`A9`). Categorised is not a status — every
+   Application always carries a Category. Statuses are data, renameable
    without code (`C1`).
 5. **Staff dashboard — backlog mode**: bulk triage of the ~1,000 accumulated
    messages (`A3`) — multi-select, categorise as a batch, answer with a

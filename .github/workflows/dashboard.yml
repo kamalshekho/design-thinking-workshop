@@ -1,0 +1,67 @@
+name: dashboard
+
+# Scoped to the dashboard so the frontend and backend workflows never trigger
+# on a change here, and vice versa.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dashboard/**'
+      - '.github/workflows/dashboard.yml'
+  pull_request:
+    paths:
+      - 'dashboard/**'
+      - '.github/workflows/dashboard.yml'
+
+jobs:
+  quality:
+    name: typecheck, lint, test, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: dashboard/.nvmrc
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      # setup-node's cache only holds the downloaded tarballs, so npm ci still
+      # extracts and links every package on every run. Caching node_modules
+      # itself keyed on the lockfile skips that work whenever it is unchanged.
+      - name: Cache node_modules
+        id: node-modules-cache
+        uses: actions/cache@v4
+        with:
+          path: dashboard/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('dashboard/package-lock.json') }}
+
+      - name: Install
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-dist
+          path: dashboard/dist
+          retention-days: 7
