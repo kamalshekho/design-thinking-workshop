@@ -4,6 +4,14 @@ status: accepted
 
 # Code speaks English, the applicant reads German
 
+**Partially superseded by
+[ADR-0003](./0003-german-dashboard-english-documentation.md):** the dashboard
+UI is German, and dashboard translations do not belong in documentation or the
+glossary. English identifiers and wire formats remain required. The shared
+component assumption below was superseded by
+[ADR-0002](./0002-dashboard-as-separate-application.md). The original rationale
+is preserved below as history.
+
 `frontend/DESIGN.md` arrived written in the association's own German —
 _Aktionsgruppe_, _Info-Runde_, _Fördermitglied_ — while
 [`CONTEXT.md`](../../CONTEXT.md) defines the same concepts in English as

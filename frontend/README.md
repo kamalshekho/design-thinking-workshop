@@ -103,9 +103,10 @@ Two reasons, and the second is the one that matters:
 
 1. It matches the Figma component boundary in `DESIGN.md` section 45. An
    `Input` in Figma has a `label` property; so does ours.
-2. The staff dashboard is **English**. A control that knows its own German
-   label cannot be reused there, and rewriting the control set later is work
-   nobody has budgeted.
+2. Keeping copy in the feature lets the same control serve different fields
+   without depending on their domain meaning. The staff dashboard owns its
+   own components, as recorded in
+   [ADR-0002](../docs/adr/0002-dashboard-as-separate-application.md).
 
 Concretely:
 
@@ -198,7 +199,9 @@ are **not yet in `DESIGN.md`**. They are marked in `de.ts` and still need a copy
 review.
 
 There is deliberately no i18n library. The form is German only (`A6`), and the
-dashboard is a separate surface in English.
+dashboard is a separate surface with German UI too. Code and documentation
+use English; see
+[ADR-0003](../docs/adr/0003-german-dashboard-english-documentation.md).
 
 ## Errors
 

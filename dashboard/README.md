@@ -40,6 +40,10 @@ The dashboard UI is German (`A6`) — staff members are German speakers. Code
 identifiers, this specification, comments, and tracker prose stay English, the
 same split `frontend/` uses for its own copy versus its own code.
 
+German UI labels belong in UI copy. Documents and the glossary use English
+domain terms without German translations or bilingual label tables. See
+[ADR-0003](../docs/adr/0003-german-dashboard-english-documentation.md).
+
 ## Attribution
 
 `dashboard/THIRD_PARTY_LICENSES` carries Untitled UI React's MIT notice and
