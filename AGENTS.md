@@ -11,6 +11,7 @@ applicant form.
 - [`docs/adr/`](./docs/adr/) — decisions that are hard to reverse, one file each
 - [`frontend/`](./frontend/) — the applicant form: specification, API contract, React project
 - [`frontend/references/`](./frontend/references/) — screenshots of the applicant form, one per UI state
+- [`dashboard/`](./dashboard/) — the staff dashboard: API contract, conventions, React project
 
 ## Working on the frontend
 

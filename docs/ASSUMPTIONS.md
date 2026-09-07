@@ -209,6 +209,145 @@ and Sonstiges, but that list is not treated as permanent.
   The initial four categories would be simpler and more reliable as frontend
   data.
 
+### A13 — Übersicht's "Offene Anfragen" panel shows five rows by default
+
+The panel below Übersicht's three metric cards lists the oldest open
+Applications — every status except `active` and `declined` — after search and
+Category/Zuständigkeit filtering, capped at five. Five is our proposal for a
+compact overview, not a confirmed client need; nothing in `C1`/`C2` says how
+many Applications a Staff member should see at a glance before going to
+Anfragen for the rest.
+
+- **Confidence:** low — invented for the prototype.
+- **Why it matters:** it sets how much of the queue is visible without a click.
+  Five rows fits comfortably below the three cards without scrolling; a busier
+  queue in practice could make five feel too short and push Staff members
+  straight to Anfragen instead.
+- **What breaks if wrong:** the cap is one number, read from
+  `OPEN_APPLICATIONS_LIMIT` in `selectOpenApplications.ts`, not scattered
+  across the panel — raising or removing it is a one-line change, not a
+  rewrite.
+
+### A14 — An Application without an Owner reads as unread
+
+The Applications list marks every Application that has no Owner the way a mail
+client marks an unread message: a dot at the row's left edge, the applicant's
+name in bold, and a tinted row. An Application with an Owner reads as plain
+text on the card's own background. The state is derived from the Owner on
+every render — assigning one turns the row plain, clearing one turns it back —
+and nothing is stored per Staff member.
+
+- **Confidence:** low — our proposal. `C2` says mail is unfindable among ~1,000
+  emails; it does not say that "nobody has taken this on" is the distinction a
+  Staff member wants to see first.
+- **Why it matters:** it decides what the list emphasises. Ownership is the
+  only signal here that says a human has looked at an Application at all —
+  Status moves later and by hand — so it is the closest thing we have to
+  read/unread. A shared dashboard also means the mark is the same for every
+  Staff member, which a per-person "read" flag would not be.
+- **What breaks if wrong:** if Staff members read the emphasis as "new" rather
+  than "unowned", an old Application somebody deliberately left unassigned
+  keeps shouting, and an Application that arrived this morning and was claimed
+  at once disappears into the plain rows. The rule is one predicate,
+  `isUnassigned` in `domain/application.ts`, so a different signal — Status
+  `new`, or an age — is a change in one place.
+
+### A15 — A Category carries a description, and one in use is deactivated
+
+Beyond its name, a Category carries one line of description, shown under the
+name on the form and edited on Kategorien. A Category that Applications are
+already filed under cannot be deleted at all — the dashboard offers
+deactivation instead, which takes it out of the form and leaves every existing
+Application with the Category it was submitted under.
+
+- **Confidence:** low — both halves are our proposal. `A7` gives us four
+  category names and nothing else; nothing the association said asks for a
+  description, and nothing says what should happen to old Applications when a
+  Category goes away.
+- **Why it matters:** the description is the only place the form can explain
+  what "Redaktion / Öffentlichkeitsarbeit" involves, and the four names of
+  `A7` are only useful if an Applicant can tell them apart. The deletion rule
+  is what keeps the
+  Applications list readable: a deleted Category would leave rows pointing at
+  an id with no name behind it.
+- **What breaks if wrong:** if descriptions go unwritten they are one empty
+  line per option, which the form can drop. If the association wants a
+  Category gone rather than hidden, the inactive list grows instead — visible
+  on Kategorien's "Inaktiv" tab, so nothing is lost, but nothing is cleaned up
+  either.
+
+### A16 — Deleting an Application moves it aside rather than erasing it
+
+The dashboard's delete action marks an Application _Discarded_: it leaves the
+working list, the metric cards and the view counts, and appears on a fourth
+screen of its own. It keeps its Status, Owner and Category. From there a staff
+member can restore it, or erase it for good in a second, separate action. There
+is no automatic purge after a retention period.
+
+- **Confidence:** low — our proposal. Nothing the association said describes
+  what happens to a request they do not want.
+- **Why it matters:** an Application is a person who wrote in. A single
+  mis-click that erases their message for good is a worse failure than a list
+  that needs tidying, and `C2` says requests are already being lost — losing
+  them faster is not the fix.
+- **What breaks if wrong:** if staff members never visit the fourth screen, the
+  discarded set grows without limit. That is a screen nobody opens, not lost
+  data. The alternative — erasing on the first click — cannot be undone at all,
+  and a retention period would be a number we invented for data belonging to
+  someone who never agreed to it.
+
+### A17 — Five seeded staff accounts and a twelve-hour sign-in
+
+The dashboard has no self-registration and no user administration. The backend
+seeds one account per staff member (`A1`), and a Sign-in lasts twelve hours of
+sliding inactivity. There is no account lockout; repeated failed sign-ins are
+throttled by address instead.
+
+- **Confidence:** low — the count follows `A1`, the twelve hours are invented.
+- **Why it matters:** it decides how much of the prototype is authentication
+  work rather than dashboard work. Twelve hours means a staff member signs in
+  once at the start of a working day and is not interrupted inside it.
+- **What breaks if wrong:** too short, and staff members meet a sign-in screen
+  mid-task; too long, and an unattended dashboard stays open. Both are one
+  configured duration. Lockout was rejected for a different reason: with five
+  staff members and no administrator, a locked account stays locked.
+
+### A18 — The dashboard is fed by a live stream, not by reloading
+
+An Application submitted on the form appears in every open dashboard within
+seconds, and so do changes to Status, Owner, notes and the discarded state made
+by another staff member. The dashboard shows whether that stream is connected,
+and does not fall back to polling when it is not.
+
+- **Confidence:** low — our proposal, and the only one here that the
+  association could not have asked for, since they have never seen a
+  dashboard.
+- **Why it matters:** the dashboard is shared by up to five people (`A1`) and
+  ownership is the signal that somebody has taken an Application on (`A14`).
+  Without a live stream, two staff members can claim the same Application and
+  neither sees the other — exactly the duplicated work this project exists to
+  remove.
+- **What breaks if wrong:** if the stream cannot be kept open in the deployment
+  we demonstrate on, the dashboard still works, but only tells the truth
+  immediately after a reload, and the connection marker tells the staff member
+  so.
+
+### A19 — An Application counts as stale after seven days
+
+Seven days of no movement is where an Application starts reading as overdue: it
+enters Anfragen's "Lange offen" view and Übersicht's third metric card. This
+closes the debt the code has been carrying — `STALE_AFTER_DAYS` in
+`dashboard/src/domain/application.ts` had no entry here.
+
+- **Confidence:** low — our invention. `A8` says requests are lost to silence,
+  but nothing says at what age silence becomes a failure.
+- **Why it matters:** it is the only number in the dashboard that turns a
+  waiting Application into a visible problem, and it drives both a view and a
+  card.
+- **What breaks if wrong:** too low and every Application is overdue, so the
+  card stops meaning anything; too high and the card is empty while people
+  wait. It is one constant in one file.
+
 ---
 
 ## Open questions we cannot answer ourselves

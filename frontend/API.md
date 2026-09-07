@@ -11,6 +11,11 @@ Status: **requires renewed agreement with the backend**. This revision replaces
 the previously agreed static category enum. The decisions are collected at the
 end.
 
+The dashboard contract, [`../dashboard/API.md`](../dashboard/API.md), asks for
+one change to this document: a category carries a `description` (`A15`), which
+the form shows under the name and which this response does not currently
+return, and `label` is renamed to `name`. Both are pending the same agreement.
+
 ## Scope
 
 One public page: the German applicant form. Three endpoints, all
