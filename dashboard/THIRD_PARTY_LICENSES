@@ -1,0 +1,179 @@
+Third-party source copied into this application.
+
+This is a source-tree notice, not something the UI shows — the same treatment
+`frontend/public/fonts/OFL.txt` gets for the Nunito font licence. Update the
+list below in the same commit as any further copy from the clone.
+
+
+================================================================================
+Untitled UI React — MIT
+================================================================================
+
+Copied by hand from the local clone at
+`/home/iliasalmerekov/Projects/Schule/react`
+(https://github.com/untitleduico/react), one component at a time, as
+`README.md` describes. Nothing pulls the clone's updates in automatically.
+
+Files copied, clone path -> path here:
+
+  components/application/app-navigation/config.ts
+    -> src/components/application/app-navigation/config.ts
+  components/application/app-navigation/base-components/nav-item.tsx
+    -> src/components/application/app-navigation/base-components/nav-item.tsx
+  components/application/app-navigation/base-components/nav-list.tsx
+    -> src/components/application/app-navigation/base-components/nav-list.tsx
+  components/application/app-navigation/base-components/mobile-header.tsx
+    -> src/components/application/app-navigation/base-components/mobile-header.tsx
+  components/application/app-navigation/base-components/nav-account-card.tsx
+    -> src/components/application/app-navigation/base-components/nav-account-card.tsx
+  components/application/app-navigation/sidebar-navigation/sidebar-simple.tsx
+    -> src/components/application/app-navigation/sidebar-navigation/sidebar-simple.tsx
+  components/application/pagination/pagination.tsx
+    -> src/components/application/pagination/pagination.tsx
+       (reduced to `PaginationCardDefault`, the one pager this dashboard shows)
+  components/application/pagination/pagination-base.tsx
+    -> src/components/application/pagination/pagination-base.tsx
+  components/application/table/table.tsx
+    -> src/components/application/table/table.tsx
+       (`TableRowActionsDropdown` dropped with the clone's `base/dropdown`)
+  components/application/table/table-example.tsx
+    -> src/components/application/application-table/application-table.tsx
+       (rows, columns and row states rewritten for Application data)
+  components/application/tabs/tabs.tsx
+    -> src/components/shared/tab-strip.tsx
+       (underline-tab styling kept, made generic over a screen's view set)
+  components/base/avatar/avatar.tsx
+    -> src/components/base/avatar/avatar.tsx
+       (base components imported directly, no `AvatarProfilePhoto` variant)
+  components/base/avatar/avatar-label-group.tsx
+    -> src/components/base/avatar/avatar-label-group.tsx
+  components/base/avatar/base-components/avatar-count.tsx
+    -> src/components/base/avatar/base-components/avatar-count.tsx
+  components/base/avatar/base-components/avatar-online-indicator.tsx
+    -> src/components/base/avatar/base-components/avatar-online-indicator.tsx
+  components/base/avatar/base-components/verified-tick.tsx
+    -> src/components/base/avatar/base-components/verified-tick.tsx
+  components/base/badges/badges.tsx
+    -> src/components/base/badges/badges.tsx
+       (reduced to `Badge` and `BadgeWithDot`)
+  components/base/badges/badge-types.ts
+    -> src/components/base/badges/badge-types.ts
+  components/base/buttons/button.tsx
+    -> src/components/base/buttons/button.tsx
+  components/base/buttons/close-button.tsx
+    -> src/components/base/buttons/close-button.tsx
+  components/base/checkbox/checkbox.tsx
+    -> src/components/base/checkbox/checkbox.tsx
+  components/base/input/input.tsx
+    -> src/components/base/input/input.tsx
+  components/base/input/hint-text.tsx
+    -> src/components/base/input/hint-text.tsx
+  components/base/input/label.tsx
+    -> src/components/base/input/label.tsx
+  components/base/toggle/toggle.tsx
+    -> src/components/base/toggle/toggle.tsx
+  components/base/tooltip/tooltip.tsx
+    -> src/components/base/tooltip/tooltip.tsx
+  components/foundations/dot-icon.tsx
+    -> src/components/foundations/dot-icon.tsx
+  hooks/use-breakpoint.ts
+    -> src/hooks/use-breakpoint.ts
+  utils/cx.ts
+    -> src/utils/cx.ts
+  utils/is-react-component.ts
+    -> src/utils/is-react-component.ts
+
+Copies that keep the clone's house style are exempted from this application's
+stricter ESLint rules by a scoped override in `eslint.config.js`, so they stay
+easy to compare against the clone.
+
+Each file carries a comment naming its clone path and what was changed.
+`src/styles/untitledui-theme.css` is not a copy: it is the subset of the
+clone's semantic token names, given this application's palette.
+
+MIT License
+
+Copyright (c) 2025 Untitled UI
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+================================================================================
+shadcn/ui — MIT
+================================================================================
+
+Copied from the public registry at https://ui.shadcn.com
+(https://github.com/shadcn-ui/ui), `new-york-v4` style. The `dashboard-01`
+block that first brought these in is no longer part of this application; what
+remains is the Card primitive behind Übersicht's metric cards, the Select
+behind the dashboard's dropdowns, and the `chart` container the sparkline is
+built on.
+
+Files copied, registry path -> path here:
+
+  registry/new-york-v4/ui/card.tsx
+    -> src/components/ui/card.tsx
+       (reduced to the four parts the dashboard renders)
+  registry/new-york-v4/ui/select.tsx
+    -> src/components/ui/select.tsx
+       (`@untitledui/icons` in place of `lucide-react`)
+  registry/new-york-v4/ui/chart.tsx
+    -> folded into src/components/ui/sparkline.tsx
+       (only the themed container, single-series and light-theme only)
+
+Each file carries a comment naming its registry path and what was changed.
+`src/styles/shadcn-ui-theme.css` is not a copy: it defines the `sd-*` tokens
+these components use, namespaced to avoid colliding with Untitled UI's own
+semantic names, light theme only.
+
+MIT License
+
+Copyright (c) 2023 shadcn
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+================================================================================
+Untitled UI avatar photo — placeholder asset, licence not asserted
+================================================================================
+
+  https://www.untitledui.com/images/avatars/ashton-blackwell
+    -> src/images/ashton-blackwell.webp (resized to 256x256, re-encoded WebP)
+
+Mock data only: the avatar of the signed-in Staff member in
+`src/data/currentStaffMember.ts`, standing in until issue #16 supplies a real
+one. This is a placeholder photo served from Untitled UI's site, not part of
+the MIT-licensed component source above, and Untitled UI states no licence for
+it. Replace it before this dashboard ships to anyone outside the team.

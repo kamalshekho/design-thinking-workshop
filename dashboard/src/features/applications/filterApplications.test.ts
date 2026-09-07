@@ -1,0 +1,154 @@
+import { describe, expect, it } from 'vitest';
+
+import type { Application } from '@/domain/application';
+
+import { EMPTY_FILTERS, filterApplications } from './filterApplications';
+
+const NOW = new Date('2026-09-05T12:00:00.000Z');
+
+function application(overrides: Partial<Application> = {}): Application {
+  return {
+    id: 'a1',
+    applicantName: 'Mara Weber',
+    email: 'mara.weber@example.org',
+    receivedAt: '2026-09-04T09:00:00.000Z',
+    categoryId: 'social-media',
+    weeklyAvailability: 4,
+    status: 'new',
+    ownerId: null,
+    message: 'Ich möchte mithelfen.',
+    internalNotes: '',
+    discardedAt: null,
+    consent: {
+      givenAt: '2026-09-04T09:00:00.000Z',
+      privacyPolicyVersion: '2026-05',
+    },
+    ...overrides,
+  };
+}
+
+describe('filterApplications', () => {
+  it('returns every Application under the default filters', () => {
+    const applications = [application({ id: 'a1' }), application({ id: 'a2' })];
+
+    expect(filterApplications(applications, EMPTY_FILTERS, NOW)).toHaveLength(
+      2,
+    );
+  });
+
+  it('keeps only Applications without an owner in the unassigned view', () => {
+    const applications = [
+      application({ id: 'unowned', ownerId: null }),
+      application({ id: 'owned', ownerId: 'staff-1' }),
+    ];
+
+    const result = filterApplications(
+      applications,
+      { ...EMPTY_FILTERS, view: 'unassigned' },
+      NOW,
+    );
+
+    expect(result.map((entry) => entry.id)).toEqual(['unowned']);
+  });
+
+  it('treats an Application as stale on its seventh day, not before', () => {
+    const applications = [
+      application({ id: 'six-days', receivedAt: '2026-08-30T12:00:00.000Z' }),
+      application({ id: 'seven-days', receivedAt: '2026-08-29T12:00:00.000Z' }),
+    ];
+
+    const result = filterApplications(
+      applications,
+      { ...EMPTY_FILTERS, view: 'stale' },
+      NOW,
+    );
+
+    expect(result.map((entry) => entry.id)).toEqual(['seven-days']);
+  });
+
+  it('searches the applicant name and the email address, ignoring case', () => {
+    const applications = [
+      application({ id: 'by-name', applicantName: 'Jonas Krüger' }),
+      application({ id: 'by-mail', email: 'ANNA@example.org' }),
+      application({ id: 'neither', applicantName: 'Lea Fischer' }),
+    ];
+
+    expect(
+      filterApplications(
+        applications,
+        { ...EMPTY_FILTERS, search: 'krüger' },
+        NOW,
+      ).map((entry) => entry.id),
+    ).toEqual(['by-name']);
+
+    expect(
+      filterApplications(
+        applications,
+        { ...EMPTY_FILTERS, search: 'anna@' },
+        NOW,
+      ).map((entry) => entry.id),
+    ).toEqual(['by-mail']);
+  });
+
+  it('combines the view, the Category and the Status', () => {
+    const applications = [
+      application({
+        id: 'match',
+        ownerId: null,
+        categoryId: 'legal',
+        status: 'in-review',
+      }),
+      application({
+        id: 'wrong-category',
+        ownerId: null,
+        categoryId: 'social-media',
+        status: 'in-review',
+      }),
+      application({
+        id: 'wrong-status',
+        ownerId: null,
+        categoryId: 'legal',
+        status: 'new',
+      }),
+      application({
+        id: 'has-owner',
+        ownerId: 'staff-1',
+        categoryId: 'legal',
+        status: 'in-review',
+      }),
+    ];
+
+    const result = filterApplications(
+      applications,
+      {
+        view: 'unassigned',
+        search: '',
+        categoryId: 'legal',
+        status: 'in-review',
+      },
+      NOW,
+    );
+
+    expect(result.map((entry) => entry.id)).toEqual(['match']);
+  });
+
+  it('leaves discarded Applications out of the list and its views', () => {
+    const applications = [
+      application({ id: 'working' }),
+      application({ id: 'discarded', discardedAt: '2026-09-04T09:00:00.000Z' }),
+    ];
+
+    const result = filterApplications(
+      applications,
+      {
+        view: 'all',
+        search: '',
+        categoryId: null,
+        status: null,
+      },
+      NOW,
+    );
+
+    expect(result.map((entry) => entry.id)).toEqual(['working']);
+  });
+});
