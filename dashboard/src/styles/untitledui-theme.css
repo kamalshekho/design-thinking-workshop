@@ -1,0 +1,280 @@
+/*
+ * The Untitled UI semantic colour tokens, reduced to the subset the copied
+ * sidebar in `src/components/` needs.
+ *
+ * The clone's own `styles/theme.css` is 834 lines and carries Untitled UI's
+ * whole palette, dark mode and typography scale. `README.md` warns that
+ * copying one component drags all of it in; this file is the answer to that
+ * warning — the same token names (`bg-primary`, `text-secondary`,
+ * `ring-secondary`), so the copied components stay diffable against the clone,
+ * but resolved to the association's palette.
+ *
+ * Two variables per token is how Untitled UI does it. `--color-*` holds the
+ * value; `--background-color-*`, `--text-color-*`, `--border-color-*` and
+ * `--ring-color-*` are what let Tailwind's `bg-`, `text-`, `border-` and
+ * `ring-` utilities resolve a name that is not a colour name. Utilities with
+ * no property-namespace entry (`text-fg-quaternary`, `outline-focus-ring`)
+ * fall back to `--color-*` on their own.
+ *
+ * Literal colours live here and in `globals.css`, nowhere else.
+ */
+
+@theme {
+  /* BACKGROUND COLORS */
+  /* Shared foundation for the staff surface and both component sources. */
+  --color-bg-canvas: #fcfcfd;
+  --color-bg-primary: #ffffff;
+  --color-bg-unread: #faf9fc;
+  --color-bg-selected: #f3eef8;
+  --color-bg-row-hover: #f5f5f7;
+  --color-border-subtle: #efeff1;
+  --color-trend-neutral: #85858f;
+  --color-trend-accent: #92849e;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --spacing-control: 2.5rem;
+  --text-page-title: 2rem;
+  --text-page-title--line-height: 1.2;
+  --text-metric: 2.125rem;
+  --text-metric--line-height: 1.1;
+  --tracking-heading: -0.025em;
+  --default-transition-duration: 150ms;
+  --shadow-xs: 0 1px 2px rgb(24 24 27 / 0.03);
+  --shadow-md: 0 4px 12px rgb(24 24 27 / 0.08);
+  --shadow-lg: 0 8px 24px rgb(24 24 27 / 0.1);
+  --color-fg-brand-primary_alt: var(--color-fuut-purple);
+  --color-fg-error-primary: var(--color-utility-red-700);
+  --color-fg-error-secondary: var(--color-utility-red-500);
+  --color-text-error-primary: var(--color-utility-red-700);
+  --color-text-error-primary_hover: var(--color-utility-red-700);
+  --color-bg-error-primary: var(--color-utility-red-50);
+  /* A lighter lilac, so hover reads as "lifted" rather than pressed. */
+  --color-bg-brand-solid_hover: #9a4ec9;
+  --color-text-brand-secondary: var(--color-fuut-purple);
+  --color-bg-error-solid: var(--color-utility-red-700);
+  --color-bg-error-solid_hover: #8e1820;
+  --color-bg-primary_hover: #f7f7f8;
+  --color-bg-secondary: #f7f7f8;
+  --color-bg-secondary_hover: #f0f0f2;
+  --color-bg-secondary_alt: #f7f7f8;
+  --color-bg-tertiary: #f0f0f2;
+  --color-bg-overlay: #18181b;
+  /* The lilac fill a checked control carries. */
+  --color-bg-brand-solid: #8437b6;
+
+  /* BORDER COLORS */
+  --color-border-primary: #d4d4d8;
+  --color-border-secondary: #e7e7ea;
+  --color-border-secondary_alt: rgb(0 0 0 / 0.1);
+
+  /* TEXT COLORS */
+  --color-text-primary: #18181b;
+  --color-text-secondary: #3f3f46;
+  --color-text-secondary_hover: #18181b;
+  --color-text-tertiary: #71717a;
+  --color-text-quaternary: #71717a;
+
+  /* FOREGROUND COLORS */
+  --color-fg-secondary: #3f3f46;
+  --color-fg-secondary_hover: #18181b;
+  --color-fg-quaternary: #8b8b95;
+  --color-fg-quaternary_hover: #71717a;
+  --color-fg-white: #ffffff;
+
+  /* COMPONENT COLORS */
+  --color-focus-ring: #8437b6;
+
+  /*
+   * `Badge` / `BadgeWithDot` (src/components/base/badges/) reference
+   * Untitled UI's `utility-*` scale, copied verbatim from the clone alongside
+   * the component. Six colours, each `50`/`200`/`500`/`700`, given the
+   * association's palette rather than Untitled UI's — the same treatment as
+   * every other token above. The status badge already used this tone set as
+   * literal hex; these are that same set, named so `Badge` can resolve them.
+   */
+  --color-utility-neutral-50: var(--color-bg-secondary);
+  --color-utility-neutral-200: var(--color-border-secondary);
+  --color-utility-neutral-500: var(--color-fg-quaternary);
+  --color-utility-neutral-700: var(--color-text-secondary);
+  --color-utility-brand-50: #f5f0f8;
+  --color-utility-brand-200: #e3d4ed;
+  --color-utility-brand-500: #8437b6;
+  --color-utility-brand-700: #8437b6;
+  --color-utility-red-50: #fdeceb;
+  --color-utility-red-200: #f3b6b6;
+  --color-utility-red-500: #c25b62;
+  --color-utility-red-700: #a01118;
+  --color-utility-yellow-50: #fff4e0;
+  --color-utility-yellow-200: #f8d488;
+  --color-utility-yellow-500: #ab8032;
+  --color-utility-yellow-700: #8a5a00;
+  --color-utility-green-50: #e6f5ea;
+  --color-utility-green-200: #b1ddbe;
+  --color-utility-green-500: #4b8b67;
+  --color-utility-green-700: #1f6b3a;
+  --color-utility-blue-50: #e7f0ff;
+  --color-utility-blue-200: #b3cff5;
+  --color-utility-blue-500: #6386af;
+  --color-utility-blue-700: #1f4f9c;
+
+  /* BACKGROUND PROPERTY COLORS */
+  --background-color-primary: var(--color-bg-primary);
+  --background-color-primary_hover: var(--color-bg-primary_hover);
+  --background-color-secondary: var(--color-bg-secondary);
+  --background-color-secondary_hover: var(--color-bg-secondary_hover);
+  --background-color-secondary_alt: var(--color-bg-secondary_alt);
+  --background-color-tertiary: var(--color-bg-tertiary);
+  --background-color-overlay: var(--color-bg-overlay);
+  --background-color-brand-solid: var(--color-bg-brand-solid);
+  --background-color-brand-solid_hover: var(--color-bg-brand-solid_hover);
+
+  /* TEXT PROPERTY COLORS */
+  --text-color-primary: var(--color-text-primary);
+  --text-color-secondary: var(--color-text-secondary);
+  --text-color-secondary_hover: var(--color-text-secondary_hover);
+  --text-color-tertiary: var(--color-text-tertiary);
+  --text-color-quaternary: var(--color-text-quaternary);
+
+  /* BORDER PROPERTY COLORS */
+  --border-color-primary: var(--color-border-primary);
+  --border-color-secondary: var(--color-border-secondary);
+
+  /* RING PROPERTY COLORS */
+  --ring-color-primary: var(--color-border-primary);
+  --ring-color-secondary: var(--color-border-secondary);
+  --ring-color-secondary_alt: var(--color-border-secondary_alt);
+
+  /* OUTLINE PROPERTY COLORS */
+  --outline-color-brand: var(--color-focus-ring);
+  --outline-color-error: var(--color-focus-ring);
+  --outline-color-focus-ring: var(--color-focus-ring);
+}
+
+/* Lets a child inherit the transition its parent declares. */
+@utility transition-inherit-all {
+  transition-property: inherit;
+  transition-duration: inherit;
+  transition-timing-function: inherit;
+}
+
+/*
+ * The clone animates its popovers with `tailwindcss-animate`, a plugin this
+ * application does not carry. Two keyframes cover what the account menu needs.
+ */
+@utility popover-entering {
+  animation: popover-in 150ms ease-out;
+}
+
+@utility popover-exiting {
+  animation: popover-out 100ms ease-in;
+}
+
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translateX(-2px);
+  }
+}
+
+@keyframes popover-out {
+  to {
+    opacity: 0;
+    transform: translateX(-2px);
+  }
+}
+
+/*
+ * The leading rail that marks the table row whose Application the drawer
+ * shows. It hangs off the row's first cell rather than the `<tr>`: CSS table
+ * fixup wraps a pseudo-element child of a table row in an anonymous table
+ * cell, which shifts every real cell of that row one column across.
+ */
+@utility row-rail {
+  & > td:first-child::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    z-index: 10;
+    width: 2px;
+    background-color: var(--color-fuut-purple);
+  }
+}
+
+/*
+ * The detail panel slides in from the right edge it is docked to, so the
+ * motion says where the panel came from and where dismissing sends it back.
+ * `100%` is the panel's own width, so the same rule covers the full-width
+ * mobile sheet and the 460/480px desktop panel. The iOS drawer curve
+ * (Ionic's) decelerates hard at the end, which reads as "settling" rather
+ * than "stopping"; no fade, because a solid panel sliding over the list is
+ * what makes it feel like a physical sheet.
+ */
+@utility drawer-entering {
+  animation: drawer-in 300ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+/*
+ * Kategorien' add/edit dialog. React Aria sets `data-entering`/`data-exiting`
+ * on the overlay and the modal; without `tailwindcss-react-aria-components`
+ * these are plain `data-[…]:` variants over the four utilities below.
+ *
+ * The dialog grows out of its own centre rather than sliding in from an edge —
+ * it replaces nothing on screen, it sits over it. Exit is shorter than enter,
+ * so dismissing feels immediate. `globals.css` already reduces both to nothing
+ * under `prefers-reduced-motion`.
+ */
+@utility overlay-entering {
+  animation: overlay-in 150ms ease-out;
+}
+
+@utility overlay-exiting {
+  animation: overlay-out 120ms ease-in;
+}
+
+@utility dialog-entering {
+  animation: dialog-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility dialog-exiting {
+  animation: dialog-out 120ms ease-in;
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes overlay-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+}
+
+@keyframes dialog-out {
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+/* Hide the default expand arrow on Safari. */
+details summary::-webkit-details-marker {
+  display: none;
+}

@@ -1,0 +1,29 @@
+/*
+ * Design tokens for the shadcn/ui-derived primitives in `src/components/ui/`
+ * — `Card`, the `Select` behind Übersicht's filter pills, and `Sparkline` —
+ * and for the screens built from them.
+ *
+ * Untitled UI already owns the bare semantic names (`bg-primary`,
+ * `border-border` would collide with `text-primary` etc. via
+ * `untitledui-theme.css`), so every token here is namespaced `sd-*` (shadcn)
+ * instead of the shadcn defaults (`background`, `card`, `muted`...). Light
+ * theme only, no `dark:` values. Only the shades actually used are defined.
+ */
+
+@theme {
+  --color-sd-background: var(--color-bg-primary);
+  --color-sd-foreground: var(--color-text-primary);
+  --color-sd-card: var(--color-bg-primary);
+  --color-sd-card-foreground: var(--color-text-primary);
+  --color-sd-popover: var(--color-bg-primary);
+  --color-sd-popover-foreground: var(--color-text-primary);
+  --color-sd-border: var(--color-border-secondary);
+  --color-sd-input: var(--color-border-primary);
+  --color-sd-ring: var(--color-focus-ring);
+  --color-sd-muted: var(--color-bg-secondary);
+  --color-sd-muted-foreground: var(--color-text-tertiary);
+  --color-sd-accent: var(--color-bg-primary_hover);
+  --color-sd-accent-foreground: var(--color-text-primary);
+  --color-sd-primary: var(--color-text-primary);
+  --color-sd-primary-foreground: var(--color-bg-primary);
+}

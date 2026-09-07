@@ -1,1 +1,65 @@
+/*
+ * Tailwind, the self-hosted typeface, and the two token files: Untitled UI's
+ * semantic names for the copied components, and the `sd-*` names for the
+ * shadcn-derived ones.
+ */
+
 @import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import './untitledui-theme.css';
+@import './shadcn-ui-theme.css';
+
+/*
+ * Brand primitives, confirmed from the live site and duplicated from
+ * `frontend/src/styles/tokens.css`. ADR-0002 keeps the two applications apart,
+ * so these are copied rather than imported; `token.json` at the repository
+ * root remains the source of truth for the values.
+ */
+@theme {
+  --color-fuut-purple: #8437b6;
+  --color-fuut-lila: #dcbae6;
+  --color-fuut-red: #e31119;
+  --color-fuut-gray: #4f4f4f;
+  --color-fuut-creme: #f6f5f1;
+  /*
+   * Inter across the whole dashboard — self-hosted through
+   * `@fontsource-variable/inter` (variable weights 100–900), so there is no
+   * runtime request to Google Fonts and no FOIT.
+   */
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-sans);
+  --font-display: var(--font-sans);
+}
+
+html,
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01';
+  font-variation-settings: 'opsz' 32;
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * The two rules every screen relies on: one focus ring, drawn the same way on
+ * a button, a link and a field, and one stroke weight for the icons inside
+ * them.
+ */
+@layer base {
+  :where(button, a, select, input, textarea):focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  :where(button, a) > svg {
+    stroke-width: 1.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

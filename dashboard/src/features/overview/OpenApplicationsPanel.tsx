@@ -1,0 +1,199 @@
+/**
+ * Übersicht's "Offene Anfragen" block: lets a Staff member pick the next
+ * Application and open it, right below the three metric cards
+ * `OverviewStats` owns. The list itself is the same `ApplicationsList`
+ * Anfragen renders, selection column and discard action included; what stays
+ * on Anfragen is the full set — this panel only ever shows the five oldest
+ * open Applications after search and filtering (`A13`), with a link across for
+ * the rest.
+ *
+ * `applications` and `onApplicationsChange` are the same pair `App` hands
+ * Anfragen, so an edit made from either screen is the same Application, not
+ * an independent copy.
+ */
+
+import { Archive } from '@untitledui/icons';
+import { useMemo, useState } from 'react';
+
+import { Button } from '@/components/base/buttons/button';
+import { de } from '@/content/de';
+import type { Application, Category, Owner } from '@/domain/application';
+import { ApplicationDrawer } from '@/features/applications/ApplicationDrawer';
+import { ApplicationsList } from '@/features/applications/ApplicationsList';
+import { buildApplicationsHref } from '@/features/applications/filterApplications';
+import { useApplicationActions } from '@/features/applications/useApplicationActions';
+
+import { OpenApplicationsFilterBar } from './OpenApplicationsFilterBar';
+import type { OpenApplicationsFilters } from './selectOpenApplications';
+import {
+  EMPTY_OPEN_APPLICATIONS_FILTERS,
+  OPEN_APPLICATIONS_LIMIT,
+  selectOpenApplications,
+} from './selectOpenApplications';
+
+type OpenApplicationsPanelProps = {
+  applications: readonly Application[];
+  onApplicationsChange: (applications: Application[]) => void;
+  /** Discards the named Applications (`A16`), the same handler Anfragen gets. */
+  onDiscard: (ids: ReadonlySet<string>) => void;
+  /** Owned by Kategorien, so the filter and the rows read the edited list. */
+  categories: readonly Category[];
+  owners: readonly Owner[];
+  /** The reference date the rows' relative ages are read against. */
+  now: Date;
+};
+
+function hasActiveFilters(filters: OpenApplicationsFilters): boolean {
+  return (
+    filters.search.trim() !== '' ||
+    filters.categoryId !== null ||
+    filters.ownerId !== null
+  );
+}
+
+export function OpenApplicationsPanel({
+  applications,
+  onApplicationsChange,
+  onDiscard,
+  categories,
+  owners,
+  now,
+}: OpenApplicationsPanelProps) {
+  const [filters, setFilters] = useState<OpenApplicationsFilters>(
+    EMPTY_OPEN_APPLICATIONS_FILTERS,
+  );
+
+  const actions = useApplicationActions({
+    applications,
+    onApplicationsChange,
+    onDiscard,
+  });
+
+  const anyOpen = useMemo(
+    () =>
+      selectOpenApplications(applications, EMPTY_OPEN_APPLICATIONS_FILTERS)
+        .length > 0,
+    [applications],
+  );
+  const matching = useMemo(
+    () => selectOpenApplications(applications, filters),
+    [applications, filters],
+  );
+  const visible = matching.slice(0, OPEN_APPLICATIONS_LIMIT);
+
+  const { selected } = actions;
+
+  const viewAllHref = buildApplicationsHref({
+    excludeCompleted: true,
+    search: filters.search,
+    categoryId: filters.categoryId,
+    ownerId: filters.ownerId,
+  });
+
+  const subtitle =
+    anyOpen && matching.length > 0
+      ? de.overview.openApplications.count(visible.length, matching.length)
+      : null;
+
+  return (
+    <section
+      aria-label={de.overview.openApplications.title}
+      className="border-border-secondary bg-bg-primary flex flex-col gap-5 rounded-xl border p-6"
+    >
+      <div>
+        <h2 className="text-text-primary tracking-heading text-xl leading-tight font-semibold">
+          {de.overview.openApplications.title}
+        </h2>
+        {subtitle ? (
+          <p className="text-text-tertiary mt-1 text-sm">{subtitle}</p>
+        ) : null}
+
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <OpenApplicationsFilterBar
+            filters={filters}
+            categories={categories}
+            owners={owners}
+            onChange={setFilters}
+          />
+          <div className="flex flex-wrap items-center gap-3">
+            {hasActiveFilters(filters) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFilters(EMPTY_OPEN_APPLICATIONS_FILTERS);
+                }}
+                className="text-fuut-purple text-sm font-medium hover:underline"
+              >
+                {de.filters.reset}
+              </button>
+            )}
+
+            {/*
+             * Same rule as on Anfragen: always on the bar, disabled while
+             * nothing is checked, so ticking a row never shifts the toolbar.
+             */}
+            <Button
+              size="md"
+              color="secondary"
+              iconLeading={Archive}
+              isDisabled={actions.selectedIds.size === 0}
+              onClick={actions.discardSelected}
+            >
+              {de.applications.discardSelected(actions.selectedIds.size)}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {!anyOpen ? (
+        <p className="text-text-tertiary text-sm">
+          {de.overview.openApplications.empty}
+        </p>
+      ) : matching.length === 0 ? (
+        <p className="text-text-tertiary text-sm">
+          {de.overview.openApplications.noMatches}
+        </p>
+      ) : (
+        <>
+          <ApplicationsList
+            applications={visible}
+            categories={categories}
+            owners={owners}
+            now={now}
+            oldestFirst
+            ariaLabel={de.overview.openApplications.title}
+            onSelect={(application) => {
+              actions.open(application.id);
+            }}
+            selectedIds={actions.selectedIds}
+            onSelectedIdsChange={actions.setSelectedIds}
+            activeId={actions.selectedId}
+            onDiscard={(application) => {
+              actions.discard(new Set([application.id]));
+            }}
+          />
+          <div className="flex justify-end">
+            <a
+              href={viewAllHref}
+              className="text-fuut-purple text-sm font-medium hover:underline"
+            >
+              {de.overview.openApplications.viewAll}
+            </a>
+          </div>
+        </>
+      )}
+
+      {selected ? (
+        <ApplicationDrawer
+          application={selected}
+          categories={categories}
+          owners={owners}
+          onClose={actions.close}
+          onChange={(change) => {
+            actions.update(selected.id, change);
+          }}
+        />
+      ) : null}
+    </section>
+  );
+}
