@@ -84,6 +84,20 @@ owner yet. Distinct from Peer onboarder, which is a separate, unimplemented
 role.
 _Avoid_: Assignee, handler
 
+**Discarded**:
+An Application a staff member has taken out of the working list without
+deleting it. It keeps its Category, Status and Owner, and stays on file until a
+staff member either restores it or erases it deliberately (`A16`). Discarded is
+not a Status — an Application carries both at once.
+_Avoid_: Deleted, removed, trashed, archived
+
+**State change**:
+One recorded change to an Application's Status, Owner or Discarded flag, with
+the moment it happened and without who made it. The dashboard replays state
+changes to say what a metric card read on a past day; nothing in the platform
+shows authorship.
+_Avoid_: Audit entry, event, revision, history entry
+
 **Inquiry**:
 An incoming message that asks a question rather than offering to volunteer. Not
 an application.
@@ -93,6 +107,13 @@ _Avoid_: Question, general mail
 Everything between an application arriving and the applicant becoming a
 volunteer — screening, the appointment, and introduction to the work.
 _Avoid_: Intake, activation, signup
+
+**Sign-in**:
+A staff member's authenticated period of work in the dashboard. Bounded, and
+ended either by the staff member or by expiry (`A17`).
+_Avoid_: Session — the glossary already spends that word on Intro session, and
+a document that says "session" twice for two unrelated things is worse than a
+longer term. Also avoid: login, auth
 
 **Platform**:
 The system this team is designing.
