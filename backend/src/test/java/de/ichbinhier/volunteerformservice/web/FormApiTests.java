@@ -180,7 +180,7 @@ class FormApiTests {
                 .formatted(submissionId, categoryId, weeklyTime, website);
     }
 
-    private static Category category(String label, int displayOrder, boolean active) {
-        return Category.builder().label(label).displayOrder(displayOrder).active(active).build();
+    private static Category category(String name, int displayOrder, boolean active) {
+        return Category.builder().name(name).displayOrder(displayOrder).active(active).build();
     }
 }

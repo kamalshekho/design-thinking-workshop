@@ -55,13 +55,13 @@ class ApplicationPersistenceTests {
         categories.save(category("Social Media", 1, true));
         categories.save(category("Etwas anderes", 2, false));
 
-        assertThat(categories.findByActiveTrueOrderByDisplayOrderAscLabelAsc())
-                .extracting(Category::getLabel)
+        assertThat(categories.findByActiveTrueOrderByDisplayOrderAsc())
+                .extracting(Category::getName)
                 .containsExactly("Social Media", "Rechtliche Unterstützung");
     }
 
-    private static Category category(String label, int displayOrder, boolean active) {
-        return Category.builder().label(label).displayOrder(displayOrder).active(active).build();
+    private static Category category(String name, int displayOrder, boolean active) {
+        return Category.builder().name(name).displayOrder(displayOrder).active(active).build();
     }
 
     private static Application application(UUID submissionId, Category category) {
