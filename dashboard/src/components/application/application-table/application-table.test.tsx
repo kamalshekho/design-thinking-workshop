@@ -11,20 +11,18 @@ const NOW = new Date('2026-09-05T12:00:00.000Z');
 function application(overrides: Partial<Application> = {}): Application {
   return {
     id: 'a1',
-    applicantName: 'Mara Weber',
+    name: 'Mara Weber',
     email: 'mara.weber@example.org',
-    receivedAt: '2026-09-01T09:00:00.000Z',
+    submittedAt: '2026-09-01T09:00:00.000Z',
     categoryId: 'social-media',
-    weeklyAvailability: 4,
-    status: 'new',
+    weeklyTime: 'HOURS_3_5',
+    status: 'NEW',
     ownerId: null,
-    message: 'Ich möchte mithelfen.',
+    about: 'Ich möchte mithelfen.',
     internalNotes: '',
     discardedAt: null,
-    consent: {
-      givenAt: '2026-09-01T09:00:00.000Z',
-      privacyPolicyVersion: '2026-05',
-    },
+    consentAt: '2026-09-01T09:00:00.000Z',
+    consentTextVersion: '2026-09',
     ...overrides,
   };
 }

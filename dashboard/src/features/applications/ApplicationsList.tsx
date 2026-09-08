@@ -62,7 +62,7 @@ export function ApplicationsList({
         id: 'discard',
         icon: Archive,
         label: (application: Application) =>
-          de.applications.discardOne(application.applicantName),
+          de.applications.discardOne(application.name),
         onAction: onDiscard,
       },
     ],

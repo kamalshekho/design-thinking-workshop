@@ -56,8 +56,8 @@ class FormApiTests {
                 .andExpect(header().string("Cache-Control", "no-cache"))
                 .andExpect(jsonPath("$.categories.length()").value(2))
                 .andExpect(jsonPath("$.categories[0].id").value(socialMedia.getId().toString()))
-                .andExpect(jsonPath("$.categories[0].label").value("Social Media"))
-                .andExpect(jsonPath("$.categories[1].label").value("Rechtliche Unterstützung"));
+                .andExpect(jsonPath("$.categories[0].name").value("Social Media"))
+                .andExpect(jsonPath("$.categories[1].name").value("Rechtliche Unterstützung"));
     }
 
     @Test

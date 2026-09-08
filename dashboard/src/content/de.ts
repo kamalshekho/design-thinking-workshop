@@ -4,7 +4,12 @@
  * file in `dashboard/` allowed to hold applicant- or staff-facing German.
  */
 
-import type { ApplicationStatus, ApplicationView } from '@/domain/application';
+import type {
+  ApplicationStatus,
+  ApplicationView,
+  WeeklyTime,
+} from '@/domain/application';
+import { STALE_AFTER_DAYS } from '@/domain/application';
 
 export const de = {
   association: 'ichbinhier',
@@ -273,7 +278,7 @@ export const de = {
   views: {
     all: 'Alle',
     unassigned: 'Nicht zugewiesen',
-    stale: 'Älter als 7 Tage',
+    stale: `Älter als ${String(STALE_AFTER_DAYS)} Tage`,
   } satisfies Record<ApplicationView, string>,
 
   filters: {
@@ -287,28 +292,41 @@ export const de = {
   },
 
   columns: {
-    receivedAt: 'Eingegangen',
-    applicantName: 'Name',
+    submittedAt: 'Eingegangen',
+    name: 'Name',
     email: 'E-Mail',
     category: 'Kategorie',
-    weeklyAvailability: 'Verfügbarkeit',
+    weeklyTime: 'Verfügbarkeit',
     status: 'Status',
     owner: 'Zuständig',
     actions: 'Aktionen',
   },
 
   statuses: {
-    new: 'Neu',
-    'in-review': 'In Prüfung',
-    'intro-booked': 'Info-Runde gebucht',
-    active: 'Aktiv',
-    waitlisted: 'Warteliste',
-    declined: 'Abgelehnt',
+    NEW: 'Neu',
+    IN_REVIEW: 'In Prüfung',
+    INTRO_BOOKED: 'Info-Runde gebucht',
+    ACTIVE: 'Aktiv',
+    WAITLISTED: 'Warteliste',
+    DECLINED: 'Abgelehnt',
   } satisfies Record<ApplicationStatus, string>,
+
+  /**
+   * The four time bands the form offers, worded as the form words them
+   * (`frontend/src/content/de.ts`) so a Staff member reads what the Applicant
+   * picked. They carry no "pro Woche" suffix: `IRREGULAR` is not a quantity,
+   * and the Verfügbarkeit column and the drawer's chip already say which
+   * question these answer.
+   */
+  weeklyTimes: {
+    HOURS_1_2: '1–2 Stunden',
+    HOURS_3_5: '3–5 Stunden',
+    HOURS_5_PLUS: 'mehr als 5 Stunden',
+    IRREGULAR: 'unregelmäßig, projektweise',
+  } satisfies Record<WeeklyTime, string>,
 
   application: {
     unassigned: 'Nicht zugewiesen',
-    hoursPerWeek: (hours: number) => `${String(hours)} Std./Woche`,
     daysAgo: (days: number) =>
       days === 0
         ? 'Heute'
@@ -322,15 +340,15 @@ export const de = {
     close: 'Schließen',
     /** Heading over the two controls that change the Application itself. */
     workflow: 'Workflow',
-    message: 'Nachricht',
+    about: 'Nachricht',
     internalNotes: 'Interne Notizen',
     /** Stated as a hint, not as placeholder text, so it survives the first keystroke. */
     notesHint: 'Nur für Mitarbeitende sichtbar',
     notesPlaceholder: 'Notiz hinzufügen …',
     consent: 'Einwilligung',
-    consentGivenAt: 'Erteilt am',
-    privacyPolicyVersion: 'Datenschutzerklärung',
-    privacyPolicyVersionValue: (version: string) => `Version ${version}`,
+    consentAt: 'Erteilt am',
+    consentTextVersion: 'Datenschutzerklärung',
+    consentTextVersionValue: (version: string) => `Version ${version}`,
     owner: 'Zuständig',
     status: 'Status',
     writeMail: 'E-Mail schreiben',

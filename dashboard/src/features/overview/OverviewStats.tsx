@@ -52,7 +52,7 @@ function valueAsOf(
 ): number {
   const arrived = applications.filter(
     (application) =>
-      new Date(application.receivedAt).getTime() <= asOf.getTime(),
+      new Date(application.submittedAt).getTime() <= asOf.getTime(),
   );
   return filterApplications(arrived, { ...EMPTY_FILTERS, ...filters }, asOf)
     .length;
@@ -113,7 +113,7 @@ const STAT_CARDS: readonly StatCard[] = [
     title: de.overview.stats.new.title,
     hint: de.overview.stats.new.hint,
     icon: Inbox01,
-    filters: { view: 'all', status: 'new' },
+    filters: { view: 'all', status: 'NEW' },
     chart: 'bar',
     color: 'var(--color-trend-neutral)',
     alert: false,

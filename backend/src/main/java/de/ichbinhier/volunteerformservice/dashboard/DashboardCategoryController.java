@@ -1,7 +1,11 @@
 package de.ichbinhier.volunteerformservice.dashboard;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+
+import jakarta.validation.Valid;
 
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import de.ichbinhier.volunteerformservice.application.ApplicationRepository;
 import de.ichbinhier.volunteerformservice.category.Category;
 import de.ichbinhier.volunteerformservice.category.CategoryRepository;
+import de.ichbinhier.volunteerformservice.web.ApiException;
+import de.ichbinhier.volunteerformservice.web.FieldValidationException;
 import lombok.RequiredArgsConstructor;
 
 
@@ -44,14 +50,11 @@ public class DashboardCategoryController {
     }
 
     @PostMapping
-    ResponseEntity<CategoryDto> create(@RequestBody CreateCategoryRequest req) {
-        String name = req.getName() != null ? req.getName().trim() : "";
+    ResponseEntity<CategoryDto> create(@Valid @RequestBody CreateCategoryRequest req) {
+        String name = req.getName();
         String desc = req.getDescription() != null ? req.getDescription() : "";
 
-        var existing = categoryRepo.findByNameIgnoreCase(name);
-        if (existing != null) {
-            return ResponseEntity.badRequest().build();
-        }
+        requireNameIsFree(name, null);
 
         int maxOrder = categoryRepo.findAll().stream()
             .mapToInt(Category::getDisplayOrder)
@@ -72,17 +75,14 @@ public class DashboardCategoryController {
     @PatchMapping("/{id}")
     ResponseEntity<CategoryDto> update(
         @PathVariable UUID id,
-        @RequestBody UpdateCategoryRequest req) {
+        @Valid @RequestBody UpdateCategoryRequest req) {
 
         var cat = categoryRepo.findById(id)
-            .orElse(null);
-
-        if (cat == null) {
-            return ResponseEntity.notFound().build();
-        }
+            .orElseThrow(ApiException::notFound);
 
         if (req.getName() != null) {
-            cat.setName(req.getName().trim());
+            requireNameIsFree(req.getName(), id);
+            cat.setName(req.getName());
         }
 
         if (req.getDescription() != null) {
@@ -99,16 +99,12 @@ public class DashboardCategoryController {
 
     @DeleteMapping("/{id}")
     ResponseEntity<Void> delete(@PathVariable UUID id) {
-        var cat = categoryRepo.findById(id)
-            .orElse(null);
-
-        if (cat == null) {
-            return ResponseEntity.notFound().build();
-        }
+        categoryRepo.findById(id)
+            .orElseThrow(ApiException::notFound);
 
         long count = appRepo.countByCategoryId(id);
         if (count > 0) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            throw ApiException.categoryInUse();
         }
 
         categoryRepo.deleteById(id);
@@ -116,18 +112,15 @@ public class DashboardCategoryController {
     }
 
     @PutMapping("/order")
-    ResponseEntity<DashboardCategoriesResponse> reorder(@RequestBody ReorderRequest req) {
-        if (req.getIds().size() != categoryRepo.count()) {
-            return ResponseEntity.badRequest().build();
+    ResponseEntity<DashboardCategoriesResponse> reorder(@Valid @RequestBody ReorderRequest req) {
+        Set<UUID> sent = new HashSet<>(req.getIds());
+        if (sent.size() != req.getIds().size() || sent.size() != categoryRepo.count()) {
+            throw orderIncomplete();
         }
 
         for (int i = 0; i < req.getIds().size(); i++) {
             var cat = categoryRepo.findById(req.getIds().get(i))
-                .orElse(null);
-
-            if (cat == null) {
-                return ResponseEntity.badRequest().build();
-            }
+                .orElseThrow(DashboardCategoryController::orderIncomplete);
 
             cat.setDisplayOrder(i);
             categoryRepo.save(cat);
@@ -140,6 +133,21 @@ public class DashboardCategoryController {
         DashboardCategoriesResponse response = new DashboardCategoriesResponse();
         response.setCategories(cats);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Two Categories may not share a name: an applicant reads it. Compared
+     * case-insensitively after trimming, ignoring the Category being renamed.
+     */
+    private void requireNameIsFree(String name, UUID renaming) {
+        Category existing = categoryRepo.findByNameIgnoreCase(name);
+        if (existing != null && !existing.getId().equals(renaming)) {
+            throw new FieldValidationException("name", "CATEGORY_NAME_TAKEN");
+        }
+    }
+
+    private static FieldValidationException orderIncomplete() {
+        return new FieldValidationException("ids", "ORDER_INCOMPLETE");
     }
 
     private CategoryDto toDto(Category cat) {

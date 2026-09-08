@@ -10,20 +10,18 @@ import {
 function application(overrides: Partial<Application> = {}): Application {
   return {
     id: 'a1',
-    applicantName: 'Mara Weber',
+    name: 'Mara Weber',
     email: 'mara.weber@example.org',
-    receivedAt: '2026-09-04T09:00:00.000Z',
+    submittedAt: '2026-09-04T09:00:00.000Z',
     categoryId: 'social-media',
-    weeklyAvailability: 4,
-    status: 'new',
+    weeklyTime: 'HOURS_3_5',
+    status: 'NEW',
     ownerId: null,
-    message: 'Ich möchte mithelfen.',
+    about: 'Ich möchte mithelfen.',
     internalNotes: '',
     discardedAt: null,
-    consent: {
-      givenAt: '2026-09-04T09:00:00.000Z',
-      privacyPolicyVersion: '2026-05',
-    },
+    consentAt: '2026-09-04T09:00:00.000Z',
+    consentTextVersion: '2026-09',
     ...overrides,
   };
 }
@@ -31,10 +29,10 @@ function application(overrides: Partial<Application> = {}): Application {
 describe('selectOpenApplications', () => {
   it('excludes active and declined Applications', () => {
     const applications = [
-      application({ id: 'new', status: 'new' }),
-      application({ id: 'in-review', status: 'in-review' }),
-      application({ id: 'active', status: 'active' }),
-      application({ id: 'declined', status: 'declined' }),
+      application({ id: 'new', status: 'NEW' }),
+      application({ id: 'in-review', status: 'IN_REVIEW' }),
+      application({ id: 'active', status: 'ACTIVE' }),
+      application({ id: 'declined', status: 'DECLINED' }),
     ];
 
     expect(
@@ -48,15 +46,15 @@ describe('selectOpenApplications', () => {
     const applications = [
       application({
         id: 'newest',
-        receivedAt: '2026-09-04T09:00:00.000Z',
+        submittedAt: '2026-09-04T09:00:00.000Z',
       }),
       application({
         id: 'oldest',
-        receivedAt: '2026-08-20T09:00:00.000Z',
+        submittedAt: '2026-08-20T09:00:00.000Z',
       }),
       application({
         id: 'middle',
-        receivedAt: '2026-08-30T09:00:00.000Z',
+        submittedAt: '2026-08-30T09:00:00.000Z',
       }),
     ];
 
@@ -71,15 +69,15 @@ describe('selectOpenApplications', () => {
     const olderFive = Array.from({ length: 5 }, (_, index) =>
       application({
         id: `older-${String(index)}`,
-        receivedAt: `2026-08-0${String(index + 1)}T09:00:00.000Z`,
+        submittedAt: `2026-08-0${String(index + 1)}T09:00:00.000Z`,
       }),
     );
     const applications = [
       ...olderFive,
       application({
         id: 'searched-for',
-        applicantName: 'Jonas Krüger',
-        receivedAt: '2026-08-20T09:00:00.000Z',
+        name: 'Jonas Krüger',
+        submittedAt: '2026-08-20T09:00:00.000Z',
       }),
     ];
 
@@ -95,19 +93,19 @@ describe('selectOpenApplications', () => {
     const applications = [
       application({
         id: 'match',
-        applicantName: 'Jonas Krüger',
+        name: 'Jonas Krüger',
         categoryId: 'legal',
         ownerId: 'staff-1',
       }),
       application({
         id: 'wrong-category',
-        applicantName: 'Jonas Krüger',
+        name: 'Jonas Krüger',
         categoryId: 'social-media',
         ownerId: 'staff-1',
       }),
       application({
         id: 'wrong-owner',
-        applicantName: 'Jonas Krüger',
+        name: 'Jonas Krüger',
         categoryId: 'legal',
         ownerId: 'staff-2',
       }),

@@ -52,7 +52,7 @@ import { Avatar } from '@/components/base/avatar/avatar';
 import { BadgeWithDot } from '@/components/base/badges/badges';
 import { de } from '@/content/de';
 import type { Application, Category, Owner } from '@/domain/application';
-import { isUnassigned } from '@/domain/application';
+import { isUnassigned, WEEKLY_TIMES } from '@/domain/application';
 import { cx } from '@/utils/cx';
 import { daysSince } from '@/utils/dates';
 import { initialsOf } from '@/utils/initials';
@@ -147,7 +147,7 @@ export function ApplicationTable({
   ariaLabel,
 }: ApplicationTableProps) {
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: 'receivedAt',
+    column: 'submittedAt',
     direction: oldestFirst ? 'ascending' : 'descending',
   });
 
@@ -166,13 +166,15 @@ export function ApplicationTable({
     Record<string, (application: Application) => string | number>
   >(
     () => ({
-      applicantName: (application) => application.applicantName,
+      name: (application) => application.name,
       email: (application) => application.email,
       category: (application) =>
         categoryNames.get(application.categoryId) ?? application.categoryId,
-      weeklyAvailability: (application) => application.weeklyAvailability,
+      // Sorted by the band's own order — 1–2 hours before "irregular" —
+      // rather than by its label or its spelling.
+      weeklyTime: (application) => WEEKLY_TIMES.indexOf(application.weeklyTime),
       status: (application) => de.statuses[application.status],
-      receivedAt: (application) => new Date(application.receivedAt).getTime(),
+      submittedAt: (application) => new Date(application.submittedAt).getTime(),
       owner: (application) =>
         application.ownerId === null
           ? ''
@@ -274,8 +276,8 @@ export function ApplicationTable({
       >
         <Table.Header>
           <Table.Head
-            id="applicantName"
-            label={de.columns.applicantName}
+            id="name"
+            label={de.columns.name}
             isRowHeader
             allowsSorting
             className="w-full max-w-full md:min-w-52"
@@ -283,14 +285,14 @@ export function ApplicationTable({
           <Table.Head id="email" label={de.columns.email} allowsSorting />
           <Table.Head id="category" label={de.columns.category} allowsSorting />
           <Table.Head
-            id="weeklyAvailability"
-            label={de.columns.weeklyAvailability}
+            id="weeklyTime"
+            label={de.columns.weeklyTime}
             allowsSorting
           />
           <Table.Head id="status" label={de.columns.status} allowsSorting />
           <Table.Head
-            id="receivedAt"
-            label={de.columns.receivedAt}
+            id="submittedAt"
+            label={de.columns.submittedAt}
             allowsSorting
           />
           <Table.Head id="owner" label={de.columns.owner} allowsSorting />
@@ -355,7 +357,7 @@ export function ApplicationTable({
                     <span aria-hidden="true" className="flex">
                       <Avatar
                         size="sm"
-                        initials={initialsOf(application.applicantName)}
+                        initials={initialsOf(application.name)}
                       />
                     </span>
                     <p
@@ -366,7 +368,7 @@ export function ApplicationTable({
                           : 'text-secondary font-medium',
                       )}
                     >
-                      {application.applicantName}
+                      {application.name}
                     </p>
                   </div>
                 </Table.Cell>
@@ -380,8 +382,8 @@ export function ApplicationTable({
                     application.categoryId}
                 </Table.Cell>
 
-                <Table.Cell className="whitespace-nowrap tabular-nums">
-                  {de.application.hoursPerWeek(application.weeklyAvailability)}
+                <Table.Cell className="whitespace-nowrap">
+                  {de.weeklyTimes[application.weeklyTime]}
                 </Table.Cell>
 
                 <Table.Cell>
@@ -396,12 +398,12 @@ export function ApplicationTable({
                 </Table.Cell>
 
                 <Table.Cell className="whitespace-nowrap tabular-nums">
-                  <time dateTime={application.receivedAt}>
-                    {dateFormatter.format(new Date(application.receivedAt))}
+                  <time dateTime={application.submittedAt}>
+                    {dateFormatter.format(new Date(application.submittedAt))}
                   </time>
                   <span className="text-tertiary block text-xs leading-5">
                     {de.application.daysAgo(
-                      daysSince(application.receivedAt, now),
+                      daysSince(application.submittedAt, now),
                     )}
                   </span>
                 </Table.Cell>

@@ -1,6 +1,7 @@
 /**
  * The full Application. Everything the list does not show lives here: the
- * message, internal notes, consent metadata, the owner, and the Status change.
+ * about text, internal notes, consent metadata, the owner, and the Status
+ * change.
  *
  * There is no email composer — issue #10 rules one out. The drawer offers a
  * mail link and a copy action; automated replies stay backend-owned. The link
@@ -210,7 +211,7 @@ export function ApplicationDrawer({
         <div className="flex items-start gap-3">
           <div className="min-w-0 flex-1">
             <h2 className="text-primary tracking-heading truncate text-lg leading-6 font-semibold">
-              {application.applicantName}
+              {application.name}
             </h2>
             <button
               type="button"
@@ -258,9 +259,7 @@ export function ApplicationDrawer({
               {category?.name ?? application.categoryId}
             </span>
           </MetaChip>
-          <MetaChip className="tabular-nums">
-            {de.application.hoursPerWeek(application.weeklyAvailability)}
-          </MetaChip>
+          <MetaChip>{de.weeklyTimes[application.weeklyTime]}</MetaChip>
         </div>
       </header>
 
@@ -318,11 +317,11 @@ export function ApplicationDrawer({
         </section>
 
         <section className="mt-7">
-          <SectionLabel>{de.detail.message}</SectionLabel>
+          <SectionLabel>{de.detail.about}</SectionLabel>
           {/* Content, not a field: a reading surface, and the drawer — not an
               inner box — is what scrolls when the message runs long. */}
           <div className="border-secondary bg-secondary text-primary mt-2.5 rounded-[10px] border px-4 py-3.5 text-sm leading-relaxed break-words whitespace-pre-line">
-            {application.message}
+            {application.about}
           </div>
         </section>
 
@@ -354,20 +353,16 @@ export function ApplicationDrawer({
           <SectionLabel icon={ShieldTick}>{de.detail.consent}</SectionLabel>
           <dl className="mt-2.5 flex flex-col gap-1.5 text-[13px]">
             <div className="flex items-baseline justify-between gap-4">
-              <dt className="text-tertiary">{de.detail.consentGivenAt}</dt>
+              <dt className="text-tertiary">{de.detail.consentAt}</dt>
               <dd className="text-secondary tabular-nums">
-                {new Date(application.consent.givenAt).toLocaleDateString(
-                  'de-DE',
-                )}
+                {new Date(application.consentAt).toLocaleDateString('de-DE')}
               </dd>
             </div>
             <div className="flex items-baseline justify-between gap-4">
-              <dt className="text-tertiary">
-                {de.detail.privacyPolicyVersion}
-              </dt>
+              <dt className="text-tertiary">{de.detail.consentTextVersion}</dt>
               <dd className="text-secondary tabular-nums">
-                {de.detail.privacyPolicyVersionValue(
-                  application.consent.privacyPolicyVersion,
+                {de.detail.consentTextVersionValue(
+                  application.consentTextVersion,
                 )}
               </dd>
             </div>

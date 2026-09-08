@@ -107,8 +107,7 @@ export function DiscardedApplicationsScreen({
     {
       id: 'restore',
       icon: FlipBackward,
-      label: (application) =>
-        de.discarded.restoreOne(application.applicantName),
+      label: (application) => de.discarded.restoreOne(application.name),
       onAction: (application) => {
         restore(new Set([application.id]));
       },
@@ -116,9 +115,8 @@ export function DiscardedApplicationsScreen({
     {
       id: 'erase',
       icon: Trash03,
-      label: (application) => de.discarded.eraseOne(application.applicantName),
-      confirm: (application) =>
-        de.discarded.confirmEraseOne(application.applicantName),
+      label: (application) => de.discarded.eraseOne(application.name),
+      confirm: (application) => de.discarded.confirmEraseOne(application.name),
       destructive: true,
       onAction: (application) => {
         erase(new Set([application.id]));

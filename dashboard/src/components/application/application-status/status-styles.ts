@@ -16,12 +16,12 @@ export const STATUS_BADGE_COLORS: Record<
   ApplicationStatus,
   BadgeColor<'pill-color'>
 > = {
-  new: 'brand',
-  'in-review': 'warning',
-  'intro-booked': 'blue',
-  active: 'success',
-  waitlisted: 'gray',
-  declined: 'error',
+  NEW: 'brand',
+  IN_REVIEW: 'warning',
+  INTRO_BOOKED: 'blue',
+  ACTIVE: 'success',
+  WAITLISTED: 'gray',
+  DECLINED: 'error',
 };
 
 /**
@@ -40,10 +40,10 @@ export const PLAIN_STATUS_BADGE_CLASSNAME =
  * dot sits inside a `select` and the label is the browser's own option text.
  */
 export const STATUS_DOT_CLASSNAME: Record<ApplicationStatus, string> = {
-  new: 'text-utility-brand-500',
-  'in-review': 'text-utility-yellow-500',
-  'intro-booked': 'text-utility-blue-500',
-  active: 'text-utility-green-500',
-  waitlisted: 'text-utility-neutral-500',
-  declined: 'text-utility-red-500',
+  NEW: 'text-utility-brand-500',
+  IN_REVIEW: 'text-utility-yellow-500',
+  INTRO_BOOKED: 'text-utility-blue-500',
+  ACTIVE: 'text-utility-green-500',
+  WAITLISTED: 'text-utility-neutral-500',
+  DECLINED: 'text-utility-red-500',
 };

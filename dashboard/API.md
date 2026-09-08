@@ -240,7 +240,7 @@ Every Application, including discarded ones.
 | `name`               | string         | as the applicant typed it                             |
 | `email`              | string         | as the applicant typed it                             |
 | `weeklyTime`         | enum           | `HOURS_1_2`, `HOURS_3_5`, `HOURS_5_PLUS`, `IRREGULAR` |
-| `about`              | string         | may be `""`                                           |
+| `about`              | string \| null | `null` when the applicant wrote nothing               |
 | `status`             | enum           | see below                                             |
 | `ownerId`            | string \| null | `null` means nobody has taken it on (`A14`)           |
 | `internalNotes`      | string         | staff-written, may be `""`                            |
@@ -746,6 +746,7 @@ Top-level codes:
 | Status        | `code`                | Dashboard behaviour                                     |
 | ------------- | --------------------- | ------------------------------------------------------- |
 | 400           | `VALIDATION_FAILED`   | inline errors from `errors`                             |
+| 400           | `NOT_DISCARDED`       | one general message, the list is refetched              |
 | 401           | `INVALID_CREDENTIALS` | sign-in screen shows one general message                |
 | 401           | `UNAUTHENTICATED`     | sign-in screen covers the dashboard, work is kept       |
 | 404           | `NOT_FOUND`           | one general message, the list is refetched              |
@@ -763,8 +764,21 @@ Field codes:
 | `CATEGORY_NAME_REQUIRED`, `CATEGORY_NAME_TOO_LONG`, `CATEGORY_NAME_TAKEN` | `name`          |
 | `CATEGORY_DESCRIPTION_TOO_LONG`                                           | `description`   |
 | `ORDER_INCOMPLETE`                                                        | `ids`           |
-| `NOT_DISCARDED`                                                           | —               |
 | `IMMUTABLE_FIELD`                                                         | the named field |
+
+`NOT_DISCARDED` is a top-level `code` rather than a field code: nothing in the
+request is wrong, the Application is simply not on the fourth screen yet, so
+there is no field to hang it on.
+
+A status this table does not name — a `405`, a `415`, a `400` Spring raises
+before a controller sees the body — carries the status's own name as its `code`
+(`METHOD_NOT_ALLOWED`, `UNSUPPORTED_MEDIA_TYPE`, `BAD_REQUEST`). Each of those
+is a caller defect rather than something a staff member can act on, so the
+general message is the right wording; what matters is that a body arrives at
+all.
+
+`RATE_LIMITED` is the one code in this table the backend does not send yet: it
+arrives with the Sign-in's throttling, not with the error contract.
 
 An unknown `code` falls back to the general message, so adding one never breaks
 the dashboard — but the staff member then sees generic wording, so say when the
@@ -884,17 +898,23 @@ Proposed for agreement with the backend team:
 ## What the dashboard changes on its own side
 
 Not work for the backend, listed because the contract above assumes it and
-because the mock data currently disagrees with the wire on eight names:
+because the mock data disagreed with the wire on eight names. The renaming
+items are struck through: they are done, on the mock data, ahead of the first
+request:
 
-- rename the domain fields per [Wire names](#wire-names), and replace
+- ~~rename the domain fields per [Wire names](#wire-names), and replace
   `weeklyAvailability: number` with the `weeklyTime` enum plus four German
-  labels in `src/content/de.ts`;
-- spell statuses in `SCREAMING_SNAKE_CASE`;
+  labels in `src/content/de.ts`~~ — done, against the mock data; the labels are
+  `de.weeklyTimes` and carry no "pro Woche" suffix, since `IRREGULAR` is not a
+  quantity;
+- ~~spell statuses in `SCREAMING_SNAKE_CASE`~~ — done;
 - ~~add `discardedAt` to the Application type and the fourth screen with its
   own table, plus restore and permanent-delete actions~~ — done, against the
   mock data; `README.md` records the screen and the wording;
-- add `description` to the Category type — it is already there — and drop the
-  client-side slug id generator, since the backend owns ids;
+- ~~add `description` to the Category type — it is already there — and drop the
+  client-side slug id generator, since the backend owns ids~~ — done; a
+  Category added on Kategorien takes a `crypto.randomUUID()` until the request
+  layer hands the backend's id back;
 - replace the sign-in screen's "kein Konto" message with one wording for
   `INVALID_CREDENTIALS`, add one for `RATE_LIMITED`, and add the `de.errors`
   block the [Errors](#errors) table is looked up in;
@@ -905,9 +925,9 @@ because the mock data currently disagrees with the wire on eight names:
   replaying today's `status`/`ownerId` across the week, and let
   `OverviewStats` read `App`'s shared list rather than building its own mock
   set, so the cards and the "Offene Anfragen" panel cannot disagree;
-- take the stale threshold's German label from `STALE_AFTER_DAYS` instead of
+- ~~take the stale threshold's German label from `STALE_AFTER_DAYS` instead of
   spelling "Älter als 7 Tage" a second time, and point the constant's comment
-  at `A19`, which exists;
+  at `A19`, which exists~~ — done;
 - replace the sidebar's mock avatar with initials, and read the signed-in staff
   member from `GET /api/v1/staff/me` rather than from
   `src/data/currentStaffMember.ts`;
@@ -915,7 +935,7 @@ because the mock data currently disagrees with the wire on eight names:
   unset `VITE_API_BASE_URL`;
 - add the stream connection marker.
 
-Two smaller drifts to fix while renaming: the mock spells the fourth Category
+~~Two smaller drifts to fix while renaming: the mock spells the fourth Category
 `Sonstiges` where the backend seeds `Etwas anderes`, and the mock stamps
 `privacyPolicyVersion: '2026-05'` where the consent text is at `2026-09`. In
-both cases the backend is right and the mock is stale.
+both cases the backend is right and the mock is stale.~~ — both fixed.

@@ -21,17 +21,18 @@ const RECEIVED = {
 function application(overrides: Partial<Application> = {}): Application {
   return {
     id: 'a1',
-    applicantName: 'Mara Weber',
+    name: 'Mara Weber',
     email: 'mara.weber@example.org',
-    receivedAt: RECEIVED.recent,
+    submittedAt: RECEIVED.recent,
     categoryId: 'social-media',
-    weeklyAvailability: 4,
-    status: 'new',
+    weeklyTime: 'HOURS_3_5',
+    status: 'NEW',
     ownerId: null,
-    message: 'Ich möchte mithelfen.',
+    about: 'Ich möchte mithelfen.',
     internalNotes: '',
     discardedAt: null,
-    consent: { givenAt: RECEIVED.recent, privacyPolicyVersion: '2026-05' },
+    consentAt: RECEIVED.recent,
+    consentTextVersion: '2026-09',
     ...overrides,
   };
 }
@@ -57,16 +58,16 @@ function Host({ initial }: { initial: Application[] }) {
 
 describe('OpenApplicationsPanel', () => {
   it('shows the empty state when there are no open Applications', () => {
-    render(<Host initial={[application({ id: 'done', status: 'active' })]} />);
+    render(<Host initial={[application({ id: 'done', status: 'ACTIVE' })]} />);
 
     expect(screen.getByText('Keine offenen Anfragen.')).toBeInTheDocument();
   });
 
   it('excludes completed Applications and counts the rest', async () => {
     const applications = [
-      application({ id: 'new', status: 'new' }),
-      application({ id: 'active', status: 'active' }),
-      application({ id: 'declined', status: 'declined' }),
+      application({ id: 'new', status: 'NEW' }),
+      application({ id: 'active', status: 'ACTIVE' }),
+      application({ id: 'declined', status: 'DECLINED' }),
     ];
 
     render(<Host initial={applications} />);
@@ -78,9 +79,9 @@ describe('OpenApplicationsPanel', () => {
 
   it('lists the oldest open Applications first', async () => {
     const applications = [
-      application({ id: 'recent', receivedAt: RECEIVED.recent }),
-      application({ id: 'oldest', receivedAt: RECEIVED.oldest }),
-      application({ id: 'middle', receivedAt: RECEIVED.middle }),
+      application({ id: 'recent', submittedAt: RECEIVED.recent }),
+      application({ id: 'oldest', submittedAt: RECEIVED.oldest }),
+      application({ id: 'middle', submittedAt: RECEIVED.middle }),
     ];
 
     render(<Host initial={applications} />);
@@ -102,15 +103,15 @@ describe('OpenApplicationsPanel', () => {
     const olderFive = Array.from({ length: 5 }, (_, index) =>
       application({
         id: `older-${String(index)}`,
-        receivedAt: `2026-07-0${String(index + 1)}T09:00:00.000Z`,
+        submittedAt: `2026-07-0${String(index + 1)}T09:00:00.000Z`,
       }),
     );
     const applications = [
       ...olderFive,
       application({
         id: 'searched-for',
-        applicantName: 'Jonas Krüger',
-        receivedAt: RECEIVED.middle,
+        name: 'Jonas Krüger',
+        submittedAt: RECEIVED.middle,
       }),
     ];
 
@@ -159,7 +160,7 @@ describe('OpenApplicationsPanel', () => {
 
   it('opens the drawer on row click and reflects an edit made through it', async () => {
     const user = userEvent.setup();
-    render(<Host initial={[application({ id: 'a1', status: 'new' })]} />);
+    render(<Host initial={[application({ id: 'a1', status: 'NEW' })]} />);
 
     await waitFor(() =>
       expect(screen.getByText('Mara Weber')).toBeInTheDocument(),
@@ -185,11 +186,11 @@ describe('OpenApplicationsPanel', () => {
     render(
       <Host
         initial={[
-          application({ id: 'a1', applicantName: 'Mara Weber', status: 'new' }),
+          application({ id: 'a1', name: 'Mara Weber', status: 'NEW' }),
           application({
             id: 'a2',
-            applicantName: 'Jonas Krüger',
-            status: 'new',
+            name: 'Jonas Krüger',
+            status: 'NEW',
           }),
         ]}
       />,
@@ -232,8 +233,8 @@ describe('OpenApplicationsPanel', () => {
     render(
       <Host
         initial={[
-          application({ id: 'a1', applicantName: 'Mara Weber' }),
-          application({ id: 'a2', applicantName: 'Jonas Krüger' }),
+          application({ id: 'a1', name: 'Mara Weber' }),
+          application({ id: 'a2', name: 'Jonas Krüger' }),
         ]}
       />,
     );
@@ -261,8 +262,8 @@ describe('OpenApplicationsPanel', () => {
     render(
       <Host
         initial={[
-          application({ id: 'a1', applicantName: 'Mara Weber' }),
-          application({ id: 'a2', applicantName: 'Jonas Krüger' }),
+          application({ id: 'a1', name: 'Mara Weber' }),
+          application({ id: 'a2', name: 'Jonas Krüger' }),
         ]}
       />,
     );
