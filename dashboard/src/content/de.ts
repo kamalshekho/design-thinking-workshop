@@ -78,7 +78,7 @@ export const de = {
     title: 'Anmelden',
     subtitle: 'Melde dich an, um die Anfragen aus dem Formular zu sehen.',
     emailLabel: 'E-Mail',
-    emailPlaceholder: 'name@ichbinhier.example',
+    emailPlaceholder: 'name@ichbinhier.online',
     passwordLabel: 'Passwort',
     submit: 'Anmelden',
 

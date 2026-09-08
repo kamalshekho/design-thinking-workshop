@@ -27,7 +27,8 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             StaffRepository staffRepo,
-            SessionManager sessionManager,
+            SignIns signIns,
+            SignInCookie signInCookie,
             ProblemAuthenticationEntryPoint unauthenticated) throws Exception {
         
         http
@@ -46,7 +47,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .addFilterBefore(
-                new CookieAuthenticationFilter(staffRepo, sessionManager),
+                new CookieAuthenticationFilter(staffRepo, signIns, signInCookie),
                 UsernamePasswordAuthenticationFilter.class
             );
 

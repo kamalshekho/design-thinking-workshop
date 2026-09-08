@@ -11,6 +11,6 @@ import ashtonBlackwell from '@/images/ashton-blackwell.webp';
 export const currentStaffMember: StaffMember = {
   id: 'staff-1',
   name: 'Ashton Blackwell',
-  email: 'ashton.blackwell@ichbinhier.example',
+  email: 'ashton.blackwell@ichbinhier.online',
   avatar: ashtonBlackwell,
 };

@@ -25,6 +25,14 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       RESEND_FROM: ${RESEND_FROM:-}
+      # Passed through empty rather than required with `:?`: whether a missing
+      # password is fatal is StaffSeeder's call, and it only refuses to start
+      # for an account it still has to create (A17).
+      STAFF_1_PASSWORD: ${STAFF_1_PASSWORD:-}
+      STAFF_2_PASSWORD: ${STAFF_2_PASSWORD:-}
+      STAFF_3_PASSWORD: ${STAFF_3_PASSWORD:-}
+      STAFF_4_PASSWORD: ${STAFF_4_PASSWORD:-}
+      STAFF_5_PASSWORD: ${STAFF_5_PASSWORD:-}
     depends_on:
       db:
         condition: service_healthy

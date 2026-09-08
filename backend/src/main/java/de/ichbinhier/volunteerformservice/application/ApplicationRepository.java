@@ -13,6 +13,8 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
 
     List<Application> findAllByOrderBySubmittedAtDesc();
 
+    List<Application> findAllByOwnerId(UUID ownerId);
+
     long countByCategoryId(UUID categoryId);
 
 }

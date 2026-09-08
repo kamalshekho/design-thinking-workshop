@@ -34,7 +34,7 @@ import de.ichbinhier.volunteerformservice.category.Category;
 import de.ichbinhier.volunteerformservice.category.CategoryRepository;
 import de.ichbinhier.volunteerformservice.staff.Staff;
 import de.ichbinhier.volunteerformservice.staff.StaffRepository;
-import de.ichbinhier.volunteerformservice.web.config.SessionManager;
+import de.ichbinhier.volunteerformservice.web.config.SignIns;
 
 /**
  * What a `PATCH` writes, and what it leaves alone. The State changes it records
@@ -60,7 +60,7 @@ class DashboardWritePathTests {
 
     @Autowired private PasswordEncoder passwordEncoder;
 
-    @Autowired private SessionManager sessions;
+    @Autowired private SignIns signIns;
 
     private Category socialMedia;
 
@@ -78,10 +78,10 @@ class DashboardWritePathTests {
         socialMedia = categories.save(category("Social Media", 1));
         ashton = staffMembers.save(Staff.builder()
                 .name("Ashton Blackwell")
-                .email("ashton.blackwell@ichbinhier.example")
+                .email("ashton.blackwell@ichbinhier.online")
                 .passwordHash(passwordEncoder.encode("correct horse"))
                 .build());
-        signIn = new Cookie("ibh_session", sessions.createSession(ashton));
+        signIn = new Cookie("ibh_session", signIns.open(ashton));
     }
 
     /**

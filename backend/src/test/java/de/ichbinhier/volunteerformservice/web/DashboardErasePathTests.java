@@ -31,7 +31,7 @@ import de.ichbinhier.volunteerformservice.category.Category;
 import de.ichbinhier.volunteerformservice.category.CategoryRepository;
 import de.ichbinhier.volunteerformservice.staff.Staff;
 import de.ichbinhier.volunteerformservice.staff.StaffRepository;
-import de.ichbinhier.volunteerformservice.web.config.SessionManager;
+import de.ichbinhier.volunteerformservice.web.config.SignIns;
 
 /**
  * What a permanent erase takes with it. The State changes own a non-nullable
@@ -57,7 +57,7 @@ class DashboardErasePathTests {
 
     @Autowired private PasswordEncoder passwordEncoder;
 
-    @Autowired private SessionManager sessions;
+    @Autowired private SignIns signIns;
 
     private Category socialMedia;
 
@@ -73,10 +73,10 @@ class DashboardErasePathTests {
         socialMedia = categories.save(category("Social Media", 1));
         Staff ashton = staffMembers.save(Staff.builder()
                 .name("Ashton Blackwell")
-                .email("ashton.blackwell@ichbinhier.example")
+                .email("ashton.blackwell@ichbinhier.online")
                 .passwordHash(passwordEncoder.encode("correct horse"))
                 .build());
-        signIn = new Cookie("ibh_session", sessions.createSession(ashton));
+        signIn = new Cookie("ibh_session", signIns.open(ashton));
     }
 
     /**
