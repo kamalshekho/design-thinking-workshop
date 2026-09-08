@@ -1,4 +1,4 @@
-package de.ichbinhier.volunteerformservice.application;
+package de.ichbinhier.volunteerformservice.web.dashboard;
 
 import java.util.UUID;
 
@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationResponse {
-    UUID applicationId;
+public class StaffMemberResponse {
+    private UUID id;
+    private String name;
 }
+

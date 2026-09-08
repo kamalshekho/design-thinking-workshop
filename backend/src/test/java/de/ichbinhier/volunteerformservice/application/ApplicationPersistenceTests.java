@@ -34,7 +34,7 @@ class ApplicationPersistenceTests {
                         stored -> {
                             assertThat(stored.getId()).isNotNull();
                             assertThat(stored.getSubmittedAt()).isNotNull();
-                            assertThat(stored.getCategory().getLabel()).isEqualTo("Social Media");
+                            assertThat(stored.getCategory().getName()).isEqualTo("Social Media");
                             assertThat(stored.getWeeklyTime()).isEqualTo(WeeklyTime.HOURS_1_2);
                         });
     }

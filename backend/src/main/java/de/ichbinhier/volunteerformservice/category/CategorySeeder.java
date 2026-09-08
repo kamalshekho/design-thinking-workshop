@@ -11,13 +11,12 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 
 
-// Basic seeder for categories, runs if table is empty
 @Component
 @Profile("!test")
 @RequiredArgsConstructor
 class CategorySeeder implements ApplicationRunner {
 
-    private static final List<String> INITIAL_LABELS =
+    private static final List<String> INITIAL_NAMES =
             List.of(
                     "Social Media",
                     "Redaktion / Öffentlichkeitsarbeit",
@@ -34,11 +33,12 @@ class CategorySeeder implements ApplicationRunner {
         }
 
         categories.saveAll(
-                IntStream.range(0, INITIAL_LABELS.size())
+                IntStream.range(0, INITIAL_NAMES.size())
                         .mapToObj(
                                 index ->
                                         Category.builder()
-                                                .label(INITIAL_LABELS.get(index))
+                                                .name(INITIAL_NAMES.get(index))
+                                                .description("")
                                                 .displayOrder(index + 1)
                                                 .active(true)
                                                 .build())

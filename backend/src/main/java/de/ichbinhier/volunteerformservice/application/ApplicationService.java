@@ -26,12 +26,12 @@ public class ApplicationService {
             return UUID.randomUUID();
         }
 
-        var existing = applications.findBySubmissionId(request.submissionId());
+        var existing = applications.findBySubmissionId(request.getSubmissionId());
         if (existing.isPresent()) {
             return existing.get().getId();
         }
 
-        Category category = categories.findById(request.categoryId())
+        Category category = categories.findById(request.getCategoryId())
                 .orElseThrow(() -> new FieldValidationException("categoryId", "CATEGORY_UNKNOWN"));
         if (!category.isActive()) {
             throw new FieldValidationException("categoryId", "CATEGORY_UNAVAILABLE");
@@ -40,7 +40,7 @@ public class ApplicationService {
         try {
             return applications.saveAndFlush(build(request, category)).getId();
         } catch (DataIntegrityViolationException exception) {
-            return applications.findBySubmissionId(request.submissionId())
+            return applications.findBySubmissionId(request.getSubmissionId())
                     .orElseThrow(() -> exception)
                     .getId();
         }
@@ -49,17 +49,17 @@ public class ApplicationService {
 
     // todo: move to mapper?
     private static Application build(ApplicationRequest request, Category category) {
-        String about = request.about() == null ? null : request.about().trim();
+        String about = request.getAbout() == null ? null : request.getAbout().trim();
 
         return Application.builder()
-                .submissionId(request.submissionId())
+                .submissionId(request.getSubmissionId())
                 .category(category)
-                .name(request.name().trim())
-                .email(request.email().trim())
-                .weeklyTime(request.weeklyTime())
+                .name(request.getName().trim())
+                .email(request.getEmail().trim())
+                .weeklyTime(request.getWeeklyTime())
                 .about(about == null || about.isEmpty() ? null : about)
                 .consentAt(Instant.now())
-                .consentTextVersion(request.consentTextVersion())
+                .consentTextVersion(request.getConsentTextVersion())
                 .build();
     }
 

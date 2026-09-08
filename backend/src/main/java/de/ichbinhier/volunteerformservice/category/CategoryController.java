@@ -22,9 +22,9 @@ public class CategoryController {
     @GetMapping
     ResponseEntity<CategoriesResponse> list() {
         List<CategoriesResponse.Item> items =
-                categories.findByActiveTrueOrderByDisplayOrderAscLabelAsc().stream()
+                categories.findByActiveTrueOrderByDisplayOrderAsc().stream()
                         .map(category -> new CategoriesResponse.Item(
-                                category.getId(), category.getLabel()))
+                                category.getId(), category.getName(), category.getDescription()))
                         .toList();
 
         return ResponseEntity.ok()
@@ -33,3 +33,4 @@ public class CategoryController {
     }
 
 }
+

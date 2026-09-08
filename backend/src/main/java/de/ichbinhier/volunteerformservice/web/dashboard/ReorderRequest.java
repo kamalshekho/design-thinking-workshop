@@ -1,5 +1,6 @@
-package de.ichbinhier.volunteerformservice.application;
+package de.ichbinhier.volunteerformservice.web.dashboard;
 
+import java.util.List;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationResponse {
-    UUID applicationId;
+public class ReorderRequest {
+    private List<UUID> ids;
 }
+

@@ -23,6 +23,7 @@ import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 
 import de.ichbinhier.volunteerformservice.category.Category;
+import de.ichbinhier.volunteerformservice.staff.Staff;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +32,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-// One applicant's request to volunteer
 @Entity
 @Table(
         name = "applications",
@@ -94,5 +94,22 @@ public class Application {
     @CreationTimestamp
     @Column(name = "submitted_at", nullable = false, updatable = false)
     private Instant submittedAt;
+
+    @Builder.Default
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 32)
+    private ApplicationStatus status = ApplicationStatus.NEW;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", foreignKey = @ForeignKey(name = "fk_applications_owner"))
+    private Staff owner;
+
+    @Size(max = 4000)
+    @Column(name = "internal_notes", length = 4000)
+    private String internalNotes;
+
+    @Column(name = "discarded_at")
+    private Instant discardedAt;
 
 }

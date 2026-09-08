@@ -8,7 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
-    // activated categories
-    List<Category> findByActiveTrueOrderByDisplayOrderAscLabelAsc();
+    List<Category> findByActiveTrueOrderByDisplayOrderAsc();
+
+    List<Category> findByOrderByDisplayOrderAsc();
+
+    Category findByNameIgnoreCase(String name);
 
 }

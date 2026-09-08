@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import de.ichbinhier.volunteerformservice.application.WeeklyTime;
 
-import tools.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 
 // exceptions handlers who return ProblemDetail with structure described in api.md
@@ -35,8 +35,12 @@ public class ApiExceptionHandler {
     // unknown enum value fails in jackson
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<ProblemDetail> onUnreadableBody(HttpMessageNotReadableException exception) {
-        if (exception.getCause() instanceof InvalidFormatException cause && cause.getTargetType() == WeeklyTime.class) {
-            return validationFailed(List.of(new ApiFieldError("weeklyTime", "WEEKLY_TIME_UNKNOWN")));
+        Throwable cause = exception.getCause();
+        if (cause instanceof InvalidFormatException) {
+            InvalidFormatException formatException = (InvalidFormatException) cause;
+            if (formatException.getTargetType() == WeeklyTime.class) {
+                return validationFailed(List.of(new ApiFieldError("weeklyTime", "WEEKLY_TIME_UNKNOWN")));
+            }
         }
         return validationFailed(List.of());
     }

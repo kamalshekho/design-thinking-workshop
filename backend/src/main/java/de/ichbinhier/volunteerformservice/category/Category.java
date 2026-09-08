@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-// A field of Vereinsarbeit an applicant can apply for
 @Entity
 @Table(name = "categories")
 @Getter
@@ -35,9 +34,13 @@ public class Category {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Size(max = 120)
-    @Column(name = "label", nullable = false, length = 120)
-    private String label;
+    @Size(max = 60)
+    @Column(name = "name", nullable = false, length = 60)
+    private String name;
+
+    @Size(max = 140)
+    @Column(name = "description", length = 140)
+    private String description;
 
     private int displayOrder;
 
