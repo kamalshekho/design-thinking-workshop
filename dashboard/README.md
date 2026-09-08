@@ -261,16 +261,18 @@ account card at the bottom. Three things went differently:
 
 ## How `src/` is laid out
 
-Five directories, each with one job, so a reader can tell copied UI from this
-application's own code and both from its data:
+Seven directories, each with one job, so a reader can tell copied UI from this
+application's own code, both from the domain, and all three from the wire:
 
 | Directory         | Holds                                                                                 |
 | ----------------- | ------------------------------------------------------------------------------------- |
-| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`                          |
+| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`          |
 | `src/features/`   | one folder per screen — `overview`, `applications`, `categories`, `discarded`, `auth` |
 | `src/components/` | UI shared across screens (see below)                                                  |
 | `src/domain/`     | `Application`, `Category`, `StaffMember` and the predicates over them                 |
-| `src/data/`       | where the screens' data comes from                                                    |
+| `src/api/`        | the wire: one transport over `fetch`, one module per resource. No React               |
+| `src/queries/`    | the cache: query keys, the Query hooks, the stream's bridge into `setQueryData`       |
+| `src/data/`       | test fixtures, and nothing else                                                       |
 
 Inside `src/components/`:
 
@@ -282,7 +284,81 @@ Inside `src/components/`:
   Application's Status maps to a colour, read by both the table row and the
   drawer so a palette change cannot leave the two disagreeing.
 
-`src/data/useDashboardData.ts` is the only owner of the dashboard's
-Applications and Categories. Every screen takes what it renders as props, so
-the mock data has exactly one entry point: when `API.md` is implemented, that
-hook is the file that changes and no screen does.
+## How the dashboard talks to the backend
+
+The shape below was agreed in issue #28 and is recorded in
+[ADR-0006](../docs/adr/0006-one-cache-and-prop-driven-screens.md). One
+sentence carries the rest: there is exactly one copy of server state — the
+TanStack Query cache — and no screen touches it.
+
+**`src/api/` is the wire, and it holds no React.** One transport function
+sends `credentials: 'same-origin'`, sets the headers, and on a failed response
+parses the `application/problem+json` body into a typed `ApiProblem` —
+`status`, `code`, and the `errors` array — which it throws. It throws rather
+than returning a result because that is TanStack Query's own contract: what is
+thrown becomes `error`. Above it sits one module per resource, each returning
+domain types, so the wire-to-domain mapping happens in one place and nothing
+above `src/api/` ever sees `fetch`.
+
+**`src/queries/` is the cache.** Query keys live in one module, because the
+list's key is read by its own hook, by the stream and by every optimistic
+mutation, and keys scattered across hooks would have the stream importing a
+hook for a string. Beside them: the Query hooks, one small helper that writes
+the `cancelQueries` / snapshot / rollback triad once for the four optimistic
+moves, and `useApplicationStream`, called once from `AppShell`, which owns the
+`EventSource` and reports whether the dashboard is live. What an event does to
+the list is a pure function, so the rules — created adds, updated replaces,
+deleted removes — are tested without an `EventSource`, jsdom or a timer.
+
+**Writes are not symmetrical, on purpose.** Status, Owner, discard and restore
+are optimistic and do not invalidate on success: the stream brings the
+authoritative echo, and invalidating on every debounced save would refetch the
+whole list. A failure rolls back to the snapshot and then invalidates to
+resync. Categories raise no stream events, so they await the server and
+invalidate instead.
+
+**Loading and failure are answered once.** `DashboardGate` sits between
+`AppShell` and the screen, subscribed to the same keys, and shows the skeleton
+or the failure until the data is there. Its real payoff is below it: no
+container and no screen handles `Application[] | undefined`, and no screen
+test writes the case where the data has not arrived.
+
+**A Sign-in that has expired is recognised in one place too.** The transport
+knows nothing about sessions; the `QueryClient`'s cache-level error callbacks
+see `UNAUTHENTICATED`, clear the session entry, and `AppShell` covers the
+dashboard with the sign-in screen while the work stays alive. The stream's own
+"do not flicker on the first reconnect" rule belongs to
+`useApplicationStream`, since it is about `EventSource` and not about
+requests.
+
+### What each layer takes for a test
+
+- `src/api/` — a stubbed global `fetch`: the method, the path, the body, the
+  wire-to-domain mapping, and the `problem+json` decoding. No React.
+- the pure functions — the stream's event application, and the State-change
+  replay behind Übersicht's sparklines — plain unit tests.
+- the screens — unchanged: fixtures through props, no provider, no `fetch`.
+- the containers — only where they carry logic, such as an optimistic
+  rollback or a draft surviving a failure, with a real `QueryClient` at
+  `retry: false` and `gcTime: 0`.
+
+There is no Mock Service Worker, and `src/data/` is fixtures only.
+
+### What a screen hands upward
+
+A screen's callbacks name intents, not replacement lists:
+`onEdit(id, change)`, `onDiscard(ids)`, `onRestore(ids)`, `onErase(ids)`, and
+on Kategorien `onCreate`, `onEdit`, `onSetActive`, `onDelete` and
+`onReorder(orderedIds)` — the last matching the body of
+`PUT …/categories/order`. The whole-list setters `useDashboardData` handed down
+cannot survive a per-field `PATCH`: which Application changed, and in which
+field, is not recoverable from a new array.
+
+One piece of state deliberately sits in the container rather than in the
+component that renders it. The internal-notes draft — one at a time, because
+one drawer is open at a time — lives above `ApplicationDrawer`, which stays
+pure and takes the value and the change handler as props. While a draft
+exists, the field does not read the cache, so a stream event cannot overwrite
+text typed since the request left, and closing the drawer flushes the request
+without discarding the draft: it survives until the write succeeds, so a
+failure leaves the typed text where the Staff member can still see it.
