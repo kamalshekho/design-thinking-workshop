@@ -32,7 +32,7 @@ import de.ichbinhier.volunteerformservice.category.Category;
 import de.ichbinhier.volunteerformservice.category.CategoryRepository;
 import de.ichbinhier.volunteerformservice.staff.Staff;
 import de.ichbinhier.volunteerformservice.staff.StaffRepository;
-import de.ichbinhier.volunteerformservice.web.config.SessionManager;
+import de.ichbinhier.volunteerformservice.web.config.SignIns;
 
 /**
  * The dashboard words every failure by looking `code` up in `de.errors`, so
@@ -53,7 +53,7 @@ class DashboardErrorContractTests {
 
     @Autowired private PasswordEncoder passwordEncoder;
 
-    @Autowired private SessionManager sessions;
+    @Autowired private SignIns signIns;
 
     private Category socialMedia;
 
@@ -70,10 +70,10 @@ class DashboardErrorContractTests {
         socialMedia = categories.save(category("Social Media", 1));
         ashton = staffMembers.save(Staff.builder()
                 .name("Ashton Blackwell")
-                .email("ashton.blackwell@ichbinhier.example")
+                .email("ashton.blackwell@ichbinhier.online")
                 .passwordHash(passwordEncoder.encode("correct horse"))
                 .build());
-        signIn = new Cookie("ibh_session", sessions.createSession(ashton));
+        signIn = new Cookie("ibh_session", signIns.open(ashton));
     }
 
     @Test
@@ -89,12 +89,12 @@ class DashboardErrorContractTests {
 
     @Test
     void answersAnUnknownAddressAndAWrongPasswordAlike() throws Exception {
-        signInWith("ashton.blackwell@ichbinhier.example", "wrong")
+        signInWith("ashton.blackwell@ichbinhier.online", "wrong")
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
                 .andExpect(jsonPath("$.code").value("INVALID_CREDENTIALS"));
 
-        signInWith("nobody@ichbinhier.example", "correct horse")
+        signInWith("nobody@ichbinhier.online", "correct horse")
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value("INVALID_CREDENTIALS"));
     }

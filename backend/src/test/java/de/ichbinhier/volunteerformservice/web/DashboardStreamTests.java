@@ -39,7 +39,7 @@ import de.ichbinhier.volunteerformservice.category.Category;
 import de.ichbinhier.volunteerformservice.category.CategoryRepository;
 import de.ichbinhier.volunteerformservice.staff.Staff;
 import de.ichbinhier.volunteerformservice.staff.StaffRepository;
-import de.ichbinhier.volunteerformservice.web.config.SessionManager;
+import de.ichbinhier.volunteerformservice.web.config.SignIns;
 
 /**
  * What an open dashboard actually receives. Without these three events the
@@ -63,7 +63,7 @@ class DashboardStreamTests {
 
     @Autowired private PasswordEncoder passwordEncoder;
 
-    @Autowired private SessionManager sessions;
+    @Autowired private SignIns signIns;
 
     private final List<MvcResult> openStreams = new ArrayList<>();
 
@@ -82,10 +82,10 @@ class DashboardStreamTests {
                 Category.builder().name("Social Media").displayOrder(1).active(true).build());
         Staff ashton = staffMembers.save(Staff.builder()
                 .name("Ashton Blackwell")
-                .email("ashton.blackwell@ichbinhier.example")
+                .email("ashton.blackwell@ichbinhier.online")
                 .passwordHash(passwordEncoder.encode("correct horse"))
                 .build());
-        signIn = new Cookie("ibh_session", sessions.createSession(ashton));
+        signIn = new Cookie("ibh_session", signIns.open(ashton));
     }
 
     /** A stream left open would keep receiving the next test class's events. */

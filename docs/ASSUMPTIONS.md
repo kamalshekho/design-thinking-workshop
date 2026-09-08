@@ -301,7 +301,7 @@ is no automatic purge after a retention period.
 The dashboard has no self-registration and no user administration. The backend
 seeds one account per staff member (`A1`), and a Sign-in lasts twelve hours of
 sliding inactivity. There is no account lockout; repeated failed sign-ins are
-throttled by address instead.
+throttled by address instead (`A20`).
 
 - **Confidence:** low — the count follows `A1`, the twelve hours are invented.
 - **Why it matters:** it decides how much of the prototype is authentication
@@ -311,6 +311,21 @@ throttled by address instead.
   mid-task; too long, and an unattended dashboard stays open. Both are one
   configured duration. Lockout was rejected for a different reason: with five
   staff members and no administrator, a locked account stays locked.
+
+Three consequences of "twelve hours of sliding inactivity" are worth naming,
+because each one is a choice rather than a detail:
+
+- **Sliding means the cookie is re-set on every authenticated response**, not
+  only at sign-in. A `Max-Age` fixed once at sign-in would expire twelve hours
+  later whatever the staff member did in between.
+- **Sign-ins live in the backend's memory, not in the database**, so a restart
+  ends every Sign-in at once. At five staff members that costs a minute of
+  re-typing, and it saves a Sign-in entity, a schema change and a second place
+  to sweep expired rows out of.
+- **The seeded addresses sit at `ichbinhier.online`** — the association's real,
+  published domain (`A6`) — while the five people are invented. The addresses
+  are sign-in identities and nothing more: no mail is ever sent to a staff
+  member, so none of these mailboxes needs to exist.
 
 ### A18 — The dashboard is fed by a live stream, not by reloading
 
@@ -347,6 +362,24 @@ closes the debt the code has been carrying — `STALE_AFTER_DAYS` in
 - **What breaks if wrong:** too low and every Application is overdue, so the
   card stops meaning anything; too high and the card is empty while people
   wait. It is one constant in one file.
+
+### A20 — Five failed sign-ins from one address in fifteen minutes
+
+A sign-in attempt from an address that has already failed five times in the
+last fifteen minutes answers `429 RATE_LIMITED` until the window runs out. A
+successful sign-in clears the address. The throttle is read before the password
+is verified, so a throttled address is not told whether it guessed correctly,
+and no bcrypt comparison is run on its behalf.
+
+- **Confidence:** low — our invention. `A17` rules out account lockout and puts
+  throttling by address in its place, but names no numbers.
+- **Why it matters:** it is the only thing between the dashboard's one public
+  endpoint and an unlimited series of password guesses, and `A17` deliberately
+  removed the usual answer.
+- **What breaks if wrong:** too strict, and a staff member who mistypes a
+  password waits a quarter of an hour with no administrator to release them —
+  the very trap `A17` rejected lockout for. Too loose, and the throttle is
+  decoration. Both are one pair of configured values.
 
 ---
 

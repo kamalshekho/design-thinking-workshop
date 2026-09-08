@@ -54,6 +54,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(ApiException.class)
     ResponseEntity<ProblemDetail> onApiFailure(ApiException exception) {
         return ResponseEntity.status(exception.getStatus())
+                .headers(exception.getHeaders())
                 .body(ApiProblem.of(exception.getStatus(), exception.getCode()));
     }
 

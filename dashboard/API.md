@@ -136,7 +136,10 @@ JSON is `camelCase`, the Jackson default. Timestamps are ISO 8601 in UTC, as
 
 There is no self-registration and no user administration anywhere in the
 dashboard. The backend seeds one account per staff member (`A1`), with initial
-passwords supplied as environment variables and stored hashed (`A17`).
+passwords supplied as environment variables — `STAFF_1_PASSWORD` through
+`STAFF_5_PASSWORD`, see `.env.example` — and stored hashed (`A17`). The five
+people are invented and their addresses are sign-in identities only: no mail is
+ever sent to a staff member.
 
 ### POST /api/v1/staff/session
 
@@ -144,7 +147,7 @@ The one public dashboard endpoint. The login screen is being built separately;
 this is what it posts.
 
 ```json
-{ "email": "ashton.blackwell@ichbinhier.example", "password": "…" }
+{ "email": "ashton.blackwell@ichbinhier.online", "password": "…" }
 ```
 
 On success: `200 OK`, the body of
@@ -160,11 +163,28 @@ cannot set request headers — a token would have to travel in the query string 
 on one origin removes CSRF without a token. Twelve hours of sliding inactivity
 (`A17`).
 
+**Sliding means the same `Set-Cookie` arrives on every authenticated response**,
+not only on this one: a `Max-Age` fixed at sign-in would expire twelve hours
+later whatever the staff member did in between. The dashboard needs to do
+nothing about that — the cookie is `HttpOnly` and the browser replaces it — but
+a proxy in front of the API must not strip `Set-Cookie` from ordinary `GET`
+responses. Sign-ins live in the backend's memory, so a restart ends all of them
+at once and every staff member meets the sign-in screen (`A17`).
+
 On failure: `401` with `code: INVALID_CREDENTIALS`, and **the same response for
 an unknown address as for a wrong password** — the dashboard has no
-"registered?" question to answer. After repeated failures from one address,
-`429` with `code: RATE_LIMITED`. There is deliberately no account lockout: with
-five staff members and no administrator, a locked account stays locked (`A17`).
+"registered?" question to answer. After five failures from one address inside
+fifteen minutes, `429` with `code: RATE_LIMITED` and a `Retry-After` in seconds,
+until the window runs out; a successful sign-in clears the address (`A20`). The
+throttle is read **before** the password is checked, so a throttled address gets
+`429` even when it finally sends the right one. There is deliberately no account
+lockout: with five staff members and no administrator, a locked account stays
+locked (`A17`).
+
+The address is taken from `X-Forwarded-For`, which both nginx configurations
+send. Behind a proxy that does not, every request would arrive with the proxy's
+own address and one person's typing mistakes would throttle all five staff
+members at once.
 
 ### DELETE /api/v1/staff/session
 
@@ -177,7 +197,7 @@ was no Sign-in either.
 {
   "id": "e0d1…",
   "name": "Ashton Blackwell",
-  "email": "ashton.blackwell@ichbinhier.example"
+  "email": "ashton.blackwell@ichbinhier.online"
 }
 ```
 
@@ -783,8 +803,10 @@ is a caller defect rather than something a staff member can act on, so the
 general message is the right wording; what matters is that a body arrives at
 all.
 
-`RATE_LIMITED` is the one code in this table the backend does not send yet: it
-arrives with the Sign-in's throttling, not with the error contract.
+`RATE_LIMITED` comes from the [Sign-in](#post-apiv1staffsession)'s throttling
+rather than from the error contract, and it is the one code in this table that
+carries a header with it: `Retry-After`, in seconds. The dashboard ignores it
+and shows the general message.
 
 An unknown `code` falls back to the general message, so adding one never breaks
 the dashboard — but the staff member then sees generic wording, so say when the
