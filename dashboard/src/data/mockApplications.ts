@@ -1,6 +1,10 @@
 /**
- * Stateful mock data. Issue #10 chose mock data over waiting for the backend,
- * and issue #16 still owns the real contract.
+ * Test fixtures, and nothing else (`README.md`, "How `src/` is laid out").
+ *
+ * These were the dashboard's data until the screens read the backend (issue
+ * #37); what is left of them is what a test renders a screen with. They are
+ * shaped exactly like the wire, so a fixture cannot pass a test that the real
+ * response would fail.
  *
  * Volumes are deliberately small. The association receives Applications in
  * dozens, not thousands — the roughly thousand emails the client described
@@ -8,8 +12,15 @@
  */
 
 import type { Application, Category, Owner } from '@/domain/application';
-import ashtonBlackwell from '@/images/ashton-blackwell.webp';
+import type { StaffMember } from '@/domain/staffMember';
 import { MILLISECONDS_PER_DAY } from '@/utils/dates';
+
+/** The Staff member a test signs in as; `mockOwners` knows them as `staff-1`. */
+export const mockStaffMember: StaffMember = {
+  id: 'staff-1',
+  name: 'Ashton Blackwell',
+  email: 'ashton.blackwell@ichbinhier.online',
+};
 
 /**
  * The four Categories `A7` records, in the order the form offers them. The
@@ -43,13 +54,9 @@ export const mockCategories: Category[] = [
   },
 ];
 
-/**
- * `staff-1` is the signed-in Staff member of `currentStaffMember.ts` and
- * carries the same photo; `staff-2` has none, which is the case the
- * Zuständigkeit column falls back to initials for.
- */
+/** `staff-1` is `mockStaffMember`, the Staff member a test signs in as. */
 export const mockOwners: Owner[] = [
-  { id: 'staff-1', name: 'Ashton Blackwell', avatar: ashtonBlackwell },
+  { id: 'staff-1', name: 'Ashton Blackwell' },
   { id: 'staff-2', name: 'Samuel Adeyemi' },
 ];
 

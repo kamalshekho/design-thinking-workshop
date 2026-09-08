@@ -8,16 +8,29 @@
  * information the person signing in needs, and both made the one thing this
  * screen is for share the page with decoration.
  *
- * Three things the form does not have, each because it would be dead UI: no
- * "Angemeldet bleiben" (no session to keep), no "Passwort vergessen?" link
- * (no reset flow behind it — the hint under the fields says who to ask
- * instead), and no loading state on the button, since the check is a local
- * function and a spinner would be theatre.
+ * Two things the form does not have, each because it would be dead UI: no
+ * "Angemeldet bleiben" (the Sign-in's twelve hours of sliding inactivity are
+ * the backend's, and there is no second duration to choose), and no "Passwort
+ * vergessen?" link — the hint under the fields says who to ask instead.
+ *
+ * It stays prop-driven: it raises credentials, and takes the request's
+ * outcome back as a problem and a pending flag. The mutation behind it lives
+ * in `App` (ADR-0006), which is what lets every test here run without a
+ * `QueryClient` or a stubbed `fetch`.
+ *
+ * **Where a failure sits is decided by what it is about** (issue #37). The
+ * three checks the screen makes itself each name a field, so they read as a
+ * hint under that field and it takes focus. A rejected Sign-in does not: the
+ * backend's `INVALID_CREDENTIALS` refuses to say which of the two fields was
+ * wrong, and `RATE_LIMITED` is about neither — so both read above the form,
+ * where they belong to the submission rather than to an input.
  */
 
 import { Mail01 } from '@untitledui/icons';
 import { useRef, useState } from 'react';
 
+import { problemCode } from '@/api/problem';
+import type { Credentials } from '@/api/session';
 import { Button } from '@/components/base/buttons/button';
 import { Input } from '@/components/base/input/input';
 import {
@@ -28,10 +41,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { de } from '@/content/de';
-import type { StaffMember } from '@/domain/staffMember';
+import { errorMessage } from '@/content/errorMessage';
 
-import type { SignInFailureReason } from './signIn';
-import { signIn } from './signIn';
+import type { CredentialIssue } from './validateCredentials';
+import { validateCredentials } from './validateCredentials';
 
 type Field = 'email' | 'password';
 
@@ -41,30 +54,33 @@ type FieldError = {
 };
 
 /**
- * Each failure belongs to the field a Staff member has to change to get past
+ * Each check belongs to the field a Staff member has to change to get past
  * it, which is also the field that takes focus after a failed submit.
  */
-const fieldErrors: Record<SignInFailureReason, FieldError> = {
+const fieldErrors: Record<CredentialIssue, FieldError> = {
   'email-required': { field: 'email', message: de.auth.emailRequired },
   'email-invalid': { field: 'email', message: de.auth.emailInvalid },
-  /**
-   * The one rejection the backend will own, and the reason it reads as it
-   * does: `INVALID_CREDENTIALS` covers a wrong password and an unknown
-   * address alike, so the screen may not answer "is this address registered?"
-   * — not even while the check is still local (`API.md`, "Errors").
-   */
-  'unknown-account': {
-    field: 'email',
-    message: de.errors.codes.INVALID_CREDENTIALS,
-  },
   'password-required': { field: 'password', message: de.auth.passwordRequired },
 };
 
 type LoginScreenProps = {
-  onSignIn: (staffMember: StaffMember) => void;
+  onSignIn: (credentials: Credentials) => void;
+  /**
+   * Whatever the last submit raised, or `null` when it raised nothing. Not a
+   * code, because a request the network never delivered has none — and the
+   * screen has to say something in that case too, which `errorMessage` words
+   * as the general failure.
+   */
+  failure?: unknown;
+  /** While the request is in flight, so the button cannot be pressed twice. */
+  isSubmitting?: boolean;
 };
 
-export function LoginScreen({ onSignIn }: LoginScreenProps) {
+export function LoginScreen({
+  onSignIn,
+  failure = null,
+  isSubmitting = false,
+}: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   /**
@@ -77,18 +93,28 @@ export function LoginScreen({ onSignIn }: LoginScreenProps) {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  function submit(): void {
-    const result = signIn(email, password);
+  /**
+   * A field the Staff member still has to fix outranks the last request's
+   * rejection: the request was about credentials that have since changed, and
+   * showing both would put two answers on one screen.
+   */
+  const submissionFailure =
+    error === null && failure !== null && failure !== undefined
+      ? errorMessage(problemCode(failure))
+      : null;
 
-    if (result.ok) {
+  function submit(): void {
+    const check = validateCredentials(email, password);
+
+    if (check.ok) {
       setError(null);
-      onSignIn(result.staffMember);
+      onSignIn(check.credentials);
       return;
     }
 
-    const failure = fieldErrors[result.reason];
-    setError(failure);
-    (failure.field === 'email' ? emailRef : passwordRef).current?.focus();
+    const fieldError = fieldErrors[check.issue];
+    setError(fieldError);
+    (fieldError.field === 'email' ? emailRef : passwordRef).current?.focus();
   }
 
   return (
@@ -102,11 +128,6 @@ export function LoginScreen({ onSignIn }: LoginScreenProps) {
         </CardHeader>
 
         <CardContent>
-          {/*
-            `noValidate` hands validation to `signIn`, so one code path
-            decides what is wrong and the message is German copy from `de.ts`
-            rather than the browser's own bubble.
-          */}
           <form
             noValidate
             onSubmit={(event) => {
@@ -115,6 +136,15 @@ export function LoginScreen({ onSignIn }: LoginScreenProps) {
             }}
             className="flex flex-col gap-4"
           >
+            {submissionFailure !== null && (
+              <p
+                role="alert"
+                className="border-utility-red-200 bg-bg-error-primary text-text-error-primary rounded-lg border px-3.5 py-3 text-sm"
+              >
+                {submissionFailure}
+              </p>
+            )}
+
             <Input
               ref={emailRef}
               type="email"
@@ -127,6 +157,8 @@ export function LoginScreen({ onSignIn }: LoginScreenProps) {
               /*
                 The screen is this one form and holds nothing else to read
                 past, which is the case `jsx-a11y/no-autofocus` guards against.
+                The rejection above the form is read out by its `role="alert"`
+                whichever field has focus.
               */
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
@@ -153,14 +185,16 @@ export function LoginScreen({ onSignIn }: LoginScreenProps) {
               onChange={setPassword}
             />
 
-            <Button type="submit" size="lg" className="mt-1 w-full">
+            <Button
+              type="submit"
+              size="lg"
+              className="mt-1 w-full"
+              isLoading={isSubmitting}
+              isDisabled={isSubmitting}
+            >
               {de.auth.submit}
             </Button>
 
-            {/*
-              Stays inside the card, and stays because it is the only answer
-              a locked-out Staff member gets — the card has no reset link.
-            */}
             <p className="text-tertiary text-sm">{de.auth.passwordResetHint}</p>
           </form>
         </CardContent>

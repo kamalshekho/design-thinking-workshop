@@ -334,6 +334,12 @@ seconds, and so do changes to Status, Owner, notes and the discarded state made
 by another staff member. The dashboard shows whether that stream is connected,
 and does not fall back to polling when it is not.
 
+- **The marker waits three seconds before reporting a drop** — our number. A
+  browser fires an error on every reconnect attempt and reconnects within a
+  second or two on its own, so reporting each one would blink "Nicht
+  verbunden" over a connection that never really went away. Three seconds is
+  long enough to sit out an ordinary reconnect and short enough that a real
+  outage is admitted while the staff member is still looking at the screen.
 - **Confidence:** low — our proposal, and the only one here that the
   association could not have asked for, since they have never seen a
   dashboard.

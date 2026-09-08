@@ -13,10 +13,11 @@ export type StaffMember = {
   id: string;
   name: string;
   email: string;
-  /**
-   * Photo of the Staff member, if there is one. Optional on purpose: one
-   * without a photo falls back to initials, so the account card and the
-   * Zuständigkeit column keep the same shape either way.
-   */
-  avatar?: string;
 };
+
+/**
+ * There is no photo. `GET /api/v1/staff/me` carries no `avatar` field and
+ * photo upload is not a feature of any screen (`API.md`), so the account card
+ * and the Zuständigkeit column render initials — one code path rather than
+ * two, and nothing to seed for the demo.
+ */

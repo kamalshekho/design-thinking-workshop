@@ -12,9 +12,13 @@ and wire formats are English; every German string a staff member reads lives in
 one exception is Category data, which staff members maintain and applicants
 read — see [Categories](#categories).
 
-Status: **proposed, awaiting agreement with the backend**. Every screen in
-`dashboard/` currently reads mock data; nothing here is implemented on either
-side. The decisions are collected [at the end](#decisions).
+Status: **agreed and implemented**, apart from the two blocks marked as such
+below. The backend serves every endpoint here and the dashboard reads all of
+them (issue #37); the dashboard's writes are issue #38, so the `PATCH`, the
+`POST`s and the `DELETE`s are implemented on the backend and not yet called.
+Where reality had to differ from this document, the document was amended in
+the same change rather than left to drift. The decisions are collected
+[at the end](#decisions).
 
 ## Contents
 
@@ -983,23 +987,31 @@ request:
   the backend's `CATEGORY_NAME_REQUIRED` / `CATEGORY_NAME_TAKEN` say the same
   sentence;
 - debounce internal notes by 800 ms, cap the textarea at 4000 characters and
-  count down the remainder — none of the three exists yet;
+  count down the remainder — none of the three exists yet (issue #38);
 - read the metric cards' trends from
   [`GET …/applications/changes`](#get-apiv1staffapplicationschanges) instead of
-  replaying today's `status`/`ownerId` across the week, and let
-  `OverviewStats` read `App`'s shared list rather than building its own mock
-  set, so the cards and the "Offene Anfragen" panel cannot disagree;
+  replaying today's `status`/`ownerId` across the week — issue #39. The
+  endpoint is called and its answer is in the cache; the replay is not written,
+  so the curve is still the confidently wrong one this document warns about.
+  `OverviewStats` does already read the one shared list, so the cards and the
+  "Offene Anfragen" panel cannot disagree;
 - ~~take the stale threshold's German label from `STALE_AFTER_DAYS` instead of
   spelling "Älter als 7 Tage" a second time, and point the constant's comment
   at `A19`, which exists~~ — done;
-- replace the sidebar's mock avatar with initials, and read the signed-in staff
-  member from `GET /api/v1/staff/me` rather than from
-  `src/data/currentStaffMember.ts`;
+- ~~replace the sidebar's mock avatar with initials, and read the signed-in
+  staff member from `GET /api/v1/staff/me` rather than from
+  `src/data/currentStaffMember.ts`~~ — done; `avatar` is off `StaffMember` and
+  off `Owner` too, since neither `me` nor `members` carries one, so every
+  avatar in the dashboard is initials and `alt=""` now hides the letters from
+  the accessible name as well as the image it replaced;
 - ~~keep `src/data/` as test fixtures and put a Mock Service Worker behind an
   unset `VITE_API_BASE_URL`~~ — the fixtures stay, the Mock Service Worker is
   withdrawn: `vite.config.ts` proxies `/api` to the real backend instead, so
   development is same-origin like production ([Deployment](#deployment));
-- add the stream connection marker.
+- ~~add the stream connection marker~~ — done; it says "Live" or "Nicht
+  verbunden" plus what to do about the second, and it waits out a grace period
+  before reporting a drop, because `EventSource` fires `error` on every
+  reconnect attempt.
 
 ~~Two smaller drifts to fix while renaming: the mock spells the fourth Category
 `Sonstiges` where the backend seeds `Etwas anderes`, and the mock stamps

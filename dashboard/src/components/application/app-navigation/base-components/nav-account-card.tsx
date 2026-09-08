@@ -108,7 +108,6 @@ export const NavAccountCard = ({
             border
             rounded={avatarRounded}
             size="sm"
-            src={account.avatar}
             initials={initials}
           />
         </AriaButton>
@@ -122,7 +121,6 @@ export const NavAccountCard = ({
     <div className="border-secondary relative flex items-center gap-2 border-t py-4 pr-6">
       <AvatarLabelGroup
         size="sm"
-        src={account.avatar}
         initials={initials}
         title={account.name}
         subtitle={account.email}

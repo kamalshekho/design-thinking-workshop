@@ -11,6 +11,12 @@
  * Staff member goes to undo something, not one of the places the work
  * happens, and keeping it out of the main list also keeps the one screen that
  * can erase an Application away from the three that cannot.
+ *
+ * The shell is also where the live stream is opened, and the one place it can
+ * be: it is mounted for as long as a Staff member is signed in, so switching
+ * screens does not drop and reopen the connection, and it is not mounted at
+ * all while the sign-in screen is up, when there is no Sign-in to
+ * authenticate the stream with (ADR-0006).
  */
 
 import { Archive, BarChartSquare02, Inbox01, Tag01 } from '@untitledui/icons';
@@ -23,6 +29,9 @@ import {
 } from '@/components/application/app-navigation/sidebar-navigation/sidebar-simple';
 import { de } from '@/content/de';
 import type { StaffMember } from '@/domain/staffMember';
+import { useApplicationStream } from '@/queries/useApplicationStream';
+
+import { StreamMarker } from './StreamMarker';
 
 export type Screen = 'overview' | 'applications' | 'categories' | 'discarded';
 
@@ -71,6 +80,8 @@ export function AppShell({
   onSignOut,
   children,
 }: AppShellProps) {
+  const { connected } = useApplicationStream();
+
   return (
     <div className="bg-primary text-primary flex min-h-screen flex-col lg:flex-row">
       <SidebarNavigationSimple
@@ -89,8 +100,9 @@ export function AppShell({
       */}
       <main
         style={{ paddingInline: SIDEBAR_GUTTER }}
-        className="bg-bg-canvas min-w-0 flex-1 py-6"
+        className="bg-bg-canvas flex min-w-0 flex-1 flex-col gap-3 py-6"
       >
+        <StreamMarker connected={connected} />
         {children}
       </main>
     </div>
