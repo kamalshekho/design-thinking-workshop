@@ -38,5 +38,15 @@ services:
       - backend
     restart: unless-stopped
 
+  dashboard:
+    build:
+      context: ./dashboard
+    image: ichbinhier-dashboard:local
+    ports:
+      - '8082:80'
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   db-data:
