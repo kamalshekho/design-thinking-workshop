@@ -133,6 +133,15 @@ German UI labels belong in UI copy. Documents and the glossary use English
 domain terms without German translations or bilingual label tables. See
 [ADR-0003](../docs/adr/0003-german-dashboard-english-documentation.md).
 
+That split is also why the backend sends an error `code` and never a German
+sentence ([`API.md`](./API.md), "Errors"). Both code tables are worded in
+`de.errors` — `codes` for a problem's top-level `code`, `fields` for one entry
+of its `errors` array — and `src/content/errorMessage.ts` is what looks a code
+up, falling back to `de.errors.general` for one it does not know. A failure is
+worded once: where the dashboard checks the same thing itself, as Kategorien's
+dialog does for an empty or duplicate name, it reads the same string rather
+than keeping a second one.
+
 ## Attribution
 
 `dashboard/THIRD_PARTY_LICENSES` carries Untitled UI React's MIT notice and

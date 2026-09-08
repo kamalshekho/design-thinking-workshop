@@ -69,7 +69,12 @@ describe('LoginScreen', () => {
     expect(field(de.auth.passwordLabel)).toHaveFocus();
   });
 
-  it('flags an address no Staff member has', async () => {
+  /**
+   * The wording is the point of this test, not the flag: it says only that
+   * the two together are wrong, because the contract's `INVALID_CREDENTIALS`
+   * refuses to tell an outsider which addresses have an account.
+   */
+  it('rejects an address no Staff member has without saying so', async () => {
     const user = userEvent.setup();
 
     render(<LoginScreen onSignIn={vi.fn()} />);
@@ -78,7 +83,10 @@ describe('LoginScreen', () => {
     await user.type(field(de.auth.passwordLabel), 'anything');
     await user.click(screen.getByRole('button', { name: de.auth.submit }));
 
-    expect(screen.getByText(de.auth.unknownAccount)).toBeInTheDocument();
+    expect(
+      screen.getByText(de.errors.codes.INVALID_CREDENTIALS),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/Konto/)).not.toBeInTheDocument();
   });
 
   it('offers no password reset link and no stay-signed-in box', () => {

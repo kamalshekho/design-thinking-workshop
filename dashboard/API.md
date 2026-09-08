@@ -782,15 +782,25 @@ arrives with the Sign-in's throttling, not with the error contract.
 
 An unknown `code` falls back to the general message, so adding one never breaks
 the dashboard — but the staff member then sees generic wording, so say when the
-list grows. The lookup itself does not exist yet: `src/content/de.ts` has no
-block keyed by these codes, and adding one is
-[dashboard-side work](#what-the-dashboard-changes-on-its-own-side).
+list grows. The lookup exists: both tables are worded in `de.errors` in
+`src/content/de.ts` — `de.errors.codes` and `de.errors.fields`, keyed by the
+`code` itself — and `src/content/errorMessage.ts` reads them. It takes a bare
+string rather than a known code, so a `code` this contract does not name is a
+general message rather than a blank. The two key sets are typed in
+`src/domain/apiError.ts`, so a code added to the tables above without a wording
+fails the dashboard's typecheck instead of reaching a staff member as the
+fallback.
 
 `INVALID_CREDENTIALS` gets **one wording for both causes** — a wrong password
 and an unknown address read identically, as
-[Sign-in](#post-apiv1staffsession) requires. The dashboard currently says "Zu
-dieser E-Mail-Adresse gibt es kein Konto", which answers the "registered?"
-question this contract refuses to answer; that string goes.
+[Sign-in](#post-apiv1staffsession) requires. The dashboard said "Zu dieser
+E-Mail-Adresse gibt es kein Konto", which answered the "registered?" question
+this contract refuses to answer; that string is gone, and the sign-in screen
+now reads its rejection out of `de.errors.codes.INVALID_CREDENTIALS` — while
+the check is still local, so the wording cannot drift back once the request is
+real. Where the message sits is still a field hint under the address; the
+[Sign-in request](#post-apiv1staffsession) is what moves it to the form, since
+it is the first failure that belongs to neither field.
 
 A timeout or a network failure is treated as retryable, and unsent internal
 notes are kept.
@@ -915,9 +925,14 @@ request:
   client-side slug id generator, since the backend owns ids~~ — done; a
   Category added on Kategorien takes a `crypto.randomUUID()` until the request
   layer hands the backend's id back;
-- replace the sign-in screen's "kein Konto" message with one wording for
+- ~~replace the sign-in screen's "kein Konto" message with one wording for
   `INVALID_CREDENTIALS`, add one for `RATE_LIMITED`, and add the `de.errors`
-  block the [Errors](#errors) table is looked up in;
+  block the [Errors](#errors) table is looked up in~~ — done; every code in
+  both [Errors](#errors) tables has a wording, `errorMessage.ts` looks one up
+  and `apiError.ts` types the keys. Kategorien's dialog now reads its own two
+  name failures out of `de.errors.fields` as well, so the client-side check and
+  the backend's `CATEGORY_NAME_REQUIRED` / `CATEGORY_NAME_TAKEN` say the same
+  sentence;
 - debounce internal notes by 800 ms, cap the textarea at 4000 characters and
   count down the remainder — none of the three exists yet;
 - read the metric cards' trends from

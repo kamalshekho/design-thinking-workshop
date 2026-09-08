@@ -75,12 +75,12 @@ export function CategoryDialog({
 
   function submit(): void {
     if (trimmedName === '') {
-      setError(de.categories.dialog.nameRequired);
+      setError(de.errors.fields.CATEGORY_NAME_REQUIRED);
       return;
     }
 
     if (isCategoryNameTaken(categories, trimmedName, category?.id)) {
-      setError(de.categories.dialog.nameTaken);
+      setError(de.errors.fields.CATEGORY_NAME_TAKEN);
       return;
     }
 
