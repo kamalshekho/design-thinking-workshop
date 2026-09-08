@@ -440,6 +440,12 @@ one request writes two rows with the same `at`. A snapshot per request would
 force the dashboard to work out which fields a partial `PATCH` actually
 touched.
 
+**Only a real change.** A `PATCH` that sets a field to the value it already
+holds writes no row, and re-discarding a discarded Application leaves
+`discardedAt` where it is. The dashboard repeats a value freely — an optimistic
+write re-sent, a second click on the same status — and a row per request would
+show as a trend that never happened.
+
 **No `internalNotes`.** No card reads them, and a debounced textarea would turn
 one note into a stream of rows.
 
