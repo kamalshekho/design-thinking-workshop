@@ -33,6 +33,38 @@ account, since five staff members with no administrator would stay locked
 (`A20`); the numbers are `sign-in.attempt-limit` and `sign-in.attempt-window` in
 `application.properties`.
 
+## Demo data
+
+`demo/DemoSeeder.java` seeds a week that reads like a real one: thirteen
+Applications across the four Categories and all six statuses, some owned and
+some not, six older than seven days, two discarded and one discarded and
+restored (`A21`). **It runs only under the `demo` profile** — the Categories and
+the staff accounts are platform data, while these Applications are a
+presentation artifact, so a database only gets applicant-shaped rows when
+somebody asks for it:
+
+```
+SPRING_PROFILES_ACTIVE=demo ./mvnw spring-boot:run
+```
+
+`docker-compose.yml` sets the profile for you, since that stack _is_ the demo
+environment; `SPRING_PROFILES_ACTIVE=` in `.env` turns it off again. The seeder
+is skipped whole once there is any Application at all, so a restart mid-demo
+neither duplicates the week nor brings back a set somebody cleared.
+
+Every Application carries the **State changes that lead to it**, dated when they
+happened — that is what makes Übersicht's sparklines a real trend rather than
+today's number repeated seven times (`dashboard/API.md`, "Which makes seeding
+part of this contract"). A seed declares only its timeline; the current Status,
+Owner and discarded state are folded out of it, so the two cannot disagree.
+
+The applicants are invented and their addresses sit at `example.org`, which
+[RFC 2606](https://www.rfc-editor.org/rfc/rfc2606) reserves — no mailbox can
+exist there. That is the point: the consent text names the association as the
+party that stores an applicant's details, and on our own domain that is not who
+receives them, so nothing a real person wrote may end up in this database
+(`dashboard/API.md`, "Deployment").
+
 ## Transactional email
 
 The confirmation email an applicant gets on submit (`A8` in

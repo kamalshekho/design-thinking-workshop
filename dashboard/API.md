@@ -841,6 +841,13 @@ prototype runs on our own domain, and the consent text names the association as
 the party that stores an applicant's details, which on our domain is not who
 receives them.
 
+The demo week the dashboard is shown on is part of that rule rather than an
+exception to it: the backend seeds thirteen invented Applications and the State
+changes that lead to them (`A21`), addressed at the reserved `example.org`
+domain, and only under the `demo` profile — so a database gets
+applicant-shaped rows when somebody asks for them and not by starting up. See
+[`../backend/README.md`](../backend/README.md), "Demo data".
+
 Two things are new, both about the stream, and both cause the same failure if
 missed: events arrive in batches instead of immediately, and "the Application
 appears while you watch" — the moment the demo is built around — does not

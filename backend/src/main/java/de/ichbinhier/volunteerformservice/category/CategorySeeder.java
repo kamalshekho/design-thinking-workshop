@@ -6,13 +6,16 @@ import java.util.stream.IntStream;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 
 
+/** First of the seeders: an Application cannot exist without a Category. */
 @Component
 @Profile("!test")
+@Order(1)
 @RequiredArgsConstructor
 class CategorySeeder implements ApplicationRunner {
 

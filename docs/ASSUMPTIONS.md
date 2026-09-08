@@ -381,6 +381,31 @@ and no bcrypt comparison is run on its behalf.
   the very trap `A17` rejected lockout for. Too loose, and the throttle is
   decoration. Both are one pair of configured values.
 
+### A21 — The demo week is thirteen invented Applications with their history
+
+What the dashboard is demonstrated on is a seeded week: thirteen Applications
+spread across the four Categories (`A7`) and all six statuses (`A9`), some
+owned and some not (`A14`), six of them older than seven days (`A19`), two
+discarded and one discarded and restored (`A16`) — each one carrying the State
+changes that lead to it, dated when they happened. It is seeded only under the
+`demo` profile, and the applicants are invented people at `example.org`.
+
+- **Confidence:** low — our invention throughout. Nothing says what a week at
+  the association actually looks like; `A4` says we do not know the volume at
+  all.
+- **Why it matters:** it is the whole of what an audience sees. The shape of it
+  decides whether Übersicht's three cards show a trend, whether every screen has
+  rows, and whether the four views and the Category filter can be shown at all.
+  A naive seed — the current state with no history — would leave three
+  sparklines flat, which is why the history is part of the seed rather than an
+  extra.
+- **What breaks if wrong:** nothing in the platform; a demo that reads thin or
+  implausible. The one part that is not cosmetic is the invented identities:
+  the consent text names the association as the party that stores an
+  applicant's details, and on our own domain that is not who receives them, so
+  a database holding what a real person wrote would be a problem the seed size
+  never is.
+
 ---
 
 ## Open questions we cannot answer ourselves
