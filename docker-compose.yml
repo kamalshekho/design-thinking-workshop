@@ -23,6 +23,8 @@ services:
       DB_URL: jdbc:postgresql://db:5432/volunteer_form
       DB_USERNAME: volunteer_form
       DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM: ${RESEND_FROM:-}
     depends_on:
       db:
         condition: service_healthy

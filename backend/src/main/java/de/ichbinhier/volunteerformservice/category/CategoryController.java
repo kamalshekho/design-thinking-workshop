@@ -24,7 +24,7 @@ public class CategoryController {
         List<CategoriesResponse.Item> items =
                 categories.findByActiveTrueOrderByDisplayOrderAsc().stream()
                         .map(category -> new CategoriesResponse.Item(
-                                category.getId(), category.getName(), category.getDescription()))
+                                category.getId(), category.getName()))
                         .toList();
 
         return ResponseEntity.ok()

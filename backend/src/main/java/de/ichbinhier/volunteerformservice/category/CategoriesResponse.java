@@ -14,13 +14,15 @@ import lombok.NoArgsConstructor;
 public class CategoriesResponse {
     List<Item> categories;
 
+    // Field is "label", not "name" — see frontend/API.md, GET
+    // /api/v1/categories. The frontend rejects any other shape as a load
+    // failure rather than guessing (readCategories in application-form/api.ts).
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Item {
         UUID id;
-        String name;
-        String description;
+        String label;
     }
 
 }

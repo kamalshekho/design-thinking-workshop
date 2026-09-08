@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import de.ichbinhier.volunteerformservice.category.Category;
 import de.ichbinhier.volunteerformservice.category.CategoryRepository;
+import de.ichbinhier.volunteerformservice.email.ConfirmationMailer;
 import de.ichbinhier.volunteerformservice.web.FieldValidationException;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class ApplicationService {
 
     private final ApplicationRepository applications;
     private final CategoryRepository categories;
+    private final ConfirmationMailer confirmationMailer;
 
 
     public UUID submit(ApplicationRequest request) {
@@ -37,13 +39,17 @@ public class ApplicationService {
             throw new FieldValidationException("categoryId", "CATEGORY_UNAVAILABLE");
         }
 
+        Application saved;
         try {
-            return applications.saveAndFlush(build(request, category)).getId();
+            saved = applications.saveAndFlush(build(request, category));
         } catch (DataIntegrityViolationException exception) {
             return applications.findBySubmissionId(request.getSubmissionId())
                     .orElseThrow(() -> exception)
                     .getId();
         }
+
+        confirmationMailer.sendConfirmation(saved);
+        return saved.getId();
     }
 
 
