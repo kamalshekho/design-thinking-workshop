@@ -5,6 +5,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +26,8 @@ import de.ichbinhier.volunteerformservice.application.StateChangeField;
 import de.ichbinhier.volunteerformservice.application.StateChangeRepository;
 import de.ichbinhier.volunteerformservice.staff.Staff;
 import de.ichbinhier.volunteerformservice.staff.StaffRepository;
+import de.ichbinhier.volunteerformservice.web.ApiException;
+import de.ichbinhier.volunteerformservice.web.FieldValidationException;
 import lombok.RequiredArgsConstructor;
 
 
@@ -66,17 +70,18 @@ public class DashboardApplicationController {
     @PatchMapping("/{id}")
     ResponseEntity<ApplicationDto> update(
         @PathVariable UUID id,
-        @RequestBody UpdateApplicationRequest req) {
-        
-        var app = appRepo.findById(id)
-            .orElse(null);
+        @Valid @RequestBody UpdateApplicationRequest req) {
 
-        if (app == null) {
-            return ResponseEntity.notFound().build();
+        String immutable = req.firstImmutableFieldSent();
+        if (immutable != null) {
+            throw new FieldValidationException(immutable, "IMMUTABLE_FIELD");
         }
 
+        var app = appRepo.findById(id)
+            .orElseThrow(ApiException::notFound);
+
         if (req.getStatus() != null) {
-            ApplicationStatus status = ApplicationStatus.valueOf(req.getStatus());
+            ApplicationStatus status = statusOf(req.getStatus());
             String oldStatus = app.getStatus().name();
             app.setStatus(status);
             if (!oldStatus.equals(req.getStatus())) {
@@ -85,7 +90,8 @@ public class DashboardApplicationController {
         }
 
         if (req.getOwnerId() != null) {
-            Staff owner = staffRepo.findById(req.getOwnerId()).orElse(null);
+            Staff owner = staffRepo.findById(req.getOwnerId())
+                .orElseThrow(() -> new FieldValidationException("ownerId", "OWNER_UNKNOWN"));
             String oldOwner = app.getOwner() != null ? app.getOwner().getId().toString() : null;
             app.setOwner(owner);
             String newOwner = owner != null ? owner.getId().toString() : null;
@@ -115,18 +121,22 @@ public class DashboardApplicationController {
     @DeleteMapping("/{id}/permanently")
     ResponseEntity<Void> deletePermanently(@PathVariable UUID id) {
         var app = appRepo.findById(id)
-            .orElse(null);
-
-        if (app == null) {
-            return ResponseEntity.notFound().build();
-        }
+            .orElseThrow(ApiException::notFound);
 
         if (app.getDiscardedAt() == null) {
-            return ResponseEntity.badRequest().build();
+            throw ApiException.notDiscarded();
         }
 
         appRepo.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private static ApplicationStatus statusOf(String status) {
+        try {
+            return ApplicationStatus.valueOf(status);
+        } catch (IllegalArgumentException unknown) {
+            throw new FieldValidationException("status", "STATUS_UNKNOWN");
+        }
     }
 
     private void recordChange(Application app, StateChangeField field, String toValue) {

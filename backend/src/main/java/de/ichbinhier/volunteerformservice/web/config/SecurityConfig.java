@@ -27,7 +27,8 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             StaffRepository staffRepo,
-            SessionManager sessionManager) throws Exception {
+            SessionManager sessionManager,
+            ProblemAuthenticationEntryPoint unauthenticated) throws Exception {
         
         http
             .csrf(AbstractHttpConfigurer::disable)
@@ -37,6 +38,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/staff/session").permitAll()
                 .requestMatchers("/api/v1/staff/**").authenticated()
                 .anyRequest().permitAll()
+            )
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(unauthenticated)
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -746,6 +746,7 @@ Top-level codes:
 | Status        | `code`                | Dashboard behaviour                                     |
 | ------------- | --------------------- | ------------------------------------------------------- |
 | 400           | `VALIDATION_FAILED`   | inline errors from `errors`                             |
+| 400           | `NOT_DISCARDED`       | one general message, the list is refetched              |
 | 401           | `INVALID_CREDENTIALS` | sign-in screen shows one general message                |
 | 401           | `UNAUTHENTICATED`     | sign-in screen covers the dashboard, work is kept       |
 | 404           | `NOT_FOUND`           | one general message, the list is refetched              |
@@ -763,8 +764,21 @@ Field codes:
 | `CATEGORY_NAME_REQUIRED`, `CATEGORY_NAME_TOO_LONG`, `CATEGORY_NAME_TAKEN` | `name`          |
 | `CATEGORY_DESCRIPTION_TOO_LONG`                                           | `description`   |
 | `ORDER_INCOMPLETE`                                                        | `ids`           |
-| `NOT_DISCARDED`                                                           | —               |
 | `IMMUTABLE_FIELD`                                                         | the named field |
+
+`NOT_DISCARDED` is a top-level `code` rather than a field code: nothing in the
+request is wrong, the Application is simply not on the fourth screen yet, so
+there is no field to hang it on.
+
+A status this table does not name — a `405`, a `415`, a `400` Spring raises
+before a controller sees the body — carries the status's own name as its `code`
+(`METHOD_NOT_ALLOWED`, `UNSUPPORTED_MEDIA_TYPE`, `BAD_REQUEST`). Each of those
+is a caller defect rather than something a staff member can act on, so the
+general message is the right wording; what matters is that a body arrives at
+all.
+
+`RATE_LIMITED` is the one code in this table the backend does not send yet: it
+arrives with the Sign-in's throttling, not with the error contract.
 
 An unknown `code` falls back to the general message, so adding one never breaks
 the dashboard — but the staff member then sees generic wording, so say when the

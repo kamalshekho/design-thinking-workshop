@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.util.List;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.ichbinhier.volunteerformservice.staff.Staff;
 import de.ichbinhier.volunteerformservice.staff.StaffRepository;
+import de.ichbinhier.volunteerformservice.web.ApiException;
 import de.ichbinhier.volunteerformservice.web.config.SessionManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,9 +39,7 @@ public class StaffAuthController {
             .orElse(null);
 
         if (staff == null || !passwordEncoder.matches(request.getPassword(), staff.getPasswordHash())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .header("Content-Type", "application/problem+json")
-                .body(null);
+            throw ApiException.invalidCredentials();
         }
 
         String sessionToken = sessionManager.createSession(staff);
@@ -88,7 +86,7 @@ public class StaffAuthController {
     @GetMapping("/me")
     ResponseEntity<StaffResponse> me(Authentication auth) {
         if (auth == null || !auth.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw ApiException.unauthenticated();
         }
 
         Staff staff = (Staff) auth.getPrincipal();
