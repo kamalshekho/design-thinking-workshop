@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -116,7 +117,15 @@ public class DashboardApplicationController {
         return ResponseEntity.ok(toDto(app));
     }
 
+    /**
+     * The State changes go first: they own a non-nullable foreign key on the
+     * Application, and the erase is the platform's only path to actually
+     * removing what a person wrote, so it must not leave a trail of their
+     * Application's life behind. Both deletes share one transaction, so a
+     * failure leaves neither half done.
+     */
     @DeleteMapping("/{id}/permanently")
+    @Transactional
     ResponseEntity<Void> deletePermanently(@PathVariable UUID id) {
         var app = appRepo.findById(id)
             .orElseThrow(ApiException::notFound);
@@ -125,6 +134,7 @@ public class DashboardApplicationController {
             throw ApiException.notDiscarded();
         }
 
+        changeRepo.deleteByApplicationId(id);
         appRepo.deleteById(id);
         return ResponseEntity.noContent().build();
     }
