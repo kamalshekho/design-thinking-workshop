@@ -50,7 +50,8 @@ public class StateChange {
     @Column(name = "field", nullable = false, length = 32)
     private StateChangeField field;
 
-    @Column(name = "to_value", nullable = false, columnDefinition = "text")
+    /** {@code null} for a cleared Owner; never null for STATUS or DISCARDED. */
+    @Column(name = "to_value", columnDefinition = "text")
     private String toValue;
 
 }

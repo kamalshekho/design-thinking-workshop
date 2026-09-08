@@ -9,13 +9,16 @@ import jakarta.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Bound field by field through the setters — no all-args constructor, because
+ * Jackson would take it as a creator and never call {@link #setOwnerId}, which
+ * is what tells an absent {@code ownerId} from an explicit {@code null}.
+ */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class UpdateApplicationRequest {
 
     /**
@@ -34,7 +37,26 @@ public class UpdateApplicationRequest {
     private Boolean discarded;
 
     @JsonIgnore
+    private final Set<String> fieldsSent = new LinkedHashSet<>();
+
+    @JsonIgnore
     private final Set<String> immutableFieldsSent = new LinkedHashSet<>();
+
+    /**
+     * Absent and {@code null} differ for {@code ownerId}: absent leaves the
+     * Owner alone, {@code null} clears it. Jackson calls the setter only for a
+     * field the request actually carries, so the setter is what tells them
+     * apart.
+     */
+    public void setOwnerId(UUID ownerId) {
+        this.ownerId = ownerId;
+        this.fieldsSent.add("ownerId");
+    }
+
+    @JsonIgnore
+    boolean isOwnerIdSent() {
+        return fieldsSent.contains("ownerId");
+    }
 
     @JsonAnySetter
     void unmapped(String field, Object value) {

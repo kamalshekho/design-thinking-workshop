@@ -3,6 +3,7 @@ package de.ichbinhier.volunteerformservice.dashboard;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import jakarta.validation.Valid;
@@ -89,13 +90,15 @@ public class DashboardApplicationController {
             }
         }
 
-        if (req.getOwnerId() != null) {
-            Staff owner = staffRepo.findById(req.getOwnerId())
-                .orElseThrow(() -> new FieldValidationException("ownerId", "OWNER_UNKNOWN"));
+        if (req.isOwnerIdSent()) {
+            Staff owner = req.getOwnerId() == null
+                ? null
+                : staffRepo.findById(req.getOwnerId())
+                    .orElseThrow(() -> new FieldValidationException("ownerId", "OWNER_UNKNOWN"));
             String oldOwner = app.getOwner() != null ? app.getOwner().getId().toString() : null;
-            app.setOwner(owner);
             String newOwner = owner != null ? owner.getId().toString() : null;
-            if (!java.util.Objects.equals(oldOwner, newOwner)) {
+            app.setOwner(owner);
+            if (!Objects.equals(oldOwner, newOwner)) {
                 recordChange(app, StateChangeField.OWNER, newOwner);
             }
         }
@@ -104,14 +107,9 @@ public class DashboardApplicationController {
             app.setInternalNotes(req.getInternalNotes());
         }
 
-        if (req.getDiscarded() != null) {
-            if (req.getDiscarded()) {
-                app.setDiscardedAt(Instant.now());
-                recordChange(app, StateChangeField.DISCARDED, "true");
-            } else {
-                app.setDiscardedAt(null);
-                recordChange(app, StateChangeField.DISCARDED, "false");
-            }
+        if (req.getDiscarded() != null && req.getDiscarded() != (app.getDiscardedAt() != null)) {
+            app.setDiscardedAt(req.getDiscarded() ? Instant.now() : null);
+            recordChange(app, StateChangeField.DISCARDED, req.getDiscarded().toString());
         }
 
         appRepo.save(app);
