@@ -26,6 +26,7 @@ import de.ichbinhier.volunteerformservice.application.ApplicationStatus;
 import de.ichbinhier.volunteerformservice.application.StateChange;
 import de.ichbinhier.volunteerformservice.application.StateChangeField;
 import de.ichbinhier.volunteerformservice.application.StateChangeRepository;
+import de.ichbinhier.volunteerformservice.application.StoredInstant;
 import de.ichbinhier.volunteerformservice.staff.Staff;
 import de.ichbinhier.volunteerformservice.staff.StaffRepository;
 import de.ichbinhier.volunteerformservice.web.ApiException;
@@ -41,11 +42,12 @@ public class DashboardApplicationController {
     private final ApplicationRepository appRepo;
     private final StaffRepository staffRepo;
     private final StateChangeRepository changeRepo;
+    private final ApplicationEventStream stream;
 
     @GetMapping
     ResponseEntity<ApplicationsResponse> list() {
         List<ApplicationDto> apps = appRepo.findAllByOrderBySubmittedAtDesc().stream()
-            .map(this::toDto)
+            .map(ApplicationDto::of)
             .toList();
 
         ApplicationsResponse response = new ApplicationsResponse();
@@ -109,12 +111,15 @@ public class DashboardApplicationController {
         }
 
         if (req.getDiscarded() != null && req.getDiscarded() != (app.getDiscardedAt() != null)) {
-            app.setDiscardedAt(req.getDiscarded() ? Instant.now() : null);
+            app.setDiscardedAt(req.getDiscarded() ? StoredInstant.now() : null);
             recordChange(app, StateChangeField.DISCARDED, req.getDiscarded().toString());
         }
 
         appRepo.save(app);
-        return ResponseEntity.ok(toDto(app));
+
+        ApplicationDto updated = ApplicationDto.of(app);
+        stream.updated(updated);
+        return ResponseEntity.ok(updated);
     }
 
     /**
@@ -134,8 +139,12 @@ public class DashboardApplicationController {
             throw ApiException.notDiscarded();
         }
 
+        ApplicationDto erased = ApplicationDto.of(app);
+
         changeRepo.deleteByApplicationId(id);
         appRepo.deleteById(id);
+
+        stream.deleted(erased);
         return ResponseEntity.noContent().build();
     }
 
@@ -150,28 +159,10 @@ public class DashboardApplicationController {
     private void recordChange(Application app, StateChangeField field, String toValue) {
         changeRepo.save(StateChange.builder()
             .application(app)
-            .changedAt(Instant.now())
+            .changedAt(StoredInstant.now())
             .field(field)
             .toValue(toValue)
             .build());
-    }
-
-    private ApplicationDto toDto(Application app) {
-        ApplicationDto dto = new ApplicationDto();
-        dto.setId(app.getId());
-        dto.setCategoryId(app.getCategory().getId());
-        dto.setName(app.getName());
-        dto.setEmail(app.getEmail());
-        dto.setWeeklyTime(app.getWeeklyTime().name());
-        dto.setAbout(app.getAbout());
-        dto.setStatus(app.getStatus().name());
-        dto.setOwnerId(app.getOwner() != null ? app.getOwner().getId() : null);
-        dto.setInternalNotes(app.getInternalNotes() != null ? app.getInternalNotes() : "");
-        dto.setDiscardedAt(app.getDiscardedAt());
-        dto.setConsentAt(app.getConsentAt());
-        dto.setConsentTextVersion(app.getConsentTextVersion());
-        dto.setSubmittedAt(app.getSubmittedAt());
-        return dto;
     }
 
     private StateChangeDto toDto(StateChange change) {

@@ -1,8 +1,8 @@
 package de.ichbinhier.volunteerformservice.application;
 
-import java.time.Instant;
 import java.util.UUID;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,7 @@ public class ApplicationService {
     private final ApplicationRepository applications;
     private final CategoryRepository categories;
     private final ConfirmationMailer confirmationMailer;
+    private final ApplicationEventPublisher events;
 
 
     public UUID submit(ApplicationRequest request) {
@@ -48,6 +49,7 @@ public class ApplicationService {
                     .getId();
         }
 
+        events.publishEvent(new ApplicationSubmitted(saved));
         confirmationMailer.sendConfirmation(saved);
         return saved.getId();
     }
@@ -64,7 +66,7 @@ public class ApplicationService {
                 .email(request.getEmail().trim())
                 .weeklyTime(request.getWeeklyTime())
                 .about(about == null || about.isEmpty() ? null : about)
-                .consentAt(Instant.now())
+                .consentAt(StoredInstant.now())
                 .consentTextVersion(request.getConsentTextVersion())
                 .build();
     }
