@@ -830,15 +830,29 @@ happen.
 - The backend should send `X-Accel-Buffering: no` on the stream response, so
   the behaviour survives a proxy configuration we forget to change.
 
-The dashboard takes one build-time variable, as the form does:
+The dashboard takes **no** build-time variable, and unlike the form it never
+gains one: every request is a relative `/api/…` path, so the dashboard is
+same-origin in development exactly as it is in production. A
+`VITE_API_BASE_URL` pointing at another origin would be unusable anyway — the
+Sign-in cookie is `SameSite=Strict`, and a cross-origin request does not carry
+it.
 
-```
-VITE_API_BASE_URL=http://localhost:8080
-```
+Development gets its own reverse proxy instead, in `vite.config.ts`, mirroring
+`nginx.conf` location for location: `/api/v1/staff/events` with an hour of
+`proxyTimeout` — nginx's `proxy_read_timeout` — so an idle stream is not cut,
+and `/api` with thirty seconds. Nothing between Vite and the browser buffers a
+response, so the stream arrives event by event there too. `npm run dev`
+therefore expects the backend on `http://localhost:8080`, its default port.
 
-Unset means requests go to a Mock Service Worker rather than a real backend, so
-the dashboard stays demonstrable while the backend is being built. The existing
-mock data (`src/data/`) stays as test fixtures.
+The cookie's `Secure` flag is not a problem over `http://localhost:5174`:
+browsers count `localhost` as a trustworthy origin and store the cookie anyway.
+
+**There is no Mock Service Worker.** An earlier version of this section
+promised one behind an unset `VITE_API_BASE_URL`; the promise existed because
+the backend did not, and the backend does now. What replaces it is the proxy
+above — a real backend on the other end of `/api` from the first request. The
+mock data (`src/data/`) stays exactly what it is: fixtures for the tests and
+for props handed to a screen, never a request handler.
 
 ## Not in this contract
 
@@ -952,8 +966,10 @@ request:
 - replace the sidebar's mock avatar with initials, and read the signed-in staff
   member from `GET /api/v1/staff/me` rather than from
   `src/data/currentStaffMember.ts`;
-- keep `src/data/` as test fixtures and put a Mock Service Worker behind an
-  unset `VITE_API_BASE_URL`;
+- ~~keep `src/data/` as test fixtures and put a Mock Service Worker behind an
+  unset `VITE_API_BASE_URL`~~ — the fixtures stay, the Mock Service Worker is
+  withdrawn: `vite.config.ts` proxies `/api` to the real backend instead, so
+  development is same-origin like production ([Deployment](#deployment));
 - add the stream connection marker.
 
 ~~Two smaller drifts to fix while renaming: the mock spells the fourth Category

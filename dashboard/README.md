@@ -179,6 +179,14 @@ npm run dev
 | `npm run format` / `format:check` | Prettier                      |
 | `npm test` / `test:watch`         | Vitest                        |
 
+The dev server proxies `/api` to `http://localhost:8080`, so it wants the
+backend running on its default port (`backend/README.md`). Development is
+same-origin for the same reason production is: the Sign-in cookie is
+`SameSite=Strict` and would not travel to a second origin. There is no
+`VITE_API_BASE_URL` and no Mock Service Worker — `vite.config.ts` mirrors
+`nginx.conf` location for location, the live stream included, and `API.md`'s
+"Deployment" section says why.
+
 CI (`.github/workflows/dashboard.yml`, mirroring `frontend.yml`, scoped to
 `dashboard/`) runs typecheck, ESLint, format check, tests and the build on
 every pull request touching this directory.
