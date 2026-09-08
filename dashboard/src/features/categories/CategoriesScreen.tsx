@@ -24,7 +24,7 @@ import { TabStrip } from '@/components/shared/tab-strip';
 import { de } from '@/content/de';
 import type { Application } from '@/domain/application';
 import { isDiscarded } from '@/domain/application';
-import type { Category, CategoryView } from '@/domain/category';
+import type { Category, CategoryDraft, CategoryView } from '@/domain/category';
 import {
   CATEGORY_VIEWS,
   countApplicationsPerCategory,
@@ -34,7 +34,6 @@ import { SearchField } from '@/features/applications/SearchField';
 import { useSearchShortcut } from '@/hooks/use-search-shortcut';
 
 import { CategoriesTable } from './CategoriesTable';
-import type { CategoryDraft } from './CategoryDialog';
 import { CategoryDialog } from './CategoryDialog';
 
 type CategoriesScreenProps = {
@@ -43,7 +42,15 @@ type CategoriesScreenProps = {
    * filter, its rows and the drawer read.
    */
   categories: readonly Category[];
-  onCategoriesChange: (categories: Category[]) => void;
+  /** Appends a Category; the id is the server's to mint (`API.md`), never this screen's. */
+  onCreate: (draft: CategoryDraft) => void;
+  /** Renames or redescribes one Category. */
+  onEdit: (id: string, draft: CategoryDraft) => void;
+  /** Takes a Category out of the form, or puts it back (`A15`). */
+  onSetActive: (id: string, active: boolean) => void;
+  onDelete: (id: string) => void;
+  /** The whole display order, the body of `PUT …/categories/order` (`API.md`). */
+  onReorder: (orderedIds: readonly string[]) => void;
   /** Read-only here — only for the "Anfragen" column and the delete guard. */
   applications: readonly Application[];
 };
@@ -74,7 +81,11 @@ function matchesSearch(category: Category, search: string): boolean {
 
 export function CategoriesScreen({
   categories,
-  onCategoriesChange,
+  onCreate,
+  onEdit,
+  onSetActive,
+  onDelete,
+  onReorder,
   applications,
 }: CategoriesScreenProps) {
   const [view, setView] = useState<CategoryView>('all');
@@ -143,20 +154,9 @@ export function CategoriesScreen({
     }
 
     if (editing === 'new') {
-      // The backend owns Category ids (`API.md`); until the request layer
-      // exists, a random UUID stands in for the one it will hand back — the
-      // same shape, and nothing derives it from the name.
-      onCategoriesChange([
-        ...categories,
-        { id: crypto.randomUUID(), ...draft },
-      ]);
+      onCreate(draft);
     } else {
-      const id = editing.id;
-      onCategoriesChange(
-        categories.map((category) =>
-          category.id === id ? { ...category, ...draft } : category,
-        ),
-      );
+      onEdit(editing.id, draft);
     }
 
     setEditing(null);
@@ -171,9 +171,7 @@ export function CategoriesScreen({
     }
 
     if (window.confirm(de.categories.confirmDelete(category.name))) {
-      onCategoriesChange(
-        categories.filter((candidate) => candidate.id !== category.id),
-      );
+      onDelete(category.id);
     }
   }
 
@@ -268,18 +266,10 @@ export function CategoriesScreen({
           onEdit={setEditing}
           onDelete={remove}
           onToggleActive={(category, active) => {
-            onCategoriesChange(
-              categories.map((candidate) =>
-                candidate.id === category.id
-                  ? { ...candidate, active }
-                  : candidate,
-              ),
-            );
+            onSetActive(category.id, active);
           }}
           onMove={(category, direction) => {
-            onCategoriesChange(
-              moveCategory(categories, category.id, direction),
-            );
+            onReorder(moveCategory(categories, category.id, direction));
           }}
           emptyState={
             <EmptyState

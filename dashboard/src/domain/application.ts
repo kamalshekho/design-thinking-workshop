@@ -91,6 +91,16 @@ export type Application = {
 };
 
 /**
+ * What a Staff member may change about an Application; the rest is
+ * server-owned. It is the body of `PATCH /applications/{id}` (`API.md`), which
+ * is why the screens hand one of these up rather than a replacement list — a
+ * per-field change is not recoverable from a new array.
+ */
+export type ApplicationEdit = Partial<
+  Pick<Application, 'status' | 'ownerId' | 'internalNotes'>
+>;
+
+/**
  * An Application nobody has taken on yet. The Applications list reads this as
  * its unread state (`A14`): as long as no Staff member owns the Application,
  * the row stays emphasised; assigning an Owner — or clearing one — flips it.

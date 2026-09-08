@@ -6,29 +6,27 @@
  * Both screens held this state and these four functions verbatim — the second
  * copy is how the bulk confirmation and the "forget ids that just left"
  * bookkeeping could drift apart. The list itself stays where it was: this hook
- * owns no Applications, it edits through the callbacks the screen was handed.
+ * owns no Applications and builds none — it names an intent through the
+ * callbacks the screen was handed, and `update` is `onEdit` with the drawer's
+ * Application already resolved.
  */
 
 import { useState } from 'react';
 
 import { de } from '@/content/de';
-import type { Application } from '@/domain/application';
-
-/** What the drawer may change about an Application; the rest is server-owned. */
-export type ApplicationEdit = Partial<
-  Pick<Application, 'status' | 'ownerId' | 'internalNotes'>
->;
+import type { Application, ApplicationEdit } from '@/domain/application';
 
 type UseApplicationActionsOptions = {
   applications: readonly Application[];
-  onApplicationsChange: (applications: Application[]) => void;
+  /** Changes one field of one Application; owned by `App`, which is what a `PATCH` is built from. */
+  onEdit: (id: string, change: ApplicationEdit) => void;
   /** Discards the named Applications; owned by `App`, since `discardedAt` is a field on the one list every screen reads. */
   onDiscard: (ids: ReadonlySet<string>) => void;
 };
 
 export function useApplicationActions({
   applications,
-  onApplicationsChange,
+  onEdit,
   onDiscard,
 }: UseApplicationActionsOptions) {
   /** The Application the drawer shows, or `null` while it is closed. */
@@ -52,14 +50,6 @@ export function useApplicationActions({
    */
   function toggle(id: string): void {
     setSelectedId((current) => (current === id ? null : id));
-  }
-
-  function update(id: string, change: ApplicationEdit): void {
-    onApplicationsChange(
-      applications.map((application) =>
-        application.id === id ? { ...application, ...change } : application,
-      ),
-    );
   }
 
   /** Ids that just left the list cannot be acted on any more. */
@@ -103,7 +93,8 @@ export function useApplicationActions({
     open: setSelectedId,
     toggle,
     close,
-    update,
+    /** The drawer's edits, straight through — this hook has nothing to add. */
+    update: onEdit,
     discard,
     discardSelected,
   };

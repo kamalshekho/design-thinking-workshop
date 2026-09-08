@@ -26,7 +26,11 @@ type AppProps = {
 /**
  * The application: the sign-in gate, the shell, and which screen the sidebar's
  * `#fragment` currently points at. The data every screen reads comes from
- * `useDashboardData` and is handed down, so no screen holds a list of its own.
+ * `useDashboardData` and is handed down, so no screen holds a list of its own;
+ * what comes back up is an intent — which Application, which field — and this
+ * is where it becomes a change to the list. Once the request layer exists
+ * (ADR-0006) a container per screen takes this wiring over and turns the same
+ * intent into a request instead.
  */
 export function App({ now, signedInAs = null }: AppProps = {}) {
   const current = useCurrentScreen();
@@ -59,7 +63,7 @@ export function App({ now, signedInAs = null }: AppProps = {}) {
         <OverviewScreen
           staffName={staffMember.name}
           applications={data.applications}
-          onApplicationsChange={data.setApplications}
+          onEdit={data.editApplication}
           onDiscard={data.discard}
           categories={data.categories}
           owners={data.owners}
@@ -71,7 +75,7 @@ export function App({ now, signedInAs = null }: AppProps = {}) {
         <ApplicationsScreen
           now={referenceDate}
           applications={data.applications}
-          onApplicationsChange={data.setApplications}
+          onEdit={data.editApplication}
           onDiscard={data.discard}
           categories={data.categories}
           owners={data.owners}
@@ -82,7 +86,11 @@ export function App({ now, signedInAs = null }: AppProps = {}) {
       {current === 'categories' && (
         <CategoriesScreen
           categories={data.categories}
-          onCategoriesChange={data.setCategories}
+          onCreate={data.createCategory}
+          onEdit={data.editCategory}
+          onSetActive={data.setCategoryActive}
+          onDelete={data.deleteCategory}
+          onReorder={data.reorderCategories}
           applications={data.applications}
         />
       )}

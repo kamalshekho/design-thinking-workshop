@@ -19,6 +19,13 @@ export type Category = {
 };
 
 /**
+ * A Category without its id: what the add dialog submits and what
+ * `POST /categories` takes, and — as a subset — what `PATCH /categories/{id}`
+ * takes (`API.md`). The server mints the id.
+ */
+export type CategoryDraft = Omit<Category, 'id'>;
+
+/**
  * The named views over the Categories list, the way `APPLICATION_VIEWS` names
  * Anfragen's. "Inaktiv" is a view rather than a filter because deactivating is
  * the alternative to deleting (`A15`) — the list of what a Staff member has
@@ -51,33 +58,37 @@ export function isCategoryNameTaken(
 }
 
 /**
- * Swaps a Category with its neighbour. Returns the list unchanged when the
- * Category is already at that end, so the caller can render the button
- * disabled and still call this without a guard.
+ * Swaps a Category with its neighbour and returns the resulting display order
+ * as ids — the body of `PUT /api/v1/staff/categories/order` (`API.md`), which
+ * takes the whole order rather than a direction so two reorders in a row
+ * cannot leave two Categories sharing a position.
+ *
+ * Returns the order unchanged when the Category is already at that end, so the
+ * caller can render the button disabled and still call this without a guard.
  */
 export function moveCategory(
   categories: readonly Category[],
   id: string,
   direction: -1 | 1,
-): Category[] {
-  const index = categories.findIndex((category) => category.id === id);
+): string[] {
+  const ids = categories.map((category) => category.id);
+  const index = ids.indexOf(id);
   const target = index + direction;
 
-  if (index === -1 || target < 0 || target >= categories.length) {
-    return [...categories];
+  if (index === -1 || target < 0 || target >= ids.length) {
+    return ids;
   }
 
-  const next = [...categories];
-  const moved = next[index];
-  const displaced = next[target];
+  const moved = ids[index];
+  const displaced = ids[target];
 
   if (moved === undefined || displaced === undefined) {
-    return next;
+    return ids;
   }
 
-  next[index] = displaced;
-  next[target] = moved;
-  return next;
+  ids[index] = displaced;
+  ids[target] = moved;
+  return ids;
 }
 
 /**

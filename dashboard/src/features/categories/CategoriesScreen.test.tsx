@@ -29,7 +29,38 @@ function Host({
   return (
     <CategoriesScreen
       categories={categories}
-      onCategoriesChange={setCategories}
+      onCreate={(draft) => {
+        setCategories((current) => [
+          ...current,
+          { id: crypto.randomUUID(), ...draft },
+        ]);
+      }}
+      onEdit={(id, draft) => {
+        setCategories((current) =>
+          current.map((category) =>
+            category.id === id ? { ...category, ...draft } : category,
+          ),
+        );
+      }}
+      onSetActive={(id, active) => {
+        setCategories((current) =>
+          current.map((category) =>
+            category.id === id ? { ...category, active } : category,
+          ),
+        );
+      }}
+      onDelete={(id) => {
+        setCategories((current) =>
+          current.filter((category) => category.id !== id),
+        );
+      }}
+      onReorder={(orderedIds) => {
+        setCategories((current) =>
+          orderedIds
+            .map((id) => current.find((category) => category.id === id))
+            .filter((category): category is Category => category !== undefined),
+        );
+      }}
       applications={applications}
     />
   );
