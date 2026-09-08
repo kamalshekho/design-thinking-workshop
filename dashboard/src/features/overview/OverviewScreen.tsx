@@ -6,7 +6,12 @@
 
 import { PageHeader } from '@/components/shared/page-header';
 import { de } from '@/content/de';
-import type { Application, Category, Owner } from '@/domain/application';
+import type {
+  Application,
+  ApplicationEdit,
+  Category,
+  Owner,
+} from '@/domain/application';
 
 import { OpenApplicationsPanel } from './OpenApplicationsPanel';
 import { OverviewStats } from './OverviewStats';
@@ -15,7 +20,7 @@ type OverviewScreenProps = {
   /** The signed-in Staff member's name, for the welcome headline. */
   staffName: string;
   applications: readonly Application[];
-  onApplicationsChange: (applications: Application[]) => void;
+  onEdit: (id: string, change: ApplicationEdit) => void;
   onDiscard: (ids: ReadonlySet<string>) => void;
   categories: readonly Category[];
   owners: readonly Owner[];
@@ -25,7 +30,7 @@ type OverviewScreenProps = {
 export function OverviewScreen({
   staffName,
   applications,
-  onApplicationsChange,
+  onEdit,
   onDiscard,
   categories,
   owners,
@@ -44,7 +49,7 @@ export function OverviewScreen({
 
       <OpenApplicationsPanel
         applications={applications}
-        onApplicationsChange={onApplicationsChange}
+        onEdit={onEdit}
         onDiscard={onDiscard}
         categories={categories}
         owners={owners}

@@ -15,9 +15,9 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
-import type { Application, Owner } from '@/domain/application';
+import type { Application, ApplicationEdit, Owner } from '@/domain/application';
 import { isDiscarded, setDiscarded } from '@/domain/application';
-import type { Category } from '@/domain/category';
+import type { Category, CategoryDraft } from '@/domain/category';
 
 import {
   createMockApplications,
@@ -37,6 +37,19 @@ export function useDashboardData(now: Date) {
 
   /** Kategorien edits this list; Anfragen's filter, its rows and the drawer read it. */
   const [categories, setCategories] = useState<Category[]>(mockCategories);
+
+  /**
+   * One Application, one field — the shape of `PATCH /applications/{id}`
+   * (`API.md`). The screens name the change; turning it into a list is this
+   * file's job, and one day the request layer's.
+   */
+  const editApplication = useCallback((id: string, change: ApplicationEdit) => {
+    setApplications((current) =>
+      current.map((application) =>
+        application.id === id ? { ...application, ...change } : application,
+      ),
+    );
+  }, []);
 
   /**
    * The three moves over `discardedAt` (`A16`). Discarding and restoring are
@@ -67,6 +80,62 @@ export function useDashboardData(now: Date) {
   }, []);
 
   /**
+   * The five moves Kategorien makes, one per endpoint in `API.md`'s
+   * "Categories" block. The id of a new Category is the server's to mint;
+   * until the request layer exists a random UUID stands in for the one it
+   * will hand back, and nothing derives it from the name.
+   */
+  const createCategory = useCallback((draft: CategoryDraft) => {
+    setCategories((current) => [
+      ...current,
+      { id: crypto.randomUUID(), ...draft },
+    ]);
+  }, []);
+
+  const editCategory = useCallback((id: string, draft: CategoryDraft) => {
+    setCategories((current) =>
+      current.map((category) =>
+        category.id === id ? { ...category, ...draft } : category,
+      ),
+    );
+  }, []);
+
+  const setCategoryActive = useCallback((id: string, active: boolean) => {
+    setCategories((current) =>
+      current.map((category) =>
+        category.id === id ? { ...category, active } : category,
+      ),
+    );
+  }, []);
+
+  const deleteCategory = useCallback((id: string) => {
+    setCategories((current) =>
+      current.filter((category) => category.id !== id),
+    );
+  }, []);
+
+  /**
+   * The whole order, as `PUT …/categories/order` takes it. The server rejects
+   * an order that is not a permutation of the list (`ORDER_INCOMPLETE`); here
+   * an unknown id is dropped and an omitted Category appended, so a stale
+   * order cannot silently lose one.
+   */
+  const reorderCategories = useCallback((orderedIds: readonly string[]) => {
+    setCategories((current) => {
+      const byId = new Map(current.map((category) => [category.id, category]));
+      const ordered = orderedIds
+        .map((id) => byId.get(id))
+        .filter((category): category is Category => category !== undefined);
+      const orderedSet = new Set(ordered.map((category) => category.id));
+
+      return [
+        ...ordered,
+        ...current.filter((category) => !orderedSet.has(category.id)),
+      ];
+    });
+  }, []);
+
+  /**
    * Newest first, so the Application a Staff member just discarded is the
    * first row on the fourth screen.
    */
@@ -85,9 +154,13 @@ export function useDashboardData(now: Date) {
 
   return {
     applications,
-    setApplications,
+    editApplication,
     categories,
-    setCategories,
+    createCategory,
+    editCategory,
+    setCategoryActive,
+    deleteCategory,
+    reorderCategories,
     owners,
     discardedApplications,
     discard,

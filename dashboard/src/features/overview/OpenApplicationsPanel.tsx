@@ -7,9 +7,9 @@
  * open Applications after search and filtering (`A13`), with a link across for
  * the rest.
  *
- * `applications` and `onApplicationsChange` are the same pair `App` hands
- * Anfragen, so an edit made from either screen is the same Application, not
- * an independent copy.
+ * `applications` and `onEdit` are the same pair `App` hands Anfragen, so an
+ * edit made from either screen is the same Application, not an independent
+ * copy.
  */
 
 import { Archive } from '@untitledui/icons';
@@ -17,7 +17,12 @@ import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/base/buttons/button';
 import { de } from '@/content/de';
-import type { Application, Category, Owner } from '@/domain/application';
+import type {
+  Application,
+  ApplicationEdit,
+  Category,
+  Owner,
+} from '@/domain/application';
 import { ApplicationDrawer } from '@/features/applications/ApplicationDrawer';
 import { ApplicationsList } from '@/features/applications/ApplicationsList';
 import { buildApplicationsHref } from '@/features/applications/filterApplications';
@@ -33,7 +38,8 @@ import {
 
 type OpenApplicationsPanelProps = {
   applications: readonly Application[];
-  onApplicationsChange: (applications: Application[]) => void;
+  /** Changes one field of one Application, the same handler Anfragen gets. */
+  onEdit: (id: string, change: ApplicationEdit) => void;
   /** Discards the named Applications (`A16`), the same handler Anfragen gets. */
   onDiscard: (ids: ReadonlySet<string>) => void;
   /** Owned by Kategorien, so the filter and the rows read the edited list. */
@@ -53,7 +59,7 @@ function hasActiveFilters(filters: OpenApplicationsFilters): boolean {
 
 export function OpenApplicationsPanel({
   applications,
-  onApplicationsChange,
+  onEdit,
   onDiscard,
   categories,
   owners,
@@ -65,7 +71,7 @@ export function OpenApplicationsPanel({
 
   const actions = useApplicationActions({
     applications,
-    onApplicationsChange,
+    onEdit,
     onDiscard,
   });
 

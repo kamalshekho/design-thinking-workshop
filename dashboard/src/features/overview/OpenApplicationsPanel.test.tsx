@@ -43,7 +43,13 @@ function Host({ initial }: { initial: Application[] }) {
   return (
     <OpenApplicationsPanel
       applications={applications}
-      onApplicationsChange={setApplications}
+      onEdit={(id, change) => {
+        setApplications((current) =>
+          current.map((application) =>
+            application.id === id ? { ...application, ...change } : application,
+          ),
+        );
+      }}
       onDiscard={(ids) => {
         setApplications((current) =>
           setDiscarded(current, ids, NOW.toISOString()),

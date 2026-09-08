@@ -49,6 +49,7 @@ import { Dot } from '@/components/foundations/dot-icon';
 import { de } from '@/content/de';
 import type {
   Application,
+  ApplicationEdit,
   ApplicationStatus,
   Category,
   Owner,
@@ -58,7 +59,6 @@ import { cx } from '@/utils/cx';
 
 import { CONTROL_CLASSNAME } from './controlStyles';
 import { OwnerSelect } from './OwnerSelect';
-import type { ApplicationEdit } from './useApplicationActions';
 
 type ApplicationDrawerProps = {
   application: Application;

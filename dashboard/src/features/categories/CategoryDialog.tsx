@@ -27,7 +27,7 @@ import { Button } from '@/components/base/buttons/button';
 import { Input } from '@/components/base/input/input';
 import { Toggle } from '@/components/base/toggle/toggle';
 import { de } from '@/content/de';
-import type { Category } from '@/domain/category';
+import type { Category, CategoryDraft } from '@/domain/category';
 import {
   CATEGORY_DESCRIPTION_MAX_LENGTH,
   CATEGORY_NAME_MAX_LENGTH,
@@ -36,8 +36,6 @@ import {
 import { cx } from '@/utils/cx';
 
 /** Everything a Category carries except its id, which the screen assigns. */
-export type CategoryDraft = Omit<Category, 'id'>;
-
 type CategoryDialogProps = {
   /** The Category being edited, or `null` while adding a new one. */
   category: Category | null;

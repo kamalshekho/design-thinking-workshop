@@ -20,6 +20,7 @@ import { TabStrip } from '@/components/shared/tab-strip';
 import { de } from '@/content/de';
 import type {
   Application,
+  ApplicationEdit,
   ApplicationView,
   Category,
   Owner,
@@ -39,7 +40,8 @@ type ApplicationsScreenProps = {
   /** The view/status a Übersicht metric card linked in with, if any. */
   initialFilters?: Partial<ApplicationFilters>;
   applications: readonly Application[];
-  onApplicationsChange: (applications: Application[]) => void;
+  /** Changes Status, Owner or internal notes on one Application — a `PATCH`, not a new list. */
+  onEdit: (id: string, change: ApplicationEdit) => void;
   /**
    * Discards the named Applications (`A16`) — they leave this list and appear
    * on the fourth screen.
@@ -54,7 +56,7 @@ export function ApplicationsScreen({
   now,
   initialFilters,
   applications,
-  onApplicationsChange,
+  onEdit,
   onDiscard,
   categories,
   owners,
@@ -66,7 +68,7 @@ export function ApplicationsScreen({
 
   const actions = useApplicationActions({
     applications,
-    onApplicationsChange,
+    onEdit,
     onDiscard,
   });
 

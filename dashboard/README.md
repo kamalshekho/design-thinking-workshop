@@ -266,7 +266,7 @@ application's own code, both from the domain, and all three from the wire:
 
 | Directory         | Holds                                                                                 |
 | ----------------- | ------------------------------------------------------------------------------------- |
-| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`          |
+| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`         |
 | `src/features/`   | one folder per screen — `overview`, `applications`, `categories`, `discarded`, `auth` |
 | `src/components/` | UI shared across screens (see below)                                                  |
 | `src/domain/`     | `Application`, `Category`, `StaffMember` and the predicates over them                 |
@@ -353,6 +353,12 @@ on Kategorien `onCreate`, `onEdit`, `onSetActive`, `onDelete` and
 `PUT …/categories/order`. The whole-list setters `useDashboardData` handed down
 cannot survive a per-field `PATCH`: which Application changed, and in which
 field, is not recoverable from a new array.
+
+What those callbacks carry lives in `src/domain/`, not in the component that
+happens to raise it: `ApplicationEdit` is the body of `PATCH /applications/{id}`
+and `CategoryDraft` the body of `POST /categories`, so `src/api/` can name both
+without importing a screen. `moveCategory` produces the resulting order as ids
+rather than a new list, for the same reason.
 
 One piece of state deliberately sits in the container rather than in the
 component that renders it. The internal-notes draft — one at a time, because
