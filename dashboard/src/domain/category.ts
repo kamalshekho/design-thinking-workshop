@@ -31,42 +31,6 @@ export type CategoryView = (typeof CATEGORY_VIEWS)[number];
 export const CATEGORY_NAME_MAX_LENGTH = 60;
 export const CATEGORY_DESCRIPTION_MAX_LENGTH = 140;
 
-/** ß and the umlauts, spelled out the way German transliterates them. */
-const TRANSLITERATIONS: Record<string, string> = {
-  ä: 'ae',
-  ö: 'oe',
-  ü: 'ue',
-  ß: 'ss',
-};
-
-/**
- * A readable, stable id derived from the name — `Soziale Medien` becomes
- * `soziale-medien`. The backend owns real ids (`A12`); until it exists, a slug
- * keeps the mock set legible in the URL fragment and in test failures.
- */
-export function categoryIdFor(name: string, taken: Iterable<string>): string {
-  const slug = name
-    .toLowerCase()
-    .replace(/[äöüß]/g, (character) => TRANSLITERATIONS[character] ?? character)
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-
-  const base = slug === '' ? 'kategorie' : slug;
-  const used = new Set(taken);
-
-  if (!used.has(base)) {
-    return base;
-  }
-
-  let suffix = 2;
-  while (used.has(`${base}-${String(suffix)}`)) {
-    suffix += 1;
-  }
-  return `${base}-${String(suffix)}`;
-}
-
 /**
  * Names are what an Applicant reads, so two Categories may not share one.
  * Compared case- and whitespace-insensitively; `exceptId` lets the Category

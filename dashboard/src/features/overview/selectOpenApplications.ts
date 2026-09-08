@@ -56,6 +56,6 @@ export function selectOpenApplications(
     )
     .sort(
       (a, b) =>
-        new Date(a.receivedAt).getTime() - new Date(b.receivedAt).getTime(),
+        new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime(),
     );
 }

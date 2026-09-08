@@ -9,20 +9,18 @@ const NOW = new Date('2026-09-05T12:00:00.000Z');
 function application(overrides: Partial<Application> = {}): Application {
   return {
     id: 'a1',
-    applicantName: 'Mara Weber',
+    name: 'Mara Weber',
     email: 'mara.weber@example.org',
-    receivedAt: '2026-09-04T09:00:00.000Z',
+    submittedAt: '2026-09-04T09:00:00.000Z',
     categoryId: 'social-media',
-    weeklyAvailability: 4,
-    status: 'new',
+    weeklyTime: 'HOURS_3_5',
+    status: 'NEW',
     ownerId: null,
-    message: 'Ich möchte mithelfen.',
+    about: 'Ich möchte mithelfen.',
     internalNotes: '',
     discardedAt: null,
-    consent: {
-      givenAt: '2026-09-04T09:00:00.000Z',
-      privacyPolicyVersion: '2026-05',
-    },
+    consentAt: '2026-09-04T09:00:00.000Z',
+    consentTextVersion: '2026-09',
     ...overrides,
   };
 }
@@ -53,8 +51,11 @@ describe('filterApplications', () => {
 
   it('treats an Application as stale on its seventh day, not before', () => {
     const applications = [
-      application({ id: 'six-days', receivedAt: '2026-08-30T12:00:00.000Z' }),
-      application({ id: 'seven-days', receivedAt: '2026-08-29T12:00:00.000Z' }),
+      application({ id: 'six-days', submittedAt: '2026-08-30T12:00:00.000Z' }),
+      application({
+        id: 'seven-days',
+        submittedAt: '2026-08-29T12:00:00.000Z',
+      }),
     ];
 
     const result = filterApplications(
@@ -68,9 +69,9 @@ describe('filterApplications', () => {
 
   it('searches the applicant name and the email address, ignoring case', () => {
     const applications = [
-      application({ id: 'by-name', applicantName: 'Jonas Krüger' }),
+      application({ id: 'by-name', name: 'Jonas Krüger' }),
       application({ id: 'by-mail', email: 'ANNA@example.org' }),
-      application({ id: 'neither', applicantName: 'Lea Fischer' }),
+      application({ id: 'neither', name: 'Lea Fischer' }),
     ];
 
     expect(
@@ -96,25 +97,25 @@ describe('filterApplications', () => {
         id: 'match',
         ownerId: null,
         categoryId: 'legal',
-        status: 'in-review',
+        status: 'IN_REVIEW',
       }),
       application({
         id: 'wrong-category',
         ownerId: null,
         categoryId: 'social-media',
-        status: 'in-review',
+        status: 'IN_REVIEW',
       }),
       application({
         id: 'wrong-status',
         ownerId: null,
         categoryId: 'legal',
-        status: 'new',
+        status: 'NEW',
       }),
       application({
         id: 'has-owner',
         ownerId: 'staff-1',
         categoryId: 'legal',
-        status: 'in-review',
+        status: 'IN_REVIEW',
       }),
     ];
 
@@ -124,7 +125,7 @@ describe('filterApplications', () => {
         view: 'unassigned',
         search: '',
         categoryId: 'legal',
-        status: 'in-review',
+        status: 'IN_REVIEW',
       },
       NOW,
     );

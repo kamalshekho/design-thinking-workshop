@@ -6,15 +6,29 @@
 
 /** The status flow proposed in `A9`. `categorised` is deliberately not a status. */
 export const APPLICATION_STATUSES = [
-  'new',
-  'in-review',
-  'intro-booked',
-  'active',
-  'waitlisted',
-  'declined',
+  'NEW',
+  'IN_REVIEW',
+  'INTRO_BOOKED',
+  'ACTIVE',
+  'WAITLISTED',
+  'DECLINED',
 ] as const;
 
 export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
+
+/**
+ * How much time an Applicant offers per week. A band, not a number of hours:
+ * the form asks for one of these four and `IRREGULAR` is not a quantity at
+ * all (`API.md`, "Wire names").
+ */
+export const WEEKLY_TIMES = [
+  'HOURS_1_2',
+  'HOURS_3_5',
+  'HOURS_5_PLUS',
+  'IRREGULAR',
+] as const;
+
+export type WeeklyTime = (typeof WEEKLY_TIMES)[number];
 
 /**
  * The statuses that mean an Application is done, one way or the other.
@@ -23,8 +37,8 @@ export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
  * means.
  */
 export const COMPLETED_APPLICATION_STATUSES: readonly ApplicationStatus[] = [
-  'active',
-  'declined',
+  'ACTIVE',
+  'DECLINED',
 ];
 
 /**
@@ -49,15 +63,20 @@ export type Owner = {
 
 export type Application = {
   id: string;
-  applicantName: string;
+  name: string;
   email: string;
-  receivedAt: string;
+  submittedAt: string;
   categoryId: string;
-  /** Hours per week the Applicant offered on the form. */
-  weeklyAvailability: number;
+  /** The time band the Applicant picked on the form. */
+  weeklyTime: WeeklyTime;
   status: ApplicationStatus;
   ownerId: string | null;
-  message: string;
+  /**
+   * What the Applicant wrote about themselves. `null` when they wrote
+   * nothing — the backend stores an empty text as no text (`API.md`), so a
+   * row must not assume a string here.
+   */
+  about: string | null;
   internalNotes: string;
   /**
    * When a Staff member discarded it, or `null` while it is in the working
@@ -65,10 +84,10 @@ export type Application = {
    * here. Discarded is not a Status — an Application carries both at once.
    */
   discardedAt: string | null;
-  consent: {
-    givenAt: string;
-    privacyPolicyVersion: string;
-  };
+  /** When the Applicant agreed to the consent text, server-stamped. */
+  consentAt: string;
+  /** Which wording of the consent text they agreed to, e.g. `2026-09`. */
+  consentTextVersion: string;
 };
 
 /**
@@ -116,7 +135,7 @@ export const APPLICATION_VIEWS = ['all', 'unassigned', 'stale'] as const;
 export type ApplicationView = (typeof APPLICATION_VIEWS)[number];
 
 /**
- * The age at which an Application counts as stale. This number has no
- * assumption entry yet — issue #17 must add one before the view ships.
+ * The age at which an Application counts as stale (`A19`). The German label
+ * on the "stale" view is built from this number, so the two cannot disagree.
  */
 export const STALE_AFTER_DAYS = 7;

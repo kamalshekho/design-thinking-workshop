@@ -240,7 +240,7 @@ Every Application, including discarded ones.
 | `name`               | string         | as the applicant typed it                             |
 | `email`              | string         | as the applicant typed it                             |
 | `weeklyTime`         | enum           | `HOURS_1_2`, `HOURS_3_5`, `HOURS_5_PLUS`, `IRREGULAR` |
-| `about`              | string         | may be `""`                                           |
+| `about`              | string \| null | `null` when the applicant wrote nothing               |
 | `status`             | enum           | see below                                             |
 | `ownerId`            | string \| null | `null` means nobody has taken it on (`A14`)           |
 | `internalNotes`      | string         | staff-written, may be `""`                            |
@@ -898,17 +898,23 @@ Proposed for agreement with the backend team:
 ## What the dashboard changes on its own side
 
 Not work for the backend, listed because the contract above assumes it and
-because the mock data currently disagrees with the wire on eight names:
+because the mock data disagreed with the wire on eight names. The renaming
+items are struck through: they are done, on the mock data, ahead of the first
+request:
 
-- rename the domain fields per [Wire names](#wire-names), and replace
+- ~~rename the domain fields per [Wire names](#wire-names), and replace
   `weeklyAvailability: number` with the `weeklyTime` enum plus four German
-  labels in `src/content/de.ts`;
-- spell statuses in `SCREAMING_SNAKE_CASE`;
+  labels in `src/content/de.ts`~~ — done, against the mock data; the labels are
+  `de.weeklyTimes` and carry no "pro Woche" suffix, since `IRREGULAR` is not a
+  quantity;
+- ~~spell statuses in `SCREAMING_SNAKE_CASE`~~ — done;
 - ~~add `discardedAt` to the Application type and the fourth screen with its
   own table, plus restore and permanent-delete actions~~ — done, against the
   mock data; `README.md` records the screen and the wording;
-- add `description` to the Category type — it is already there — and drop the
-  client-side slug id generator, since the backend owns ids;
+- ~~add `description` to the Category type — it is already there — and drop the
+  client-side slug id generator, since the backend owns ids~~ — done; a
+  Category added on Kategorien takes a `crypto.randomUUID()` until the request
+  layer hands the backend's id back;
 - replace the sign-in screen's "kein Konto" message with one wording for
   `INVALID_CREDENTIALS`, add one for `RATE_LIMITED`, and add the `de.errors`
   block the [Errors](#errors) table is looked up in;
@@ -919,9 +925,9 @@ because the mock data currently disagrees with the wire on eight names:
   replaying today's `status`/`ownerId` across the week, and let
   `OverviewStats` read `App`'s shared list rather than building its own mock
   set, so the cards and the "Offene Anfragen" panel cannot disagree;
-- take the stale threshold's German label from `STALE_AFTER_DAYS` instead of
+- ~~take the stale threshold's German label from `STALE_AFTER_DAYS` instead of
   spelling "Älter als 7 Tage" a second time, and point the constant's comment
-  at `A19`, which exists;
+  at `A19`, which exists~~ — done;
 - replace the sidebar's mock avatar with initials, and read the signed-in staff
   member from `GET /api/v1/staff/me` rather than from
   `src/data/currentStaffMember.ts`;
@@ -929,7 +935,7 @@ because the mock data currently disagrees with the wire on eight names:
   unset `VITE_API_BASE_URL`;
 - add the stream connection marker.
 
-Two smaller drifts to fix while renaming: the mock spells the fourth Category
+~~Two smaller drifts to fix while renaming: the mock spells the fourth Category
 `Sonstiges` where the backend seeds `Etwas anderes`, and the mock stamps
 `privacyPolicyVersion: '2026-05'` where the consent text is at `2026-09`. In
-both cases the backend is right and the mock is stale.
+both cases the backend is right and the mock is stale.~~ — both fixed.

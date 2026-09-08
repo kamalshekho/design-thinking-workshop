@@ -118,26 +118,26 @@ describe('CategoriesScreen', () => {
     render(<Host />);
 
     await user.click(
-      screen.getByRole('button', { name: de.categories.editOne('Sonstiges') }),
+      screen.getByRole('button', {
+        name: de.categories.editOne('Etwas anderes'),
+      }),
     );
 
     const field = screen.getByRole('textbox', {
       name: /^Name/,
     });
     await user.clear(field);
-    await user.type(field, 'Etwas anderes');
+    await user.type(field, 'Sonstiges');
     await user.click(
       screen.getByRole('button', { name: de.categories.dialog.save }),
     );
 
     expect(
-      screen.getByRole('button', {
-        name: de.categories.editOne('Etwas anderes'),
-      }),
+      screen.getByRole('button', { name: de.categories.editOne('Sonstiges') }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', {
-        name: de.categories.editOne('Sonstiges'),
+        name: de.categories.editOne('Etwas anderes'),
       }),
     ).not.toBeInTheDocument();
   });
@@ -148,14 +148,16 @@ describe('CategoriesScreen', () => {
 
     await user.click(
       screen.getByRole('switch', {
-        name: de.categories.toggleOne('Sonstiges'),
+        name: de.categories.toggleOne('Etwas anderes'),
       }),
     );
 
     await user.click(tab(2));
 
     expect(
-      screen.getByRole('button', { name: de.categories.editOne('Sonstiges') }),
+      screen.getByRole('button', {
+        name: de.categories.editOne('Etwas anderes'),
+      }),
     ).toBeInTheDocument();
   });
 

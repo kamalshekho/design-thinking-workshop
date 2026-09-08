@@ -284,7 +284,7 @@ describe('App', () => {
 
     await user.selectOptions(
       screen.getByLabelText(de.filters.status),
-      screen.getByRole('option', { name: de.statuses['in-review'] }),
+      screen.getByRole('option', { name: de.statuses.IN_REVIEW }),
     );
 
     await waitFor(() =>

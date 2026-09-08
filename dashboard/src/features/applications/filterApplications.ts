@@ -66,7 +66,7 @@ function matchesView(
     case 'unassigned':
       return application.ownerId === null;
     case 'stale':
-      return daysSince(application.receivedAt, now) >= STALE_AFTER_DAYS;
+      return daysSince(application.submittedAt, now) >= STALE_AFTER_DAYS;
   }
 }
 
@@ -80,7 +80,7 @@ export function matchesSearch(
     return true;
   }
   return (
-    application.applicantName.toLowerCase().includes(term) ||
+    application.name.toLowerCase().includes(term) ||
     application.email.toLowerCase().includes(term)
   );
 }

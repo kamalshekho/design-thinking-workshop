@@ -27,7 +27,6 @@ import { isDiscarded } from '@/domain/application';
 import type { Category, CategoryView } from '@/domain/category';
 import {
   CATEGORY_VIEWS,
-  categoryIdFor,
   countApplicationsPerCategory,
   moveCategory,
 } from '@/domain/category';
@@ -144,11 +143,13 @@ export function CategoriesScreen({
     }
 
     if (editing === 'new') {
-      const id = categoryIdFor(
-        draft.name,
-        categories.map((category) => category.id),
-      );
-      onCategoriesChange([...categories, { id, ...draft }]);
+      // The backend owns Category ids (`API.md`); until the request layer
+      // exists, a random UUID stands in for the one it will hand back — the
+      // same shape, and nothing derives it from the name.
+      onCategoriesChange([
+        ...categories,
+        { id: crypto.randomUUID(), ...draft },
+      ]);
     } else {
       const id = editing.id;
       onCategoriesChange(
