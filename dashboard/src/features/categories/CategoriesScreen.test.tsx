@@ -109,7 +109,7 @@ describe('CategoriesScreen', () => {
     );
 
     expect(
-      screen.getByText(de.categories.dialog.nameTaken),
+      screen.getByText(de.errors.fields.CATEGORY_NAME_TAKEN),
     ).toBeInTheDocument();
   });
 

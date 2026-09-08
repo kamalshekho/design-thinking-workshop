@@ -4,12 +4,20 @@
  * file in `dashboard/` allowed to hold applicant- or staff-facing German.
  */
 
+import type { FieldErrorCode, TopLevelErrorCode } from '@/domain/apiError';
 import type {
   ApplicationStatus,
   ApplicationView,
   WeeklyTime,
 } from '@/domain/application';
-import { STALE_AFTER_DAYS } from '@/domain/application';
+import {
+  INTERNAL_NOTES_MAX_LENGTH,
+  STALE_AFTER_DAYS,
+} from '@/domain/application';
+import {
+  CATEGORY_DESCRIPTION_MAX_LENGTH,
+  CATEGORY_NAME_MAX_LENGTH,
+} from '@/domain/category';
 
 export const de = {
   association: 'ichbinhier',
@@ -74,10 +82,14 @@ export const de = {
     passwordLabel: 'Passwort',
     submit: 'Anmelden',
 
+    /**
+     * The three wordings the screen can raise on its own, before a request is
+     * made. A rejected Sign-in is not among them: the backend answers
+     * `INVALID_CREDENTIALS`, and `errors.codes` words it.
+     */
     emailRequired: 'Bitte gib deine E-Mail-Adresse ein.',
     emailInvalid: 'Diese E-Mail-Adresse ist unvollständig.',
     passwordRequired: 'Bitte gib dein Passwort ein.',
-    unknownAccount: 'Zu dieser E-Mail-Adresse gibt es kein Konto.',
 
     /**
      * Stated instead of a "Passwort vergessen?" link, because there is no
@@ -90,6 +102,59 @@ export const de = {
   fields: {
     /** The password input's own visibility toggle, in every form. */
     togglePassword: 'Passwort anzeigen oder verbergen',
+  },
+
+  /**
+   * What a Staff member reads when a request fails. The backend sends a `code`
+   * and no German (`API.md`, "Errors"), so this block is the one place a
+   * failure is worded, and `content/errorMessage.ts` is what looks a code up
+   * in it. A code neither table names — a `405` Spring raises before a
+   * controller sees the body, or one the contract grows later — falls back to
+   * `general`, so an unknown code never leaves a screen wordless.
+   */
+  errors: {
+    general: 'Das hat nicht geklappt. Bitte versuche es noch einmal.',
+
+    codes: {
+      VALIDATION_FAILED: 'Bitte prüfe die markierten Felder.',
+      NOT_DISCARDED:
+        'Diese Anfrage ist nicht aussortiert. Die Liste wurde neu geladen.',
+      /**
+       * One wording for both causes — a wrong password and an address no
+       * account has read identically, because the Sign-in refuses to say
+       * which of the two it was (`API.md`).
+       */
+      INVALID_CREDENTIALS: 'E-Mail-Adresse oder Passwort stimmt nicht.',
+      UNAUTHENTICATED:
+        'Deine Anmeldung ist abgelaufen. Bitte melde dich erneut an.',
+      NOT_FOUND:
+        'Diesen Eintrag gibt es nicht mehr. Die Liste wurde neu geladen.',
+      CATEGORY_IN_USE:
+        'Diese Kategorie wird noch von Anfragen genutzt. Deaktiviere sie stattdessen.',
+      RATE_LIMITED:
+        'Zu viele Versuche. Bitte warte einen Moment und versuche es dann erneut.',
+      INTERNAL_ERROR:
+        'Beim Server ist etwas schiefgegangen. Bitte versuche es noch einmal.',
+    } satisfies Record<TopLevelErrorCode, string>,
+
+    /**
+     * Read next to the field the backend names, so each one is a sentence
+     * about that field alone. The three limits are the constants the dialog
+     * and the notes field count down from — the wording and the input cannot
+     * disagree about a number.
+     */
+    fields: {
+      STATUS_UNKNOWN: 'Diesen Status gibt es nicht.',
+      OWNER_UNKNOWN: 'Diese zuständige Person gibt es nicht mehr.',
+      NOTES_TOO_LONG: `Die Notiz ist zu lang. Höchstens ${String(INTERNAL_NOTES_MAX_LENGTH)} Zeichen.`,
+      CATEGORY_NAME_REQUIRED: 'Bitte einen Namen angeben.',
+      CATEGORY_NAME_TOO_LONG: `Der Name ist zu lang. Höchstens ${String(CATEGORY_NAME_MAX_LENGTH)} Zeichen.`,
+      CATEGORY_NAME_TAKEN: 'Es gibt bereits eine Kategorie mit diesem Namen.',
+      CATEGORY_DESCRIPTION_TOO_LONG: `Die Beschreibung ist zu lang. Höchstens ${String(CATEGORY_DESCRIPTION_MAX_LENGTH)} Zeichen.`,
+      ORDER_INCOMPLETE:
+        'Die Reihenfolge ließ sich nicht speichern. Die Liste wurde neu geladen.',
+      IMMUTABLE_FIELD: 'Dieses Feld lässt sich nicht ändern.',
+    } satisfies Record<FieldErrorCode, string>,
   },
 
   applications: {
@@ -250,8 +315,11 @@ export const de = {
       save: 'Speichern',
       cancel: 'Abbrechen',
       close: 'Schließen',
-      nameRequired: 'Bitte einen Namen angeben.',
-      nameTaken: 'Es gibt bereits eine Kategorie mit diesem Namen.',
+      /**
+       * The dialog's own two checks have no wording of their own: the backend
+       * answers `CATEGORY_NAME_REQUIRED` and `CATEGORY_NAME_TAKEN` for the
+       * same two failures, and one failure is worded once — in `errors.fields`.
+       */
       remaining: (count: number) => `Noch ${String(count)} Zeichen`,
     },
   },

@@ -47,7 +47,16 @@ type FieldError = {
 const fieldErrors: Record<SignInFailureReason, FieldError> = {
   'email-required': { field: 'email', message: de.auth.emailRequired },
   'email-invalid': { field: 'email', message: de.auth.emailInvalid },
-  'unknown-account': { field: 'email', message: de.auth.unknownAccount },
+  /**
+   * The one rejection the backend will own, and the reason it reads as it
+   * does: `INVALID_CREDENTIALS` covers a wrong password and an unknown
+   * address alike, so the screen may not answer "is this address registered?"
+   * — not even while the check is still local (`API.md`, "Errors").
+   */
+  'unknown-account': {
+    field: 'email',
+    message: de.errors.codes.INVALID_CREDENTIALS,
+  },
   'password-required': { field: 'password', message: de.auth.passwordRequired },
 };
 

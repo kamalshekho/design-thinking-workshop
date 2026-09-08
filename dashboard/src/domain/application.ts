@@ -129,6 +129,13 @@ export function setDiscarded(
   );
 }
 
+/**
+ * How much a Staff member may write into `internalNotes` before the backend
+ * answers `NOTES_TOO_LONG` (`API.md`). The German wording of that code counts
+ * from this number, and the textarea will cap at it.
+ */
+export const INTERNAL_NOTES_MAX_LENGTH = 4000;
+
 /** The named views over the Applications list that issue #10 asks for. */
 export const APPLICATION_VIEWS = ['all', 'unassigned', 'stale'] as const;
 
