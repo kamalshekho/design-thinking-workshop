@@ -1,4 +1,4 @@
-package de.ichbinhier.volunteerformservice.web.dashboard;
+package de.ichbinhier.volunteerformservice.dashboard;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;

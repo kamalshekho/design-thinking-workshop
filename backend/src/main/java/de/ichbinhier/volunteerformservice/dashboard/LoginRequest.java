@@ -1,4 +1,4 @@
-package de.ichbinhier.volunteerformservice.web.dashboard;
+package de.ichbinhier.volunteerformservice.dashboard;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RouteSelection {
-    private String route;
-    private int count;
+public class LoginRequest {
+    private String email;
+    private String password;
 }
 

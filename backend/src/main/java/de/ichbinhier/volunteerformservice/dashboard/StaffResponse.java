@@ -1,4 +1,4 @@
-package de.ichbinhier.volunteerformservice.web.dashboard;
+package de.ichbinhier.volunteerformservice.dashboard;
 
 import java.util.UUID;
 
@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StaffMemberResponse {
+public class StaffResponse {
     private UUID id;
     private String name;
+    private String email;
 }
 
