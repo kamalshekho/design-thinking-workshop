@@ -23,9 +23,9 @@ const NOW = new Date('2026-09-05T12:00:00.000Z');
  * here for the same reason it is held there: while one exists the field shows
  * it rather than the list's value.
  */
-function Host() {
-  const [applications, setApplications] = useState<Application[]>(() =>
-    createMockApplications(NOW),
+function Host({ initial }: { initial?: Application[] } = {}) {
+  const [applications, setApplications] = useState<Application[]>(
+    () => initial ?? createMockApplications(NOW),
   );
   const [draft, setDraft] = useState<NotesDraft | null>(null);
 
@@ -58,6 +58,28 @@ function Host() {
 }
 
 describe('ApplicationsScreen', () => {
+  it('explains a backend with no Applications instead of showing an empty table', () => {
+    render(<Host initial={[]} />);
+
+    expect(screen.getByText(de.applications.empty)).toBeInTheDocument();
+    expect(screen.getByText(de.applications.emptyHint)).toBeInTheDocument();
+    // The pager offered "Zurück | 1 | Weiter" under the empty state before.
+    expect(
+      screen.queryByRole('button', { name: de.pagination.next }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('offers to undo the narrowing when a filter, not the backend, empties the list', async () => {
+    const user = userEvent.setup();
+    render(<Host />);
+
+    await user.type(screen.getByRole('searchbox'), 'niemand-mit-diesem-namen');
+
+    expect(await screen.findByText(de.applications.noMatches)).toBeVisible();
+    expect(screen.getByText(de.applications.noMatchesHint)).toBeVisible();
+    expect(screen.queryByText(de.applications.empty)).not.toBeInTheDocument();
+  });
+
   it('counts the Applications behind each view', () => {
     render(<Host />);
 

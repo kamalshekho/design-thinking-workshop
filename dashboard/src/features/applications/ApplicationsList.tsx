@@ -37,6 +37,12 @@ type ApplicationsListProps = {
   activeId?: string | null;
   /** The named views and the search/filter controls, rendered above the table card. */
   toolbar?: ReactNode;
+  /**
+   * Shown in place of the rows while the list is empty. Anfragen passes one;
+   * Übersicht's panel answers emptiness above the list instead, because it
+   * also has a filter bar to take out of the way (issue #53).
+   */
+  emptyState?: ReactNode;
 };
 
 export function ApplicationsList({
@@ -53,6 +59,7 @@ export function ApplicationsList({
   onDiscard,
   activeId,
   toolbar,
+  emptyState,
 }: ApplicationsListProps) {
   const rowActions = useMemo(
     () => [
@@ -83,6 +90,7 @@ export function ApplicationsList({
       rowActions={rowActions}
       activeId={activeId}
       ariaLabel={ariaLabel}
+      emptyState={emptyState}
     />
   );
 

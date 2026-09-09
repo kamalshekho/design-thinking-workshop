@@ -90,9 +90,23 @@ export function Sparkline({
     label: labels?.[index],
   }));
 
+  /**
+   * A week that never left zero is drawn as one muted baseline rather than
+   * handed to Recharts, because the two chart types disagree about it and
+   * neither reads as "flat": a bar chart draws nothing at all for zero-height
+   * bars, so the card looks like a chart that failed to load, and an area
+   * chart draws its line on the very bottom edge in the card's own colour —
+   * which on the overdue card is a semantic red, so the honest answer "nothing
+   * happened this week" reads as an alert. One rule in a neutral grey says the
+   * same thing on all three cards. This is the state the platform is in on the
+   * association's first day (issue #53).
+   */
+  const flat = data.every((value) => value === 0);
+
   return (
     <div
       data-sparkline={id}
+      data-flat={flat ? 'true' : undefined}
       aria-hidden="true"
       className={cx('flex w-20 flex-col gap-1', className)}
     >
@@ -100,51 +114,60 @@ export function Sparkline({
         data-slot="chart"
         className={cx('h-full w-full text-xs', chartClassName)}
       >
-        <ResponsiveContainer>
-          {type === 'area' ? (
-            <AreaChart
-              data={points}
-              margin={{ top: 4, right: 2, bottom: 0, left: 2 }}
-            >
-              <Area
-                dataKey="value"
-                type="linear"
-                stroke={color}
-                strokeWidth={strokeWidth}
-                fill={color}
-                fillOpacity={0.05}
-                isAnimationActive={false}
-                activeDot={{ r: 3.5, strokeWidth: 0, fill: color }}
-              />
-              <Tooltip
-                cursor={{
-                  stroke: color,
-                  strokeWidth: 1,
-                  strokeDasharray: '3 3',
-                }}
-                content={<SparklineTooltipContent color={color} />}
-                wrapperStyle={{ outline: 'none', zIndex: 50 }}
-              />
-            </AreaChart>
-          ) : (
-            <BarChart
-              data={points}
-              margin={{ top: 4, right: 0, bottom: 0, left: 0 }}
-            >
-              <Bar
-                dataKey="value"
-                fill={color}
-                radius={[2, 2, 0, 0]}
-                isAnimationActive={false}
-              />
-              <Tooltip
-                cursor={{ fill: color, opacity: 0.1 }}
-                content={<SparklineTooltipContent color={color} />}
-                wrapperStyle={{ outline: 'none', zIndex: 50 }}
-              />
-            </BarChart>
-          )}
-        </ResponsiveContainer>
+        {flat ? (
+          <div className="flex h-full w-full items-end">
+            <span
+              className="h-px w-full rounded-full"
+              style={{ backgroundColor: 'var(--color-border-secondary)' }}
+            />
+          </div>
+        ) : (
+          <ResponsiveContainer>
+            {type === 'area' ? (
+              <AreaChart
+                data={points}
+                margin={{ top: 4, right: 2, bottom: 0, left: 2 }}
+              >
+                <Area
+                  dataKey="value"
+                  type="linear"
+                  stroke={color}
+                  strokeWidth={strokeWidth}
+                  fill={color}
+                  fillOpacity={0.05}
+                  isAnimationActive={false}
+                  activeDot={{ r: 3.5, strokeWidth: 0, fill: color }}
+                />
+                <Tooltip
+                  cursor={{
+                    stroke: color,
+                    strokeWidth: 1,
+                    strokeDasharray: '3 3',
+                  }}
+                  content={<SparklineTooltipContent color={color} />}
+                  wrapperStyle={{ outline: 'none', zIndex: 50 }}
+                />
+              </AreaChart>
+            ) : (
+              <BarChart
+                data={points}
+                margin={{ top: 4, right: 0, bottom: 0, left: 0 }}
+              >
+                <Bar
+                  dataKey="value"
+                  fill={color}
+                  radius={[2, 2, 0, 0]}
+                  isAnimationActive={false}
+                />
+                <Tooltip
+                  cursor={{ fill: color, opacity: 0.1 }}
+                  content={<SparklineTooltipContent color={color} />}
+                  wrapperStyle={{ outline: 'none', zIndex: 50 }}
+                />
+              </BarChart>
+            )}
+          </ResponsiveContainer>
+        )}
       </div>
       {labels && (
         <div

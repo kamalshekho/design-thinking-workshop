@@ -11,10 +11,11 @@
  * changes.
  */
 
-import { Archive } from '@untitledui/icons';
+import { Archive, Inbox01 } from '@untitledui/icons';
 import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/base/buttons/button';
+import { EmptyState } from '@/components/shared/empty-state';
 import { PageHeader } from '@/components/shared/page-header';
 import { TabStrip } from '@/components/shared/tab-strip';
 import { de } from '@/content/de';
@@ -109,6 +110,14 @@ export function ApplicationsScreen({
 
   const { selected } = actions;
 
+  /**
+   * Two empty states, the pair Kategorien and Aussortiert already draw: a
+   * backend with no Applications at all is the platform's first day, while an
+   * empty list under a view, a search or a filter is a narrowing the Staff
+   * member can undo.
+   */
+  const nothingAtAll = applications.length === 0;
+
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
@@ -140,6 +149,19 @@ export function ApplicationsScreen({
         onDiscard={(application) => {
           actions.discard(new Set([application.id]));
         }}
+        emptyState={
+          <EmptyState
+            icon={Inbox01}
+            title={
+              nothingAtAll ? de.applications.empty : de.applications.noMatches
+            }
+            hint={
+              nothingAtAll
+                ? de.applications.emptyHint
+                : de.applications.noMatchesHint
+            }
+          />
+        }
         toolbar={
           <>
             <div className="flex min-w-0 flex-1 flex-wrap gap-3">

@@ -74,7 +74,36 @@ describe('OpenApplicationsPanel', () => {
   it('shows the empty state when there are no open Applications', () => {
     render(<Host initial={[application({ id: 'done', status: 'ACTIVE' })]} />);
 
-    expect(screen.getByText('Keine offenen Anfragen.')).toBeInTheDocument();
+    expect(screen.getByText(de.overview.openApplications.empty)).toBeVisible();
+    expect(
+      screen.getByText(de.overview.openApplications.emptyHint),
+    ).toBeVisible();
+  });
+
+  it('takes the search, the filters and the bulk action away while nothing is open', () => {
+    render(<Host initial={[]} />);
+
+    // Controls over a list that is empty because the backend has none offer
+    // to narrow nothing (issue #53).
+    expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', {
+        name: de.applications.discardSelected(0),
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps the controls once one Application is open, so a filter that hides it can be undone', async () => {
+    const user = userEvent.setup();
+    render(<Host initial={[application()]} />);
+
+    await user.type(screen.getByRole('searchbox'), 'niemand');
+
+    expect(
+      await screen.findByText(de.overview.openApplications.noMatches),
+    ).toBeVisible();
+    expect(screen.getByRole('searchbox')).toBeVisible();
+    expect(screen.getByText(de.filters.reset)).toBeVisible();
   });
 
   it('excludes completed Applications and counts the rest', async () => {
