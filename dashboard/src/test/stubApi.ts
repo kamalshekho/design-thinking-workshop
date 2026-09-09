@@ -35,9 +35,21 @@ import type { StateChange } from '@/domain/stateChange';
 export class StubEventSource {
   static latest: StubEventSource | null = null;
 
+  /** The browser's own constants, which the hook reads off the global. */
+  static readonly CONNECTING = 0;
+  static readonly OPEN = 1;
+  static readonly CLOSED = 2;
+
   onopen: ((event: Event) => void) | null = null;
   onerror: ((event: Event) => void) | null = null;
   closed = false;
+  /**
+   * Which of the two failures a test is driving. A dropped connection leaves
+   * the source `CONNECTING` and the browser repairs it; a response — a `502`
+   * or a `401` — leaves it `CLOSED` for good, and the hook has to reopen it
+   * itself (`queries/useApplicationStream.ts`).
+   */
+  readyState: number = StubEventSource.CONNECTING;
 
   private readonly listeners = new Map<string, Set<EventListener>>();
 
@@ -57,14 +69,25 @@ export class StubEventSource {
 
   close(): void {
     this.closed = true;
+    this.readyState = StubEventSource.CLOSED;
   }
 
   /** What the browser does when the stream connects, and on every reconnect. */
   fireOpen(): void {
+    this.readyState = StubEventSource.OPEN;
     this.onopen?.(new Event('open'));
   }
 
+  /** A dropped connection: the browser will try again by itself. */
   fireError(): void {
+    this.readyState = StubEventSource.CONNECTING;
+    this.onerror?.(new Event('error'));
+  }
+
+  /** A response the browser gives up on — a `502` or a `401`. */
+  fireErrorAndClose(): void {
+    this.readyState = StubEventSource.CLOSED;
+    this.closed = true;
     this.onerror?.(new Event('error'));
   }
 

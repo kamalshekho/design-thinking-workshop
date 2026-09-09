@@ -6,7 +6,7 @@ import { ApiProblem } from '@/api/problem';
 import { de } from '@/content/de';
 import { mockStaffMember } from '@/data/mockApplications';
 
-import { LoginScreen } from './LoginScreen';
+import { SignInForm } from './SignInForm';
 
 /**
  * `base/input` keeps the required marker in the DOM and hides it with a
@@ -35,11 +35,11 @@ async function submitCredentials(
   await user.click(screen.getByRole('button', { name: de.auth.submit }));
 }
 
-describe('LoginScreen', () => {
+describe('SignInForm', () => {
   it('hands the credentials up, with the address trimmed', async () => {
     const onSignIn = vi.fn();
 
-    render(<LoginScreen onSignIn={onSignIn} />);
+    render(<SignInForm onSignIn={onSignIn} />);
 
     await submitCredentials(`  ${mockStaffMember.email}  `, 'geheim');
 
@@ -52,7 +52,7 @@ describe('LoginScreen', () => {
   it('says nothing until the form is submitted', async () => {
     const user = userEvent.setup();
 
-    render(<LoginScreen onSignIn={vi.fn()} />);
+    render(<SignInForm onSignIn={vi.fn()} />);
 
     await user.type(field(de.auth.emailLabel), 'not-an-email');
 
@@ -62,7 +62,7 @@ describe('LoginScreen', () => {
   it('flags an unfinished address and puts focus back in the field', async () => {
     const onSignIn = vi.fn();
 
-    render(<LoginScreen onSignIn={onSignIn} />);
+    render(<SignInForm onSignIn={onSignIn} />);
 
     await submitCredentials('not-an-email', 'geheim');
 
@@ -72,7 +72,7 @@ describe('LoginScreen', () => {
   });
 
   it('flags a missing password on the password field', async () => {
-    render(<LoginScreen onSignIn={vi.fn()} />);
+    render(<SignInForm onSignIn={vi.fn()} />);
 
     await submitCredentials(mockStaffMember.email, '');
 
@@ -89,7 +89,7 @@ describe('LoginScreen', () => {
    */
   it('words a rejected Sign-in above the form, not under a field', () => {
     render(
-      <LoginScreen
+      <SignInForm
         onSignIn={vi.fn()}
         failure={new ApiProblem({ status: 401, code: 'INVALID_CREDENTIALS' })}
       />,
@@ -111,7 +111,7 @@ describe('LoginScreen', () => {
 
   it('words a throttled address above the form too', () => {
     render(
-      <LoginScreen
+      <SignInForm
         onSignIn={vi.fn()}
         failure={
           new ApiProblem({
@@ -135,7 +135,7 @@ describe('LoginScreen', () => {
    */
   it('words a request that never reached the backend generally', () => {
     render(
-      <LoginScreen onSignIn={vi.fn()} failure={new TypeError('offline')} />,
+      <SignInForm onSignIn={vi.fn()} failure={new TypeError('offline')} />,
     );
 
     expect(screen.getByRole('alert')).toHaveTextContent(de.errors.general);
@@ -143,7 +143,7 @@ describe('LoginScreen', () => {
 
   it('drops the rejection once a field needs fixing again', async () => {
     render(
-      <LoginScreen
+      <SignInForm
         onSignIn={vi.fn()}
         failure={new ApiProblem({ status: 401, code: 'INVALID_CREDENTIALS' })}
       />,
@@ -156,13 +156,13 @@ describe('LoginScreen', () => {
   });
 
   it('cannot be submitted twice while the request is in flight', () => {
-    render(<LoginScreen onSignIn={vi.fn()} isSubmitting />);
+    render(<SignInForm onSignIn={vi.fn()} isSubmitting />);
 
     expect(screen.getByRole('button', { name: de.auth.submit })).toBeDisabled();
   });
 
   it('offers no password reset link and no stay-signed-in box', () => {
-    render(<LoginScreen onSignIn={vi.fn()} />);
+    render(<SignInForm onSignIn={vi.fn()} />);
 
     expect(screen.queryAllByRole('link')).toHaveLength(0);
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
@@ -170,10 +170,37 @@ describe('LoginScreen', () => {
   });
 
   it('labels the password visibility toggle in German', () => {
-    render(<LoginScreen onSignIn={vi.fn()} />);
+    render(<SignInForm onSignIn={vi.fn()} />);
 
     expect(
       screen.getByRole('button', { name: de.fields.togglePassword }),
     ).toBeInTheDocument();
+  });
+
+  /**
+   * The cover fills the address in, because the Staff member whose Sign-in ran
+   * out is signing in again rather than choosing an account (issue #40).
+   */
+  it('starts with the address it was given', () => {
+    render(
+      <SignInForm onSignIn={vi.fn()} initialEmail={mockStaffMember.email} />,
+    );
+
+    expect(field(de.auth.emailLabel)).toHaveValue(mockStaffMember.email);
+  });
+
+  it('takes the cover its own heading and reason', () => {
+    render(
+      <SignInForm
+        onSignIn={vi.fn()}
+        title={de.auth.expiredTitle}
+        subtitle={de.auth.expiredSubtitle}
+      />,
+    );
+
+    expect(
+      screen.getByRole('heading', { name: de.auth.expiredTitle }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(de.auth.expiredSubtitle)).toBeInTheDocument();
   });
 });

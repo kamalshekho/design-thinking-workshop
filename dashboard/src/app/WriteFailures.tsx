@@ -16,13 +16,18 @@
  * Dismissable rather than self-clearing on a timer: the wording for
  * `CATEGORY_IN_USE` tells the Staff member what to do instead, and a sentence
  * that removes itself while it is being read is worse than one that waits.
+ *
+ * One code never reaches it: a write refused because the Sign-in expired is
+ * already answered by the cover coming up over the whole dashboard
+ * (`SignInCover`), and a general "Aktion fehlgeschlagen" underneath it would
+ * name a symptom while the real sentence sits on top of it.
  */
 
 import { XClose } from '@untitledui/icons';
 import type { ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 
-import { problemCode } from '@/api/problem';
+import { isUnauthenticated, problemCode } from '@/api/problem';
 import { Button } from '@/components/base/buttons/button';
 import { de } from '@/content/de';
 import { errorMessage } from '@/content/errorMessage';
@@ -64,6 +69,10 @@ export function WriteFailures({ children }: { children: ReactNode }) {
   const [failure, setFailure] = useState<unknown>(null);
 
   const report = useCallback((raised: unknown) => {
+    if (isUnauthenticated(raised)) {
+      return;
+    }
+
     setFailure(raised);
   }, []);
 

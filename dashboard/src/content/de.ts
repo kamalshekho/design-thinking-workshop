@@ -116,6 +116,21 @@ export const de = {
     checking: 'Anmeldung wird geprüft …',
 
     /**
+     * The cover an expired Sign-in puts over the dashboard (issue #40). It
+     * says why the form is here, because "Anmelden" over a dashboard that was
+     * working a moment ago reads as a fault rather than as the twelve hours
+     * running out (`A17`) — and it promises the work is still there, which is
+     * what the cover exists to make true.
+     *
+     * "Sitzung" is not the word: the glossary spends *Session* on Intro
+     * session (`CONTEXT.md`), and the sentence a Staff member reads keeps the
+     * same distinction the documents do.
+     */
+    expiredTitle: 'Anmeldung abgelaufen',
+    expiredSubtitle:
+      'Melde dich erneut an, um weiterzuarbeiten. Deine Eingaben bleiben erhalten.',
+
+    /**
      * The three wordings the screen can raise on its own, before a request is
      * made — and the reason they are the only ones that sit under a field.
      * Each names the field the Staff member has to change, so the message

@@ -748,10 +748,20 @@ timeout:
 
 ```
 
-When the Sign-in expires the server closes the stream with `401`. `EventSource`
-reconnects on its own; the dashboard shows the sign-in screen after repeated
-failures. There is no polling fallback — the dashboard shows whether the stream
-is connected instead, because a dashboard that silently displays yesterday's
+When the Sign-in expires the server closes the stream with `401`. The dashboard
+never reads that status — an `EventSource` reports only `error` — so it asks
+`GET /me`, and only a `401` there covers the dashboard with the sign-in screen.
+
+`EventSource` reconnects on its own only after a _dropped_ connection. A
+response it can see — the `401` above, or a `502` from the proxy while the
+backend restarts — closes it for good, and reconnecting is then the
+dashboard's own job; it opens a fresh stream every five seconds until one
+connects or the Sign-in turns out to be gone. This is what makes a `401` on
+this endpoint safe to answer plainly: it costs the dashboard a reconnect, not
+the connection.
+
+There is no polling fallback — the dashboard shows whether the stream is
+connected instead, because a dashboard that silently displays yesterday's
 queue is worse than one that admits it is disconnected.
 
 `category.changed` is **not** in this contract. Categories are edited rarely and
