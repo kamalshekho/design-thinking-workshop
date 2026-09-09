@@ -13,17 +13,21 @@ import type { Application } from '@/domain/application';
 import { setDiscarded } from '@/domain/application';
 
 import { ApplicationsScreen } from './ApplicationsScreen';
+import type { NotesDraft } from './useNotesDraft';
 
 const NOW = new Date('2026-09-05T12:00:00.000Z');
 
 /**
- * Mirrors how `App` owns the one Applications list and hands it down, so a
- * test exercises the screen against the same wiring the application uses.
+ * Mirrors what `ApplicationsContainer` hands down, so a test exercises the
+ * screen against the same wiring the application uses. The notes draft is held
+ * here for the same reason it is held there: while one exists the field shows
+ * it rather than the list's value.
  */
 function Host() {
   const [applications, setApplications] = useState<Application[]>(() =>
     createMockApplications(NOW),
   );
+  const [draft, setDraft] = useState<NotesDraft | null>(null);
 
   return (
     <ApplicationsScreen
@@ -43,6 +47,12 @@ function Host() {
       }}
       categories={mockCategories}
       owners={mockOwners}
+      notes={{
+        draft,
+        onChange: (applicationId, text) => {
+          setDraft({ applicationId, text });
+        },
+      }}
     />
   );
 }

@@ -56,29 +56,20 @@ function withoutApplication(
 }
 
 /**
- * The three rules, applied to the list the cache holds.
+ * Puts one Application into the list, wherever it belongs: replacing the row
+ * with its id, or going to the front when the list has not seen it.
  *
- * `created` and `updated` share one branch on purpose. Both carry the whole
- * row, and either can arrive for an Application the list already has or has
- * not: the refetch on every `open` may already have picked up a creation, and
- * an update can be the first thing seen of an Application submitted while the
- * stream was down. Writing them as "add" and "replace" would leave both cases
- * to a guard at every call site; one idempotent upsert has neither case.
+ * Exported because the stream is not the only thing that arrives holding a
+ * complete, server-authored Application — a `PATCH` answers with one too, and
+ * both have to land in the cache by the same rule.
  *
- * A row the list has not seen goes to the front. Newest-first is what the
- * list arrives in, and `API.md` calls that order a convenience rather than a
- * contract — every screen sorts for itself.
+ * Newest-first is what the list arrives in, and `API.md` calls that order a
+ * convenience rather than a contract — every screen sorts for itself.
  */
-export function applyApplicationEvent(
+export function upsertApplication(
   applications: readonly Application[],
-  event: ApplicationEvent,
+  application: Application,
 ): Application[] {
-  const { application } = event;
-
-  if (event.type === 'application.deleted') {
-    return withoutApplication(applications, application.id);
-  }
-
   const known = applications.some(
     (candidate) => candidate.id === application.id,
   );
@@ -88,4 +79,25 @@ export function applyApplicationEvent(
         candidate.id === application.id ? application : candidate,
       )
     : [application, ...applications];
+}
+
+/**
+ * The three rules, applied to the list the cache holds.
+ *
+ * `created` and `updated` share one branch on purpose. Both carry the whole
+ * row, and either can arrive for an Application the list already has or has
+ * not: the refetch on every `open` may already have picked up a creation, and
+ * an update can be the first thing seen of an Application submitted while the
+ * stream was down. Writing them as "add" and "replace" would leave both cases
+ * to a guard at every call site; one idempotent upsert has neither case.
+ */
+export function applyApplicationEvent(
+  applications: readonly Application[],
+  event: ApplicationEvent,
+): Application[] {
+  const { application } = event;
+
+  return event.type === 'application.deleted'
+    ? withoutApplication(applications, application.id)
+    : upsertApplication(applications, application);
 }

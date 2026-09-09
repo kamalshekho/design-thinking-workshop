@@ -37,6 +37,12 @@ export const de = {
     loading: 'Anfragen werden geladen …',
     loadFailed: 'Die Anfragen konnten nicht geladen werden.',
     retry: 'Erneut versuchen',
+    /**
+     * The dismiss control on the notice a failed write raises. The sentence
+     * itself is `errors`: the backend sends a `code` and the dashboard words
+     * it in one place (`API.md`, "Errors").
+     */
+    dismissFailure: 'Meldung ausblenden',
     live: 'Live',
     disconnected: 'Nicht verbunden',
     disconnectedHint: 'Die Liste kann veraltet sein. Bitte lade die Seite neu.',
@@ -136,6 +142,13 @@ export const de = {
   fields: {
     /** The password input's own visibility toggle, in every form. */
     togglePassword: 'Passwort anzeigen oder verbergen',
+    /**
+     * The countdown under a capped field. One wording for the Category
+     * description and for the internal notes: both count down to a limit the
+     * backend enforces too (`API.md`), and two sentences for one idea would
+     * drift apart.
+     */
+    remaining: (count: number) => `Noch ${String(count)} Zeichen`,
   },
 
   /**
@@ -349,12 +362,13 @@ export const de = {
       save: 'Speichern',
       cancel: 'Abbrechen',
       close: 'Schließen',
-      /**
-       * The dialog's own two checks have no wording of their own: the backend
-       * answers `CATEGORY_NAME_REQUIRED` and `CATEGORY_NAME_TAKEN` for the
-       * same two failures, and one failure is worded once — in `errors.fields`.
+      /*
+       * No wording here for the dialog's own two checks: the backend answers
+       * `CATEGORY_NAME_REQUIRED` and `CATEGORY_NAME_TAKEN` for the same two
+       * failures, and one failure is worded once — in `errors.fields`. The
+       * description's countdown is `fields.remaining`, shared with the
+       * internal notes.
        */
-      remaining: (count: number) => `Noch ${String(count)} Zeichen`,
     },
   },
 

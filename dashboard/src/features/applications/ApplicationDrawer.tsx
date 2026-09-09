@@ -54,7 +54,10 @@ import type {
   Category,
   Owner,
 } from '@/domain/application';
-import { APPLICATION_STATUSES } from '@/domain/application';
+import {
+  APPLICATION_STATUSES,
+  INTERNAL_NOTES_MAX_LENGTH,
+} from '@/domain/application';
 import { cx } from '@/utils/cx';
 
 import { CONTROL_CLASSNAME } from './controlStyles';
@@ -66,12 +69,17 @@ type ApplicationDrawerProps = {
   owners: readonly Owner[];
   onClose: () => void;
   /**
-   * One callback for the three fields the drawer edits, rather than one each:
-   * both screens funnelled all three into the same "replace this Application"
-   * update, and spelling that out three times per screen is what kept the
-   * wiring longer than the drawer.
+   * Status and Zuständigkeit: one callback for both, because both are one
+   * click and travel as the same `PATCH`.
    */
   onChange: (change: ApplicationEdit) => void;
+  /**
+   * What the notes field shows. Not `application.internalNotes`: while a note
+   * is unsent the container's draft is the truth, and the cache holds the echo
+   * of the last note that landed (`useNotesDraft`).
+   */
+  notesValue: string;
+  onNotesChange: (text: string) => void;
 };
 
 /** How long "Kopiert" stays on the copy button before it reverts. */
@@ -143,6 +151,8 @@ export function ApplicationDrawer({
   owners,
   onClose,
   onChange,
+  notesValue,
+  onNotesChange,
 }: ApplicationDrawerProps) {
   /**
    * The address that was copied, not a flag: opening another Application then
@@ -329,16 +339,14 @@ export function ApplicationDrawer({
           <SectionLabel htmlFor={notesId}>
             {de.detail.internalNotes}
           </SectionLabel>
-          <p id={notesHintId} className="text-tertiary mt-1 text-xs">
-            {de.detail.notesHint}
-          </p>
           <textarea
             id={notesId}
             aria-describedby={notesHintId}
-            value={application.internalNotes}
+            value={notesValue}
+            maxLength={INTERNAL_NOTES_MAX_LENGTH}
             placeholder={de.detail.notesPlaceholder}
             onChange={(event) => {
-              onChange({ internalNotes: event.target.value });
+              onNotesChange(event.target.value);
             }}
             className={cx(
               CONTROL_CLASSNAME,
@@ -347,6 +355,19 @@ export function ApplicationDrawer({
               'placeholder:text-quaternary mt-2.5 min-h-28 resize-y px-3 py-2.5 leading-relaxed',
             )}
           />
+          {/* The hint and the countdown are one description, so the field
+              names its limit to a screen reader as well as on screen. */}
+          <div
+            id={notesHintId}
+            className="text-tertiary mt-1 flex justify-between gap-3 text-xs"
+          >
+            <span>{de.detail.notesHint}</span>
+            <span className="tabular-nums">
+              {de.fields.remaining(
+                INTERNAL_NOTES_MAX_LENGTH - notesValue.length,
+              )}
+            </span>
+          </div>
         </section>
 
         <section className="border-secondary mt-7 border-t pt-5">

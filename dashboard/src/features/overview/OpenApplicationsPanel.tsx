@@ -27,6 +27,8 @@ import { ApplicationDrawer } from '@/features/applications/ApplicationDrawer';
 import { ApplicationsList } from '@/features/applications/ApplicationsList';
 import { buildApplicationsHref } from '@/features/applications/filterApplications';
 import { useApplicationActions } from '@/features/applications/useApplicationActions';
+import type { NotesField } from '@/features/applications/useNotesDraft';
+import { notesValueFor } from '@/features/applications/useNotesDraft';
 
 import { OpenApplicationsFilterBar } from './OpenApplicationsFilterBar';
 import type { OpenApplicationsFilters } from './selectOpenApplications';
@@ -47,6 +49,8 @@ type OpenApplicationsPanelProps = {
   owners: readonly Owner[];
   /** The reference date the rows' relative ages are read against. */
   now: Date;
+  /** The internal-notes draft, for the drawer this panel opens too. */
+  notes: NotesField;
 };
 
 function hasActiveFilters(filters: OpenApplicationsFilters): boolean {
@@ -64,6 +68,7 @@ export function OpenApplicationsPanel({
   categories,
   owners,
   now,
+  notes,
 }: OpenApplicationsPanelProps) {
   const [filters, setFilters] = useState<OpenApplicationsFilters>(
     EMPTY_OPEN_APPLICATIONS_FILTERS,
@@ -197,6 +202,10 @@ export function OpenApplicationsPanel({
           onClose={actions.close}
           onChange={(change) => {
             actions.update(selected.id, change);
+          }}
+          notesValue={notesValueFor(notes, selected)}
+          onNotesChange={(text) => {
+            notes.onChange(selected.id, text);
           }}
         />
       ) : null}

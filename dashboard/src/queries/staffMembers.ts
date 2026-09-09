@@ -5,9 +5,10 @@
  * cache rather than in a module constant.
  */
 
-import { queryOptions } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 
 import { fetchStaffMembers } from '@/api/staffMembers';
+import type { Owner } from '@/domain/application';
 
 import { queryKeys } from './keys';
 
@@ -15,3 +16,10 @@ export const staffMembersQuery = queryOptions({
   queryKey: queryKeys.staffMembers,
   queryFn: () => fetchStaffMembers(),
 });
+
+const NO_OWNERS: readonly Owner[] = [];
+
+/** The list a container hands its screen; see `useApplications` on the fallback. */
+export function useOwners(): readonly Owner[] {
+  return useQuery(staffMembersQuery).data ?? NO_OWNERS;
+}

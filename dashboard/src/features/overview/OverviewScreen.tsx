@@ -13,6 +13,7 @@ import type {
   Owner,
 } from '@/domain/application';
 import type { StateChange } from '@/domain/stateChange';
+import type { NotesField } from '@/features/applications/useNotesDraft';
 
 import { OpenApplicationsPanel } from './OpenApplicationsPanel';
 import { OverviewStats } from './OverviewStats';
@@ -28,6 +29,8 @@ type OverviewScreenProps = {
   categories: readonly Category[];
   owners: readonly Owner[];
   now: Date;
+  /** The internal-notes draft, for the drawer the panel below opens. */
+  notes: NotesField;
 };
 
 export function OverviewScreen({
@@ -39,6 +42,7 @@ export function OverviewScreen({
   categories,
   owners,
   now,
+  notes,
 }: OverviewScreenProps) {
   return (
     <div className="flex w-full flex-col gap-8">
@@ -62,6 +66,7 @@ export function OverviewScreen({
         categories={categories}
         owners={owners}
         now={now}
+        notes={notes}
       />
     </div>
   );

@@ -178,7 +178,7 @@ export function CategoryDialog({
               >
                 <span>{de.categories.dialog.descriptionHint}</span>
                 <span className="tabular-nums">
-                  {de.categories.dialog.remaining(remaining)}
+                  {de.fields.remaining(remaining)}
                 </span>
               </div>
             </div>

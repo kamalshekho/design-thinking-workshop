@@ -4,12 +4,12 @@ import { useMemo, useState } from 'react';
 
 import { de } from '@/content/de';
 import type { StaffMember } from '@/domain/staffMember';
-import { ApplicationsScreen } from '@/features/applications/ApplicationsScreen';
+import { ApplicationsContainer } from '@/features/applications/ApplicationsContainer';
 import { parseFiltersFromHash } from '@/features/applications/filterApplications';
 import { LoginScreen } from '@/features/auth/LoginScreen';
-import { CategoriesScreen } from '@/features/categories/CategoriesScreen';
-import { DiscardedApplicationsScreen } from '@/features/discarded/DiscardedApplicationsScreen';
-import { OverviewScreen } from '@/features/overview/OverviewScreen';
+import { CategoriesContainer } from '@/features/categories/CategoriesContainer';
+import { DiscardedContainer } from '@/features/discarded/DiscardedContainer';
+import { OverviewContainer } from '@/features/overview/OverviewContainer';
 import { createQueryClient } from '@/queries/queryClient';
 import {
   useSignedInStaffMember,
@@ -21,7 +21,7 @@ import type { Screen } from './AppShell';
 import { AppShell } from './AppShell';
 import { DashboardGate } from './DashboardGate';
 import { useCurrentScreen } from './useCurrentScreen';
-import { useDashboardData } from './useDashboardData';
+import { WriteFailures } from './WriteFailures';
 
 type AppProps = {
   /** Injected so tests agree with the fixtures on one reference date. */
@@ -61,11 +61,10 @@ export function App({ now, client }: AppProps = {}) {
  * in — an expired Sign-in mid-session is the same answer, and covering the
  * screens with the sign-in form without losing typed work is issue #40.
  *
- * The data every screen reads comes from `useDashboardData` and is handed
- * down, so no screen holds a list of its own; what comes back up is an intent
- * — which Application, which field — and this is where it becomes a change to
- * the cache. Issue #38 turns each of those into a request and moves the
- * wiring into a container per screen (ADR-0006).
+ * `WriteFailures` wraps the shell rather than the screens below it: the
+ * mutations that report a failure are under it, and so is the notice that
+ * words it, which `AppShell` renders beside the stream marker. The sign-in
+ * screen is outside it, because it words its own rejection next to the form.
  */
 function Dashboard({ now }: { now?: Date }) {
   const current = useCurrentScreen();
@@ -103,21 +102,23 @@ function Dashboard({ now }: { now?: Date }) {
   }
 
   return (
-    <AppShell
-      current={current}
-      account={staffMember}
-      onSignOut={() => {
-        signOut.mutate();
-      }}
-    >
-      <DashboardGate>
-        <Screens
-          current={current}
-          staffMember={staffMember}
-          now={referenceDate}
-        />
-      </DashboardGate>
-    </AppShell>
+    <WriteFailures>
+      <AppShell
+        current={current}
+        account={staffMember}
+        onSignOut={() => {
+          signOut.mutate();
+        }}
+      >
+        <DashboardGate>
+          <Screens
+            current={current}
+            staffMember={staffMember}
+            now={referenceDate}
+          />
+        </DashboardGate>
+      </AppShell>
+    </WriteFailures>
   );
 }
 
@@ -126,6 +127,13 @@ function Dashboard({ now }: { now?: Date }) {
  * requests below it too. They are mounted only while a Staff member is signed
  * in, so the sign-in screen does not fire four requests that can only answer
  * `401`.
+ *
+ * Each of them is a container rather than the screen itself (ADR-0006): the
+ * container reads the cache and turns the screen's intents into requests, and
+ * this file is back to routing. `useDashboardData` — one hook that held every
+ * list and every write for all four — is gone; what replaced it is four files
+ * that each answer for one screen, plus `useApplicationWrites` for the two
+ * that share a list and a drawer.
  */
 function Screens({
   current,
@@ -136,57 +144,22 @@ function Screens({
   staffMember: StaffMember;
   now: Date;
 }) {
-  const data = useDashboardData(now);
-
   return (
     <>
       {current === 'overview' && (
-        <OverviewScreen
-          staffName={staffMember.name}
-          applications={data.applications}
-          stateChanges={data.stateChanges}
-          onEdit={data.editApplication}
-          onDiscard={data.discard}
-          categories={data.categories}
-          owners={data.owners}
-          now={now}
-        />
+        <OverviewContainer staffName={staffMember.name} now={now} />
       )}
 
       {current === 'applications' && (
-        <ApplicationsScreen
+        <ApplicationsContainer
           now={now}
-          applications={data.applications}
-          onEdit={data.editApplication}
-          onDiscard={data.discard}
-          categories={data.categories}
-          owners={data.owners}
           initialFilters={parseFiltersFromHash(window.location.hash)}
         />
       )}
 
-      {current === 'categories' && (
-        <CategoriesScreen
-          categories={data.categories}
-          onCreate={data.createCategory}
-          onEdit={data.editCategory}
-          onSetActive={data.setCategoryActive}
-          onDelete={data.deleteCategory}
-          onReorder={data.reorderCategories}
-          applications={data.applications}
-        />
-      )}
+      {current === 'categories' && <CategoriesContainer />}
 
-      {current === 'discarded' && (
-        <DiscardedApplicationsScreen
-          applications={data.discardedApplications}
-          onRestore={data.restore}
-          onErase={data.erase}
-          categories={data.categories}
-          owners={data.owners}
-          now={now}
-        />
-      )}
+      {current === 'discarded' && <DiscardedContainer now={now} />}
     </>
   );
 }
