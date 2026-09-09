@@ -1,66 +1,81 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { de } from '@/content/de';
-import { currentStaffMember } from '@/data/currentStaffMember';
-
-import { App } from './App';
+import { mockStaffMember } from '@/data/mockApplications';
+import { renderApp, renderSignedIn } from '@/test/renderApp';
+import type { StubbedApi } from '@/test/stubApi';
+import { REFERENCE_DATE, stubApi } from '@/test/stubApi';
 
 /**
- * Every test below is about a dashboard screen, so it starts past the sign-in
- * gate (`A16`) rather than filling the form first. The gate itself is tested
- * in `features/auth/LoginScreen.test.tsx`, and once here in `signs out`.
+ * The whole application against the stubbed backend: `fetch` answers from the
+ * fixtures and the live stream stays inert unless a test drives it
+ * (`src/test/stubApi.ts`).
  */
-function renderSignedIn() {
-  return render(<App signedInAs={currentStaffMember} />);
-}
-
 describe('App', () => {
+  let api: StubbedApi;
+
+  beforeEach(() => {
+    api = stubApi();
+  });
+
   afterEach(() => {
     window.location.hash = '';
+    vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
-  it('opens the sign-in screen with no Staff member signed in', () => {
-    render(<App />);
+  it('opens the sign-in screen when GET /me finds no Sign-in', async () => {
+    api.signedIn = false;
+
+    renderApp();
 
     expect(
-      screen.getByRole('heading', { name: de.auth.title }),
+      await screen.findByRole('heading', { name: de.auth.title }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('navigation', { name: de.navigation.label }),
     ).not.toBeInTheDocument();
   });
 
+  it('opens the dashboard when GET /me answers with a Staff member', async () => {
+    await renderSignedIn();
+
+    expect(screen.getByText(mockStaffMember.email)).toBeInTheDocument();
+    expect(screen.getByText('Mara Weber')).toBeInTheDocument();
+  });
+
   it('signs out from the account menu, back to the sign-in screen', async () => {
     const user = userEvent.setup();
 
-    renderSignedIn();
+    await renderSignedIn();
 
     await user.click(screen.getByRole('button', { name: de.account.menu }));
     await user.click(
       screen.getByRole('menuitem', { name: de.account.signOut }),
     );
 
+    // `DELETE /session` clears the cookie, so `GET /me` now answers `401`.
     expect(
-      screen.getByRole('heading', { name: de.auth.title }),
+      await screen.findByRole('heading', { name: de.auth.title }),
     ).toBeInTheDocument();
+    expect(api.signedIn).toBe(false);
   });
 
-  it('opens on the Applications screen', () => {
-    renderSignedIn();
+  it('opens on the Applications screen', async () => {
+    await renderSignedIn();
 
     expect(
       screen.getByRole('navigation', { name: de.navigation.label }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByText(de.overview.welcome(currentStaffMember.name)),
+      screen.queryByText(de.overview.welcome(mockStaffMember.name)),
     ).not.toBeInTheDocument();
   });
 
-  it('shows the four screens in the sidebar, Anfragen current', () => {
-    renderSignedIn();
+  it('shows the four screens in the sidebar, Anfragen current', async () => {
+    await renderSignedIn();
 
     const sidebar = screen.getByRole('navigation', {
       name: de.navigation.label,
@@ -87,7 +102,7 @@ describe('App', () => {
   it('opens the account menu from the profile card', async () => {
     const user = userEvent.setup();
 
-    renderSignedIn();
+    await renderSignedIn();
 
     await user.click(screen.getByRole('button', { name: de.account.menu }));
 
@@ -99,7 +114,7 @@ describe('App', () => {
   it('collapses the desktop sidebar to its icon navigation', async () => {
     const user = userEvent.setup();
 
-    renderSignedIn();
+    await renderSignedIn();
 
     await user.click(
       screen.getByRole('button', { name: de.navigation.collapse }),
@@ -149,7 +164,7 @@ describe('App', () => {
   it('switches the active sidebar link and shows the welcome headline', async () => {
     const user = userEvent.setup();
 
-    renderSignedIn();
+    await renderSignedIn();
 
     await user.click(
       screen.getByRole('link', { name: de.navigation.overview }),
@@ -159,13 +174,13 @@ describe('App', () => {
       screen.getByRole('link', { name: de.navigation.overview }),
     ).toHaveAttribute('aria-current', 'page');
     expect(
-      screen.getByText(de.overview.welcome(currentStaffMember.name)),
+      screen.getByText(de.overview.welcome(mockStaffMember.name)),
     ).toBeInTheDocument();
   });
 
   it('carries a Category renamed on Kategorien over to Anfragen', async () => {
     const user = userEvent.setup();
-    renderSignedIn();
+    await renderSignedIn();
 
     await user.click(
       screen.getByRole('link', { name: de.navigation.categories }),
@@ -195,7 +210,7 @@ describe('App', () => {
 
   it('discards an Application to the fourth screen and restores it', async () => {
     const user = userEvent.setup();
-    renderSignedIn();
+    await renderSignedIn();
 
     await user.click(
       screen.getByRole('button', {
@@ -229,7 +244,7 @@ describe('App', () => {
   it('erases a discarded Application, with no way back to Anfragen', async () => {
     const user = userEvent.setup();
     vi.spyOn(window, 'confirm').mockReturnValue(true);
-    renderSignedIn();
+    await renderSignedIn();
 
     await user.click(
       screen.getByRole('button', {
@@ -256,7 +271,7 @@ describe('App', () => {
 
   it('shares an edit on an Application between Übersicht and Anfragen', async () => {
     const user = userEvent.setup();
-    renderSignedIn();
+    await renderSignedIn();
 
     await user.click(
       screen.getByRole('link', { name: de.navigation.overview }),
@@ -290,5 +305,86 @@ describe('App', () => {
     await waitFor(() =>
       expect(screen.getByText('Jonas Krüger')).toBeInTheDocument(),
     );
+  });
+  /**
+   * The three stream behaviours the contract turns on: an event applies
+   * without a follow-up request, every `open` refetches because the server
+   * keeps no replay buffer, and the marker says whether any of that is
+   * happening (`API.md`, "The live stream").
+   */
+  describe('the live stream', () => {
+    function submitted(name: string) {
+      const at = REFERENCE_DATE.toISOString();
+
+      return {
+        id: 'application-live',
+        categoryId: 'social-media',
+        name,
+        email: 'live@example.org',
+        weeklyTime: 'HOURS_1_2' as const,
+        about: null,
+        status: 'NEW' as const,
+        ownerId: null,
+        internalNotes: '',
+        discardedAt: null,
+        consentAt: at,
+        consentTextVersion: '2026-09',
+        submittedAt: at,
+      };
+    }
+
+    it('shows an Application submitted while the dashboard is open', async () => {
+      await renderSignedIn();
+
+      expect(screen.queryByText('Ida Lindqvist')).not.toBeInTheDocument();
+
+      const requests = vi.mocked(fetch).mock.calls.length;
+      act(() => {
+        api.stream()?.emit('application.created', submitted('Ida Lindqvist'));
+      });
+
+      expect(await screen.findByText('Ida Lindqvist')).toBeInTheDocument();
+      // Applied from the event itself: the row cost no request.
+      expect(vi.mocked(fetch).mock.calls).toHaveLength(requests);
+    });
+
+    it('drops an erased Application on application.deleted', async () => {
+      await renderSignedIn();
+
+      const [first] = api.applications;
+      expect(first).toBeDefined();
+
+      act(() => {
+        api.stream()?.emit('application.deleted', first!);
+      });
+
+      await waitFor(() => {
+        expect(screen.queryByText(first!.name)).not.toBeInTheDocument();
+      });
+    });
+
+    it('refetches the list on every open, including a reconnect', async () => {
+      await renderSignedIn();
+
+      api.applications = [submitted('Ida Lindqvist'), ...api.applications];
+
+      act(() => {
+        api.stream()?.fireOpen();
+      });
+
+      expect(await screen.findByText('Ida Lindqvist')).toBeInTheDocument();
+    });
+
+    it('says whether the dashboard is live', async () => {
+      await renderSignedIn();
+
+      expect(screen.getByText(de.dashboard.disconnected)).toBeInTheDocument();
+
+      act(() => {
+        api.stream()?.fireOpen();
+      });
+
+      expect(await screen.findByText(de.dashboard.live)).toBeInTheDocument();
+    });
   });
 });

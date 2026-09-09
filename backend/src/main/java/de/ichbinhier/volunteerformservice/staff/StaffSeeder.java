@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +23,14 @@ import lombok.RequiredArgsConstructor;
  * <p>The five people are invented; the addresses sit at the association's real
  * domain and are sign-in identities only — no mail is ever sent to a Staff
  * member, so none of these mailboxes has to exist (`A17`).
+ *
+ * <p>Second of the seeders, after the Categories: the retirement below reaches
+ * into the Applications, and the demo seed that runs third needs these accounts
+ * to hand an Owner to.
  */
 @Component
 @Profile("!test")
+@Order(2)
 @RequiredArgsConstructor
 public class StaffSeeder implements ApplicationRunner {
 

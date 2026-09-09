@@ -334,6 +334,12 @@ seconds, and so do changes to Status, Owner, notes and the discarded state made
 by another staff member. The dashboard shows whether that stream is connected,
 and does not fall back to polling when it is not.
 
+- **The marker waits three seconds before reporting a drop** — our number. A
+  browser fires an error on every reconnect attempt and reconnects within a
+  second or two on its own, so reporting each one would blink "Nicht
+  verbunden" over a connection that never really went away. Three seconds is
+  long enough to sit out an ordinary reconnect and short enough that a real
+  outage is admitted while the staff member is still looking at the screen.
 - **Confidence:** low — our proposal, and the only one here that the
   association could not have asked for, since they have never seen a
   dashboard.
@@ -380,6 +386,31 @@ and no bcrypt comparison is run on its behalf.
   password waits a quarter of an hour with no administrator to release them —
   the very trap `A17` rejected lockout for. Too loose, and the throttle is
   decoration. Both are one pair of configured values.
+
+### A21 — The demo week is thirteen invented Applications with their history
+
+What the dashboard is demonstrated on is a seeded week: thirteen Applications
+spread across the four Categories (`A7`) and all six statuses (`A9`), some
+owned and some not (`A14`), six of them older than seven days (`A19`), two
+discarded and one discarded and restored (`A16`) — each one carrying the State
+changes that lead to it, dated when they happened. It is seeded only under the
+`demo` profile, and the applicants are invented people at `example.org`.
+
+- **Confidence:** low — our invention throughout. Nothing says what a week at
+  the association actually looks like; `A4` says we do not know the volume at
+  all.
+- **Why it matters:** it is the whole of what an audience sees. The shape of it
+  decides whether Übersicht's three cards show a trend, whether every screen has
+  rows, and whether the four views and the Category filter can be shown at all.
+  A naive seed — the current state with no history — would leave three
+  sparklines flat, which is why the history is part of the seed rather than an
+  extra.
+- **What breaks if wrong:** nothing in the platform; a demo that reads thin or
+  implausible. The one part that is not cosmetic is the invented identities:
+  the consent text names the association as the party that stores an
+  applicant's details, and on our own domain that is not who receives them, so
+  a database holding what a real person wrote would be a problem the seed size
+  never is.
 
 ---
 

@@ -22,6 +22,26 @@ import {
 export const de = {
   association: 'ichbinhier',
 
+  /**
+   * The three states the application answers once for every screen, rather
+   * than each screen answering them again (ADR-0006): the boot fetch, its
+   * failure, and whether the live stream is carrying changes.
+   *
+   * The disconnected wording says what to do about it. `API.md` is explicit
+   * that there is no polling fallback — a dashboard that silently displays
+   * yesterday's queue is worse than one that admits it is disconnected — and
+   * a marker that only admits it, without naming the remedy, leaves the
+   * Staff member guessing.
+   */
+  dashboard: {
+    loading: 'Anfragen werden geladen …',
+    loadFailed: 'Die Anfragen konnten nicht geladen werden.',
+    retry: 'Erneut versuchen',
+    live: 'Live',
+    disconnected: 'Nicht verbunden',
+    disconnectedHint: 'Die Liste kann veraltet sein. Bitte lade die Seite neu.',
+  },
+
   overview: {
     welcome: (name: string) => `Willkommen, ${name}!`,
     subtitle:
@@ -83,9 +103,23 @@ export const de = {
     submit: 'Anmelden',
 
     /**
+     * The boot question. The Sign-in is an `HttpOnly` cookie, so whether one
+     * exists is `GET /me` rather than something the dashboard can read for
+     * itself (`API.md`) — a request, and therefore a wait worth naming.
+     */
+    checking: 'Anmeldung wird geprüft …',
+
+    /**
      * The three wordings the screen can raise on its own, before a request is
-     * made. A rejected Sign-in is not among them: the backend answers
-     * `INVALID_CREDENTIALS`, and `errors.codes` words it.
+     * made — and the reason they are the only ones that sit under a field.
+     * Each names the field the Staff member has to change, so the message
+     * belongs next to it and that field takes focus.
+     *
+     * A rejected Sign-in is not among them. `INVALID_CREDENTIALS` and
+     * `RATE_LIMITED` are about the submission as a whole — the first refuses
+     * to say which of the two fields was wrong, the second says nothing about
+     * either — so once a request raises one, `errors.codes` words it above
+     * the form rather than under a field (issue #37).
      */
     emailRequired: 'Bitte gib deine E-Mail-Adresse ein.',
     emailInvalid: 'Diese E-Mail-Adresse ist unvollständig.',

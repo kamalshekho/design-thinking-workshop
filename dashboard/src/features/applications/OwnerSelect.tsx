@@ -51,23 +51,20 @@ type OwnerSelectProps = {
 type OwnerOption = {
   key: string;
   name: string;
-  /** Absent for a Staff member without a photo, and for "Nicht zugewiesen". */
-  avatar?: string;
   /** The empty row draws the empty-user glyph instead of initials. */
   isUnassigned: boolean;
 };
 
 /**
- * The photo when the Staff member has one, their initials when not, and the
- * empty-user glyph for "Nicht zugewiesen" — the three states the Zuständigkeit
- * column shows, in the same order, so the drawer and the row agree.
+ * A Staff member's initials, and the empty-user glyph for "Nicht zugewiesen"
+ * — the two states the Zuständigkeit column shows, so the drawer and the row
+ * agree.
  */
 function OwnerAvatar({ option }: { option: OwnerOption }) {
   return (
     <Avatar
       size="xs"
       alt=""
-      src={option.avatar}
       initials={option.isUnassigned ? undefined : initialsOf(option.name)}
     />
   );
@@ -83,7 +80,6 @@ export function OwnerSelect({ ownerId, owners, onChange }: OwnerSelectProps) {
     ...owners.map((owner) => ({
       key: owner.id,
       name: owner.name,
-      avatar: owner.avatar,
       isUnassigned: false,
     })),
   ];

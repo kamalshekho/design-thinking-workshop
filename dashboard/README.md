@@ -155,10 +155,12 @@ new component copy.
 In scope: the application boundary, the component-sourcing mechanism, and the
 conventions that follow from both — enough to start the scaffold.
 
-Out of scope, still open, and not decided here: screen-by-screen design, the
-backend contract, and the final specification structure and acceptance/demo
-walkthrough. These are the remaining items on the Wayfinder map (issue #10)
-and follow once this boundary is built on.
+Out of scope, still open, and not decided here: screen-by-screen design and
+the final specification structure and acceptance/demo walkthrough. Those were
+the remaining items on the Wayfinder map (issue #10). The backend contract has
+since been written down in [`API.md`](./API.md), agreed, implemented on both
+sides, and connected to the screens — the Wayfinder map for that is issue
+#26.
 
 ## Getting started
 
@@ -195,10 +197,24 @@ every pull request touching this directory.
 
 All four sidebar items now have a screen behind them; the links still carry
 fragments (`#overview`) and `AppShell` is told which one is current, since
-there is no router. The backend contract is now written down in
-[`API.md`](./API.md) and awaits agreement with the backend team (issue #16);
-until it is implemented every screen reads mock data, and an edit made on
-Kategorien lives for the session only.
+there is no router.
+
+The dashboard **reads** the backend (issue #37): the Sign-in is real, and the
+Applications, the state changes, the Categories and the Staff members all come
+from [`API.md`](./API.md)'s endpoints, with the live stream applying changes as
+they happen. Three things follow it and are not here yet:
+
+- **the writes are still local** (issue #38). Every edit — a Status, an Owner,
+  the internal notes, the five Category moves — is applied to the Query cache
+  and no request is sent, so it lives until the next refetch and the live
+  stream's refetch on `open` will undo it;
+- **Übersicht's sparklines still replay today's values across the week**
+  (issue #39). `GET …/applications/changes` is fetched and kept in the cache;
+  reading the trend out of it, which is the only way the curve is not
+  confidently wrong, is that issue's work;
+- **an expired Sign-in mid-session is not covered** (issue #40). A `401`
+  reaches the screen that made the request rather than putting the sign-in
+  screen over the dashboard and keeping the work.
 
 Two findings about the clone are worth writing down here, because both are
 work that the Untitled UI website makes look like a copy.
@@ -261,18 +277,19 @@ account card at the bottom. Three things went differently:
 
 ## How `src/` is laid out
 
-Seven directories, each with one job, so a reader can tell copied UI from this
+Eight directories, each with one job, so a reader can tell copied UI from this
 application's own code, both from the domain, and all three from the wire:
 
-| Directory         | Holds                                                                                 |
-| ----------------- | ------------------------------------------------------------------------------------- |
-| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`         |
-| `src/features/`   | one folder per screen — `overview`, `applications`, `categories`, `discarded`, `auth` |
-| `src/components/` | UI shared across screens (see below)                                                  |
-| `src/domain/`     | `Application`, `Category`, `StaffMember` and the predicates over them                 |
-| `src/api/`        | the wire: one transport over `fetch`, one module per resource. No React               |
-| `src/queries/`    | the cache: query keys, the Query hooks, the stream's bridge into `setQueryData`       |
-| `src/data/`       | test fixtures, and nothing else                                                       |
+| Directory         | Holds                                                                                         |
+| ----------------- | --------------------------------------------------------------------------------------------- |
+| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`                 |
+| `src/features/`   | one folder per screen — `overview`, `applications`, `categories`, `discarded`, `auth`         |
+| `src/components/` | UI shared across screens (see below)                                                          |
+| `src/domain/`     | `Application`, `Category`, `StaffMember` and the predicates over them                         |
+| `src/api/`        | the wire: one transport over `fetch`, one module per resource. No React                       |
+| `src/queries/`    | the cache: query keys, the Query hooks, the stream's bridge into `setQueryData`               |
+| `src/data/`       | test fixtures, and nothing else                                                               |
+| `src/test/`       | the Vitest setup, and the `fetch`/`EventSource` stub a whole-application test renders against |
 
 Inside `src/components/`:
 
@@ -323,13 +340,22 @@ or the failure until the data is there. Its real payoff is below it: no
 container and no screen handles `Application[] | undefined`, and no screen
 test writes the case where the data has not arrived.
 
-**A Sign-in that has expired is recognised in one place too.** The transport
-knows nothing about sessions; the `QueryClient`'s cache-level error callbacks
-see `UNAUTHENTICATED`, clear the session entry, and `AppShell` covers the
-dashboard with the sign-in screen while the work stays alive. The stream's own
-"do not flicker on the first reconnect" rule belongs to
-`useApplicationStream`, since it is about `EventSource` and not about
-requests.
+**A Sign-in that has expired is recognised in one place too** — issue #40's
+work, not built yet. The transport knows nothing about sessions; the
+`QueryClient`'s cache-level error callbacks see `UNAUTHENTICATED`, clear the
+session entry, and `AppShell` covers the dashboard with the sign-in screen
+while the work stays alive. What does exist is the boot half of it: the
+Sign-in is a cookie the dashboard cannot read, so `GET /me` is what the
+session query asks, and a `401` there is the answer "nobody is signed in"
+rather than a failure a Staff member reads.
+
+**Whether the dashboard is live is on the screen.** `API.md` rules out a
+polling fallback, so the connection marker is not decoration — it is the only
+thing that distinguishes "no new Anfragen" from "no connection", and it says
+to reload when it is the second. The "do not blink on a reconnect" rule
+belongs to `useApplicationStream`, since it is about `EventSource` and not
+about requests: a browser fires `error` on every reconnect attempt, so the
+marker waits out a grace period before admitting the stream is down.
 
 ### What each layer takes for a test
 
@@ -338,9 +364,15 @@ requests.
 - the pure functions — the stream's event application, and the State-change
   replay behind Übersicht's sparklines — plain unit tests.
 - the screens — unchanged: fixtures through props, no provider, no `fetch`.
+  `LoginScreen` is one of them: it raises credentials and takes the request's
+  outcome back as props, so its tests need neither.
 - the containers — only where they carry logic, such as an optimistic
   rollback or a draft surviving a failure, with a real `QueryClient` at
   `retry: false` and `gcTime: 0`.
+- the whole application — `src/test/stubApi.ts` answers every endpoint from
+  the fixtures and hands the test the `EventSource` the application opened, so
+  `App.test.tsx` can drive a `application.created` event or a reconnect and
+  watch what reaches the screen.
 
 There is no Mock Service Worker, and `src/data/` is fixtures only.
 

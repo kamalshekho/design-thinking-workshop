@@ -49,16 +49,17 @@ export const COMPLETED_APPLICATION_STATUSES: readonly ApplicationStatus[] = [
  */
 export type { Category } from './category';
 
-/** The Staff member who owns an Application. An Application may have none. */
+/**
+ * The Staff member who owns an Application. An Application may have none.
+ *
+ * A name and an id, which is all `GET /api/v1/staff/members` sends: no
+ * address, because the selector and the filter show names and an address per
+ * row would spread personal data further than either screen needs, and no
+ * photo, because there is none to send (`domain/staffMember.ts`).
+ */
 export type Owner = {
   id: string;
   name: string;
-  /**
-   * Photo of the Staff member, if there is one. Optional on purpose: a Staff
-   * member without a photo falls back to initials, so the Zuständigkeit column
-   * keeps the same shape either way.
-   */
-  avatar?: string;
 };
 
 export type Application = {

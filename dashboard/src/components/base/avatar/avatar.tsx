@@ -2,6 +2,13 @@
  * Clone path: `components/base/avatar/avatar.tsx`. Its base components are
  * imported directly instead of through the clone's `base-components/index.tsx`
  * barrel, and the `AvatarProfilePhoto` variant is not part of this copy.
+ *
+ * One behaviour was added: `alt=""` hides the initials too, not only the
+ * image. Every avatar in this dashboard renders initials — the wire carries no
+ * photo (`API.md`) — and each one sits beside the name it abbreviates, so
+ * leaving the letters in the accessible name would have a screen reader read
+ * "AB Ashton Blackwell". `alt=""` is how the caller already says the avatar is
+ * decorative; it now means that whichever way the avatar renders.
  */
 
 import { User01 } from '@untitledui/icons';
@@ -152,7 +159,10 @@ export const Avatar = ({
 
     if (initials) {
       return (
-        <span className={cx('text-quaternary', styles[size].initials)}>
+        <span
+          aria-hidden={alt === '' ? 'true' : undefined}
+          className={cx('text-quaternary', styles[size].initials)}
+        >
           {initials}
         </span>
       );

@@ -410,13 +410,13 @@ export function ApplicationTable({
 
                 <Table.Cell>
                   <div className="flex items-center gap-2.5">
-                    {/* Photo when the Staff member has one, initials when
-                        not, and the empty-user glyph when nobody is assigned.
-                        `alt=""` throughout: the name is right beside it, so a
-                        screen reader would only hear it twice. */}
+                    {/* Initials when an Owner is assigned, and the empty-user
+                        glyph when nobody is. There is no photo to show: the
+                        wire carries none (`API.md`). `alt=""` either way — the
+                        name is right beside it, so a screen reader would only
+                        hear it twice. */}
                     <Avatar
                       size="xs"
-                      src={owner?.avatar}
                       alt=""
                       initials={
                         ownerName === null ? undefined : initialsOf(ownerName)

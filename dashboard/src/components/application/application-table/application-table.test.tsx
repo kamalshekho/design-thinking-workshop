@@ -66,21 +66,11 @@ describe('ApplicationTable', () => {
     expect(row?.querySelector('.bg-fuut-purple')).toBeNull();
   });
 
-  it('shows the photo of an Owner who has one', () => {
-    const rowFor = renderTable([
-      application({ id: 'owned', ownerId: 'staff-1' }),
-    ]);
-
-    // The applicant column carries initials only, so the row's single image is
-    // the Owner's photo.
-    const photo = rowFor('owned')?.querySelector('img[data-avatar-img]');
-
-    expect(photo).toHaveAttribute('src', mockOwners[0]?.avatar);
-    // Decorative: the Owner's name sits next to it.
-    expect(photo).toHaveAttribute('alt', '');
-  });
-
-  it('falls back to initials for an Owner without a photo', () => {
+  /**
+   * There is no photo anywhere: `GET /api/v1/staff/members` carries none
+   * (`API.md`), so the Zuständigkeit column has one rendering rather than two.
+   */
+  it('shows an Owner as initials, with no image in the row', () => {
     const rowFor = renderTable([
       application({ id: 'owned', ownerId: 'staff-2' }),
     ]);
