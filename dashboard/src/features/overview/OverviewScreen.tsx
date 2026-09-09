@@ -12,6 +12,7 @@ import type {
   Category,
   Owner,
 } from '@/domain/application';
+import type { StateChange } from '@/domain/stateChange';
 
 import { OpenApplicationsPanel } from './OpenApplicationsPanel';
 import { OverviewStats } from './OverviewStats';
@@ -20,6 +21,8 @@ type OverviewScreenProps = {
   /** The signed-in Staff member's name, for the welcome headline. */
   staffName: string;
   applications: readonly Application[];
+  /** The state history behind the three cards' sparklines; only they read it. */
+  stateChanges: readonly StateChange[];
   onEdit: (id: string, change: ApplicationEdit) => void;
   onDiscard: (ids: ReadonlySet<string>) => void;
   categories: readonly Category[];
@@ -30,6 +33,7 @@ type OverviewScreenProps = {
 export function OverviewScreen({
   staffName,
   applications,
+  stateChanges,
   onEdit,
   onDiscard,
   categories,
@@ -44,7 +48,11 @@ export function OverviewScreen({
           title={de.overview.welcome(staffName)}
           subtitle={de.overview.subtitle}
         />
-        <OverviewStats applications={applications} now={now} />
+        <OverviewStats
+          applications={applications}
+          stateChanges={stateChanges}
+          now={now}
+        />
       </div>
 
       <OpenApplicationsPanel
