@@ -18,6 +18,7 @@ import { Plus, Tag01 } from '@untitledui/icons';
 import { useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/base/buttons/button';
+import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { PageHeader } from '@/components/shared/page-header';
 import { TabStrip } from '@/components/shared/tab-strip';
@@ -91,6 +92,8 @@ export function CategoriesScreen({
   const [view, setView] = useState<CategoryView>('all');
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Editing>(null);
+  /** The Category whose deletion is waiting on its confirmation. */
+  const [deleting, setDeleting] = useState<Category | null>(null);
 
   const searchRef = useRef<HTMLInputElement>(null);
   useSearchShortcut(searchRef);
@@ -162,6 +165,7 @@ export function CategoriesScreen({
     setEditing(null);
   }
 
+  /** Opens the question; the dialog's confirming button is what deletes. */
   function remove(category: Category): void {
     // The row's delete button is already disabled in this case; the guard is
     // here as well because "no Application loses its Category" is a rule of
@@ -170,9 +174,7 @@ export function CategoriesScreen({
       return;
     }
 
-    if (window.confirm(de.categories.confirmDelete(category.name))) {
-      onDelete(category.id);
-    }
+    setDeleting(category);
   }
 
   const summary = [
@@ -300,6 +302,21 @@ export function CategoriesScreen({
           }
         />
       </div>
+
+      {deleting === null ? null : (
+        <ConfirmDialog
+          title={de.categories.confirmDelete(deleting.name)}
+          description={de.categories.confirmDeleteHint}
+          confirmLabel={de.categories.delete}
+          onConfirm={() => {
+            onDelete(deleting.id);
+            setDeleting(null);
+          }}
+          onCancel={() => {
+            setDeleting(null);
+          }}
+        />
+      )}
 
       {editing !== null && (
         <CategoryDialog

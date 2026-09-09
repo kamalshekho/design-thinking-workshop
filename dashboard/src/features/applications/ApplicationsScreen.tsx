@@ -31,6 +31,7 @@ import { APPLICATION_VIEWS, isDiscarded } from '@/domain/application';
 import { ApplicationDrawer } from './ApplicationDrawer';
 import { ApplicationsList } from './ApplicationsList';
 import { ApplicationsToolbar } from './ApplicationsToolbar';
+import { DiscardSelectedDialog } from './DiscardSelectedDialog';
 import type { ApplicationFilters } from './filterApplications';
 import { EMPTY_FILTERS, filterApplications } from './filterApplications';
 import { useApplicationActions } from './useApplicationActions';
@@ -216,6 +217,14 @@ export function ApplicationsScreen({
           onNotesChange={(text) => {
             notes.onChange(selected.id, text);
           }}
+        />
+      ) : null}
+
+      {actions.discardConfirmOpen ? (
+        <DiscardSelectedDialog
+          count={actions.selectedIds.size}
+          onConfirm={actions.confirmDiscardSelected}
+          onCancel={actions.cancelDiscardSelected}
         />
       ) : null}
     </div>

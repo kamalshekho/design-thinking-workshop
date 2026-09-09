@@ -129,6 +129,17 @@
   --background-color-overlay: var(--color-bg-overlay);
   --background-color-brand-solid: var(--color-bg-brand-solid);
   --background-color-brand-solid_hover: var(--color-bg-brand-solid_hover);
+  /*
+   * The danger colours. Without these three the clone's `primary-destructive`
+   * and `secondary-destructive` buttons ask Tailwind for `bg-error-solid` and
+   * `hover:bg-error-primary`, which resolve to nothing: the confirming button
+   * in a delete dialog came out white text on transparent. The `--color-bg-*`
+   * values above it were already here — only the mapping into the background
+   * namespace was missing.
+   */
+  --background-color-error-primary: var(--color-bg-error-primary);
+  --background-color-error-solid: var(--color-bg-error-solid);
+  --background-color-error-solid_hover: var(--color-bg-error-solid_hover);
 
   /* TEXT PROPERTY COLORS */
   --text-color-primary: var(--color-text-primary);

@@ -175,6 +175,16 @@ export const de = {
   },
 
   /**
+   * The one word every confirmation dialog shares. The confirming button is
+   * worded per action — it names what the click does, so "OK" appears
+   * nowhere — but the way out of the question is the same everywhere, and one
+   * wording is what makes it recognisable as the way out.
+   */
+  confirm: {
+    cancel: 'Abbrechen',
+  },
+
+  /**
    * What a Staff member reads when a request fails. The backend sends a `code`
    * and no German (`API.md`, "Errors"), so this block is the one place a
    * failure is worded, and `content/errorMessage.ts` is what looks a code up
@@ -241,6 +251,8 @@ export const de = {
      * about which row it is on.
      */
     discardOne: (name: string) => `Anfrage von ${name} aussortieren`,
+    /** The confirming button in the bulk dialog: the action, not "OK". */
+    discard: 'Aussortieren',
     /** Bare while nothing is checked, counted once the selection is non-empty. */
     discardSelected: (count: number) =>
       count === 0 ? 'Aussortieren' : `Aussortieren (${String(count)})`,
@@ -248,11 +260,19 @@ export const de = {
      * Only the bulk action asks. A single row is one click from being back —
      * the fourth screen is the undo — while ticking rows and hitting the bar
      * moves several at once.
+     *
+     * The question is the dialog's heading and the hint the line under it:
+     * this is the confirmation that is not about losing anything, so it says
+     * where the rows go rather than warning.
      */
     confirmDiscardSelected: (count: number) =>
       count === 1
         ? '1 markierte Anfrage aussortieren?'
         : `${String(count)} markierte Anfragen aussortieren?`,
+    confirmDiscardSelectedHint: (count: number) =>
+      count === 1
+        ? 'Die Anfrage wandert mit Status, Zuständigkeit und Kategorie nach „Aussortiert“ und lässt sich von dort wiederherstellen.'
+        : 'Die Anfragen wandern mit Status, Zuständigkeit und Kategorie nach „Aussortiert“ und lassen sich von dort wiederherstellen.',
 
     /**
      * The first day: the backend runs without the demo week (`A21`), so there
@@ -290,16 +310,19 @@ export const de = {
         ? 'Endgültig löschen'
         : `Endgültig löschen (${String(count)})`,
     /**
-     * Both confirmations name the consequence: this is the only action in the
+     * Both confirmations ask which rows they are about; `eraseWarning` names
+     * the consequence under either question. This is the only action in the
      * dashboard that erases what a person wrote, and there is no undo behind
-     * it (`A16`).
+     * it (`A16`), so the consequence is one sentence in one place rather than
+     * a clause repeated in three questions.
      */
-    confirmEraseOne: (name: string) =>
-      `Anfrage von ${name} endgültig löschen? Das lässt sich nicht rückgängig machen.`,
+    confirmEraseOne: (name: string) => `Anfrage von ${name} endgültig löschen?`,
     confirmEraseSelected: (count: number) =>
       count === 1
-        ? '1 markierte Anfrage endgültig löschen? Das lässt sich nicht rückgängig machen.'
-        : `${String(count)} markierte Anfragen endgültig löschen? Das lässt sich nicht rückgängig machen.`,
+        ? '1 markierte Anfrage endgültig löschen?'
+        : `${String(count)} markierte Anfragen endgültig löschen?`,
+    eraseWarning:
+      'Das Geschriebene wird gelöscht — mit Status, Zuständigkeit und Notizen. Das lässt sich nicht rückgängig machen.',
 
     empty: 'Nichts aussortiert.',
     emptyHint:
@@ -350,6 +373,13 @@ export const de = {
     delete: 'Löschen',
     deleteOne: (name: string) => `${name} löschen`,
     confirmDelete: (name: string) => `Kategorie „${name}“ wirklich löschen?`,
+    /**
+     * Deleting is only offered for a Category no Application names (`A15`),
+     * so nothing about the Applications changes — what is lost is the wording
+     * in the form, which would have to be written again.
+     */
+    confirmDeleteHint:
+      'Die Kategorie verschwindet aus dem Formular. Das lässt sich nicht rückgängig machen — sie müsste neu angelegt werden.',
 
     moveUp: 'Nach oben',
     moveDown: 'Nach unten',

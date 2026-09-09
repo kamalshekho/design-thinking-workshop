@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -58,7 +58,6 @@ describe('DiscardedApplicationsScreen', () => {
 
   it('restores one Application without asking', async () => {
     const user = userEvent.setup();
-    const confirm = vi.spyOn(window, 'confirm');
     const { onRestore } = renderScreen();
 
     await user.click(
@@ -68,27 +67,50 @@ describe('DiscardedApplicationsScreen', () => {
     );
 
     expect(onRestore).toHaveBeenCalledWith(new Set(['application-1']));
-    expect(confirm).not.toHaveBeenCalled();
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
   });
 
   it('asks before erasing one Application, and does nothing on cancel', async () => {
     const user = userEvent.setup();
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
     const { onErase } = renderScreen();
 
     await user.click(
       screen.getByRole('button', { name: de.discarded.eraseOne('Mara Weber') }),
     );
 
-    expect(confirm).toHaveBeenCalledWith(
-      de.discarded.confirmEraseOne('Mara Weber'),
+    const dialog = screen.getByRole('alertdialog', {
+      name: de.discarded.confirmEraseOne('Mara Weber'),
+    });
+    expect(
+      within(dialog).getByText(de.discarded.eraseWarning),
+    ).toBeInTheDocument();
+
+    await user.click(
+      within(dialog).getByRole('button', { name: de.confirm.cancel }),
     );
+
     expect(onErase).not.toHaveBeenCalled();
+    expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+  });
+
+  it('erases one Application once the dialog is confirmed', async () => {
+    const user = userEvent.setup();
+    const { onErase } = renderScreen();
+
+    await user.click(
+      screen.getByRole('button', { name: de.discarded.eraseOne('Mara Weber') }),
+    );
+    await user.click(
+      within(screen.getByRole('alertdialog')).getByRole('button', {
+        name: de.discarded.erase,
+      }),
+    );
+
+    expect(onErase).toHaveBeenCalledWith(new Set(['application-1']));
   });
 
   it('keeps both bulk buttons on the bar, disabled until a row is checked', async () => {
     const user = userEvent.setup();
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
     const { onErase } = renderScreen();
 
     expect(
@@ -107,6 +129,13 @@ describe('DiscardedApplicationsScreen', () => {
     ).toBeEnabled();
     await user.click(
       screen.getByRole('button', { name: de.discarded.eraseSelected(1) }),
+    );
+    await user.click(
+      within(
+        screen.getByRole('alertdialog', {
+          name: de.discarded.confirmEraseSelected(1),
+        }),
+      ).getByRole('button', { name: de.discarded.erase }),
     );
 
     expect(onErase).toHaveBeenCalledWith(new Set(['application-1']));

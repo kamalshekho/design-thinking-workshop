@@ -50,12 +50,27 @@ import { PaginationCardDefault } from '@/components/application/pagination/pagin
 import { Table, TableCard } from '@/components/application/table/table';
 import { Avatar } from '@/components/base/avatar/avatar';
 import { BadgeWithDot } from '@/components/base/badges/badges';
+import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { de } from '@/content/de';
 import type { Application, Category, Owner } from '@/domain/application';
 import { isUnassigned, WEEKLY_TIMES } from '@/domain/application';
 import { cx } from '@/utils/cx';
 import { daysSince } from '@/utils/dates';
 import { initialsOf } from '@/utils/initials';
+
+/**
+ * What a row action asks before it runs, worded by the screen that owns the
+ * action. Three parts rather than one string, because the dialog has room for
+ * the consequence under the question and for a button that names the action.
+ */
+export type ApplicationRowConfirmation = {
+  /** The question. Becomes the dialog's accessible name. */
+  title: string;
+  /** The consequence, under the question. */
+  description?: string;
+  /** The confirming button's label — the action, never "OK". */
+  confirmLabel: string;
+};
 
 /**
  * One trailing icon button on every row. The screen owns the wording, so a
@@ -69,11 +84,11 @@ export type ApplicationRowAction = {
   /** Accessible name of the icon-only button. */
   label: (application: Application) => string;
   /**
-   * Asked through `window.confirm` before the action runs. Omitted for an
-   * action a Staff member can simply undo — restoring an Application is one
-   * click away from being discarded again, so it asks nothing.
+   * Asked in a `ConfirmDialog` before the action runs. Omitted for an action
+   * a Staff member can simply undo — restoring an Application is one click
+   * away from being discarded again, so it asks nothing.
    */
-  confirm?: (application: Application) => string;
+  confirm?: (application: Application) => ApplicationRowConfirmation;
   /** Renders the button in the danger colour. */
   destructive?: boolean;
   onAction: (application: Application) => void;
@@ -150,6 +165,17 @@ export function ApplicationTable({
     column: 'submittedAt',
     direction: oldestFirst ? 'ascending' : 'descending',
   });
+
+  /**
+   * The row action waiting on its confirmation, with the row it was pressed
+   * on. Held here rather than in the screen because the button is here: the
+   * screen already said what to ask through `action.confirm`, and one piece
+   * of state per table is what keeps two rows from asking at once.
+   */
+  const [pendingAction, setPendingAction] = useState<{
+    action: ApplicationRowAction;
+    application: Application;
+  } | null>(null);
 
   const categoryNames = useMemo(
     () => new Map(categories.map((category) => [category.id, category.name])),
@@ -445,12 +471,11 @@ export function ApplicationTable({
                           aria-label={action.label(application)}
                           onClick={(event) => {
                             event.stopPropagation();
-                            if (
-                              action.confirm === undefined ||
-                              window.confirm(action.confirm(application))
-                            ) {
+                            if (action.confirm === undefined) {
                               action.onAction(application);
+                              return;
                             }
+                            setPendingAction({ action, application });
                           }}
                           className={cx(
                             'text-fg-quaternary outline-focus-ring hover:bg-primary_hover cursor-pointer rounded-md p-1.5 transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2',
@@ -481,6 +506,52 @@ export function ApplicationTable({
           onPageChange={setPage}
         />
       ) : null}
+
+      {pendingAction === null ? null : (
+        <RowActionConfirmation
+          action={pendingAction.action}
+          application={pendingAction.application}
+          onSettled={() => {
+            setPendingAction(null);
+          }}
+        />
+      )}
     </TableCard.Root>
+  );
+}
+
+/**
+ * The pending row action's question. A component of its own so the dialog is
+ * built from a confirmation that exists — inside it, `action.confirm` is no
+ * longer optional, and the row it was pressed on cannot have gone away.
+ */
+function RowActionConfirmation({
+  action,
+  application,
+  onSettled,
+}: {
+  action: ApplicationRowAction;
+  application: Application;
+  /** Both answers land here: the dialog closes either way. */
+  onSettled: () => void;
+}) {
+  const confirmation = action.confirm?.(application);
+
+  if (confirmation === undefined) {
+    return null;
+  }
+
+  return (
+    <ConfirmDialog
+      title={confirmation.title}
+      description={confirmation.description}
+      confirmLabel={confirmation.confirmLabel}
+      destructive={action.destructive ?? false}
+      onConfirm={() => {
+        action.onAction(application);
+        onSettled();
+      }}
+      onCancel={onSettled}
+    />
   );
 }

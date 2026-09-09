@@ -1,7 +1,7 @@
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { de } from '@/content/de';
 import { mockCategories, mockOwners } from '@/data/mockApplications';
@@ -272,7 +272,6 @@ describe('OpenApplicationsPanel', () => {
 
   it('discards a single Application from the row action, like Anfragen does', async () => {
     const user = userEvent.setup();
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
     render(
       <Host
         initial={[
@@ -296,12 +295,10 @@ describe('OpenApplicationsPanel', () => {
       expect(within(grid).queryByText('Mara Weber')).not.toBeInTheDocument(),
     );
     expect(within(grid).getByText('Jonas Krüger')).toBeInTheDocument();
-    confirm.mockRestore();
   });
 
   it('discards the checked Applications from the bulk action, like Anfragen does', async () => {
     const user = userEvent.setup();
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
     render(
       <Host
         initial={[
@@ -322,12 +319,18 @@ describe('OpenApplicationsPanel', () => {
     });
     expect(bulkDiscard).toBeEnabled();
     await user.click(bulkDiscard);
+    await user.click(
+      within(
+        screen.getByRole('alertdialog', {
+          name: de.applications.confirmDiscardSelected(1),
+        }),
+      ).getByRole('button', { name: de.applications.discard }),
+    );
 
     await waitFor(() =>
       expect(within(grid).queryByText('Jonas Krüger')).not.toBeInTheDocument(),
     );
     expect(within(grid).getByText('Mara Weber')).toBeInTheDocument();
-    confirm.mockRestore();
   });
 
   it('links to Anfragen preserving search, Category and owner, without the five-row cap', async () => {

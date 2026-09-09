@@ -256,7 +256,6 @@ describe('CategoriesScreen', () => {
 
   it('deletes a Category nothing is filed under', async () => {
     const user = userEvent.setup();
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
     render(<Host />);
 
     await user.click(screen.getByRole('button', { name: de.categories.add }));
@@ -272,6 +271,13 @@ describe('CategoriesScreen', () => {
       screen.getByRole('button', {
         name: de.categories.deleteOne('Veranstaltungen'),
       }),
+    );
+    await user.click(
+      within(
+        screen.getByRole('alertdialog', {
+          name: de.categories.confirmDelete('Veranstaltungen'),
+        }),
+      ).getByRole('button', { name: de.categories.delete }),
     );
 
     expect(

@@ -123,6 +123,35 @@ The dot is `aria-hidden`: the Zuständigkeit column already says "Nicht
 zugewiesen" in words, and any text in the name cell lands in the row header's
 accessible name.
 
+## Confirmations
+
+Every question the dashboard asks before an action runs goes through one
+component, `components/shared/confirm-dialog.tsx`, and none of them go through
+`window.confirm` any more. The browser dialog was the one surface in the
+application that was not this application: it carried the browser's
+typography and the operating system's button order, it had nowhere to put the
+consequence under the question, and it labelled the answer "OK" on the screen
+that erases what a person wrote.
+
+What the dialog gets from being ours: the danger colour on the answer that
+deletes, a second line for the consequence, and a button that names the action
+— "Endgültig löschen", "Aussortieren", "Löschen". "Abbrechen" is the same
+wording everywhere, which is what makes it recognisable as the way out.
+Escape and a click on the backdrop cancel, focus stays inside the dialog, and
+on open it lands on the dialog itself rather than on a button, so a stray
+Enter on the way there answers nothing.
+
+Three of the four confirmations are destructive and read that way. The fourth
+is the bulk "Aussortieren", which takes nothing away — the Applications keep
+their Status, Owner, Category and notes and wait on Aussortiert (`A16`) — so
+it carries the archive glyph and the plain brand colour, and its second line
+says where the rows go instead of warning.
+
+Which actions ask, and which do not, has not changed: the row discard on
+Anfragen and Übersicht asks nothing, because Aussortiert is the undo, and
+restoring asks nothing for the same reason. The three that ask are the bulk
+discard, both erase actions, and deleting a Category.
+
 ## Empty screens
 
 A backend started without the `demo` profile has the four Categories and the
@@ -277,6 +306,15 @@ with it — each place that needed one was rewritten against plain Tailwind or
 React Aria, and the file comments say where. Only `@untitledui/icons` and
 `tailwind-merge` were added as dependencies.
 
+"Grows one token at a time" has a failure mode worth naming, because it is
+silent: the theme maps colours into Tailwind's property namespaces by hand
+(`--background-color-*`, `--text-color-*`), so a copied component asking for
+`bg-error-solid` while only `--color-bg-error-solid` is mapped gets no
+declaration at all rather than an error. The confirmation dialog found it —
+the button that erases an Application came out white text on transparent —
+and the three danger backgrounds are mapped now. A copied variant that
+renders invisible is worth checking against this list first.
+
 ## The copied components
 
 `src/components/` mirrors the clone's own file layout, and `@/` resolves to
@@ -320,7 +358,8 @@ Inside `src/components/`:
 - `base/`, `application/`, `foundations/`, `ui/` — copies from the clone and
   the shadcn/ui registry, in their upstream file layout;
 - `shared/` — what this application assembles from those primitives because
-  the clone ships no equivalent: `page-header`, `empty-state`, `tab-strip`;
+  the clone ships no equivalent: `page-header`, `empty-state`, `tab-strip`,
+  `confirm-dialog`;
 - `application/application-status/` — `status-styles.ts`, the one place an
   Application's Status maps to a colour, read by both the table row and the
   drawer so a palette change cannot leave the two disagreeing.
