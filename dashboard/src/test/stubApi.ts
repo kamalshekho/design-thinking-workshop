@@ -11,6 +11,12 @@
  * its own, so a test that does not care about the stream is not surprised by
  * the refetch every `open` triggers — and a test that does care fires it
  * itself.
+ *
+ * The writes really write, which is what makes a whole-application test worth
+ * running: an optimistic discard that was never sent, or one the server
+ * refused, both look identical on screen until the refetch behind them asks
+ * this object what happened. `writeFailure` is how a test makes every write
+ * fail, so the rollback and the one notice above the screens can be watched.
  */
 
 import { vi } from 'vitest';
@@ -84,6 +90,8 @@ export type StubbedApi = {
   staffMember: StaffMember;
   /** What `POST /session` answers with instead of a Sign-in, when set. */
   signInFailure: { status: number; code: string } | null;
+  /** What every write answers with instead of doing the work, when set. */
+  writeFailure: { status: number; code: string } | null;
   /** The stream the application opened, once it has opened one. */
   stream: () => StubEventSource | null;
 };
@@ -102,6 +110,8 @@ function problem(status: number, code: string): Response {
   });
 }
 
+const NO_CONTENT = () => new Response(null, { status: 204 });
+
 /** The reference date the fixtures and the application agree on. */
 export const REFERENCE_DATE = new Date('2026-09-08T09:00:00Z');
 
@@ -114,6 +124,7 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
     changes: [],
     staffMember: mockStaffMember,
     signInFailure: null,
+    writeFailure: null,
     stream: () => StubEventSource.latest,
     ...overrides,
   };
@@ -129,7 +140,14 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
       );
       const method = init?.method ?? 'GET';
 
-      if (url.endsWith('/staff/session') && method === 'POST') {
+      const body = ((): Record<string, unknown> =>
+        typeof init?.body === 'string'
+          ? (JSON.parse(init.body) as Record<string, unknown>)
+          : {})();
+      /** The path under `/api/v1/staff`, so a route reads as it does in `API.md`. */
+      const path = url.slice(url.indexOf('/staff') + '/staff'.length);
+
+      if (path === '/session' && method === 'POST') {
         if (api.signInFailure !== null) {
           return Promise.resolve(
             problem(api.signInFailure.status, api.signInFailure.code),
@@ -139,32 +157,34 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
         return Promise.resolve(json(api.staffMember));
       }
 
-      if (url.endsWith('/staff/session') && method === 'DELETE') {
+      if (path === '/session' && method === 'DELETE') {
         api.signedIn = false;
-        return Promise.resolve(new Response(null, { status: 204 }));
+        return Promise.resolve(NO_CONTENT());
       }
 
       if (!api.signedIn) {
         return Promise.resolve(problem(401, 'UNAUTHENTICATED'));
       }
 
-      if (url.endsWith('/staff/me')) {
+      if (method !== 'GET' && api.writeFailure !== null) {
+        return Promise.resolve(
+          problem(api.writeFailure.status, api.writeFailure.code),
+        );
+      }
+
+      if (path === '/me') {
         return Promise.resolve(json(api.staffMember));
       }
 
-      if (url.includes('/staff/applications/changes')) {
+      if (path.startsWith('/applications/changes')) {
         return Promise.resolve(json({ changes: api.changes }));
       }
 
-      if (url.endsWith('/staff/applications')) {
+      if (path === '/applications') {
         return Promise.resolve(json({ applications: api.applications }));
       }
 
-      if (url.endsWith('/staff/categories')) {
-        return Promise.resolve(json({ categories: api.categories }));
-      }
-
-      if (url.endsWith('/staff/members')) {
+      if (path === '/members') {
         return Promise.resolve(
           json({
             members: api.owners.map((owner) => ({
@@ -173,6 +193,123 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
             })),
           }),
         );
+      }
+
+      /**
+       * `PATCH …/applications/{id}` — any subset of the four fields, and the
+       * complete Application back. `discarded` is a boolean on the wire and a
+       * timestamp on the row, stamped here the way the server stamps it.
+       */
+      const patched = /^\/applications\/([^/]+)$/.exec(path);
+      if (patched !== null && method === 'PATCH') {
+        const id = patched[1];
+        const application = api.applications.find((row) => row.id === id);
+
+        if (application === undefined) {
+          return Promise.resolve(problem(404, 'NOT_FOUND'));
+        }
+
+        const { discarded, ...edit } = body;
+        const updated: Application = {
+          ...application,
+          ...(edit as Partial<Application>),
+          ...(discarded === undefined
+            ? {}
+            : {
+                discardedAt:
+                  discarded === true ? REFERENCE_DATE.toISOString() : null,
+              }),
+        };
+
+        api.applications = api.applications.map((row) =>
+          row.id === id ? updated : row,
+        );
+        return Promise.resolve(json(updated));
+      }
+
+      const erased = /^\/applications\/([^/]+)\/permanently$/.exec(path);
+      if (erased !== null && method === 'DELETE') {
+        const id = erased[1];
+        const application = api.applications.find((row) => row.id === id);
+
+        if (application === undefined) {
+          return Promise.resolve(problem(404, 'NOT_FOUND'));
+        }
+
+        if (application.discardedAt === null) {
+          return Promise.resolve(problem(400, 'NOT_DISCARDED'));
+        }
+
+        api.applications = api.applications.filter((row) => row.id !== id);
+        api.changes = api.changes.filter(
+          (change) => change.applicationId !== id,
+        );
+        return Promise.resolve(NO_CONTENT());
+      }
+
+      if (path === '/categories' && method === 'GET') {
+        return Promise.resolve(json({ categories: api.categories }));
+      }
+
+      /** The id is the server's to mint, which is half of why this awaits it. */
+      if (path === '/categories' && method === 'POST') {
+        const created: Category = {
+          id: crypto.randomUUID(),
+          name: typeof body.name === 'string' ? body.name : '',
+          description:
+            typeof body.description === 'string' ? body.description : '',
+          active: body.active !== false,
+        };
+
+        api.categories = [...api.categories, created];
+        return Promise.resolve(json(created, 201));
+      }
+
+      if (path === '/categories/order' && method === 'PUT') {
+        const ids = body.ids as string[];
+        const byId = new Map(api.categories.map((row) => [row.id, row]));
+
+        if (
+          ids.length !== api.categories.length ||
+          ids.some((id) => !byId.has(id))
+        ) {
+          return Promise.resolve(problem(400, 'VALIDATION_FAILED'));
+        }
+
+        api.categories = ids.flatMap((id) => {
+          const category = byId.get(id);
+          return category === undefined ? [] : [category];
+        });
+        return Promise.resolve(json({ categories: api.categories }));
+      }
+
+      const category = /^\/categories\/([^/]+)$/.exec(path);
+      if (category !== null) {
+        const id = category[1];
+        const existing = api.categories.find((row) => row.id === id);
+
+        if (existing === undefined) {
+          return Promise.resolve(problem(404, 'NOT_FOUND'));
+        }
+
+        if (method === 'PATCH') {
+          const updated = { ...existing, ...(body as Partial<Category>) };
+          api.categories = api.categories.map((row) =>
+            row.id === id ? updated : row,
+          );
+          return Promise.resolve(json(updated));
+        }
+
+        if (method === 'DELETE') {
+          const named = api.applications.some((row) => row.categoryId === id);
+
+          if (named) {
+            return Promise.resolve(problem(409, 'CATEGORY_IN_USE'));
+          }
+
+          api.categories = api.categories.filter((row) => row.id !== id);
+          return Promise.resolve(NO_CONTENT());
+        }
       }
 
       return Promise.resolve(problem(404, 'NOT_FOUND'));

@@ -199,19 +199,13 @@ All four sidebar items now have a screen behind them; the links still carry
 fragments (`#overview`) and `AppShell` is told which one is current, since
 there is no router.
 
-The dashboard **reads** the backend (issue #37): the Sign-in is real, and the
-Applications, the state changes, the Categories and the Staff members all come
-from [`API.md`](./API.md)'s endpoints, with the live stream applying changes as
-they happen. Three things follow it and are not here yet:
+The dashboard reads and writes the backend (issues #37 and #38): the Sign-in
+is real, the Applications, the state changes, the Categories and the Staff
+members all come from [`API.md`](./API.md)'s endpoints, the live stream applies
+changes as they happen, and every edit a Staff member makes — a Status, an
+Owner, the internal notes, a discard, a restore, the permanent erase and the
+five Category moves — is a request. One thing follows it and is not here yet:
 
-- **the writes are still local** (issue #38). Every edit — a Status, an Owner,
-  the internal notes, the five Category moves — is applied to the Query cache
-  and no request is sent, so it lives until the next refetch and the live
-  stream's refetch on `open` will undo it;
-- **Übersicht's sparklines still replay today's values across the week**
-  (issue #39). `GET …/applications/changes` is fetched and kept in the cache;
-  reading the trend out of it, which is the only way the curve is not
-  confidently wrong, is that issue's work;
 - **an expired Sign-in mid-session is not covered** (issue #40). A `401`
   reaches the screen that made the request rather than putting the sign-in
   screen over the dashboard and keeping the work.
@@ -280,16 +274,16 @@ account card at the bottom. Three things went differently:
 Eight directories, each with one job, so a reader can tell copied UI from this
 application's own code, both from the domain, and all three from the wire:
 
-| Directory         | Holds                                                                                         |
-| ----------------- | --------------------------------------------------------------------------------------------- |
-| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`                 |
-| `src/features/`   | one folder per screen — `overview`, `applications`, `categories`, `discarded`, `auth`         |
-| `src/components/` | UI shared across screens (see below)                                                          |
-| `src/domain/`     | `Application`, `Category`, `StaffMember` and the predicates over them                         |
-| `src/api/`        | the wire: one transport over `fetch`, one module per resource. No React                       |
-| `src/queries/`    | the cache: query keys, the Query hooks, the stream's bridge into `setQueryData`               |
-| `src/data/`       | test fixtures, and nothing else                                                               |
-| `src/test/`       | the Vitest setup, and the `fetch`/`EventSource` stub a whole-application test renders against |
+| Directory         | Holds                                                                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`, `WriteFailures`                                          |
+| `src/features/`   | one folder per screen — `overview`, `applications`, `categories`, `discarded`, `auth`: each holds its screen and the container above it |
+| `src/components/` | UI shared across screens (see below)                                                                                                    |
+| `src/domain/`     | `Application`, `Category`, `StaffMember` and the predicates over them                                                                   |
+| `src/api/`        | the wire: one transport over `fetch`, one module per resource. No React                                                                 |
+| `src/queries/`    | the cache: query keys, the Query hooks, the stream's bridge into `setQueryData`                                                         |
+| `src/data/`       | test fixtures, and nothing else                                                                                                         |
+| `src/test/`       | the Vitest setup, and the `fetch`/`EventSource` stub a whole-application test renders against                                           |
 
 Inside `src/components/`:
 
@@ -333,6 +327,16 @@ authoritative echo, and invalidating on every debounced save would refetch the
 whole list. A failure rolls back to the snapshot and then invalidates to
 resync. Categories raise no stream events, so they await the server and
 invalidate instead.
+
+**A failed write is worded once, too, and not by the screen that made it.** A
+read that fails has `DashboardGate`'s panel and a retry button; a write that
+fails has neither, because the Staff member has already moved on and the
+optimistic change is being rolled back underneath them. So every mutation
+reports what was thrown to `WriteFailures`, which remembers the newest one, and
+`AppShell` renders one dismissable notice beside the stream marker. One
+failure, not a list: five discards that all failed are one thing that went
+wrong (`API.md`, "Bulk actions are N single requests"), and the German comes
+from the same `de.errors` lookup the sign-in screen reads.
 
 **Loading and failure are answered once.** `DashboardGate` sits between
 `AppShell` and the screen, subscribed to the same keys, and shows the skeleton

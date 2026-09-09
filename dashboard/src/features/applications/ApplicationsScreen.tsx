@@ -33,6 +33,8 @@ import { ApplicationsToolbar } from './ApplicationsToolbar';
 import type { ApplicationFilters } from './filterApplications';
 import { EMPTY_FILTERS, filterApplications } from './filterApplications';
 import { useApplicationActions } from './useApplicationActions';
+import type { NotesField } from './useNotesDraft';
+import { notesValueFor } from './useNotesDraft';
 
 type ApplicationsScreenProps = {
   /** The reference date the relative ages and the "Lange offen" view are read against. */
@@ -50,6 +52,12 @@ type ApplicationsScreenProps = {
   /** Owned by Kategorien, so a Category renamed there is renamed in the filter, the list and the drawer at once. */
   categories: readonly Category[];
   owners: readonly Owner[];
+  /**
+   * The internal-notes draft, held by the container above (`useNotesDraft`):
+   * the note is the one field that is not read from the cache while it is
+   * being typed.
+   */
+  notes: NotesField;
 };
 
 export function ApplicationsScreen({
@@ -60,6 +68,7 @@ export function ApplicationsScreen({
   onDiscard,
   categories,
   owners,
+  notes,
 }: ApplicationsScreenProps) {
   const [filters, setFilters] = useState<ApplicationFilters>(() => ({
     ...EMPTY_FILTERS,
@@ -180,6 +189,10 @@ export function ApplicationsScreen({
           onClose={actions.close}
           onChange={(change) => {
             actions.update(selected.id, change);
+          }}
+          notesValue={notesValueFor(notes, selected)}
+          onNotesChange={(text) => {
+            notes.onChange(selected.id, text);
           }}
         />
       ) : null}

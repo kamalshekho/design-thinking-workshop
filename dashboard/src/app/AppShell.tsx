@@ -12,6 +12,11 @@
  * happens, and keeping it out of the main list also keeps the one screen that
  * can erase an Application away from the three that cannot.
  *
+ * It is also where the two things the whole dashboard says about itself sit:
+ * whether the live stream is connected, and the last write that failed. Both
+ * are above the screen rather than inside it, because neither belongs to any
+ * one of the four.
+ *
  * The shell is also where the live stream is opened, and the one place it can
  * be: it is mounted for as long as a Staff member is signed in, so switching
  * screens does not drop and reopen the connection, and it is not mounted at
@@ -32,6 +37,7 @@ import type { StaffMember } from '@/domain/staffMember';
 import { useApplicationStream } from '@/queries/useApplicationStream';
 
 import { StreamMarker } from './StreamMarker';
+import { WriteFailureNotice } from './WriteFailures';
 
 export type Screen = 'overview' | 'applications' | 'categories' | 'discarded';
 
@@ -103,6 +109,7 @@ export function AppShell({
         className="bg-bg-canvas flex min-w-0 flex-1 flex-col gap-3 py-6"
       >
         <StreamMarker connected={connected} />
+        <WriteFailureNotice />
         {children}
       </main>
     </div>

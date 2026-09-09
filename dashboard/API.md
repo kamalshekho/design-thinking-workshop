@@ -13,9 +13,9 @@ one exception is Category data, which staff members maintain and applicants
 read — see [Categories](#categories).
 
 Status: **agreed and implemented**, apart from the two blocks marked as such
-below. The backend serves every endpoint here and the dashboard reads all of
-them (issue #37); the dashboard's writes are issue #38, so the `PATCH`, the
-`POST`s and the `DELETE`s are implemented on the backend and not yet called.
+below. The backend serves every endpoint here, the dashboard reads all of them
+(issue #37) and it now calls every write too (issue #38) — the `PATCH`, the
+`POST`, the `DELETE`s and the order `PUT`.
 Where reality had to differ from this document, the document was amended in
 the same change rather than left to drift. The decisions are collected
 [at the end](#decisions).
@@ -96,6 +96,11 @@ three endpoints. This is the delta.
 An Application submitted through the form gets `status = NEW`, `owner = null`,
 `internalNotes = null` and `discardedAt = null`. The form does not send any of
 them and must not be able to.
+
+The `internalNotes` column is nullable, but the wire never is: the read
+coalesces a stored `null` to `""`. That is why the dashboard types
+`internalNotes` as `string` while `about` — which the backend really does send
+as `null` — is `string | null`.
 
 ## Wire names
 
@@ -352,11 +357,12 @@ protects the important case is the partial `PATCH` itself: the drawer sends only
 `internalNotes` while somebody types, so a colleague's status change is never
 overwritten by a note.
 
-Internal notes must arrive debounced: the dashboard is required to wait until
-typing pauses (800 ms) rather than send a request per keystroke. Named here
-because the alternative looks, from the server, like a flood — and named as a
-requirement rather than as a fact, because the drawer does not debounce yet
-(see [what the dashboard changes](#what-the-dashboard-changes-on-its-own-side)).
+Internal notes arrive debounced: the dashboard waits until typing pauses
+(800 ms) rather than sending a request per keystroke. Named here because the
+alternative looks, from the server, like a flood. The drawer holds the unsent
+note as a draft of its own until the request succeeds, which is also what keeps
+the stream's echo of that very note from overwriting whatever has been typed
+since it left.
 The 4000-character limit is likewise enforced on both sides: the textarea caps
 the input, and the backend still answers `NOTES_TOO_LONG` for a request that
 gets past it.
@@ -986,8 +992,11 @@ request:
   name failures out of `de.errors.fields` as well, so the client-side check and
   the backend's `CATEGORY_NAME_REQUIRED` / `CATEGORY_NAME_TAKEN` say the same
   sentence;
-- debounce internal notes by 800 ms, cap the textarea at 4000 characters and
-  count down the remainder — none of the three exists yet (issue #38);
+- ~~debounce internal notes by 800 ms, cap the textarea at 4000 characters and
+  count down the remainder~~ — done (issue #38); the countdown is
+  `de.fields.remaining`, shared with the Category description's, and the
+  unsent note lives in a draft above the drawer so that neither the stream's
+  echo nor a failed request can take the typed text off the screen;
 - read the metric cards' trends from
   [`GET …/applications/changes`](#get-apiv1staffapplicationschanges) instead of
   replaying today's `status`/`ownerId` across the week — issue #39. The

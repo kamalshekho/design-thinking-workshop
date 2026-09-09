@@ -307,6 +307,228 @@ describe('App', () => {
     );
   });
   /**
+   * The writes, against the stubbed backend that really applies them
+   * (`src/test/stubApi.ts`). What is worth a test here rather than in a
+   * container is the pair of facts a screen cannot show on its own: that a
+   * request was sent at all, and what is left on screen when it fails.
+   */
+  describe('the writes', () => {
+    function calls(method: string, path: string) {
+      return vi
+        .mocked(fetch)
+        .mock.calls.filter(
+          ([url, init]) =>
+            typeof url === 'string' &&
+            url.includes(path) &&
+            (init?.method ?? 'GET') === method,
+        );
+    }
+
+    it('sends a Status change as a PATCH of that one field', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      await user.click(screen.getByText('Mara Weber'));
+      await user.selectOptions(
+        screen.getByLabelText(de.detail.status),
+        de.statuses.IN_REVIEW,
+      );
+
+      await waitFor(() => {
+        expect(calls('PATCH', '/staff/applications/')).toHaveLength(1);
+      });
+      expect(calls('PATCH', '/staff/applications/')[0]?.[1]?.body).toBe(
+        '{"status":"IN_REVIEW"}',
+      );
+    });
+
+    /**
+     * The one distinction the endpoint turns on: an absent `ownerId` leaves
+     * the Owner alone, an explicit `null` clears it (`API.md`). The selector's
+     * empty option is the only thing in the dashboard that means the second.
+     */
+    it('clears an Owner with an explicit null', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      const owned = api.applications.find(
+        (application) => application.ownerId !== null,
+      );
+      expect(owned).toBeDefined();
+
+      await user.click(screen.getByText(owned!.name));
+      await user.click(screen.getByRole('button', { name: de.detail.owner }));
+      await user.click(
+        screen.getByRole('option', { name: de.application.unassigned }),
+      );
+
+      await waitFor(() => {
+        expect(calls('PATCH', '/staff/applications/')).toHaveLength(1);
+      });
+      expect(calls('PATCH', '/staff/applications/')[0]?.[1]?.body).toBe(
+        '{"ownerId":null}',
+      );
+    });
+
+    /** A bulk action is N single requests; there is no bulk endpoint. */
+    it('discards a checked selection as one request per Application', async () => {
+      const user = userEvent.setup();
+      vi.spyOn(window, 'confirm').mockReturnValue(true);
+      await renderSignedIn();
+
+      const rows = screen.getAllByRole('checkbox').slice(1, 3);
+      for (const row of rows) {
+        await user.click(row);
+      }
+      await user.click(
+        screen.getByRole('button', {
+          name: de.applications.discardSelected(2),
+        }),
+      );
+
+      await waitFor(() => {
+        expect(calls('PATCH', '/staff/applications/')).toHaveLength(2);
+      });
+      expect(
+        calls('PATCH', '/staff/applications/').map(([, init]) => init?.body),
+      ).toEqual(['{"discarded":true}', '{"discarded":true}']);
+    });
+
+    /**
+     * The optimistic half is what a Staff member sees first, so the failure
+     * has to put the row back — and say so once, above the screens, since
+     * there is no panel to retry from the way a failed read has one.
+     */
+    it('rolls a failed discard back and words it once', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      api.writeFailure = { status: 500, code: 'INTERNAL_ERROR' };
+
+      await user.click(
+        screen.getByRole('button', {
+          name: de.applications.discardOne('Mara Weber'),
+        }),
+      );
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        de.errors.codes.INTERNAL_ERROR,
+      );
+      await waitFor(() => {
+        expect(screen.getByText('Mara Weber')).toBeInTheDocument();
+      });
+      expect(screen.getAllByRole('alert')).toHaveLength(1);
+    });
+
+    it('sends the internal note once typing pauses, and keeps it when it fails', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      api.writeFailure = { status: 500, code: 'INTERNAL_ERROR' };
+
+      await user.click(screen.getByText('Mara Weber'));
+      await user.type(
+        screen.getByLabelText(de.detail.internalNotes),
+        'Rückruf',
+      );
+
+      await waitFor(
+        () => {
+          expect(calls('PATCH', '/staff/applications/')).toHaveLength(1);
+        },
+        { timeout: 3000 },
+      );
+      expect(calls('PATCH', '/staff/applications/')[0]?.[1]?.body).toBe(
+        '{"internalNotes":"Rückruf"}',
+      );
+      expect(screen.getByLabelText(de.detail.internalNotes)).toHaveValue(
+        'Rückruf',
+      );
+    });
+
+    it('erases through the permanently path, after the server has', async () => {
+      const user = userEvent.setup();
+      vi.spyOn(window, 'confirm').mockReturnValue(true);
+      await renderSignedIn();
+
+      await user.click(
+        screen.getByRole('button', {
+          name: de.applications.discardOne('Mara Weber'),
+        }),
+      );
+      await user.click(
+        screen.getByRole('link', { name: de.navigation.discarded }),
+      );
+      await user.click(
+        screen.getByRole('button', {
+          name: de.discarded.eraseOne('Mara Weber'),
+        }),
+      );
+
+      await waitFor(() => {
+        expect(calls('DELETE', '/permanently')).toHaveLength(1);
+      });
+      expect(api.applications.some((row) => row.name === 'Mara Weber')).toBe(
+        false,
+      );
+    });
+
+    /**
+     * Kategorien awaits the server for every write, because the id and the
+     * name's uniqueness are the server's (`API.md`) — so the new row on screen
+     * is the refetched one, not an optimistic guess.
+     */
+    it('creates a Category the server minted the id for', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      await user.click(
+        screen.getByRole('link', { name: de.navigation.categories }),
+      );
+      await user.click(screen.getByRole('button', { name: de.categories.add }));
+      await user.type(
+        screen.getByRole('textbox', { name: /^Name/ }),
+        'Fundraising',
+      );
+      await user.click(
+        screen.getByRole('button', { name: de.categories.dialog.create }),
+      );
+
+      await waitFor(() => {
+        expect(calls('POST', '/staff/categories')).toHaveLength(1);
+      });
+      expect(await screen.findByText('Fundraising')).toBeInTheDocument();
+      expect(
+        api.categories.find((category) => category.name === 'Fundraising')?.id,
+      ).toBeDefined();
+    });
+
+    /** The whole order, as ids — not a direction (`API.md`). */
+    it('sends the whole order when a Category moves', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+      const [first, second] = api.categories;
+      expect(second).toBeDefined();
+
+      await user.click(
+        screen.getByRole('link', { name: de.navigation.categories }),
+      );
+      await user.click(
+        screen.getByRole('button', {
+          name: de.categories.moveUpOne(second!.name),
+        }),
+      );
+
+      await waitFor(() => {
+        expect(calls('PUT', '/staff/categories/order')).toHaveLength(1);
+      });
+      expect(calls('PUT', '/staff/categories/order')[0]?.[1]?.body).toContain(
+        `["${second!.id}","${first!.id}"`,
+      );
+    });
+  });
+
+  /**
    * The three stream behaviours the contract turns on: an event applies
    * without a follow-up request, every `open` refetches because the server
    * keeps no replay buffer, and the marker says whether any of that is

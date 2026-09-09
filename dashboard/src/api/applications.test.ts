@@ -1,6 +1,19 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { fetchApplications, fetchStateChanges } from './applications';
+import {
+  eraseApplication,
+  fetchApplications,
+  fetchStateChanges,
+  patchApplication,
+} from './applications';
+
+function noContent() {
+  const mock = vi.fn<(input: string, init?: RequestInit) => Promise<Response>>(
+    () => Promise.resolve(new Response(null, { status: 204 })),
+  );
+  vi.stubGlobal('fetch', mock);
+  return mock;
+}
 
 function answer(body: unknown) {
   const mock = vi.fn<(input: string, init?: RequestInit) => Promise<Response>>(
@@ -124,5 +137,71 @@ describe('fetchStateChanges', () => {
       null,
       true,
     ]);
+  });
+});
+
+describe('patchApplication', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('sends the change to the one write endpoint and maps the answer back', async () => {
+    const mock = answer({ ...wire, status: 'IN_REVIEW' });
+
+    await expect(
+      patchApplication(wire.id, { status: 'IN_REVIEW' }),
+    ).resolves.toEqual({ ...wire, status: 'IN_REVIEW' });
+
+    const [path, init] = mock.mock.calls[0] ?? [];
+    expect(path).toBe(`/api/v1/staff/applications/${wire.id}`);
+    expect(init?.method).toBe('PATCH');
+    expect(init?.body).toBe(JSON.stringify({ status: 'IN_REVIEW' }));
+  });
+
+  /**
+   * The distinction the whole endpoint turns on (`API.md`): an absent
+   * `ownerId` leaves the Owner alone, an explicit `null` clears it. A body
+   * built by spreading, or one serialised through a mapping that drops nulls,
+   * would send the first where the drawer meant the second.
+   */
+  it('sends an explicit null to clear the Owner', async () => {
+    const mock = answer({ ...wire, ownerId: null });
+
+    await patchApplication(wire.id, { ownerId: null });
+
+    expect(mock.mock.calls[0]?.[1]?.body).toBe('{"ownerId":null}');
+  });
+
+  it('leaves the Owner alone when the change does not name it', async () => {
+    const mock = answer(wire);
+
+    await patchApplication(wire.id, { internalNotes: 'Rückruf am Montag.' });
+
+    expect(mock.mock.calls[0]?.[1]?.body).not.toContain('ownerId');
+  });
+
+  it('carries the discard flag, which is not a field on an Application', async () => {
+    const mock = answer({ ...wire, discardedAt: '2026-09-08T09:00:00Z' });
+
+    await patchApplication(wire.id, { discarded: true });
+
+    expect(mock.mock.calls[0]?.[1]?.body).toBe('{"discarded":true}');
+  });
+});
+
+describe('eraseApplication', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('deletes under the permanently path and answers nothing', async () => {
+    const mock = noContent();
+
+    await expect(eraseApplication(wire.id)).resolves.toBeUndefined();
+
+    const [path, init] = mock.mock.calls[0] ?? [];
+    expect(path).toBe(`/api/v1/staff/applications/${wire.id}/permanently`);
+    expect(init?.method).toBe('DELETE');
+    expect(init?.body).toBeUndefined();
   });
 });

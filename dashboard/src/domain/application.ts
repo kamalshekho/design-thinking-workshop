@@ -78,6 +78,11 @@ export type Application = {
    * row must not assume a string here.
    */
   about: string | null;
+  /**
+   * What a Staff member wrote about the Application. The column is nullable,
+   * but the wire never is — the backend coalesces a stored `null` to `""`
+   * (`API.md`) — so the textarea always binds to a string.
+   */
   internalNotes: string;
   /**
    * When a Staff member discarded it, or `null` while it is in the working
@@ -147,6 +152,14 @@ export function setDiscarded(
  */
 export const INTERNAL_NOTES_MAX_LENGTH = 4000;
 
+/**
+ * How long typing has to pause before the note is sent. `API.md` requires the
+ * debounce rather than merely suggesting it: a request per keystroke looks,
+ * from the server, like a flood, and the note is the one field a Staff member
+ * writes a paragraph into.
+ */
+export const NOTES_DEBOUNCE_MS = 800;
+
 /** The named views over the Applications list that issue #10 asks for. */
 export const APPLICATION_VIEWS = ['all', 'unassigned', 'stale'] as const;
 
@@ -157,3 +170,15 @@ export type ApplicationView = (typeof APPLICATION_VIEWS)[number];
  * on the "stale" view is built from this number, so the two cannot disagree.
  */
 export const STALE_AFTER_DAYS = 7;
+
+/**
+ * The whole body of `PATCH /api/v1/staff/applications/{id}`: an edit plus the
+ * discard flag (`API.md`). `discarded` is not a field on an Application — the
+ * server stamps `discardedAt` from its own clock and sends the stamp back — so
+ * it cannot be picked out of the type the way the three editable fields are.
+ *
+ * An absent key means "leave it alone" and `ownerId: null` means "clear the
+ * Owner", which is why every caller builds one of these with only the keys it
+ * means rather than spreading a whole Application over it.
+ */
+export type ApplicationPatch = ApplicationEdit & { discarded?: boolean };

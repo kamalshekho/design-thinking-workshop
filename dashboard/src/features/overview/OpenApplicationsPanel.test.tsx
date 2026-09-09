@@ -7,6 +7,7 @@ import { de } from '@/content/de';
 import { mockCategories, mockOwners } from '@/data/mockApplications';
 import type { Application } from '@/domain/application';
 import { setDiscarded } from '@/domain/application';
+import type { NotesDraft } from '@/features/applications/useNotesDraft';
 
 import { OpenApplicationsPanel } from './OpenApplicationsPanel';
 
@@ -37,9 +38,10 @@ function application(overrides: Partial<Application> = {}): Application {
   };
 }
 
-/** Mirrors how `App` hands the shared Applications state down to both screens. */
+/** Mirrors what the two containers hand down to the screens they wrap. */
 function Host({ initial }: { initial: Application[] }) {
   const [applications, setApplications] = useState(initial);
+  const [draft, setDraft] = useState<NotesDraft | null>(null);
   return (
     <OpenApplicationsPanel
       applications={applications}
@@ -58,6 +60,12 @@ function Host({ initial }: { initial: Application[] }) {
       categories={mockCategories}
       owners={mockOwners}
       now={NOW}
+      notes={{
+        draft,
+        onChange: (applicationId, text) => {
+          setDraft({ applicationId, text });
+        },
+      }}
     />
   );
 }
