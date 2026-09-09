@@ -22,6 +22,13 @@
  * screens does not drop and reopen the connection, and it is not mounted at
  * all while the sign-in screen is up, when there is no Sign-in to
  * authenticate the stream with (ADR-0006).
+ *
+ * An expired Sign-in is the same case reached from the other side. The shell
+ * stays mounted — that is what keeps the work alive under the cover
+ * (`SignInCover`) — so `signInExpired` is what stands in for unmounting: the
+ * stream is closed, because there is no Sign-in to authenticate it with, and
+ * the shell is `inert`, because a dashboard that looks covered but still
+ * answers a click would send writes that can only be refused.
  */
 
 import { Archive, BarChartSquare02, Inbox01, Tag01 } from '@untitledui/icons';
@@ -75,8 +82,10 @@ type AppShellProps = {
   current: Screen;
   /** The signed-in Staff member, shown in the sidebar's account card. */
   account: StaffMember;
-  /** Ends the session; `App` then renders `LoginScreen` again. */
+  /** Ends the Sign-in; `App` then renders `LoginScreen` again. */
   onSignOut: () => void;
+  /** The Sign-in ran out and `App` has put the cover over this shell. */
+  signInExpired?: boolean;
   children: ReactNode;
 };
 
@@ -84,12 +93,16 @@ export function AppShell({
   current,
   account,
   onSignOut,
+  signInExpired = false,
   children,
 }: AppShellProps) {
-  const { connected } = useApplicationStream();
+  const { connected } = useApplicationStream({ enabled: !signInExpired });
 
   return (
-    <div className="bg-primary text-primary flex min-h-screen flex-col lg:flex-row">
+    <div
+      inert={signInExpired}
+      className="bg-primary text-primary flex min-h-screen flex-col lg:flex-row"
+    >
       <SidebarNavigationSimple
         activeUrl={`#${current}`}
         items={navItems}

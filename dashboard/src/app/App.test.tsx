@@ -26,6 +26,18 @@ describe('App', () => {
     vi.restoreAllMocks();
   });
 
+  /** Which requests the application actually made, by method and path. */
+  function calls(method: string, path: string) {
+    return vi
+      .mocked(fetch)
+      .mock.calls.filter(
+        ([url, init]) =>
+          typeof url === 'string' &&
+          url.includes(path) &&
+          (init?.method ?? 'GET') === method,
+      );
+  }
+
   it('opens the sign-in screen when GET /me finds no Sign-in', async () => {
     api.signedIn = false;
 
@@ -313,17 +325,6 @@ describe('App', () => {
    * request was sent at all, and what is left on screen when it fails.
    */
   describe('the writes', () => {
-    function calls(method: string, path: string) {
-      return vi
-        .mocked(fetch)
-        .mock.calls.filter(
-          ([url, init]) =>
-            typeof url === 'string' &&
-            url.includes(path) &&
-            (init?.method ?? 'GET') === method,
-        );
-    }
-
     it('sends a Status change as a PATCH of that one field', async () => {
       const user = userEvent.setup();
       await renderSignedIn();
@@ -525,6 +526,249 @@ describe('App', () => {
       expect(calls('PUT', '/staff/categories/order')[0]?.[1]?.body).toContain(
         `["${second!.id}","${first!.id}"`,
       );
+    });
+  });
+
+  /**
+   * An expired Sign-in, which is the one failure the dashboard answers by
+   * covering itself rather than by wording something (`API.md`, "When a
+   * Sign-in expires"). What makes these tests worth running at the whole
+   * application is exactly what a component test cannot show: that nothing
+   * was unmounted, so the drawer, the filters and the typed note are still
+   * there when the Staff member signs in again.
+   */
+  describe('an expired Sign-in', () => {
+    /**
+     * `base/input` keeps the required marker in the DOM, so the accessible
+     * label reads "Passwort *" under jsdom; `selector` also keeps the loose
+     * match off the password field's own visibility toggle.
+     */
+    function coverField(label: string): HTMLElement {
+      return screen.getByLabelText(label, {
+        exact: false,
+        selector: 'input',
+      });
+    }
+
+    /** Opens Mara Weber's drawer and types a note the Sign-in then refuses. */
+    async function typeANoteAndLetTheSignInExpire(
+      user: ReturnType<typeof userEvent.setup>,
+    ): Promise<void> {
+      await user.click(screen.getByText('Mara Weber'));
+      await user.type(
+        screen.getByLabelText(de.detail.internalNotes),
+        'Rückruf',
+      );
+
+      api.signedIn = false;
+
+      await waitFor(
+        () => {
+          expect(calls('PATCH', '/staff/applications/')).toHaveLength(1);
+        },
+        { timeout: 3000 },
+      );
+    }
+
+    it('covers the dashboard and keeps the work when a write answers 401', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      await typeANoteAndLetTheSignInExpire(user);
+
+      expect(
+        await screen.findByRole('heading', { name: de.auth.expiredTitle }),
+      ).toBeInTheDocument();
+
+      /** Everything below the cover is still mounted, note and all. */
+      const shell = screen.getByRole('navigation', {
+        name: de.navigation.label,
+      });
+      expect(shell).toBeInTheDocument();
+      expect(shell.closest('[inert]')).not.toBeNull();
+      expect(screen.getByLabelText(de.detail.internalNotes)).toHaveValue(
+        'Rückruf',
+      );
+
+      /** The cover is the sentence; the write notice does not repeat it. */
+      expect(screen.queryByText(de.errors.general)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(de.dashboard.loadFailed),
+      ).not.toBeInTheDocument();
+    });
+
+    it('drops the cover and leaves the Staff member where they were', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      await typeANoteAndLetTheSignInExpire(user);
+      await screen.findByRole('heading', { name: de.auth.expiredTitle });
+
+      /** The address is filled in already: only the password is re-typed. */
+      expect(coverField(de.auth.emailLabel)).toHaveValue(mockStaffMember.email);
+      await user.type(coverField(de.auth.passwordLabel), 'geheim');
+      await user.click(screen.getByRole('button', { name: de.auth.submit }));
+
+      await waitFor(() => {
+        expect(
+          screen.queryByRole('heading', { name: de.auth.expiredTitle }),
+        ).not.toBeInTheDocument();
+      });
+
+      expect(screen.getByLabelText(de.detail.internalNotes)).toHaveValue(
+        'Rückruf',
+      );
+      expect(
+        screen.getByRole('navigation', { name: de.navigation.label }),
+      ).not.toHaveAttribute('inert');
+    });
+
+    /**
+     * The other half of the same rule. Somebody else at the same machine is
+     * not resuming that work — the cache holds Applicants' personal data and
+     * an unsent note in the drawer, so it goes, exactly as it goes on
+     * "Abmelden".
+     */
+    it('drops the work when somebody else signs in at the cover', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      await typeANoteAndLetTheSignInExpire(user);
+      await screen.findByRole('heading', { name: de.auth.expiredTitle });
+
+      api.staffMember = {
+        id: 'staff-other',
+        name: 'Rosalie Bergmann',
+        email: 'rosalie.bergmann@ichbinhier.online',
+      };
+
+      await user.clear(coverField(de.auth.emailLabel));
+      await user.type(coverField(de.auth.emailLabel), api.staffMember.email);
+      await user.type(coverField(de.auth.passwordLabel), 'geheim');
+      await user.click(screen.getByRole('button', { name: de.auth.submit }));
+
+      expect(
+        await screen.findByText(api.staffMember.email),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(de.detail.internalNotes),
+      ).not.toBeInTheDocument();
+    });
+
+    /**
+     * The stream's half. An `EventSource` reports `error` and nothing else, so
+     * repeated failures are a reason to ask `GET /me` rather than a verdict:
+     * only a `401` there puts the cover up.
+     */
+    it('asks whether the Sign-in is still there after repeated stream failures', async () => {
+      await renderSignedIn();
+      const asked = calls('GET', '/me').length;
+
+      api.signedIn = false;
+
+      act(() => {
+        api.stream()?.fireError();
+        api.stream()?.fireError();
+        api.stream()?.fireError();
+      });
+
+      expect(
+        await screen.findByRole('heading', { name: de.auth.expiredTitle }),
+      ).toBeInTheDocument();
+      expect(calls('GET', '/me')).toHaveLength(asked + 1);
+      expect(api.stream()?.closed).toBe(true);
+    });
+
+    /**
+     * The other failure. A response — nginx's `502` while the backend
+     * restarts, or the `401` once the Sign-in is gone — closes the source for
+     * good, so there is no run of retries to wait out: the question is asked
+     * on the first one.
+     */
+    it('asks at once when a response closed the stream for good', async () => {
+      await renderSignedIn();
+      const asked = calls('GET', '/me').length;
+
+      api.signedIn = false;
+
+      act(() => {
+        api.stream()?.fireErrorAndClose();
+      });
+
+      expect(
+        await screen.findByRole('heading', { name: de.auth.expiredTitle }),
+      ).toBeInTheDocument();
+      expect(calls('GET', '/me')).toHaveLength(asked + 1);
+    });
+
+    /**
+     * And when the Sign-in holds, the hook opens a stream itself. The browser
+     * will not: a closed `EventSource` stays closed, so without this a single
+     * `502` during a backend restart would leave the dashboard behind a red
+     * marker with a stale list for the rest of the day.
+     */
+    it('opens a fresh stream after the browser has closed one', async () => {
+      await renderSignedIn();
+      const dropped = api.stream();
+      expect(dropped).not.toBeNull();
+
+      vi.useFakeTimers();
+
+      try {
+        await act(async () => {
+          dropped?.fireErrorAndClose();
+          await Promise.resolve();
+        });
+
+        await act(async () => {
+          await vi.advanceTimersByTimeAsync(5_000);
+        });
+
+        expect(api.stream()).not.toBe(dropped);
+        expect(
+          screen.queryByRole('heading', { name: de.auth.expiredTitle }),
+        ).not.toBeInTheDocument();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('leaves the dashboard alone while the Sign-in holds, and asks again', async () => {
+      await renderSignedIn();
+      const asked = calls('GET', '/me').length;
+
+      act(() => {
+        api.stream()?.fireError();
+        api.stream()?.fireError();
+        api.stream()?.fireError();
+      });
+
+      await waitFor(() => {
+        expect(calls('GET', '/me')).toHaveLength(asked + 1);
+      });
+
+      expect(
+        screen.queryByRole('heading', { name: de.auth.expiredTitle }),
+      ).not.toBeInTheDocument();
+
+      /**
+       * And it keeps asking while the failures keep coming: the answer that
+       * matters may arrive later than the first question, since a backend
+       * restart takes the Sign-ins with it (`A17`) and the first question is
+       * asked while the backend is still down.
+       */
+      api.signedIn = false;
+
+      act(() => {
+        api.stream()?.fireError();
+        api.stream()?.fireError();
+        api.stream()?.fireError();
+      });
+
+      expect(
+        await screen.findByRole('heading', { name: de.auth.expiredTitle }),
+      ).toBeInTheDocument();
+      expect(calls('GET', '/me')).toHaveLength(asked + 2);
     });
   });
 

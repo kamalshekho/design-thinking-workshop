@@ -9,8 +9,8 @@
  */
 
 export const queryKeys = {
-  /** `GET /me`, or `null` while nobody is signed in. */
-  signedInStaffMember: ['signedInStaffMember'] as const,
+  /** The current Sign-in: `GET /me`'s answer, plus whether it has expired. */
+  signIn: ['signIn'] as const,
   applications: ['applications'] as const,
   /** The state history behind Übersicht's sparklines. */
   stateChanges: ['stateChanges'] as const,

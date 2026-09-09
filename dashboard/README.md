@@ -204,11 +204,15 @@ is real, the Applications, the state changes, the Categories and the Staff
 members all come from [`API.md`](./API.md)'s endpoints, the live stream applies
 changes as they happen, and every edit a Staff member makes — a Status, an
 Owner, the internal notes, a discard, a restore, the permanent erase and the
-five Category moves — is a request. One thing follows it and is not here yet:
+five Category moves — is a request. An expired Sign-in is covered too, without
+losing the work under it (issue #40).
 
-- **an expired Sign-in mid-session is not covered** (issue #40). A `401`
-  reaches the screen that made the request rather than putting the sign-in
-  screen over the dashboard and keeping the work.
+One thing the cover leaves behind, because it is the failure panel's design
+rather than the Sign-in's: a read that fails for any _other_ reason still
+replaces the screens with `DashboardGate`'s panel, and that unmounts the open
+drawer along with the note typed into it. A backend restart shows both at once
+— the `502` takes the drawer, the `401` a moment later puts the cover up over
+what is left.
 
 Two findings about the clone are worth writing down here, because both are
 work that the Untitled UI website makes look like a copy.
@@ -344,14 +348,34 @@ or the failure until the data is there. Its real payoff is below it: no
 container and no screen handles `Application[] | undefined`, and no screen
 test writes the case where the data has not arrived.
 
-**A Sign-in that has expired is recognised in one place too** — issue #40's
-work, not built yet. The transport knows nothing about sessions; the
-`QueryClient`'s cache-level error callbacks see `UNAUTHENTICATED`, clear the
-session entry, and `AppShell` covers the dashboard with the sign-in screen
-while the work stays alive. What does exist is the boot half of it: the
-Sign-in is a cookie the dashboard cannot read, so `GET /me` is what the
-session query asks, and a `401` there is the answer "nobody is signed in"
-rather than a failure a Staff member reads.
+**A Sign-in that has expired is recognised in one place too.** The transport
+knows nothing about Sign-ins; both of the `QueryClient`'s caches get an
+`onError`, so every read and every write passes one check for
+`UNAUTHENTICATED` (`queries/queryClient.ts`), and the answer is a single
+transition on the Sign-in entry (`domain/signIn.ts`).
+
+That entry is three states rather than a Staff member or `null`, because
+**nobody signed in and a Sign-in that ran out are different answers**. The
+first is `LoginScreen`, with nothing behind it. The second is the same form as
+a dialog over a dashboard that is _still mounted_ — `app/SignInCover.tsx`, a
+sibling of `AppShell` rather than a replacement for it, which is the whole
+mechanism: the filters, the open drawer and the unsent note survive because
+nothing was ever unmounted. Two things follow the cover rather than being
+decoration: the shell behind it is `inert`, and `DashboardGate` skips a `401`
+so its failure panel cannot tear down the screens the cover is protecting.
+
+Signing in out of the cover splits by who did it. The same Staff member is
+resuming, so the cache is kept and then invalidated — invalidating keeps the
+data on screen while it is re-asked, where a reset would send the gate back to
+its loading panel and unmount the drawer. Somebody else is borrowing the
+machine, so the cache goes, for the same reason "Abmelden" clears it.
+
+The stream reaches the same transition by asking rather than guessing. An
+`EventSource` reports only `error`, so `readyState` is what tells a dropped
+connection (the browser repairs it; wait) from a response (`502` or `401` — the
+browser is done, and this hook opens a fresh stream itself). Either way the
+verdict comes from `GET /me`, so a backend that is merely down never asks a
+Staff member for a password.
 
 **Whether the dashboard is live is on the screen.** `API.md` rules out a
 polling fallback, so the connection marker is not decoration — it is the only
@@ -359,7 +383,7 @@ thing that distinguishes "no new Anfragen" from "no connection", and it says
 to reload when it is the second. The "do not blink on a reconnect" rule
 belongs to `useApplicationStream`, since it is about `EventSource` and not
 about requests: a browser fires `error` on every reconnect attempt, so the
-marker waits out a grace period before admitting the stream is down.
+marker waits out a grace period before admitting the stream is down (`A18`).
 
 ### What each layer takes for a test
 
@@ -368,15 +392,18 @@ marker waits out a grace period before admitting the stream is down.
 - the pure functions — the stream's event application, and the State-change
   replay behind Übersicht's sparklines — plain unit tests.
 - the screens — unchanged: fixtures through props, no provider, no `fetch`.
-  `LoginScreen` is one of them: it raises credentials and takes the request's
-  outcome back as props, so its tests need neither.
+  `SignInForm` is one of them: it raises credentials and takes the request's
+  outcome back as props, so its tests need neither, and both places that ask
+  for a password — the screen and the cover — are the same component.
 - the containers — only where they carry logic, such as an optimistic
   rollback or a draft surviving a failure, with a real `QueryClient` at
   `retry: false` and `gcTime: 0`.
 - the whole application — `src/test/stubApi.ts` answers every endpoint from
   the fixtures and hands the test the `EventSource` the application opened, so
-  `App.test.tsx` can drive a `application.created` event or a reconnect and
-  watch what reaches the screen.
+  `App.test.tsx` can drive a `application.created` event, either kind of
+  stream failure, or an expired Sign-in and watch what reaches the screen. Its
+  cache is `createQueryClient`'s, with `retry` and `gcTime` overridden per
+  render, so the `401` recognition is under test rather than stubbed out.
 
 There is no Mock Service Worker, and `src/data/` is fixtures only.
 

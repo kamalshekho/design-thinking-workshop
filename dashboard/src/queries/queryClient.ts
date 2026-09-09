@@ -11,26 +11,55 @@
  * - **no refetch on window focus.** Same reason, and a sharper one: an
  *   optimistic write that has not yet been echoed by the stream would be
  *   replaced by a refetch triggered by nothing more than switching tabs;
- * - **`retry: 1`.** One retry absorbs a dropped request without making the
- *   failure state slow to reach. A `401` is not retried at all — the session
- *   query says so for itself, since there it is an answer rather than a
- *   failure.
+ * - **`retry: 1`, and never a `401`.** One retry absorbs a dropped request
+ *   without making the failure state slow to reach. An expired Sign-in is not
+ *   a dropped request: asking again cannot make the cookie come back, and each
+ *   attempt is time the dashboard spends before admitting the Sign-in is gone.
  *
- * Recognising an expired Sign-in at this level — clearing the session entry
- * when any query answers `UNAUTHENTICATED`, so the sign-in screen covers the
- * dashboard without losing the work below it — is issue #40.
+ * **An expired Sign-in is recognised here and nowhere else.** Both caches get
+ * an `onError`, so every read and every write in the dashboard passes one
+ * check: a `401 UNAUTHENTICATED` from any of them means the Sign-in ran out,
+ * and the Sign-in entry is marked expired — which is what puts the sign-in
+ * cover over a dashboard that stays mounted, with the work below it intact
+ * (`session.ts`, `app/SignInCover.tsx`).
+ *
+ * The cache is the right level for it because the alternative is every caller.
+ * The transport cannot do it — it knows nothing about React or about the cache
+ * — and a check in each query and each mutation is the same rule written a
+ * dozen times, one of which would be forgotten the next time an endpoint is
+ * added.
  */
 
-import { QueryClient } from '@tanstack/react-query';
+import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
+
+import { isUnauthenticated } from '@/api/problem';
+
+import { markSignInExpired } from './session';
 
 export function createQueryClient(): QueryClient {
-  return new QueryClient({
+  /**
+   * Both callbacks close over the client they belong to, which does not exist
+   * until the caches do. They only ever run from a settled request, long after
+   * this function has returned.
+   */
+  function onError(failure: unknown): void {
+    if (isUnauthenticated(failure)) {
+      markSignInExpired(client);
+    }
+  }
+
+  const client = new QueryClient({
+    queryCache: new QueryCache({ onError }),
+    mutationCache: new MutationCache({ onError }),
     defaultOptions: {
       queries: {
         staleTime: Infinity,
         refetchOnWindowFocus: false,
-        retry: 1,
+        retry: (attempts, failure) =>
+          !isUnauthenticated(failure) && attempts < 1,
       },
     },
   });
+
+  return client;
 }

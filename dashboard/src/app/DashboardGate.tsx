@@ -14,14 +14,22 @@
  *
  * A failure offers a retry rather than only naming itself: the likely cause
  * is a backend that is not up yet or a request that was dropped, and both are
- * fixed by asking again. An expired Sign-in never reaches here — it is not a
- * failure the Staff member reads but the sign-in screen, which issue #40 puts
- * over the dashboard without losing the work below it.
+ * fixed by asking again.
+ *
+ * **An expired Sign-in is not one of them.** It is answered by the cover over
+ * the whole dashboard (`SignInCover`), and this gate has to stay out of the
+ * way while that happens: the panel below would unmount every screen under it
+ * — the open drawer and the note typed into it included — which is the exact
+ * work the cover exists to keep. So a `401` is skipped here, and the children
+ * stay mounted behind the cover. It reaches this gate at all because a write
+ * refused by the expired Sign-in invalidates the list on its way out
+ * (`queries/optimistic.ts`), and the refetch is refused too.
  */
 
 import { useQueries } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
+import { isUnauthenticated } from '@/api/problem';
 import { Button } from '@/components/base/buttons/button';
 import { de } from '@/content/de';
 import { applicationsQuery, stateChangesQuery } from '@/queries/applications';
@@ -46,7 +54,9 @@ export function DashboardGate({ children }: DashboardGateProps) {
     return <LoadingPanel />;
   }
 
-  const failed = queries.filter((query) => query.isError);
+  const failed = queries.filter(
+    (query) => query.isError && !isUnauthenticated(query.error),
+  );
 
   if (failed.length > 0) {
     return (

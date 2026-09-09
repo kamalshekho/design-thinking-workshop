@@ -340,6 +340,20 @@ and does not fall back to polling when it is not.
   verbunden" over a connection that never really went away. Three seconds is
   long enough to sit out an ordinary reconnect and short enough that a real
   outage is admitted while the staff member is still looking at the screen.
+- **Three dropped connections, and then the dashboard asks whether the
+  Sign-in is still there** — our number. A browser reports a failed stream as
+  an error and nothing more, so the dashboard cannot read the `401` that ends
+  it (`A17`); it asks `GET /me` instead, and only that answer decides. Three
+  is one more than an ordinary reconnect costs, and the question is repeated
+  while the failures continue, because a restart takes the Sign-ins with it and
+  the first question is asked while the backend is still down.
+- **A stream the browser has closed is reopened after five seconds** — our
+  number, and it exists because a browser only retries a *dropped* connection.
+  A response it can read — the `401` above, or the proxy's `502` during a
+  restart — closes the stream for good, so without this a restart would leave
+  the dashboard behind a red marker with a stale list for the rest of the day.
+  Five seconds does not race a backend coming back up and still has the
+  dashboard live while the staff member is looking at it.
 - **Confidence:** low — our proposal, and the only one here that the
   association could not have asked for, since they have never seen a
   dashboard.
