@@ -471,7 +471,10 @@ export function ApplicationTable({
         </Table.Body>
       </Table>
 
-      {paginated ? (
+      {/* No pager under an empty table: with no rows it reads
+          "Zurück | 1 | Weiter" under the empty state, which offers a page
+          that does not exist and makes the screen look half-loaded (issue #53). */}
+      {paginated && sorted.length > 0 ? (
         <PaginationCardDefault
           page={currentPage}
           total={totalPages}

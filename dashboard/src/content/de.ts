@@ -72,8 +72,16 @@ export const de = {
       ownerLabel: 'Zuständigkeit',
       allCategories: 'Alle Kategorien',
       allOwners: 'Alle Zuständigen',
+      /**
+       * The panel's own two states, worded from "offen" rather than from the
+       * whole list: an Application that is Declined or Active is not open, so
+       * "keine offenen" can be true while Anfragen is full (issue #53).
+       */
       empty: 'Keine offenen Anfragen.',
+      emptyHint:
+        'Neue Anfragen aus dem Formular erscheinen hier, die ältesten zuerst.',
       noMatches: 'Keine passenden Anfragen.',
+      noMatchesHint: 'Suche oder Filter zurücksetzen, um alle zu sehen.',
       count: (shown: number, total: number) =>
         `${String(shown)} von ${String(total)} offenen Anfragen`,
       viewAll: 'Alle offenen Anfragen ansehen',
@@ -245,6 +253,20 @@ export const de = {
       count === 1
         ? '1 markierte Anfrage aussortieren?'
         : `${String(count)} markierte Anfragen aussortieren?`,
+
+    /**
+     * The first day: the backend runs without the demo week (`A21`), so there
+     * is nothing here until somebody submits the form. The hint names the
+     * stream, because the next Application really does arrive without a
+     * reload.
+     */
+    empty: 'Noch keine Anfrage eingegangen.',
+    emptyHint:
+      'Sobald jemand das Formular abschickt, erscheint die Anfrage hier — ohne Neuladen.',
+    /** Applications exist, but none in this view, search or filter. */
+    noMatches: 'Keine Anfrage in dieser Ansicht.',
+    noMatchesHint:
+      'Andere Ansicht wählen oder Suche und Filter zurücksetzen. Aussortierte Anfragen liegen unter „Aussortiert“.',
   },
 
   discarded: {

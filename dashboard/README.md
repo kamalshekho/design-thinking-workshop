@@ -123,6 +123,32 @@ The dot is `aria-hidden`: the Zuständigkeit column already says "Nicht
 zugewiesen" in words, and any text in the name cell lands in the row header's
 accessible name.
 
+## Empty screens
+
+A backend started without the `demo` profile has the four Categories and the
+five Staff accounts their seeders create, and no Applications at all — which is
+also the state the platform is in on the association's own first day. So all
+four screens are walked against it, and each answers emptiness the same way
+(issue #53):
+
+- **the list card shows an `EmptyState`**, never a header row with nothing
+  under it. Two wordings per screen: nothing at all — the first day, which says
+  what will fill the list — and nothing under this view, search or filter,
+  which says how to undo the narrowing. Anfragen, Kategorien and Aussortiert
+  each pass both into `components/shared/empty-state.tsx`, and Übersicht's
+  panel draws the same component above its own list;
+- **no pager under an empty table.** "Zurück | 1 | Weiter" under an empty state
+  offers a page that does not exist;
+- **controls that narrow nothing are taken away.** Übersicht's panel drops its
+  search, its two filters and its bulk action while no Application is open, and
+  brings them back as soon as one is — so filtering down to nothing never
+  removes the control that undoes it;
+- **an all-zero week in a sparkline is one muted baseline**, not a chart. Three
+  zeroes and seven flat days are correct, and the card must not read as broken:
+  a bar chart draws nothing for zero-height bars, and an area chart draws its
+  line on the very bottom edge in the card's own colour — a semantic red on the
+  overdue card. One grey rule says the same thing on all three.
+
 ## Language
 
 The dashboard UI is German (`A6`) — staff members are German speakers. Code

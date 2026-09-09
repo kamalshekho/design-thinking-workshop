@@ -12,10 +12,11 @@
  * copy.
  */
 
-import { Archive } from '@untitledui/icons';
+import { Archive, Inbox01 } from '@untitledui/icons';
 import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/base/buttons/button';
+import { EmptyState } from '@/components/shared/empty-state';
 import { de } from '@/content/de';
 import type {
   Application,
@@ -119,51 +120,62 @@ export function OpenApplicationsPanel({
           <p className="text-text-tertiary mt-1 text-sm">{subtitle}</p>
         ) : null}
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
-          <OpenApplicationsFilterBar
-            filters={filters}
-            categories={categories}
-            owners={owners}
-            onChange={setFilters}
-          />
-          <div className="flex flex-wrap items-center gap-3">
-            {hasActiveFilters(filters) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setFilters(EMPTY_OPEN_APPLICATIONS_FILTERS);
-                }}
-                className="text-fuut-purple text-sm font-medium hover:underline"
-              >
-                {de.filters.reset}
-              </button>
-            )}
+        {/* A search field, two filters and a bulk action over a list that is
+            empty because the backend has no Applications at all offer to
+            narrow nothing (issue #53). They stay the moment there is one
+            open Application, even if a filter then hides it, so filtering
+            down to nothing cannot take away the control that undoes it. */}
+        {anyOpen ? (
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+            <OpenApplicationsFilterBar
+              filters={filters}
+              categories={categories}
+              owners={owners}
+              onChange={setFilters}
+            />
+            <div className="flex flex-wrap items-center gap-3">
+              {hasActiveFilters(filters) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFilters(EMPTY_OPEN_APPLICATIONS_FILTERS);
+                  }}
+                  className="text-fuut-purple text-sm font-medium hover:underline"
+                >
+                  {de.filters.reset}
+                </button>
+              )}
 
-            {/*
-             * Same rule as on Anfragen: always on the bar, disabled while
-             * nothing is checked, so ticking a row never shifts the toolbar.
-             */}
-            <Button
-              size="md"
-              color="secondary"
-              iconLeading={Archive}
-              isDisabled={actions.selectedIds.size === 0}
-              onClick={actions.discardSelected}
-            >
-              {de.applications.discardSelected(actions.selectedIds.size)}
-            </Button>
+              {/*
+               * Same rule as on Anfragen: always on the bar, disabled while
+               * nothing is checked, so ticking a row never shifts the toolbar.
+               */}
+              <Button
+                size="md"
+                color="secondary"
+                iconLeading={Archive}
+                isDisabled={actions.selectedIds.size === 0}
+                onClick={actions.discardSelected}
+              >
+                {de.applications.discardSelected(actions.selectedIds.size)}
+              </Button>
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
 
       {!anyOpen ? (
-        <p className="text-text-tertiary text-sm">
-          {de.overview.openApplications.empty}
-        </p>
+        <EmptyState
+          icon={Inbox01}
+          title={de.overview.openApplications.empty}
+          hint={de.overview.openApplications.emptyHint}
+        />
       ) : matching.length === 0 ? (
-        <p className="text-text-tertiary text-sm">
-          {de.overview.openApplications.noMatches}
-        </p>
+        <EmptyState
+          icon={Inbox01}
+          title={de.overview.openApplications.noMatches}
+          hint={de.overview.openApplications.noMatchesHint}
+        />
       ) : (
         <>
           <ApplicationsList
