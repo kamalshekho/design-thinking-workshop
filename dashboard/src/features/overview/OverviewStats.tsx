@@ -9,6 +9,7 @@
 
 import { Clock, Inbox01, User01 } from '@untitledui/icons';
 import type { FC } from 'react';
+import { useMemo } from 'react';
 
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import type { SparklineType } from '@/components/ui/sparkline';
@@ -16,6 +17,7 @@ import { Sparkline } from '@/components/ui/sparkline';
 import { de } from '@/content/de';
 import type { Application } from '@/domain/application';
 import { STALE_AFTER_DAYS } from '@/domain/application';
+import type { StateChange } from '@/domain/stateChange';
 import type { ApplicationFilters } from '@/features/applications/filterApplications';
 import {
   EMPTY_FILTERS,
@@ -24,12 +26,21 @@ import {
 import { cx } from '@/utils/cx';
 import { MILLISECONDS_PER_DAY } from '@/utils/dates';
 
+import { applicationsAsOf } from './applicationsAsOf';
+
 type OverviewStatsProps = {
   /**
    * The same list Anfragen and the panel below read, so a card's count follows
    * what a Staff member has done in the session rather than a set of its own.
    */
   applications: readonly Application[];
+  /**
+   * The state history the trailing week is replayed from
+   * (`GET /applications/changes`). Empty is not a special case: with no rows
+   * the walk keeps every current value, which reads as "nothing changed this
+   * week" — the honest curve for a backend that has no history yet.
+   */
+  stateChanges: readonly StateChange[];
   /** The reference date "today" means for the counts and the trailing week. */
   now: Date;
 };
@@ -38,25 +49,11 @@ const HISTORY_DAYS = 7;
 /** `Date#getDay()` is 0-indexed on Sunday; these line up with that index. */
 const WEEKDAY_LABELS = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
-/**
- * A card's count as it would have read on `asOf`: only Applications received
- * by then count at all, and `filterApplications`'s own age/ownership logic
- * (unchanged) decides membership from there. This is what makes the trend
- * real instead of decorative — replaying the same filter across the trailing
- * week, not shaping a curve toward today's value.
- */
-function valueAsOf(
-  applications: readonly Application[],
-  filters: Partial<ApplicationFilters>,
-  asOf: Date,
-): number {
-  const arrived = applications.filter(
-    (application) =>
-      new Date(application.submittedAt).getTime() <= asOf.getTime(),
-  );
-  return filterApplications(arrived, { ...EMPTY_FILTERS, ...filters }, asOf)
-    .length;
-}
+/** One day of the trailing week, and the list as it stood on it. */
+type DayAsOf = {
+  day: Date;
+  applications: readonly Application[];
+};
 
 /** The trailing `HISTORY_DAYS` days ending at `referenceDate`, oldest first. */
 function trailingDays(referenceDate: Date, days: number): Date[] {
@@ -69,13 +66,42 @@ function trailingDays(referenceDate: Date, days: number): Date[] {
   );
 }
 
-function historyFor(
+/**
+ * The trailing week, reconstructed once for all three cards: the walk over
+ * the state history is per day, not per card, and the last day is
+ * `referenceDate` itself — where the walk finds nothing to undo and hands
+ * back the current list, so a card's big number and the right-hand end of its
+ * sparkline cannot disagree.
+ */
+function weekAsOf(
   applications: readonly Application[],
-  filters: Partial<ApplicationFilters>,
+  stateChanges: readonly StateChange[],
   referenceDate: Date,
+): DayAsOf[] {
+  return trailingDays(referenceDate, HISTORY_DAYS).map((day) => ({
+    day,
+    applications: applicationsAsOf(applications, stateChanges, day),
+  }));
+}
+
+/**
+ * A card's curve: the same filter run over each day's reconstructed list,
+ * with that day as the reference date so "Lange offen" ages against the day
+ * it is counting, not against today. This is what makes the trend real
+ * instead of decorative — the same question asked of seven different lists,
+ * not a curve shaped toward today's value.
+ */
+function historyFor(
+  week: readonly DayAsOf[],
+  filters: Partial<ApplicationFilters>,
 ): number[] {
-  return trailingDays(referenceDate, HISTORY_DAYS).map((day) =>
-    valueAsOf(applications, filters, day),
+  return week.map(
+    (entry) =>
+      filterApplications(
+        entry.applications,
+        { ...EMPTY_FILTERS, ...filters },
+        entry.day,
+      ).length,
   );
 }
 
@@ -138,8 +164,17 @@ const STAT_CARDS: readonly StatCard[] = [
   },
 ];
 
-export function OverviewStats({ applications, now }: OverviewStatsProps) {
+export function OverviewStats({
+  applications,
+  stateChanges,
+  now,
+}: OverviewStatsProps) {
   const weekdayLabels = weekdayLabelsFor(now);
+
+  const week = useMemo(
+    () => weekAsOf(applications, stateChanges, now),
+    [applications, stateChanges, now],
+  );
 
   const cards = STAT_CARDS.map((card) => ({
     ...card,
@@ -148,7 +183,7 @@ export function OverviewStats({ applications, now }: OverviewStatsProps) {
       { ...EMPTY_FILTERS, ...card.filters },
       now,
     ).length,
-    history: historyFor(applications, card.filters, now),
+    history: historyFor(week, card.filters),
   }));
 
   return (

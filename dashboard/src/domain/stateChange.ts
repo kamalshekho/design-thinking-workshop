@@ -6,8 +6,9 @@
  * `ownerId` were last Tuesday, and an Application carries only its current
  * pair — so replaying today's values across the week produces a curve that is
  * confidently wrong. The backend records every change and the dashboard walks
- * backwards from the current state. That walk is issue #39; this type and the
- * request behind it are what it walks over.
+ * backwards from the current state in
+ * `features/overview/applicationsAsOf.ts`; this type and the request behind
+ * it are what that walk walks over.
  */
 
 /** The three fields a card reads, and the only ones recorded (`API.md`). */

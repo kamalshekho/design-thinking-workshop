@@ -144,6 +144,7 @@ function Screens({
         <OverviewScreen
           staffName={staffMember.name}
           applications={data.applications}
+          stateChanges={data.stateChanges}
           onEdit={data.editApplication}
           onDiscard={data.discard}
           categories={data.categories}
