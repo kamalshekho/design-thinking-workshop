@@ -255,7 +255,6 @@ describe('App', () => {
 
   it('erases a discarded Application, with no way back to Anfragen', async () => {
     const user = userEvent.setup();
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
     await renderSignedIn();
 
     await user.click(
@@ -269,6 +268,11 @@ describe('App', () => {
     await user.click(
       screen.getByRole('button', {
         name: de.discarded.eraseOne('Mara Weber'),
+      }),
+    );
+    await user.click(
+      within(screen.getByRole('alertdialog')).getByRole('button', {
+        name: de.discarded.erase,
       }),
     );
 
@@ -374,7 +378,6 @@ describe('App', () => {
     /** A bulk action is N single requests; there is no bulk endpoint. */
     it('discards a checked selection as one request per Application', async () => {
       const user = userEvent.setup();
-      vi.spyOn(window, 'confirm').mockReturnValue(true);
       await renderSignedIn();
 
       const rows = screen.getAllByRole('checkbox').slice(1, 3);
@@ -385,6 +388,13 @@ describe('App', () => {
         screen.getByRole('button', {
           name: de.applications.discardSelected(2),
         }),
+      );
+      await user.click(
+        within(
+          screen.getByRole('alertdialog', {
+            name: de.applications.confirmDiscardSelected(2),
+          }),
+        ).getByRole('button', { name: de.applications.discard }),
       );
 
       await waitFor(() => {
@@ -449,7 +459,6 @@ describe('App', () => {
 
     it('erases through the permanently path, after the server has', async () => {
       const user = userEvent.setup();
-      vi.spyOn(window, 'confirm').mockReturnValue(true);
       await renderSignedIn();
 
       await user.click(
@@ -463,6 +472,11 @@ describe('App', () => {
       await user.click(
         screen.getByRole('button', {
           name: de.discarded.eraseOne('Mara Weber'),
+        }),
+      );
+      await user.click(
+        within(screen.getByRole('alertdialog')).getByRole('button', {
+          name: de.discarded.erase,
         }),
       );
 

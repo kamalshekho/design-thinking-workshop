@@ -26,6 +26,7 @@ import type {
 } from '@/domain/application';
 import { ApplicationDrawer } from '@/features/applications/ApplicationDrawer';
 import { ApplicationsList } from '@/features/applications/ApplicationsList';
+import { DiscardSelectedDialog } from '@/features/applications/DiscardSelectedDialog';
 import { buildApplicationsHref } from '@/features/applications/filterApplications';
 import { useApplicationActions } from '@/features/applications/useApplicationActions';
 import type { NotesField } from '@/features/applications/useNotesDraft';
@@ -219,6 +220,14 @@ export function OpenApplicationsPanel({
           onNotesChange={(text) => {
             notes.onChange(selected.id, text);
           }}
+        />
+      ) : null}
+
+      {actions.discardConfirmOpen ? (
+        <DiscardSelectedDialog
+          count={actions.selectedIds.size}
+          onConfirm={actions.confirmDiscardSelected}
+          onCancel={actions.cancelDiscardSelected}
         />
       ) : null}
     </section>

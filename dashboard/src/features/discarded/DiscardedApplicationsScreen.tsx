@@ -35,6 +35,7 @@ import { useMemo, useRef, useState } from 'react';
 import type { ApplicationRowAction } from '@/components/application/application-table/application-table';
 import { ApplicationTable } from '@/components/application/application-table/application-table';
 import { Button } from '@/components/base/buttons/button';
+import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { PageHeader } from '@/components/shared/page-header';
 import { de } from '@/content/de';
@@ -72,6 +73,12 @@ export function DiscardedApplicationsScreen({
   const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(
     new Set(),
   );
+  /**
+   * Whether the bulk erase is waiting on its confirmation. A flag rather than
+   * the ids: the dialog asks about the selection as it stands, and the bar
+   * behind it cannot be ticked while the dialog holds focus.
+   */
+  const [eraseConfirmOpen, setEraseConfirmOpen] = useState(false);
 
   const searchRef = useRef<HTMLInputElement>(null);
   useSearchShortcut(searchRef);
@@ -116,7 +123,11 @@ export function DiscardedApplicationsScreen({
       id: 'erase',
       icon: Trash03,
       label: (application) => de.discarded.eraseOne(application.name),
-      confirm: (application) => de.discarded.confirmEraseOne(application.name),
+      confirm: (application) => ({
+        title: de.discarded.confirmEraseOne(application.name),
+        description: de.discarded.eraseWarning,
+        confirmLabel: de.discarded.erase,
+      }),
       destructive: true,
       onAction: (application) => {
         erase(new Set([application.id]));
@@ -167,13 +178,8 @@ export function DiscardedApplicationsScreen({
             iconLeading={Trash01}
             isDisabled={selectedIds.size === 0}
             onClick={() => {
-              if (
-                selectedIds.size > 0 &&
-                window.confirm(
-                  de.discarded.confirmEraseSelected(selectedIds.size),
-                )
-              ) {
-                erase(selectedIds);
+              if (selectedIds.size > 0) {
+                setEraseConfirmOpen(true);
               }
             }}
           >
@@ -205,6 +211,21 @@ export function DiscardedApplicationsScreen({
           }
         />
       </div>
+
+      {eraseConfirmOpen ? (
+        <ConfirmDialog
+          title={de.discarded.confirmEraseSelected(selectedIds.size)}
+          description={de.discarded.eraseWarning}
+          confirmLabel={de.discarded.erase}
+          onConfirm={() => {
+            erase(selectedIds);
+            setEraseConfirmOpen(false);
+          }}
+          onCancel={() => {
+            setEraseConfirmOpen(false);
+          }}
+        />
+      ) : null}
     </div>
   );
 }

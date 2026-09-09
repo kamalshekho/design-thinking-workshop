@@ -13,7 +13,6 @@
 
 import { useState } from 'react';
 
-import { de } from '@/content/de';
 import type { Application, ApplicationEdit } from '@/domain/application';
 
 type UseApplicationActionsOptions = {
@@ -35,6 +34,13 @@ export function useApplicationActions({
   const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(
     new Set(),
   );
+  /**
+   * Whether the bulk discard is waiting on its confirmation. The question is
+   * asked in a dialog the screen renders, so this hook no longer decides
+   * inside one function call whether the action runs: it opens the question
+   * and waits to be told.
+   */
+  const [discardConfirmOpen, setDiscardConfirmOpen] = useState(false);
 
   const selected =
     applications.find((application) => application.id === selectedId) ?? null;
@@ -77,12 +83,18 @@ export function useApplicationActions({
    * several at once.
    */
   function discardSelected(): void {
-    if (
-      selectedIds.size > 0 &&
-      window.confirm(de.applications.confirmDiscardSelected(selectedIds.size))
-    ) {
-      discard(selectedIds);
+    if (selectedIds.size > 0) {
+      setDiscardConfirmOpen(true);
     }
+  }
+
+  function confirmDiscardSelected(): void {
+    setDiscardConfirmOpen(false);
+    discard(selectedIds);
+  }
+
+  function cancelDiscardSelected(): void {
+    setDiscardConfirmOpen(false);
   }
 
   return {
@@ -96,6 +108,11 @@ export function useApplicationActions({
     /** The drawer's edits, straight through — this hook has nothing to add. */
     update: onEdit,
     discard,
+    /** Opens the question; `confirmDiscardSelected` is what discards. */
     discardSelected,
+    /** True while the dialog the screen renders is up. */
+    discardConfirmOpen,
+    confirmDiscardSelected,
+    cancelDiscardSelected,
   };
 }
