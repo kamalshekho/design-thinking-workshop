@@ -21,7 +21,15 @@ cp .env.example .env   # set DB_PASSWORD
 docker compose up -d --build
 ```
 
-The form is then on <http://localhost:8081>
+The form is then on <http://localhost:8081>; the staff dashboard is on
+<http://localhost:8082>.
+
+Run the demo on the presenting machine and open both addresses as
+`localhost`. The dashboard's Sign-in cookie is deliberately `Secure`, so a
+browser will reject it over plain HTTP on a network name or IP address. Do not
+drop that flag to make the dashboard reachable from another device: put TLS in
+front of the two containers instead. The demo database is for synthetic test
+data only; do not enter real applicant details while presenting it.
 
 `docker compose down` to stop services, with `-v` to drop the database
 
