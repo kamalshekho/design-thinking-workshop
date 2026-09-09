@@ -17,9 +17,9 @@ import { useCurrentSignIn, useSignIn, useSignOut } from '@/queries/session';
 import type { Screen } from './AppShell';
 import { AppShell } from './AppShell';
 import { DashboardGate } from './DashboardGate';
+import { RequestFailures } from './RequestFailures';
 import { SignInCover } from './SignInCover';
 import { useCurrentScreen } from './useCurrentScreen';
-import { WriteFailures } from './WriteFailures';
 
 type AppProps = {
   /** Injected so tests agree with the fixtures on one reference date. */
@@ -65,7 +65,7 @@ export function App({ now, client }: AppProps = {}) {
  * in again reveals them rather than rebuilding them. Swapping in `LoginScreen`
  * would unmount the lot, which is precisely the work the cover exists to keep.
  *
- * `WriteFailures` wraps both, so a write refused by the expired Sign-in has
+ * `RequestFailures` wraps both, so a write refused by the expired Sign-in has
  * somewhere to report to while the cover comes up — the notice itself ignores
  * that one code, since the cover already says what happened. The sign-in
  * screen proper is outside it, because it words its own rejection next to the
@@ -116,7 +116,7 @@ function Dashboard({ now }: { now?: Date }) {
   const staffMember: StaffMember = signIn.staffMember;
 
   return (
-    <WriteFailures>
+    <RequestFailures>
       <AppShell
         current={current}
         account={staffMember}
@@ -142,7 +142,7 @@ function Dashboard({ now }: { now?: Date }) {
           isSubmitting={signInRequest.isPending}
         />
       )}
-    </WriteFailures>
+    </RequestFailures>
   );
 }
 

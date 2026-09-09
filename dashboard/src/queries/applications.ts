@@ -43,7 +43,7 @@ import type { StateChange } from '@/domain/stateChange';
 import { upsertApplication } from './applicationEvents';
 import { queryKeys } from './keys';
 import { optimisticList } from './optimistic';
-import { useReportWriteFailure } from './writeFailures';
+import { useReportRequestFailure } from './requestFailures';
 
 /** Every Application, discarded ones included; the screens filter for themselves. */
 export const applicationsQuery = queryOptions({
@@ -84,7 +84,7 @@ export type ApplicationEditVariables = {
 
 export function useEditApplication() {
   const queryClient = useQueryClient();
-  const report = useReportWriteFailure();
+  const report = useReportRequestFailure();
   const list = optimisticList<Application>(queryClient, queryKeys.applications);
 
   return useMutation({
@@ -133,7 +133,7 @@ export type SetDiscardedVariables = {
 
 export function useSetDiscarded() {
   const queryClient = useQueryClient();
-  const report = useReportWriteFailure();
+  const report = useReportRequestFailure();
   const list = optimisticList<Application>(queryClient, queryKeys.applications);
 
   return useMutation({
@@ -180,7 +180,7 @@ export function useSetDiscarded() {
  */
 export function useEraseApplications() {
   const queryClient = useQueryClient();
-  const report = useReportWriteFailure();
+  const report = useReportRequestFailure();
   const list = optimisticList<Application>(queryClient, queryKeys.applications);
 
   return useMutation({

@@ -30,7 +30,7 @@ import {
 import type { Category, CategoryDraft } from '@/domain/category';
 
 import { queryKeys } from './keys';
-import { useReportWriteFailure } from './writeFailures';
+import { useReportRequestFailure } from './requestFailures';
 
 export const categoriesQuery = queryOptions({
   queryKey: queryKeys.categories,
@@ -55,7 +55,7 @@ function useCategoryWrite<Variables>(
   write: (variables: Variables) => Promise<unknown>,
 ) {
   const queryClient = useQueryClient();
-  const report = useReportWriteFailure();
+  const report = useReportRequestFailure();
 
   return useMutation({
     mutationFn: write,
