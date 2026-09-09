@@ -13,9 +13,10 @@
  * can erase an Application away from the three that cannot.
  *
  * It is also where the two things the whole dashboard says about itself sit:
- * whether the live stream is connected, and the last write that failed. Both
- * are above the screen rather than inside it, because neither belongs to any
- * one of the four.
+ * whether the live stream is connected, and the last request that failed —
+ * a write that was refused, or a refetch that left the list stale. Both are
+ * above the screen rather than inside it, because neither belongs to any one
+ * of the four, and the second must not replace them (issue #58).
  *
  * The shell is also where the live stream is opened, and the one place it can
  * be: it is mounted for as long as a Staff member is signed in, so switching
@@ -43,8 +44,8 @@ import { de } from '@/content/de';
 import type { StaffMember } from '@/domain/staffMember';
 import { useApplicationStream } from '@/queries/useApplicationStream';
 
+import { RequestFailureNotice } from './RequestFailures';
 import { StreamMarker } from './StreamMarker';
-import { WriteFailureNotice } from './WriteFailures';
 
 export type Screen = 'overview' | 'applications' | 'categories' | 'discarded';
 
@@ -122,7 +123,7 @@ export function AppShell({
         className="bg-bg-canvas flex min-w-0 flex-1 flex-col gap-3 py-6"
       >
         <StreamMarker connected={connected} />
-        <WriteFailureNotice />
+        <RequestFailureNotice />
         {children}
       </main>
     </div>

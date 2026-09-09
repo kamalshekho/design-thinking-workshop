@@ -773,6 +773,109 @@ describe('App', () => {
   });
 
   /**
+   * A read that failed *after* the list had arrived — nginx's `502` while the
+   * backend restarts. Issue #58 decided that this is not the gate's panel, and
+   * what makes it worth running at the whole application is what a component
+   * test cannot show: the drawer and the note typed into it are still there,
+   * because the notice sits above the screens rather than in place of them.
+   */
+  describe('a refetch that failed', () => {
+    /** Opens Mara Weber's drawer, types a note, then takes the backend away. */
+    async function typeANoteAndRestartTheBackend(
+      user: ReturnType<typeof userEvent.setup>,
+    ): Promise<void> {
+      await user.click(screen.getByText('Mara Weber'));
+      await user.type(
+        screen.getByLabelText(de.detail.internalNotes),
+        'Rückruf',
+      );
+
+      api.readFailure = { status: 502, code: 'BAD_GATEWAY' };
+
+      /** Every `open` refetches, which is where the restart is noticed. */
+      act(() => {
+        api.stream()?.fireOpen();
+      });
+    }
+
+    it('words the stale list once and leaves the work standing', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      await typeANoteAndRestartTheBackend(user);
+
+      expect(
+        await screen.findByText(de.dashboard.updateFailed),
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText(de.detail.internalNotes)).toHaveValue(
+        'Rückruf',
+      );
+      /** Two of them: the row is still in the list, and the drawer is open. */
+      expect(screen.getAllByText('Mara Weber')).toHaveLength(2);
+
+      /** The panel's wording belongs to a dashboard with nothing to show. */
+      expect(
+        screen.queryByText(de.dashboard.loadFailed),
+      ).not.toBeInTheDocument();
+    });
+
+    /** The retry the panel has, over exactly the queries that failed. */
+    it('asks again from the notice', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      await typeANoteAndRestartTheBackend(user);
+      await screen.findByText(de.dashboard.updateFailed);
+
+      api.readFailure = null;
+      const asked = calls('GET', '/staff/applications').length;
+
+      await user.click(
+        screen.getByRole('button', { name: de.dashboard.retry }),
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.queryByText(de.dashboard.updateFailed),
+        ).not.toBeInTheDocument();
+      });
+      expect(calls('GET', '/staff/applications').length).toBeGreaterThan(asked);
+    });
+
+    /**
+     * The double failure issue #58 opened with, from the other side: the
+     * `502` used to take the drawer with it and the `401` a moment later
+     * covered whatever was left. Now the restart is one dismissable sentence
+     * and the cover comes up over the same work.
+     */
+    it('lets the 401 behind it cover the same work', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      await typeANoteAndRestartTheBackend(user);
+      await screen.findByText(de.dashboard.updateFailed);
+
+      /** The backend is back, and the Sign-in did not survive it (`A17`). */
+      api.readFailure = null;
+      api.signedIn = false;
+
+      act(() => {
+        api.stream()?.fireErrorAndClose();
+      });
+
+      expect(
+        await screen.findByRole('heading', { name: de.auth.expiredTitle }),
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText(de.detail.internalNotes)).toHaveValue(
+        'Rückruf',
+      );
+      expect(
+        screen.queryByText(de.dashboard.loadFailed),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  /**
    * The three stream behaviours the contract turns on: an event applies
    * without a follow-up request, every `open` refetches because the server
    * keeps no replay buffer, and the marker says whether any of that is

@@ -1,5 +1,6 @@
 /**
- * Loading and failure, answered once for the whole dashboard (ADR-0006).
+ * Whether there is anything to show yet, answered once for the whole dashboard
+ * (`README.md`, "Loading and failure").
  *
  * The gate sits between `AppShell` and the screen and subscribes to the same
  * four cache entries every screen below it reads. Its real payoff is
@@ -12,18 +13,23 @@
  * Zuständigkeit column is empty — three staggered half-screens instead of one
  * wait.
  *
- * A failure offers a retry rather than only naming itself: the likely cause
- * is a backend that is not up yet or a request that was dropped, and both are
- * fixed by asking again.
+ * **The question is whether there is data, not whether this fetch failed**
+ * (issue #58). `data === undefined` is what makes a panel here honest: there
+ * is nothing on screen, so nothing is taken away by replacing it. A refetch
+ * that failed over a list already in the cache is the other state — the work,
+ * the filters and the open drawer are still there, and unmounting them to say
+ * so would destroy more than the failure did. That one is
+ * `RequestFailureNotice`, above the screens rather than in place of them.
+ *
+ * A failure here offers a retry rather than only naming itself: the likely
+ * cause is a backend that is not up yet or a request that was dropped, and
+ * both are fixed by asking again.
  *
  * **An expired Sign-in is not one of them.** It is answered by the cover over
  * the whole dashboard (`SignInCover`), and this gate has to stay out of the
- * way while that happens: the panel below would unmount every screen under it
- * — the open drawer and the note typed into it included — which is the exact
- * work the cover exists to keep. So a `401` is skipped here, and the children
- * stay mounted behind the cover. It reaches this gate at all because a write
- * refused by the expired Sign-in invalidates the list on its way out
- * (`queries/optimistic.ts`), and the refetch is refused too.
+ * way while that happens, so a `401` is skipped here. It reaches this gate at
+ * all because a write refused by the expired Sign-in invalidates the list on
+ * its way out (`queries/optimistic.ts`), and the refetch is refused too.
  */
 
 import { useQueries } from '@tanstack/react-query';
@@ -50,11 +56,18 @@ export function DashboardGate({ children }: DashboardGateProps) {
     ],
   });
 
-  if (queries.some((query) => query.isPending)) {
-    return <LoadingPanel />;
+  /**
+   * A read that failed with data in the cache is not one of these: it has
+   * something to show, and `RequestFailureNotice` says what happened over the
+   * top of it.
+   */
+  const missing = queries.filter((query) => query.data === undefined);
+
+  if (missing.length === 0) {
+    return children;
   }
 
-  const failed = queries.filter(
+  const failed = missing.filter(
     (query) => query.isError && !isUnauthenticated(query.error),
   );
 
@@ -70,7 +83,7 @@ export function DashboardGate({ children }: DashboardGateProps) {
     );
   }
 
-  return children;
+  return <LoadingPanel />;
 }
 
 /**

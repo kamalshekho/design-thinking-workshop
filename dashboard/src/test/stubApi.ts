@@ -16,7 +16,9 @@
  * running: an optimistic discard that was never sent, or one the server
  * refused, both look identical on screen until the refetch behind them asks
  * this object what happened. `writeFailure` is how a test makes every write
- * fail, so the rollback and the one notice above the screens can be watched.
+ * fail, so the rollback and the one notice above the screens can be watched,
+ * and `readFailure` is how it makes the four reads fail while the Sign-in
+ * still holds — a backend restart, from the reads' side.
  */
 
 import { vi } from 'vitest';
@@ -115,6 +117,17 @@ export type StubbedApi = {
   signInFailure: { status: number; code: string } | null;
   /** What every write answers with instead of doing the work, when set. */
   writeFailure: { status: number; code: string } | null;
+  /**
+   * What the four dashboard reads answer with instead of a list, when set —
+   * a backend that has gone away mid-Sign-in, which is what a `502` from
+   * nginx during a restart is.
+   *
+   * `GET /me` is deliberately left out of it, so that a test can fail the
+   * reads while the Sign-in still holds: that is the whole difference between
+   * a stale list said once above the screens and the cover coming up over
+   * them.
+   */
+  readFailure: { status: number; code: string } | null;
   /** The stream the application opened, once it has opened one. */
   stream: () => StubEventSource | null;
 };
@@ -148,6 +161,7 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
     staffMember: mockStaffMember,
     signInFailure: null,
     writeFailure: null,
+    readFailure: null,
     stream: () => StubEventSource.latest,
     ...overrides,
   };
@@ -197,6 +211,12 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
 
       if (path === '/me') {
         return Promise.resolve(json(api.staffMember));
+      }
+
+      if (method === 'GET' && api.readFailure !== null) {
+        return Promise.resolve(
+          problem(api.readFailure.status, api.readFailure.code),
+        );
       }
 
       if (path.startsWith('/applications/changes')) {

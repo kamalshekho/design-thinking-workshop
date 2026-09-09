@@ -233,13 +233,6 @@ Owner, the internal notes, a discard, a restore, the permanent erase and the
 five Category moves — is a request. An expired Sign-in is covered too, without
 losing the work under it (issue #40).
 
-One thing the cover leaves behind, because it is the failure panel's design
-rather than the Sign-in's: a read that fails for any _other_ reason still
-replaces the screens with `DashboardGate`'s panel, and that unmounts the open
-drawer along with the note typed into it. A backend restart shows both at once
-— the `502` takes the drawer, the `401` a moment later puts the cover up over
-what is left.
-
 Two findings about the clone are worth writing down here, because both are
 work that the Untitled UI website makes look like a copy.
 
@@ -306,7 +299,7 @@ application's own code, both from the domain, and all three from the wire:
 
 | Directory         | Holds                                                                                                                                   |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`, `WriteFailures`                                          |
+| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`, `RequestFailures`                                        |
 | `src/features/`   | one folder per screen — `overview`, `applications`, `categories`, `discarded`, `auth`: each holds its screen and the container above it |
 | `src/components/` | UI shared across screens (see below)                                                                                                    |
 | `src/domain/`     | `Application`, `Category`, `StaffMember` and the predicates over them                                                                   |
@@ -358,21 +351,41 @@ whole list. A failure rolls back to the snapshot and then invalidates to
 resync. Categories raise no stream events, so they await the server and
 invalidate instead.
 
-**A failed write is worded once, too, and not by the screen that made it.** A
-read that fails has `DashboardGate`'s panel and a retry button; a write that
-fails has neither, because the Staff member has already moved on and the
-optimistic change is being rolled back underneath them. So every mutation
-reports what was thrown to `WriteFailures`, which remembers the newest one, and
-`AppShell` renders one dismissable notice beside the stream marker. One
-failure, not a list: five discards that all failed are one thing that went
-wrong (`API.md`, "Bulk actions are N single requests"), and the German comes
-from the same `de.errors` lookup the sign-in screen reads.
+**Loading and failure are answered once, and failure is two states.** What
+tells them apart is whether the cache holds anything to show — not whether
+this is the boot fetch (issue #58).
 
-**Loading and failure are answered once.** `DashboardGate` sits between
-`AppShell` and the screen, subscribed to the same keys, and shows the skeleton
-or the failure until the data is there. Its real payoff is below it: no
-container and no screen handles `Application[] | undefined`, and no screen
+_Nothing yet_ is `DashboardGate`, between `AppShell` and the screen and
+subscribed to the same four keys: while any one of them has no data it shows
+the waiting sentence, or the failure with a retry. Its real payoff is below it:
+no container and no screen handles `Application[] | undefined`, and no screen
 test writes the case where the data has not arrived.
+
+_No longer_ is a refetch that failed over a list already on screen, and it must
+not reach that panel: the work, the filters and the open drawer are still
+there, and replacing them to report the failure destroys more than the failure
+did. So the gate answers one question — whether there is data — and the stale
+list is said above the screens instead.
+
+**A failed write and a failed refetch share that slot**, because they have the
+same shape: something happened to work that is still on display, and it needs
+saying once rather than once per request. Every mutation reports what was
+thrown to `RequestFailures`; the notice reads the four cache entries itself and
+takes the newer of the two, since a backend that is down fails the write and
+the refetch behind it and that is one thing that went wrong.
+
+The wordings stay two. A write has already been rolled back and its list
+refetched, so there is nothing to ask again and the notice only says what went
+wrong, out of the same `de.errors` lookup the sign-in screen reads. A stale
+list has nothing else worth offering, so it carries the retry the panel has,
+over exactly the queries that failed. Either way it is one failure and not a
+list: five discards that all failed are one thing (`API.md`, "Bulk actions are
+N single requests").
+
+`StreamMarker` was the other candidate for the stale list and lost: the marker
+is a _state_ — the dashboard is not live — while a failed refetch is an
+_event_, and a refetch can fail while the stream is up. That the marker is
+already there is why the notice may be dismissed.
 
 **A Sign-in that has expired is recognised in one place too.** The transport
 knows nothing about Sign-ins; both of the `QueryClient`'s caches get an

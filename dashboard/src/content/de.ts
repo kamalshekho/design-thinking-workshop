@@ -23,9 +23,10 @@ export const de = {
   association: 'ichbinhier',
 
   /**
-   * The three states the application answers once for every screen, rather
-   * than each screen answering them again (ADR-0006): the boot fetch, its
-   * failure, and whether the live stream is carrying changes.
+   * The states the application answers once for every screen, rather than each
+   * screen answering them again (ADR-0006): the boot fetch, its failure, a
+   * later update that failed over a list already on screen, and whether the
+   * live stream is carrying changes.
    *
    * The disconnected wording says what to do about it. `API.md` is explicit
    * that there is no polling fallback — a dashboard that silently displays
@@ -36,11 +37,22 @@ export const de = {
   dashboard: {
     loading: 'Anfragen werden geladen …',
     loadFailed: 'Die Anfragen konnten nicht geladen werden.',
+    /**
+     * The other half of the same pair, and the reason there are two wordings
+     * rather than one (issue #58). `loadFailed` belongs to the panel, where
+     * nothing really did load; this one belongs to the notice above the
+     * screens, where a list is still on display and only the update failed. So
+     * it speaks of updating rather than loading, and it names the consequence
+     * in the same words `disconnectedHint` does, because it is the same
+     * consequence.
+     */
+    updateFailed:
+      'Die Anfragen konnten nicht aktualisiert werden. Die Liste kann veraltet sein.',
     retry: 'Erneut versuchen',
     /**
-     * The dismiss control on the notice a failed write raises. The sentence
-     * itself is `errors`: the backend sends a `code` and the dashboard words
-     * it in one place (`API.md`, "Errors").
+     * The dismiss control on the notice a failed request raises. A failed
+     * write's sentence is `errors`: the backend sends a `code` and the
+     * dashboard words it in one place (`API.md`, "Errors").
      */
     dismissFailure: 'Meldung ausblenden',
     live: 'Live',
