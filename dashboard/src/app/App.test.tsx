@@ -715,6 +715,68 @@ describe('App', () => {
       expect(calls('GET', '/me')).toHaveLength(asked + 1);
     });
 
+    it('keeps checking a closed stream until it can identify an expired Sign-in', async () => {
+      await renderSignedIn();
+      const asked = calls('GET', '/me').length;
+
+      /** nginx can answer before the restarted backend can answer `GET /me`. */
+      api.signInCheckFailure = { status: 502, code: 'UPSTREAM_UNAVAILABLE' };
+
+      act(() => {
+        api.stream()?.fireErrorAndClose();
+      });
+
+      await waitFor(() => {
+        expect(calls('GET', '/me')).toHaveLength(asked + 1);
+      });
+      expect(
+        screen.queryByRole('heading', { name: de.auth.expiredTitle }),
+      ).not.toBeInTheDocument();
+
+      api.signInCheckFailure = null;
+      api.signedIn = false;
+
+      expect(calls('GET', '/me')).toHaveLength(asked + 1);
+      expect(
+        await screen.findByRole(
+          'heading',
+          { name: de.auth.expiredTitle },
+          { timeout: 6_000 },
+        ),
+      ).toBeInTheDocument();
+      expect(calls('GET', '/me')).toHaveLength(asked + 2);
+    }, 8_000);
+
+    it('reopens the stream when the later Sign-in check succeeds', async () => {
+      await renderSignedIn();
+      const asked = calls('GET', '/me').length;
+      const dropped = api.stream();
+
+      api.signInCheckFailure = { status: 502, code: 'UPSTREAM_UNAVAILABLE' };
+
+      act(() => {
+        dropped?.fireErrorAndClose();
+      });
+
+      await waitFor(() => {
+        expect(calls('GET', '/me')).toHaveLength(asked + 1);
+      });
+
+      api.signInCheckFailure = null;
+
+      await waitFor(
+        () => {
+          expect(api.stream()).not.toBe(dropped);
+        },
+        { timeout: 6_000 },
+      );
+
+      expect(calls('GET', '/me')).toHaveLength(asked + 2);
+      expect(
+        screen.queryByRole('heading', { name: de.auth.expiredTitle }),
+      ).not.toBeInTheDocument();
+    }, 8_000);
+
     /**
      * And when the Sign-in holds, the hook opens a stream itself. The browser
      * will not: a closed `EventSource` stays closed, so without this a single
