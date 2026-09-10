@@ -15,17 +15,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RouteSelectionsController {
 
+    private final RouteSelectionCounterService counterService;
+
     @GetMapping("/route-selections")
     ResponseEntity<RouteSelectionsResponse> list() {
-        List<RouteSelection> fixedRoutes = List.of(
-            new RouteSelection("COMMUNITY", 0),
-            new RouteSelection("SUPPORTING_MEMBER", 0)
-        );
+        List<RouteSelection> allCounters = counterService.getAll();
 
-        List<CategoryRouteSelection> categories = List.of();
+        // Split into fixed routes and category counters.
+        List<RouteSelection> fixedRoutes = allCounters.stream()
+                .filter(r -> "COMMUNITY".equals(r.getRoute())
+                        || "SUPPORTING_MEMBER".equals(r.getRoute()))
+                .toList();
+
+        List<CategoryRouteSelection> categories = allCounters.stream()
+                .filter(r -> r.getRoute().startsWith("CATEGORY:"))
+                .map(r -> {
+                    String catId = r.getRoute().substring("CATEGORY:".length());
+                    return new CategoryRouteSelection(
+                            new CategoryDto(catId, "Category"), r.getCount());
+                })
+                .toList();
 
         RouteSelectionsResponse response = new RouteSelectionsResponse();
-        response.setFixedRoutes(fixedRoutes);
+        response.setFixedRoutes(fixedRoutes.isEmpty()
+                ? List.of(
+                    new RouteSelection("COMMUNITY", 0),
+                    new RouteSelection("SUPPORTING_MEMBER", 0))
+                : fixedRoutes);
         response.setCategories(categories);
         return ResponseEntity.ok(response);
     }
