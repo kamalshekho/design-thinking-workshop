@@ -1,7 +1,8 @@
 # Frontend — applicant form
 
-The public German form where someone says how they want to be involved with
-"Ich bin hier e.V.". One page, one submission, no authentication.
+The public German- and English-language form where someone says how they want
+to be involved with "Ich bin hier e.V.". One page, one submission, no
+authentication.
 
 The form is implemented: all eight states from `DESIGN.md` (sections 27–35)
 are ported and covered by behavioural tests, plus the three category-loading
@@ -62,7 +63,7 @@ frontend/
     ├── features/
     │   └── application-form/     the form: schema, transport, routes
     ├── components/ui/            presentational components, domain-free
-    ├── content/                  German copy and external links
+    ├── content/                  localized copy and external links
     ├── styles/                   tokens.css and base.css
     ├── mocks/                    MSW handlers — API.md, executable
     └── test/                     test setup
@@ -90,8 +91,8 @@ than arguing. What they cannot check:
 - **No `any`, no non-null assertion in `src` outside tests.** `strict` plus
   `noUncheckedIndexedAccess` is on; if a type is hard to express, that is
   usually a sign the data shape is wrong.
-- **English identifiers, German strings.** A variable is never named
-  `bewerbung`; the copy it renders is always German.
+- **English identifiers, localized strings.** A variable is never named
+  `bewerbung`; the copy it renders comes from the active locale.
 
 ## Component rules
 
@@ -185,22 +186,25 @@ face actually rendered before chasing a spacing bug.
 
 ## Copy
 
-All applicant-facing German lives in `src/content/de.ts`, except the dynamic
-category labels returned by the backend as specified in `API.md`. No German
-string appears in a component.
+All fixed applicant-facing copy lives in `src/content/de.ts` and
+`src/content/en.ts`, except the dynamic category labels returned by the backend
+as specified in `API.md`. No localized string appears in a component.
 
 The point is reviewability: the fixed copy of the form can be read against
-`DESIGN.md` in one file. `DESIGN.md` section 49 forbids rewriting the specified
-wording, so a copy change is a change to both files in one commit. Category
-labels are backend-owned data because staff members can maintain them (`A12`).
+`DESIGN.md` in two locale files. `DESIGN.md` section 49 forbids rewriting the
+specified wording, so a copy change is a change to both files in one commit.
+Category labels are backend-owned data because staff members can maintain them
+(`A12`).
 
 Some strings — most error messages — were written for this implementation and
 are **not yet in `DESIGN.md`**. They are marked in `de.ts` and still need a copy
 review.
 
-There is deliberately no i18n library. The form is German only (`A6`), and the
-dashboard is a separate surface with German UI too. Code and documentation
-use English; see
+The applicant form supports German and English through a small local locale
+provider; the selected language is kept in browser storage. Backend-managed
+category labels are returned as provided by the API and are not translated in
+the client. The dashboard is a separate surface with German UI. Code and
+documentation use English; see
 [ADR-0003](../docs/adr/0003-german-dashboard-english-documentation.md).
 
 ## Errors
@@ -208,15 +212,15 @@ use English; see
 One path for every error, whether it came from the schema or from the backend:
 
 ```
-zod / server  →  error code  →  errorText(code)  →  German text
+zod / server  →  error code  →  locale content  →  visible text
 ```
 
 Codes are machine-readable (`EMAIL_INVALID`, `CONSENT_REQUIRED`) and listed in
-`features/application-form/errors.ts`. The backend sends the same codes and
-never German error text — see `API.md`.
+`features/application-form/errors.ts`. The backend sends the same codes and no
+localized error text — see `API.md`.
 
-Adding a code without adding its German text is a type error, which is
-intentional.
+Adding a code without adding its German and English text is a type error, which
+is intentional.
 
 ## Changing a screen
 
@@ -261,7 +265,7 @@ experiences:
 - each of the eight states is free of automatically detectable a11y violations
   (`expectNoA11yViolations` from `src/test/a11y.ts`).
 
-Assert on **error codes and visible German text**, never on class names or
+Assert on **error codes and visible localized text**, never on class names or
 component internals. There is no Playwright: all the logic is client-side and
 synchronous, so RTL covers it. Native select behaviour on a real phone
 (`DESIGN.md` section 34) is a manual check either way.
@@ -337,7 +341,7 @@ wrong:
    membership application. The two bypass routes consist of nothing but their
    link, so a wrong URL breaks the majority route (`A5`).
 2. **Error copy beyond the email field is ours, not the specification's.** It
-   needs a review pass in German.
+   needs a review pass in both supported languages.
 3. **The consent text version (`2026-09`) needs a home** where a reader can
    resolve it to the exact wording.
 4. **The confirmation email does not exist yet.** The form's subheading and its

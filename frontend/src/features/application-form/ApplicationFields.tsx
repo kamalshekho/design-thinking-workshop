@@ -7,8 +7,8 @@ import { Field } from '../../components/ui/Field/Field';
 import { Input } from '../../components/ui/Input/Input';
 import { Select } from '../../components/ui/Select/Select';
 import { Textarea } from '../../components/ui/Textarea/Textarea';
-import { de } from '../../content/de';
 import { links } from '../../content/links';
+import type { Content } from '../../content/types';
 import styles from './ApplicationForm.module.css';
 import { type makeFieldProps, toErrorText } from './fieldProps';
 import { WEEKLY_TIME_OPTIONS } from './routes';
@@ -20,6 +20,7 @@ interface ApplicationFieldsProps {
   consentError: FieldError | undefined;
   isSubmitting: boolean;
   submitError: string | null;
+  content: Content;
 }
 
 export function ApplicationFields({
@@ -28,6 +29,7 @@ export function ApplicationFields({
   consentError,
   isSubmitting,
   submitError,
+  content,
 }: ApplicationFieldsProps) {
   const consentErrorId = useId();
   const { error: nameError, ...nameControl } = fieldProps('name');
@@ -38,27 +40,27 @@ export function ApplicationFields({
 
   return (
     <div className={styles.applicationFields}>
-      <Field error={nameError} label={de.fields.name.label} required>
+      <Field error={nameError} label={content.fields.name.label} required>
         {(aria) => <Input required {...nameControl} {...aria} />}
       </Field>
 
-      <Field error={emailError} label={de.fields.email.label} required>
+      <Field error={emailError} label={content.fields.email.label} required>
         {(aria) => <Input required type="email" {...emailControl} {...aria} />}
       </Field>
 
       <Field
         error={weeklyTimeError}
-        label={de.fields.weeklyTime.label}
+        label={content.fields.weeklyTime.label}
         required
       >
         {(aria) => (
           <Select defaultValue="" required {...weeklyTimeControl} {...aria}>
             <option disabled value="">
-              {de.fields.weeklyTime.placeholder}
+              {content.fields.weeklyTime.placeholder}
             </option>
             {WEEKLY_TIME_OPTIONS.map((option) => (
               <option key={option} value={option}>
-                {de.weeklyTimeLabels[option]}
+                {content.weeklyTimeLabels[option]}
               </option>
             ))}
           </Select>
@@ -67,12 +69,12 @@ export function ApplicationFields({
 
       <Field
         error={aboutError}
-        hint={de.fields.about.hint}
-        label={de.fields.about.label}
+        hint={content.fields.about.hint}
+        label={content.fields.about.label}
       >
         {(aria) => (
           <Textarea
-            placeholder={de.fields.about.placeholder}
+            placeholder={content.fields.about.placeholder}
             {...aboutControl}
             {...aria}
           />
@@ -85,19 +87,19 @@ export function ApplicationFields({
           aria-invalid={consentError ? 'true' : undefined}
           {...register('privacyConsent')}
         >
-          {de.fields.consent.before}
-          <a href={links.privacyPolicy}>{de.fields.consent.linkLabel}</a>
-          {de.fields.consent.after}
+          {content.fields.consent.before}
+          <a href={links.privacyPolicy}>{content.fields.consent.linkLabel}</a>
+          {content.fields.consent.after}
         </Checkbox>
         {consentError ? (
           <p className={styles.error} id={consentErrorId} role="alert">
-            {toErrorText(consentError.message)}
+            {toErrorText(consentError.message, content)}
           </p>
         ) : null}
       </div>
 
       <div className={styles.honeypot}>
-        <label htmlFor="website">{de.a11y.honeypotLabel}</label>
+        <label htmlFor="website">{content.a11y.honeypotLabel}</label>
         <input
           autoComplete="off"
           id="website"
@@ -110,16 +112,16 @@ export function ApplicationFields({
       <div className={styles.submitRow}>
         <Button
           isLoading={isSubmitting}
-          loadingLabel={de.submit.loadingLabel}
+          loadingLabel={content.submit.loadingLabel}
           type="submit"
           width="full"
         >
-          {de.submit.label}
+          {content.submit.label}
         </Button>
-        <p className={styles.submitHelper}>{de.submit.helper}</p>
+        <p className={styles.submitHelper}>{content.submit.helper}</p>
         {isSubmitting ? (
           <p className={styles.visuallyHidden} role="status">
-            {de.a11y.submitting}
+            {content.a11y.submitting}
           </p>
         ) : null}
         {submitError ? (

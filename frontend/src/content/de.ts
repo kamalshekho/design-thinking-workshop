@@ -3,6 +3,7 @@ import type {
   FixedRoute,
   WeeklyTime,
 } from '../features/application-form/routes';
+import type { Content } from './types';
 
 /**
  * Every German string the applicant can read. Nothing outside this file may
@@ -28,6 +29,7 @@ export const de = {
     menuLabel: 'Menü öffnen',
     menuCloseLabel: 'Menü schließen',
     searchLabel: 'Suche',
+    languageLabel: 'Sprache',
     logoAlt: 'ichbinhier e.V.',
   },
 
@@ -216,7 +218,7 @@ export const de = {
     copyright: 'Copyright 2026 ichbinhier e.V. – Alle Rechte vorbehalten.',
     backToTopLabel: 'Nach oben',
   },
-} as const;
+} as const satisfies Content;
 
 export function errorText(code: string): string {
   return code in de.errors ? de.errors[code as ErrorCode] : de.unknownError;

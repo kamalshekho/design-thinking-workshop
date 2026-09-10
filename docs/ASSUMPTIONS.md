@@ -129,10 +129,10 @@ The association publicly invites people to write to `info@ichbinhier.online`
 about helping with *Vereinsarbeit*. Public communication is in German.
 
 - **Confidence:** high for the channel and the language, medium for the shape.
-- **Consequence:** the applicant-facing form is German-only. An English form on
-  a German association's site would lose applicants — the same loss the project
-  exists to prevent. The staff dashboard UI is German too, since staff members
-  are German speakers; only our documents, code and presentation stay English.
+- **Consequence:** German is the applicant form's default language. The staff
+  dashboard UI is German too, since staff members are German speakers; only our
+  documents, code and presentation stay English. English availability is a
+  separate product decision (`A22`).
 
 ### A7 — The categories are the association's own four
 
@@ -425,6 +425,19 @@ changes that lead to it, dated when they happened. It is seeded only under the
   applicant's details, and on our own domain that is not who receives them, so
   a database holding what a real person wrote would be a problem the seed size
   never is.
+
+### A22 — The public form is available in English as well as German
+
+German remains the default because the association communicates publicly in
+German (`A6`). An explicit DE/EN control exposes an English version of every
+fixed applicant-facing string. Category labels remain backend-owned and arrive
+in the language the API provides (`A12`).
+
+- **Confidence:** high — a confirmed product direction.
+- **What breaks if wrong:** English-speaking applicants either cannot use the
+  form or read a mixed-language category list. A server-side category
+  localisation contract would be needed before category labels can be
+  translated consistently.
 
 ---
 

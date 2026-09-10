@@ -33,6 +33,9 @@ export const Desktop: Story = {
     menuCloseLabel: de.nav.menuCloseLabel,
     menuLabel: de.nav.menuLabel,
     navItems,
+    language: 'de',
+    languageLabel: de.nav.languageLabel,
+    onLanguageChange: () => undefined,
     searchLabel: de.nav.searchLabel,
   },
 };
