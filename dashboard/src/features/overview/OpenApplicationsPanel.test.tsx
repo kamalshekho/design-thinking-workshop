@@ -120,7 +120,7 @@ describe('OpenApplicationsPanel', () => {
     );
   });
 
-  it('lists the oldest open Applications first', async () => {
+  it('lists the most recent open Applications first', async () => {
     const applications = [
       application({ id: 'recent', submittedAt: RECEIVED.recent }),
       application({ id: 'oldest', submittedAt: RECEIVED.oldest }),
@@ -134,27 +134,27 @@ describe('OpenApplicationsPanel', () => {
         .getAllByRole('row')
         .filter((row) => row.getAttribute('data-key'));
       expect(rows.map((row) => row.getAttribute('data-key'))).toEqual([
-        'oldest',
-        'middle',
         'recent',
+        'middle',
+        'oldest',
       ]);
     });
   });
 
   it('finds an Application by search that is outside the five-row cap', async () => {
     const user = userEvent.setup();
-    const olderFive = Array.from({ length: 5 }, (_, index) =>
+    const newerFive = Array.from({ length: 5 }, (_, index) =>
       application({
-        id: `older-${String(index)}`,
-        submittedAt: `2026-07-0${String(index + 1)}T09:00:00.000Z`,
+        id: `newer-${String(index)}`,
+        submittedAt: `2026-09-0${String(index + 1)}T09:00:00.000Z`,
       }),
     );
     const applications = [
-      ...olderFive,
+      ...newerFive,
       application({
         id: 'searched-for',
         name: 'Jonas Krüger',
-        submittedAt: RECEIVED.middle,
+        submittedAt: RECEIVED.oldest,
       }),
     ];
 
