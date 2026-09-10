@@ -115,6 +115,8 @@ export type StubbedApi = {
   staffMember: StaffMember;
   /** What `POST /session` answers with instead of a Sign-in, when set. */
   signInFailure: { status: number; code: string } | null;
+  /** What `GET /me` answers while a stream recovery check is in flight. */
+  signInCheckFailure: { status: number; code: string } | null;
   /** What every write answers with instead of doing the work, when set. */
   writeFailure: { status: number; code: string } | null;
   /**
@@ -160,6 +162,7 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
     changes: [],
     staffMember: mockStaffMember,
     signInFailure: null,
+    signInCheckFailure: null,
     writeFailure: null,
     readFailure: null,
     stream: () => StubEventSource.latest,
@@ -210,6 +213,11 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
       }
 
       if (path === '/me') {
+        if (api.signInCheckFailure !== null) {
+          return Promise.resolve(
+            problem(api.signInCheckFailure.status, api.signInCheckFailure.code),
+          );
+        }
         return Promise.resolve(json(api.staffMember));
       }
 

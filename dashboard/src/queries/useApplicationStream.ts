@@ -138,12 +138,18 @@ export function useApplicationStream({
      * nothing about the Sign-in, and the marker already says the stream is
      * down.
      */
-    function askWhetherSignedIn(): void {
-      void fetchSignedInStaffMember().catch((failure: unknown) => {
+    async function askWhetherSignedIn(): Promise<boolean> {
+      try {
+        await fetchSignedInStaffMember();
+        return false;
+      } catch (failure) {
         if (isUnauthenticated(failure)) {
           markSignInExpired(queryClient);
+          return true;
         }
-      });
+
+        return false;
+      }
     }
 
     source.onopen = () => {
@@ -160,17 +166,26 @@ export function useApplicationStream({
 
     source.onerror = () => {
       if (source.readyState === EventSource.CLOSED) {
-        askWhetherSignedIn();
+        void askWhetherSignedIn();
 
         reopen ??= setTimeout(() => {
-          setAttempt((current) => current + 1);
+          void askWhetherSignedIn().then(
+            (expired) => {
+              if (!expired) {
+                setAttempt((current) => current + 1);
+              }
+            },
+            () => {
+              setAttempt((current) => current + 1);
+            },
+          );
         }, REOPEN_AFTER_MS);
       } else {
         failures += 1;
 
         if (failures >= FAILURES_BEFORE_ASKING) {
           failures = 0;
-          askWhetherSignedIn();
+          void askWhetherSignedIn();
         }
       }
 
