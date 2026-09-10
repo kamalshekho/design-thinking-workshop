@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import type { UseFormSetError, UseFormSetValue } from 'react-hook-form';
 
-import { errorText } from '../../content/de';
 import { type Category, submitApplication } from './api';
 import { formFieldFor } from './errors';
 import { asApplicationValues, type FormValues } from './schema';
@@ -30,7 +29,7 @@ export function useApplicationSubmit(
   const isSubmittingRef = useRef(false);
   const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitErrorCode, setSubmitErrorCode] = useState<string | null>(null);
 
   async function onSubmit(values: FormValues) {
     if (isSubmittingRef.current) return;
@@ -44,7 +43,7 @@ export function useApplicationSubmit(
     }
 
     isSubmittingRef.current = true;
-    setSubmitError(null);
+    setSubmitErrorCode(null);
     setIsSubmitting(true);
     const result = await submitApplication(
       applicationValues,
@@ -75,8 +74,8 @@ export function useApplicationSubmit(
       return;
     }
 
-    setSubmitError(errorText(result.code));
+    setSubmitErrorCode(result.code);
   }
 
-  return { onSubmit, confirmedEmail, isSubmitting, submitError };
+  return { onSubmit, confirmedEmail, isSubmitting, submitErrorCode };
 }

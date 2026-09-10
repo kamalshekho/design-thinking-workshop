@@ -5,6 +5,8 @@ import { cx } from '../../../lib/cx';
 import { Button } from '../Button/Button';
 import styles from './Header.module.css';
 
+type Language = 'de' | 'en';
+
 export interface HeaderNavItem {
   label: string;
   href: string;
@@ -19,6 +21,9 @@ interface HeaderProps {
   searchLabel: string;
   menuLabel: string;
   menuCloseLabel: string;
+  language: Language;
+  languageLabel: string;
+  onLanguageChange: (language: Language) => void;
 }
 
 /** Scroll distance, in either direction, needed to flip the header state.
@@ -114,6 +119,9 @@ export function Header({
   searchLabel,
   menuLabel,
   menuCloseLabel,
+  language,
+  languageLabel,
+  onLanguageChange,
 }: HeaderProps) {
   const isScrolled = useIsScrolled();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -148,6 +156,33 @@ export function Header({
                   {item.label}
                 </a>
               ))}
+              <div
+                aria-label={languageLabel}
+                className={styles.languageSwitcher}
+              >
+                <button
+                  aria-pressed={language === 'de'}
+                  className={styles.languageButton}
+                  onClick={() => {
+                    onLanguageChange('de');
+                    setIsMenuOpen(false);
+                  }}
+                  type="button"
+                >
+                  DE
+                </button>
+                <button
+                  aria-pressed={language === 'en'}
+                  className={styles.languageButton}
+                  onClick={() => {
+                    onLanguageChange('en');
+                    setIsMenuOpen(false);
+                  }}
+                  type="button"
+                >
+                  EN
+                </button>
+              </div>
             </nav>
 
             <div className={styles.actions}>

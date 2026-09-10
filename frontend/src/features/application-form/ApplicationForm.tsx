@@ -8,12 +8,12 @@ import { Field } from '../../components/ui/Field/Field';
 import { FormCard } from '../../components/ui/FormCard/FormCard';
 import { RoutePanel } from '../../components/ui/RoutePanel/RoutePanel';
 import { Select } from '../../components/ui/Select/Select';
-import { de } from '../../content/de';
 import { links } from '../../content/links';
+import { useLocale } from '../../content/useLocale';
 import { ApplicationFields } from './ApplicationFields';
 import styles from './ApplicationForm.module.css';
 import { Confirmation } from './Confirmation';
-import { makeFieldProps } from './fieldProps';
+import { makeFieldProps, toErrorText } from './fieldProps';
 import { outcomeOf } from './routes';
 import { emptyFormValues, formSchema, type FormValues } from './schema';
 import { useApplicationSubmit } from './useApplicationSubmit';
@@ -28,6 +28,7 @@ import { useRouteAnalytics } from './useRouteAnalytics';
  * responsive rules in ApplicationForm.module.css, not a separate branch.
  */
 export function ApplicationForm() {
+  const { content } = useLocale();
   const {
     control,
     register,
@@ -53,7 +54,7 @@ export function ApplicationForm() {
   const outcome = route === '' ? null : outcomeOf(route);
 
   useRouteAnalytics(route);
-  const { onSubmit, confirmedEmail, isSubmitting, submitError } =
+  const { onSubmit, confirmedEmail, isSubmitting, submitErrorCode } =
     useApplicationSubmit(
       setError,
       setValue,
@@ -66,24 +67,26 @@ export function ApplicationForm() {
   }
 
   if (confirmedEmail) {
-    return <Confirmation email={confirmedEmail} />;
+    return <Confirmation content={content} email={confirmedEmail} />;
   }
 
-  const fieldProps = makeFieldProps(register, errors);
+  const fieldProps = makeFieldProps(register, errors, content);
+  const submitError =
+    toErrorText(submitErrorCode ?? undefined, content) ?? null;
   const { error: routeError, ...routeControl } = fieldProps('route');
 
   return (
     <FormCard>
-      <h1 className={styles.title}>{de.page.title}</h1>
-      <p className={styles.subtitle}>{de.page.subtitle}</p>
+      <h1 className={styles.title}>{content.page.title}</h1>
+      <p className={styles.subtitle}>{content.page.subtitle}</p>
       <img alt="" className={styles.icon} src={iconSpeak} />
       <hr className={styles.divider} />
       <form noValidate onSubmit={handleFormSubmit}>
         <div className={styles.fields}>
           <Field
             error={routeError}
-            hint={de.routeField.hint}
-            label={de.routeField.label}
+            hint={content.routeField.hint}
+            label={content.routeField.label}
             required
           >
             {(aria) => (
@@ -96,21 +99,21 @@ export function ApplicationForm() {
               >
                 {categoriesState.status === 'loading' ? (
                   <option disabled value="">
-                    {de.categoriesField.loadingOption}
+                    {content.categoriesField.loadingOption}
                   </option>
                 ) : null}
                 {categoriesState.status === 'error' ? (
                   <option disabled value="">
-                    {de.categoriesField.errorOption}
+                    {content.categoriesField.errorOption}
                   </option>
                 ) : null}
                 {categoriesState.status === 'loaded' ? (
                   <>
                     <option disabled value="">
-                      {de.routeField.placeholder}
+                      {content.routeField.placeholder}
                     </option>
                     <option value="COMMUNITY">
-                      {de.routeLabels.COMMUNITY}
+                      {content.routeLabels.COMMUNITY}
                     </option>
                     {categoriesState.categories.map((category) => (
                       <option key={category.id} value={category.id}>
@@ -118,7 +121,7 @@ export function ApplicationForm() {
                       </option>
                     ))}
                     <option value="SUPPORTING_MEMBER">
-                      {de.routeLabels.SUPPORTING_MEMBER}
+                      {content.routeLabels.SUPPORTING_MEMBER}
                     </option>
                   </>
                 ) : null}
@@ -129,29 +132,31 @@ export function ApplicationForm() {
           {categoriesState.status === 'error' ? (
             <div className={styles.categoriesError}>
               <p className={styles.error} role="alert">
-                {de.categoriesField.error}
+                {content.categoriesField.error}
               </p>
               <Button
                 onClick={categoriesState.retry}
                 type="button"
                 variant="secondary"
               >
-                {de.categoriesField.retry}
+                {content.categoriesField.retry}
               </Button>
             </div>
           ) : null}
 
           {categoriesState.status === 'loaded' &&
           categoriesState.categories.length === 0 ? (
-            <p className={styles.categoriesEmpty}>{de.categoriesField.empty}</p>
+            <p className={styles.categoriesEmpty}>
+              {content.categoriesField.empty}
+            </p>
           ) : null}
 
           {outcome === 'community' ? (
             <RoutePanel
               actionHref={links.communityGroup}
-              actionLabel={de.communityPanel.cta}
-              body={de.communityPanel.body}
-              title={de.communityPanel.title}
+              actionLabel={content.communityPanel.cta}
+              body={content.communityPanel.body}
+              title={content.communityPanel.title}
               variant="community"
             />
           ) : null}
@@ -159,9 +164,9 @@ export function ApplicationForm() {
           {outcome === 'supporting-member' ? (
             <RoutePanel
               actionHref={links.supportingMembership}
-              actionLabel={de.supportingMemberPanel.cta}
-              body={de.supportingMemberPanel.body}
-              title={de.supportingMemberPanel.title}
+              actionLabel={content.supportingMemberPanel.cta}
+              body={content.supportingMemberPanel.body}
+              title={content.supportingMemberPanel.title}
               variant="supporting-member"
             />
           ) : null}
@@ -169,6 +174,7 @@ export function ApplicationForm() {
           {outcome === 'application' ? (
             <ApplicationFields
               consentError={errors.privacyConsent}
+              content={content}
               fieldProps={fieldProps}
               isSubmitting={isSubmitting}
               register={register}

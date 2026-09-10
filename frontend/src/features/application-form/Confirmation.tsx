@@ -1,21 +1,22 @@
 import { FormCard } from '../../components/ui/FormCard/FormCard';
-import { de } from '../../content/de';
+import type { Content } from '../../content/types';
 import styles from './ApplicationForm.module.css';
 
 interface ConfirmationProps {
   email: string;
+  content: Content;
 }
 
-export function Confirmation({ email }: ConfirmationProps) {
+export function Confirmation({ content, email }: ConfirmationProps) {
   return (
     <FormCard>
-      <h1 className={styles.title}>{de.confirmation.title}</h1>
+      <h1 className={styles.title}>{content.confirmation.title}</h1>
       <p className={styles.subtitle}>
-        {de.confirmation.bodyBefore}
+        {content.confirmation.bodyBefore}
         <strong>{email}</strong>
-        {de.confirmation.bodyAfter}
+        {content.confirmation.bodyAfter}
       </p>
-      <p className={styles.subtitle}>{de.confirmation.closing}</p>
+      <p className={styles.subtitle}>{content.confirmation.closing}</p>
     </FormCard>
   );
 }
