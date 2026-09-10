@@ -10,10 +10,19 @@
  * `aria-live="polite"` rather than `assertive`: losing the stream does not
  * interrupt what a Staff member is doing, and the row they are reading stays
  * correct.
+ *
+ * It reads from the left, not the right end of the strip, because an open
+ * `ApplicationDrawer` lies over that corner and "Nicht verbunden" is the only
+ * reason the marker exists (issue #64). A quiet status in the corner was the
+ * nicer arrangement and loses to the corner being occupied. `DRAWER_RESERVE`
+ * finishes the job: the wording wraps before the drawer's column instead of
+ * running under it, since the hint is the half that says what to do.
  */
 
 import { de } from '@/content/de';
 import { cx } from '@/utils/cx';
+
+import { DRAWER_RESERVE } from './strip';
 
 type StreamMarkerProps = {
   connected: boolean;
@@ -24,7 +33,10 @@ export function StreamMarker({ connected }: StreamMarkerProps) {
     <p
       role="status"
       aria-live="polite"
-      className="text-tertiary flex items-center justify-end gap-1.5 text-xs"
+      className={cx(
+        'text-tertiary flex flex-wrap items-center gap-1.5 text-xs',
+        DRAWER_RESERVE,
+      )}
     >
       <span
         aria-hidden="true"

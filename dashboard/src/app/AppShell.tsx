@@ -122,6 +122,26 @@ export function AppShell({
         style={{ paddingInline: SIDEBAR_GUTTER }}
         className="bg-bg-canvas flex min-w-0 flex-1 flex-col gap-3 py-6"
       >
+        {/*
+         * The strip. Whatever is added here reads from the left and keeps
+         * `DRAWER_RESERVE` on its contents: `ApplicationDrawer` is an `aside`
+         * with no scrim, so it lies over the right end while blocking
+         * nothing, and a panel that blocks nothing may not eat a click on a
+         * control it covers, nor cut a sentence that has to be read
+         * (issue #64). A bordered box may still span the full width — only
+         * what is read or clicked has to stay out of that column.
+         *
+         * The strip is never told that a drawer is open. The reserve is
+         * unconditional, which is what keeps anything here from moving when
+         * one opens, and it costs nothing while none is there because
+         * everything is left-aligned.
+         *
+         * The rule stops at the modal overlays: `CategoryDialog`,
+         * `DiscardSelectedDialog` and `SignInCover` cover this strip on
+         * purpose. Below `sm` the drawer is `w-full` and no reserve reaches
+         * anything — a known hole, since at that width the drawer is a modal
+         * in all but the attribute.
+         */}
         <StreamMarker connected={connected} />
         <RequestFailureNotice />
         {children}

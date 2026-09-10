@@ -8,6 +8,8 @@ import { renderApp, renderSignedIn } from '@/test/renderApp';
 import type { StubbedApi } from '@/test/stubApi';
 import { REFERENCE_DATE, stubApi } from '@/test/stubApi';
 
+import { DRAWER_RESERVE } from './strip';
+
 /**
  * The whole application against the stubbed backend: `fetch` answers from the
  * fixtures and the live stream stays inert unless a test drives it
@@ -948,6 +950,102 @@ describe('App', () => {
       expect(
         screen.queryByText(de.dashboard.loadFailed),
       ).not.toBeInTheDocument();
+    });
+  });
+
+  /**
+   * The corner an open `ApplicationDrawer` lies over (issue #64). It is an
+   * `aside` with no scrim, so it blocks nothing and must not eat a click on a
+   * control it happens to cover — which the strip answers by keeping its right
+   * end clear rather than by learning that a drawer is open.
+   *
+   * jsdom lays nothing out, so these assert the mechanism and not two boxes
+   * that would both measure zero: nothing in the strip is placed at the right
+   * end, so the end the drawer covers holds nothing to reach. The geometry is
+   * a browser pass, at 1024px and 1280px with a drawer open.
+   */
+  describe('the strip under an open drawer', () => {
+    it("leaves the notice's retry clear of the drawer", async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      await user.click(screen.getByText('Mara Weber'));
+      api.readFailure = { status: 502, code: 'BAD_GATEWAY' };
+      act(() => {
+        api.stream()?.fireOpen();
+      });
+
+      const sentence = await screen.findByText(de.dashboard.updateFailed);
+      /** The drawer really is over the strip while that is read. */
+      expect(
+        screen.getByLabelText(de.detail.internalNotes),
+      ).toBeInTheDocument();
+
+      const retry = screen.getByRole('button', { name: de.dashboard.retry });
+      const dismiss = screen.getByRole('button', {
+        name: de.dashboard.dismissFailure,
+      });
+
+      /**
+       * A second row beneath the sentence rather than two more items beside
+       * it, so the buttons' position stops depending on how long the sentence
+       * runs.
+       */
+      const actions = retry.parentElement;
+      expect(actions).toBe(dismiss.parentElement);
+      expect(actions).not.toContainElement(sentence);
+      expect(sentence.nextElementSibling).toBe(actions);
+      expect(actions).not.toHaveClass('justify-end');
+      expect(actions).not.toHaveClass('ml-auto');
+
+      /**
+       * And the two of them stack rather than overflow when what is left of
+       * the strip will not hold both — 1024px leaves 189px against the 322px
+       * they want side by side.
+       */
+      expect(actions).toHaveClass('flex-wrap');
+
+      /**
+       * The contents keep out of the drawer's column, the sentence included:
+       * left alignment alone let it keep its natural width and run under the
+       * drawer. The border does not — the box spans `main` on purpose.
+       */
+      const contents = actions?.parentElement;
+      expect(contents).toHaveClass('flex-col');
+      expect(contents).toHaveClass('items-start');
+      expect(contents?.className).toContain(DRAWER_RESERVE);
+      expect(contents?.parentElement?.className).not.toContain(DRAWER_RESERVE);
+      expect(contents?.parentElement).toHaveClass('border');
+
+      /** The corner `XClose` is gone, so the label is read and not only announced. */
+      expect(dismiss).toHaveTextContent(de.dashboard.dismissFailure);
+      expect(dismiss.querySelector('svg')).toBeNull();
+    });
+
+    /**
+     * The rule covers what has to be *read* as much as what can be clicked.
+     * "Nicht verbunden" is the only reason the marker exists, so the corner is
+     * the one place it may not sit.
+     */
+    it('reads the disconnected wording clear of the drawer', async () => {
+      const user = userEvent.setup();
+      await renderSignedIn();
+
+      /** Disconnected is where the marker starts, and the drawer goes over it. */
+      await user.click(screen.getByText('Mara Weber'));
+
+      const marker = screen
+        .getByText(de.dashboard.disconnected)
+        .closest('[role="status"]');
+
+      expect(
+        screen.getByLabelText(de.detail.internalNotes),
+      ).toBeInTheDocument();
+      expect(marker).not.toBeNull();
+      expect(marker).not.toHaveClass('justify-end');
+      /** The hint is the half that says what to do, so it wraps rather than hides. */
+      expect(marker).toHaveClass('flex-wrap');
+      expect(marker?.className).toContain(DRAWER_RESERVE);
     });
   });
 

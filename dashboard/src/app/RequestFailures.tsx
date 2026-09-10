@@ -34,7 +34,6 @@
  */
 
 import { useQueries } from '@tanstack/react-query';
-import { XClose } from '@untitledui/icons';
 import type { ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -50,6 +49,9 @@ import {
   useRequestFailures,
 } from '@/queries/requestFailures';
 import { staffMembersQuery } from '@/queries/staffMembers';
+import { cx } from '@/utils/cx';
+
+import { DRAWER_RESERVE } from './strip';
 
 /**
  * The notice reads the cache rather than being told about it. It subscribes to
@@ -115,6 +117,21 @@ export function RequestFailureNotice() {
   return null;
 }
 
+/**
+ * Two rows — the sentence, then the buttons beneath it at the left — because
+ * an open `ApplicationDrawer` lies over the right end of the strip and would
+ * swallow them there (issue #64). Along the way it stops the buttons' position
+ * depending on how long the sentence is, and it turns the corner `XClose` into
+ * a labelled button: `dismissFailure` is a visible label now rather than an
+ * `aria-label`.
+ *
+ * The *box* keeps the full width of `main` and lets its right end run under
+ * the drawer, which is what issue #64 asks for. The *contents* do not:
+ * `DRAWER_RESERVE` sits inside the border, so the sentence wraps before the
+ * drawer's column rather than being cut mid-word there, and the buttons wrap
+ * onto their own lines when what is left will not hold both — which is what
+ * 1024px needs, where only 189px stands clear.
+ */
 function Notice({
   children,
   onRetry,
@@ -125,24 +142,24 @@ function Notice({
   onDismiss: () => void;
 }) {
   return (
-    <div className="border-utility-red-200 bg-bg-error-primary flex items-start gap-3 rounded-lg border px-3.5 py-3">
-      <p role="alert" className="text-text-error-primary flex-1 text-sm">
-        {children}
-      </p>
+    <div className="border-utility-red-200 bg-bg-error-primary rounded-lg border px-3.5 py-3">
+      <div className={cx('flex flex-col items-start gap-2', DRAWER_RESERVE)}>
+        <p role="alert" className="text-text-error-primary text-sm">
+          {children}
+        </p>
 
-      {onRetry !== undefined && (
-        <Button size="sm" color="secondary" onClick={onRetry}>
-          {de.dashboard.retry}
-        </Button>
-      )}
+        <div className="flex flex-wrap items-center gap-2">
+          {onRetry !== undefined && (
+            <Button size="sm" color="secondary" onClick={onRetry}>
+              {de.dashboard.retry}
+            </Button>
+          )}
 
-      <Button
-        size="sm"
-        color="tertiary"
-        iconLeading={XClose}
-        aria-label={de.dashboard.dismissFailure}
-        onClick={onDismiss}
-      />
+          <Button size="sm" color="tertiary" onClick={onDismiss}>
+            {de.dashboard.dismissFailure}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
