@@ -426,6 +426,34 @@ is a _state_ — the dashboard is not live — while a failed refetch is an
 _event_, and a refetch can fail while the stream is up. That the marker is
 already there is why the notice may be dismissed.
 
+**The strip that holds both keeps the drawer's column clear**, and everything
+in it reads from the left: the notice's retry and dismiss sit on a second row
+under the sentence, and the marker lost its `justify-end`.
+`ApplicationDrawer` is an `aside` with no scrim, so it lies over the right end
+while blocking nothing — and a panel that blocks nothing may not eat a click on
+a control it happens to cover, which is what a retry underneath it amounted to.
+The rule covers what has to be _read_ as much as what can be clicked, which is
+why the marker moved too.
+
+Left alignment alone does not finish it, because a line long enough still runs
+into that column: the notice's own sentence was cut mid-word at 1280px and the
+marker's hint at 1024px. So the strip also keeps `DRAWER_RESERVE`
+(`app/strip.ts`) on its contents — the drawer's width as right padding, which
+makes the sentence wrap and the two buttons stack before the column rather than
+disappearing into it. Only 189px stands clear at 1024px, against 445px at
+1280px, so the wrap earns its keep. A bordered box may still span the full
+width of `main`, and the notice's does: the reserve sits inside the border, and
+a border that continues under a panel reads as continuing rather than as broken
+off.
+
+The strip is never told that a drawer is open. The reserve is unconditional,
+which is what keeps the list and the strip from moving when one opens, and it
+costs nothing while none is there because everything is left-aligned. The rule
+stops at the modal overlays — `CategoryDialog`, `DiscardSelectedDialog` and
+`SignInCover` cover the strip on purpose. Below `sm` the drawer is `w-full` and
+no reserve reaches anything: a known hole, left open because at that width the
+drawer is a modal in all but the attribute (issue #64).
+
 **A Sign-in that has expired is recognised in one place too.** The transport
 knows nothing about Sign-ins; both of the `QueryClient`'s caches get an
 `onError`, so every read and every write passes one check for

@@ -50,9 +50,11 @@ export const de = {
       'Die Anfragen konnten nicht aktualisiert werden. Die Liste kann veraltet sein.',
     retry: 'Erneut versuchen',
     /**
-     * The dismiss control on the notice a failed request raises. A failed
-     * write's sentence is `errors`: the backend sends a `code` and the
-     * dashboard words it in one place (`API.md`, "Errors").
+     * The dismiss control on the notice a failed request raises — a visible
+     * button label since issue #64 took the corner `XClose` away, so it is
+     * read rather than only announced. A failed write's sentence is `errors`:
+     * the backend sends a `code` and the dashboard words it in one place
+     * (`API.md`, "Errors").
      */
     dismissFailure: 'Meldung ausblenden',
     live: 'Live',
