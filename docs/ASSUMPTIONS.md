@@ -211,12 +211,17 @@ and Sonstiges, but that list is not treated as permanent.
 
 ### A13 — Übersicht's "Offene Anfragen" panel shows five rows by default
 
-The panel below Übersicht's three metric cards lists the oldest open
+The panel below Übersicht's three metric cards lists the most recent open
 Applications — every status except `active` and `declined` — after search and
 Category/Zuständigkeit filtering, capped at five. Five is our proposal for a
 compact overview, not a confirmed client need; nothing in `C1`/`C2` says how
 many Applications a Staff member should see at a glance before going to
 Anfragen for the rest.
+
+Newest first follows from the cap: an oldest-first panel would never show an
+Application that arrives while five older ones are still open, and a Staff
+member opening Übersicht is asking what came in. The queue that ages is what
+the "Lange offen" card and Anfragen's `stale` view answer.
 
 - **Confidence:** low — invented for the prototype.
 - **Why it matters:** it sets how much of the queue is visible without a click.

@@ -3,9 +3,9 @@
  * Application and open it, right below the three metric cards
  * `OverviewStats` owns. The list itself is the same `ApplicationsList`
  * Anfragen renders, selection column and discard action included; what stays
- * on Anfragen is the full set — this panel only ever shows the five oldest
- * open Applications after search and filtering (`A13`), with a link across for
- * the rest.
+ * on Anfragen is the full set — this panel only ever shows the five most
+ * recent open Applications after search and filtering (`A13`), with a link
+ * across for the rest.
  *
  * `applications` and `onEdit` are the same pair `App` hands Anfragen, so an
  * edit made from either screen is the same Application, not an independent
@@ -184,7 +184,6 @@ export function OpenApplicationsPanel({
             categories={categories}
             owners={owners}
             now={now}
-            oldestFirst
             ariaLabel={de.overview.openApplications.title}
             onSelect={(application) => {
               actions.open(application.id);

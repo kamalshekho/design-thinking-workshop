@@ -79,7 +79,7 @@ export const de = {
        */
       empty: 'Keine offenen Anfragen.',
       emptyHint:
-        'Neue Anfragen aus dem Formular erscheinen hier, die ältesten zuerst.',
+        'Neue Anfragen aus dem Formular erscheinen hier, die neuesten zuerst.',
       noMatches: 'Keine passenden Anfragen.',
       noMatchesHint: 'Suche oder Filter zurücksetzen, um alle zu sehen.',
       count: (shown: number, total: number) =>

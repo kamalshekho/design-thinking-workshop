@@ -42,7 +42,7 @@ describe('selectOpenApplications', () => {
     ).toEqual(['new', 'in-review']);
   });
 
-  it('sorts the oldest Application first', () => {
+  it('sorts the newest Application first', () => {
     const applications = [
       application({
         id: 'newest',
@@ -62,22 +62,22 @@ describe('selectOpenApplications', () => {
       selectOpenApplications(applications, EMPTY_OPEN_APPLICATIONS_FILTERS).map(
         (entry) => entry.id,
       ),
-    ).toEqual(['oldest', 'middle', 'newest']);
+    ).toEqual(['newest', 'middle', 'oldest']);
   });
 
   it('finds an Application by search that a five-row cap would otherwise hide', () => {
-    const olderFive = Array.from({ length: 5 }, (_, index) =>
+    const newerFive = Array.from({ length: 5 }, (_, index) =>
       application({
-        id: `older-${String(index)}`,
-        submittedAt: `2026-08-0${String(index + 1)}T09:00:00.000Z`,
+        id: `newer-${String(index)}`,
+        submittedAt: `2026-09-0${String(index + 1)}T09:00:00.000Z`,
       }),
     );
     const applications = [
-      ...olderFive,
+      ...newerFive,
       application({
         id: 'searched-for',
         name: 'Jonas Krüger',
-        submittedAt: '2026-08-20T09:00:00.000Z',
+        submittedAt: '2026-08-01T09:00:00.000Z',
       }),
     ];
 
