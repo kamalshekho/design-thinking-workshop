@@ -1,6 +1,6 @@
 # Frontend — applicant form
 
-The public German- and English-language form where someone says how they want
+The public German-language form where someone says how they want
 to be involved with "Ich bin hier e.V.". One page, one submission, no
 authentication.
 
@@ -62,7 +62,7 @@ frontend/
     ├── features/
     │   └── application-form/     the form: schema, transport, routes
     ├── components/ui/            presentational components, domain-free
-    ├── content/                  localized copy and external links
+    ├── content/                  German copy and external links
     ├── styles/                   tokens.css and base.css
     ├── mocks/                    MSW handlers — API.md, executable
     └── test/                     test setup
@@ -180,13 +180,12 @@ palette — see `DESIGN.md`'s note under the title.
 
 ## Copy
 
-All fixed applicant-facing copy lives in `src/content/de.ts` and
-`src/content/en.ts`, except the dynamic category labels returned by the backend
+All fixed applicant-facing copy lives in `src/content/de.ts`, except the dynamic category labels returned by the backend
 as specified in `API.md`. No localized string appears in a component.
 
 The point is reviewability: the fixed copy of the form can be read against
-`DESIGN.md` in two locale files. `DESIGN.md` section 49 forbids rewriting the
-specified wording, so a copy change is a change to both files in one commit.
+`DESIGN.md` in one file. `DESIGN.md` section 49 forbids rewriting the
+specified wording.
 Category labels are backend-owned data because staff members can maintain them
 (`A12`).
 
@@ -194,10 +193,9 @@ Some strings — most error messages — were written for this implementation an
 are **not yet in `DESIGN.md`**. They are marked in `de.ts` and still need a copy
 review.
 
-The applicant form supports German and English through a small local locale
-provider; the selected language is kept in browser storage. Backend-managed
-category labels are returned as provided by the API and are not translated in
-the client. The dashboard is a separate surface with German UI. Code and
+The applicant form is German only; the English version and its language switch
+were removed (`A22`). Backend-managed category labels are shown as the API
+returns them. The dashboard is a separate surface with German UI. Code and
 documentation use English; see
 [ADR-0003](../docs/adr/0003-german-dashboard-english-documentation.md).
 
@@ -206,14 +204,14 @@ documentation use English; see
 One path for every error, whether it came from the schema or from the backend:
 
 ```
-zod / server  →  error code  →  locale content  →  visible text
+zod / server  →  error code  →  German content  →  visible text
 ```
 
 Codes are machine-readable (`EMAIL_INVALID`, `CONSENT_REQUIRED`) and listed in
 `features/application-form/errors.ts`. The backend sends the same codes and no
 localized error text — see `API.md`.
 
-Adding a code without adding its German and English text is a type error, which
+Adding a code without adding its German text is a type error, which
 is intentional.
 
 ## Changing a screen
@@ -336,9 +334,11 @@ wrong:
 1. **The external URLs in `src/content/links.ts` are guesses** — the privacy
    policy, where a community member actually joins, and the supporting
    membership application. The two bypass routes consist of nothing but their
-   link, so a wrong URL breaks the majority route (`A5`).
+   link, so a wrong URL breaks the majority route (`A5`). The header and
+   footer carry no destinations at all: the prototype shows their items
+   without links, and the footer's Kontakt block holds placeholder data.
 2. **Error copy beyond the email field is ours, not the specification's.** It
-   needs a review pass in both supported languages.
+   needs a review pass.
 3. **The consent text version (`2026-09`) needs a home** where a reader can
    resolve it to the exact wording.
 4. **The confirmation email does not exist yet.** The form's subheading and its

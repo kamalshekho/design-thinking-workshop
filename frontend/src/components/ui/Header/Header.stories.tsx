@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { de } from '../../../content/de';
-import { links } from '../../../content/links';
 import { Header } from './Header';
 
 const meta = {
@@ -17,25 +16,20 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const navItems = [
-  { label: de.nav.items[0], href: links.nav.about },
-  { label: de.nav.items[1], href: links.nav.engagement },
-  { label: de.nav.items[2], href: links.nav.education },
-  { label: de.nav.items[3], href: links.nav.news },
-  { label: de.nav.items[4], href: links.nav.events },
+  { label: de.nav.items[0] },
+  { label: de.nav.items[1] },
+  { label: de.nav.items[2] },
+  { label: de.nav.items[3] },
+  { label: de.nav.items[4] },
 ];
 
 export const Desktop: Story = {
   args: {
-    donateHref: links.nav.donate,
     donateLabel: de.nav.donate,
-    homeHref: links.home,
     logoAlt: de.nav.logoAlt,
     menuCloseLabel: de.nav.menuCloseLabel,
     menuLabel: de.nav.menuLabel,
     navItems,
-    language: 'de',
-    languageLabel: de.nav.languageLabel,
-    onLanguageChange: () => undefined,
     searchLabel: de.nav.searchLabel,
   },
 };

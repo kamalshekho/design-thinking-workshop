@@ -29,7 +29,6 @@ export const de = {
     menuLabel: 'Menü öffnen',
     menuCloseLabel: 'Menü schließen',
     searchLabel: 'Suche',
-    languageLabel: 'Sprache',
     logoAlt: 'ichbinhier e.V.',
   },
 
@@ -200,7 +199,7 @@ export const de = {
     kontakt: {
       title: 'Kontakt',
       talkToUs: 'Sprich mit uns',
-      address: ['Postfach 25588', '10129 Berlin', 'info@ichbinhier.online'],
+      address: ['Musterstraße 1', '12345 Musterstadt', 'kontakt@example.org'],
     },
     rechtliches: {
       title: 'Rechtliches',

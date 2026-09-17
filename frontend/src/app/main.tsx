@@ -4,7 +4,6 @@ import '../styles/base.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { LocaleProvider } from '../content/LocaleProvider';
 import { App } from './App';
 
 /**
@@ -25,9 +24,7 @@ if (!container) throw new Error('Root element #root is missing');
 void enableMocking().then(() => {
   createRoot(container).render(
     <StrictMode>
-      <LocaleProvider>
-        <App />
-      </LocaleProvider>
+      <App />
     </StrictMode>,
   );
 });

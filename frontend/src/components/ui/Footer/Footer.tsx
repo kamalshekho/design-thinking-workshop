@@ -6,30 +6,30 @@ import styles from './Footer.module.css';
 
 export interface FooterSocialLink {
   label: string;
-  href: string;
+  href?: string;
   icon: string;
 }
 
 export interface FooterKontakt {
   title: string;
   talkToUsLabel: string;
-  talkToUsHref: string;
+  talkToUsHref?: string;
   address: string[];
 }
 
 export interface FooterRechtliches {
   title: string;
   impressumLabel: string;
-  impressumHref: string;
+  impressumHref?: string;
   datenschutzLabel: string;
-  datenschutzHref: string;
+  datenschutzHref?: string;
 }
 
 export interface FooterContent {
   kontakt: FooterKontakt;
   rechtliches: FooterRechtliches;
   donateLabel: string;
-  donateHref: string;
+  donateHref?: string;
   socialLinks: FooterSocialLink[];
   copyright: string;
   backToTopLabel: string;
@@ -42,6 +42,9 @@ interface FooterProps {
 
 /**
  * Domain-free site footer matching the Figma Footer component.
+ *
+ * Every destination is optional: without one, the item keeps its look but
+ * leads nowhere, which is how the prototype shows it.
  */
 export function Footer({ content, onBackToTop }: FooterProps) {
   const {
@@ -93,7 +96,7 @@ export function Footer({ content, onBackToTop }: FooterProps) {
                   aria-label={social.label}
                   className={styles.socialLink}
                   href={social.href}
-                  key={social.href}
+                  key={social.label}
                 >
                   <img alt="" className={styles.socialIcon} src={social.icon} />
                 </a>

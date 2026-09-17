@@ -59,7 +59,7 @@
   /* #1877f2 (--color-primary) on white is 4.23:1 — enough for a large bold
      button label (needs 3:1) but short of the 4.5:1 a normal-weight small
      text or icon needs. This shade carries the same primary blue at body
-     text sizes: the header nav links, the language switcher and the footer,
+     text sizes: the header nav links and the footer,
      which sits on a full-bleed primary fill. */
   --color-primary-text: #145dbf;
   --color-secondary: #4b4f56;

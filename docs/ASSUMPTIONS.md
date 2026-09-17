@@ -131,8 +131,8 @@ about helping with *Vereinsarbeit*. Public communication is in German.
 - **Confidence:** high for the channel and the language, medium for the shape.
 - **Consequence:** German is the applicant form's default language. The staff
   dashboard UI is German too, since staff members are German speakers; only our
-  documents, code and presentation stay English. English availability is a
-  separate product decision (`A22`).
+  documents, code and presentation stay English. The public form is German
+  only (`A22`).
 
 ### A7 — The categories are the association's own four
 
@@ -431,18 +431,17 @@ changes that lead to it, dated when they happened. It is seeded only under the
   a database holding what a real person wrote would be a problem the seed size
   never is.
 
-### A22 — The public form is available in English as well as German
+### A22 — The public form is German only
 
-German remains the default because the association communicates publicly in
-German (`A6`). An explicit DE/EN control exposes an English version of every
-fixed applicant-facing string. Category labels remain backend-owned and arrive
-in the language the API provides (`A12`).
+The form used to offer an English version behind a DE/EN switch in the header.
+The team removed both: the association communicates publicly in German (`A6`),
+and category labels arrive from the backend in German only (`A12`), so an
+English page always showed a mixed-language category list.
 
-- **Confidence:** high — a confirmed product direction.
-- **What breaks if wrong:** English-speaking applicants either cannot use the
-  form or read a mixed-language category list. A server-side category
-  localisation contract would be needed before category labels can be
-  translated consistently.
+- **Confidence:** high — a team decision.
+- **What breaks if wrong:** English-speaking applicants cannot read the form.
+  Bringing English back means a second copy file, the switch, and a way for
+  the backend to return category labels in more than one language.
 
 ---
 
