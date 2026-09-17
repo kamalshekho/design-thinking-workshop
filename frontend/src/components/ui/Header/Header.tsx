@@ -1,6 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
 
-import logo from '../../../assets/icons/ibh-logo.png';
 import { cx } from '../../../lib/cx';
 import { Button } from '../Button/Button';
 import styles from './Header.module.css';
@@ -136,7 +135,10 @@ export function Header({
       <header className={headerClassName}>
         <div className={styles.inner}>
           <a className={styles.logoLink} href={homeHref}>
-            <img alt={logoAlt} className={styles.logo} src={logo} />
+            {/* Placeholder standing in for the association's removed logo. */}
+            <span aria-label={logoAlt} className={styles.logo} role="img">
+              Logo
+            </span>
           </a>
 
           <div

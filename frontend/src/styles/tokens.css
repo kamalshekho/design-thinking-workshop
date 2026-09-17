@@ -2,22 +2,24 @@
  * Design tokens — the only file in the codebase allowed to hold literal
  * colours, sizes and shadows.
  *
- * Primitive values are taken from the live site (https://www.ichbinhier.eu/)
- * and are marked "confirmed" in ../../token.json. Do not change a primitive
- * without changing token.json in the same commit: token.json is what Figma
- * reads, this file is what the browser reads, and they describe the same thing.
+ * The client asked for a neutral presentation with no association branding
+ * (no logo, no brand colours, no brand font), so the palette below is a
+ * generic blue-on-neutral scheme, not a value taken from any brand source.
+ * It is mirrored in ../../token.json — change one and change the other in
+ * the same commit, or the design and the code stop describing the same thing.
  *
  * Component CSS must reference these variables and never a literal value.
  * Stylelint enforces that for every file except this one.
  */
 
 :root {
-  /* Brand primitives — confirmed from the site CSS */
-  --color-fuut-purple: #8437b6;
-  --color-fuut-lila: #dcbae6;
-  --color-fuut-red: #e31119;
-  --color-fuut-gray: #4f4f4f;
-  --color-fuut-creme: #f6f5f1;
+  /* Neutral primitives — a generic blue-on-white-and-grey scheme, not a
+     brand palette. Every other colour below is a shade of one of these
+     four or a plain neutral grey. */
+  --color-neutral-primary: #1877f2;
+  --color-neutral-primary-soft: #e7f3ff;
+  --color-neutral-surface: #fff;
+  --color-neutral-page-bg: #f0f2f5;
 
   /* WordPress font-size presets exposed by the site */
   --wp--preset--font-size--small: 13px;
@@ -45,39 +47,47 @@
 
   /* Semantic aliases. Components use these, not the primitives above. */
 
-  /* Nunito is the self-hosted stand-in used when the hotlinked brand face
-     fails to load; see base.css. */
-  --font-primary: 'Akhand Soft', 'Nunito', arial, sans-serif;
-  --color-page-bg: var(--color-fuut-creme);
-  --color-surface: #fff;
-  --color-text: var(--color-fuut-gray);
-  --color-text-muted: #777;
+  --font-primary:
+    system-ui, -apple-system, 'Segoe UI', roboto, arial, sans-serif;
+  --color-page-bg: var(--color-neutral-page-bg);
+  --color-surface: var(--color-neutral-surface);
+  --color-text: #1c1e21;
+  --color-text-muted: #65676b;
   --color-text-inverse: #fff;
-  --color-primary: var(--color-fuut-red);
-  --color-secondary: var(--color-fuut-purple);
-  --color-accent-soft: var(--color-fuut-lila);
-  --color-border: #b9b9b9;
-  --color-border-hover: #8e8e8e;
-  --color-divider: #e5e5e5;
-  --color-text-disabled: #8b8b8b;
-  --color-focus: var(--color-fuut-purple);
-  --color-focus-ring: rgb(132 55 182 / 14%);
-  --color-error: var(--color-fuut-red);
-  --color-action-primary-hover: #c00e15;
-  --color-action-secondary-hover: #702e9c;
-  --color-action-secondary-hover-dull: #a255d3;
-  --color-action-primary-disabled: rgb(227 17 25 / 40%);
-  --color-action-secondary-disabled: rgb(132 55 182 / 40%);
+  --color-primary: var(--color-neutral-primary);
+
+  /* #1877f2 (--color-primary) on white is 4.23:1 — enough for a large bold
+     button label (needs 3:1) but short of the 4.5:1 a normal-weight small
+     text or icon needs. This shade carries the same primary blue at body
+     text sizes: the header nav links, the language switcher and the footer,
+     which sits on a full-bleed primary fill. */
+  --color-primary-text: #145dbf;
+  --color-secondary: #4b4f56;
+  --color-accent-soft: var(--color-neutral-primary-soft);
+  --color-border: #ccd0d5;
+  --color-border-hover: #8a8d91;
+  --color-divider: #e4e6eb;
+  --color-text-disabled: #8a8d91;
+  --color-focus: var(--color-neutral-primary);
+  --color-focus-ring: rgb(24 119 242 / 14%);
+  --color-error: #d32f2f;
+  --color-action-primary-hover: #145dbf;
+  --color-action-secondary-hover: #383b40;
+  --color-action-secondary-hover-dull: #5c6066;
+  --color-action-primary-disabled: rgb(24 119 242 / 40%);
+  --color-action-secondary-disabled: rgb(75 79 86 / 40%);
   --color-transparent: transparent;
 
-  /* Route-specific surfaces. Blue belongs to the community panel only; it is
-     not a new brand colour (DESIGN.md section 28). */
-  --color-route-blue-bg: #e9f4fc;
-  --color-route-blue-text: #2e72ad;
-  --color-route-blue-action: #1a6fe0;
-  --color-route-blue-action-hover: #1558b3;
-  --color-route-blue-action-disabled: rgb(26 111 224 / 40%);
-  --color-route-purple-bg: #f2e9f6;
+  /* Route-specific surfaces. Kept as a distinct blue tone so the two direct
+     routes still read apart from each other and from the primary action;
+     no longer tied to a brand colour (DESIGN.md section 28 is superseded by
+     the neutral palette above). */
+  --color-route-blue-bg: var(--color-neutral-primary-soft);
+  --color-route-blue-text: #0b5cad;
+  --color-route-blue-action: var(--color-neutral-primary);
+  --color-route-blue-action-hover: var(--color-action-primary-hover);
+  --color-route-blue-action-disabled: var(--color-action-primary-disabled);
+  --color-route-purple-bg: #eef0f3;
 
   --radius-none: 0;
   --radius-control: 4px;
@@ -86,8 +96,8 @@
   --radius-panel: 8px;
   --radius-pill: 999px;
 
-  --font-button: arimo, arial, sans-serif;
-  --font-input: arimo, arial, sans-serif;
+  --font-button: var(--font-primary);
+  --font-input: var(--font-primary);
   --font-weight-button: 700;
   --shadow-form-card: 0 8px 28px rgb(79 79 79 / 10%);
 

@@ -4,6 +4,15 @@
 >
 > Use this document together with `token.json` and `theme.css` for Figma, Stitch, frontend implementation, and design review.
 
+> **Neutral presentation.** The client asked to show the prototype without
+> their visual identity, to avoid copyright problems on a demo they do not
+> own. Sections 4, 5 and 13 below describe the palette, typeface and hero
+> treatment the client actually approved on their site; the shipped form uses
+> the neutral values in `token.json` and `tokens.css` instead — a generic blue
+> on white and grey, the system font stack, and a labeled placeholder box
+> where the halftone illustration and the logo used to sit. Layout, spacing
+> and every other section here still apply unchanged.
+
 ---
 
 ## 1. Goal
@@ -93,6 +102,10 @@ Avoid:
 
 ## 4. Confirmed Brand Colors
 
+> **Superseded for the shipped prototype** — see the note under the title.
+> The table below is the client's own palette, kept as a record of what the
+> live site uses; `tokens.css` no longer references any of these values.
+
 These values are source-of-truth values extracted from the website CSS.
 
 | Token         | Value     | Role                         |
@@ -121,6 +134,11 @@ Do not replace the red or purple with approximate colors.
 ---
 
 ## 5. Typography
+
+> **Superseded for the shipped prototype** — see the note under the title.
+> The form renders in the system font stack
+> (`system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif`); neither
+> Akhand Soft nor Nunito ships with it.
 
 ### Primary font
 
@@ -374,6 +392,11 @@ existing destination into the animated drawer; this is independent of the
 ---
 
 ## 13. Brand Strip / Halftone
+
+> **Superseded for the shipped prototype** — see the note under the title.
+> The band at the same position and size now holds a plain placeholder box
+> labeled "Banner" instead of the halftone illustration; the logo in the
+> header (section 12) is a plain box labeled "Logo".
 
 Use:
 

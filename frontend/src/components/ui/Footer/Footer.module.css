@@ -2,11 +2,15 @@
   display: flex;
   justify-content: center;
   padding-block: var(--footer-padding-block);
-  background: var(--color-primary);
 
-  /* Bold white text on the saturated red background renders visibly
-     thinner under subpixel antialiasing (most noticeable on macOS); force
-     grayscale smoothing so the weight actually reads as bold. */
+  /* --color-primary-text, not --color-primary: the footer's body text runs
+     13-14px and normal weight in places, which needs 4.5:1 against its
+     background; the raw primary primitive only clears 4.23:1 on white text. */
+  background: var(--color-primary-text);
+
+  /* Bold white text on the background renders visibly thinner under
+     subpixel antialiasing (most noticeable on macOS); force grayscale
+     smoothing so the weight actually reads as bold. */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

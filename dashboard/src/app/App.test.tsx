@@ -155,7 +155,7 @@ describe('App', () => {
       'lg:group-hover:opacity-100',
     );
     const compactWordmarks = Array.from(
-      document.querySelectorAll('img[src="/Rectangle.png"]'),
+      document.querySelectorAll('[data-testid="wordmark-compact"]'),
     );
     const sidebarCompactWordmark = compactWordmarks.find((wordmark) =>
       wordmark.classList.contains('lg:opacity-100'),

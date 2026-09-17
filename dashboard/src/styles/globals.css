@@ -10,17 +10,28 @@
 @import './shadcn-ui-theme.css';
 
 /*
- * Brand primitives, confirmed from the live site and duplicated from
- * `frontend/src/styles/tokens.css`. ADR-0002 keeps the two applications apart,
- * so these are copied rather than imported; `token.json` at the repository
- * root remains the source of truth for the values.
+ * Neutral primitives, duplicated from `frontend/src/styles/tokens.css`. The
+ * client asked to show the prototype without the association's visual
+ * identity, so these are a generic blue-on-white-and-grey scheme rather than
+ * a value taken from their site. ADR-0002 keeps the two applications apart,
+ * so these are copied rather than imported; `frontend/token.json` at the
+ * repository root remains the source of truth for the values. The variable
+ * names keep their original `fuut-*` suffix so every Tailwind utility that
+ * already resolves against them (`bg-fuut-purple`, `text-fuut-purple`, …)
+ * keeps working without a second edit pass across the codebase.
  */
 @theme {
-  --color-fuut-purple: #8437b6;
-  --color-fuut-lila: #dcbae6;
-  --color-fuut-red: #e31119;
-  --color-fuut-gray: #4f4f4f;
-  --color-fuut-creme: #f6f5f1;
+  /* `#1877f2`, the exact shade `frontend/` uses, is 4.23:1 on white — enough
+     for a large bold button label but short of the 4.5:1 a normal-weight
+     small text or icon needs. Dashboard components resolve this one variable
+     for both roles (`text-fuut-purple` and `bg-fuut-purple` sit side by side
+     across the same files), so it carries the AA-safe shade throughout
+     rather than splitting into a second token as `frontend/` does. */
+  --color-fuut-purple: #145dbf;
+  --color-fuut-lila: #e7f3ff;
+  --color-fuut-red: #d32f2f;
+  --color-fuut-gray: #1c1e21;
+  --color-fuut-creme: #f0f2f5;
   /*
    * Inter across the whole dashboard — self-hosted through
    * `@fontsource-variable/inter` (variable weights 100–900), so there is no
