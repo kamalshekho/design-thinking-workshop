@@ -37,7 +37,10 @@
 }
 
 .consentGroup a {
-  color: var(--color-primary);
+  /* --color-primary-text, not --color-primary: this link renders at
+     var(--wp--preset--font-size--small) (13px), which needs 4.5:1 — the raw
+     primary primitive only clears 4.23:1 on white. */
+  color: var(--color-primary-text);
 }
 
 .error {

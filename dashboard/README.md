@@ -201,9 +201,8 @@ than keeping a second one.
 
 `dashboard/THIRD_PARTY_LICENSES` carries Untitled UI React's MIT notice and
 lists every component copied from the clone. It is a source-tree file, not
-something shown in the UI — the same treatment `frontend/public/fonts/OFL.txt`
-already gets for the Nunito font licence. Update it in the same commit as any
-new component copy.
+something shown in the UI. Update it in the same commit as any new component
+copy.
 
 ## Scope of this document
 

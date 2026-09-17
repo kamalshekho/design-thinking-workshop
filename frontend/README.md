@@ -56,8 +56,7 @@ frontend/
 ├── API.md                        contract with the backend
 ├── token.json                    design tokens for Figma
 ├── references/                   screenshots of the form, one per state
-├── public/
-│   └── fonts/                    self-hosted fallback face, plus its licence
+├── public/                       favicon, robots.txt, mock service worker
 └── src/
     ├── app/                      entry point and page shell
     ├── features/
@@ -149,15 +148,17 @@ or shadow. Everything else references a variable:
 color: var(--color-primary);
 
 /* Rejected by Stylelint */
-color: #e31119;
+color: #1877f2;
 ```
 
 Stylelint enforces this, and ESLint rejects the `style` prop for the same
 reason — an inline style cannot be checked for literal values.
 
-Primitives in `tokens.css` come from the live site and are mirrored in
-`token.json`, which is what Figma reads. **Change one and change the other in
-the same commit**, or the design and the code stop describing the same product.
+Primitives in `tokens.css` are mirrored in `token.json`, which is what Figma
+reads. **Change one and change the other in the same commit**, or the design
+and the code stop describing the same product. The palette is a neutral
+blue-on-white-and-grey scheme, not the association's own colours — see
+`DESIGN.md` section 4 for why.
 
 If a design needs a value that no token expresses, add a semantic token rather
 than a literal, and say so in the pull request — a new token is a design
@@ -165,24 +166,17 @@ decision, not an implementation detail.
 
 ## Fonts
 
-Two faces, in this order:
+The form renders in the platform's own font — no downloaded or self-hosted
+face:
 
-1. **Akhand Soft** — the brand face from `DESIGN.md` section 5. Weight 400
-   only; the section warns against assuming a real Medium or Bold, so
-   `base.css` pins headings to 400 rather than letting the browser synthesise
-   a fake bold. The file is provisioned outside the repository, so a fresh
-   checkout and CI do not have it.
-2. **Nunito** — self-hosted from `public/fonts/`, SIL OFL, weight 400. The
-   closest free match: geometric sans, rounded terminals, tall x-height. Its
-   licence is in `public/fonts/OFL.txt` and has to stay there.
+```css
+system-ui, -apple-system, 'Segoe UI', roboto, arial, sans-serif
+```
 
-Without the brand file the browser falls through to Nunito. That is intended
-behaviour, not an error — the page still reads as the same product instead of
-dropping to Arial.
-
-The two faces have different metrics, so line breaks and block heights shift
-slightly between them. When a build does not match a Figma frame, check which
-face actually rendered before chasing a spacing bug.
+`DESIGN.md` section 5 specifies the association's own brand face (Akhand
+Soft, with Nunito self-hosted as its fallback); the shipped prototype does not
+use either, for the same reason it does not carry the logo or the brand
+palette — see `DESIGN.md`'s note under the title.
 
 ## Copy
 
@@ -317,11 +311,14 @@ the platform would look like.
 
 Three consequences that are easy to forget:
 
-- **The page carries their branding on a domain that is not theirs.** In search
-  results that reads as an official page of the association. `index.html` sets
-  `noindex, nofollow` and `public/robots.txt` disallows everything. Remove that
-  only when the association owns the deployment. Keeping the demo behind basic
-  auth or an unguessable host is worth the five minutes.
+- **The page still names the association on a domain that is not theirs.**
+  The client asked for a neutral presentation precisely because of this — the
+  form no longer carries their logo, colours or font, but the copy still
+  refers to them by name, and in search results that could still read as an
+  official page. `index.html` sets `noindex, nofollow` and `public/robots.txt`
+  disallows everything. Remove that only when the association owns the
+  deployment. Keeping the demo behind basic auth or an unguessable host is
+  worth the five minutes.
 - **The consent text names the wrong party.** `DESIGN.md` section 23 has the
   applicant agree that _ichbinhier e.V._ stores their details; on our domain the
   data reaches us instead. The copy is right for the system we are proposing, so

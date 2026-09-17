@@ -17,6 +17,11 @@
  * fall back to `--color-*` on their own.
  *
  * Literal colours live here and in `globals.css`, nowhere else.
+ *
+ * The `brand`/`fuut-purple` tones below were the association's purple; they
+ * are now shades of the neutral blue in `globals.css` (`--color-fuut-purple`)
+ * instead, per the client's request to show the prototype without their
+ * visual identity.
  */
 
 @theme {
@@ -24,12 +29,12 @@
   /* Shared foundation for the staff surface and both component sources. */
   --color-bg-canvas: #fcfcfd;
   --color-bg-primary: #ffffff;
-  --color-bg-unread: #faf9fc;
-  --color-bg-selected: #f3eef8;
+  --color-bg-unread: #f5f9ff;
+  --color-bg-selected: #eaf2fe;
   --color-bg-row-hover: #f5f5f7;
   --color-border-subtle: #efeff1;
   --color-trend-neutral: #85858f;
-  --color-trend-accent: #92849e;
+  --color-trend-accent: #6b8cae;
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.5rem;
@@ -50,8 +55,9 @@
   --color-text-error-primary: var(--color-utility-red-700);
   --color-text-error-primary_hover: var(--color-utility-red-700);
   --color-bg-error-primary: var(--color-utility-red-50);
-  /* A lighter lilac, so hover reads as "lifted" rather than pressed. */
-  --color-bg-brand-solid_hover: #9a4ec9;
+  /* A lighter blue, so hover reads as "lifted" rather than pressed — kept
+     close enough to --color-fuut-purple that white text stays above 4.5:1. */
+  --color-bg-brand-solid_hover: #1670dc;
   --color-text-brand-secondary: var(--color-fuut-purple);
   --color-bg-error-solid: var(--color-utility-red-700);
   --color-bg-error-solid_hover: #8e1820;
@@ -61,8 +67,8 @@
   --color-bg-secondary_alt: #f7f7f8;
   --color-bg-tertiary: #f0f0f2;
   --color-bg-overlay: #18181b;
-  /* The lilac fill a checked control carries. */
-  --color-bg-brand-solid: #8437b6;
+  /* The solid fill a checked control carries. */
+  --color-bg-brand-solid: var(--color-fuut-purple);
 
   /* BORDER COLORS */
   --color-border-primary: #d4d4d8;
@@ -84,7 +90,7 @@
   --color-fg-white: #ffffff;
 
   /* COMPONENT COLORS */
-  --color-focus-ring: #8437b6;
+  --color-focus-ring: var(--color-fuut-purple);
 
   /*
    * `Badge` / `BadgeWithDot` (src/components/base/badges/) reference
@@ -98,10 +104,10 @@
   --color-utility-neutral-200: var(--color-border-secondary);
   --color-utility-neutral-500: var(--color-fg-quaternary);
   --color-utility-neutral-700: var(--color-text-secondary);
-  --color-utility-brand-50: #f5f0f8;
-  --color-utility-brand-200: #e3d4ed;
-  --color-utility-brand-500: #8437b6;
-  --color-utility-brand-700: #8437b6;
+  --color-utility-brand-50: #e7f3ff;
+  --color-utility-brand-200: #c9e3fe;
+  --color-utility-brand-500: var(--color-fuut-purple);
+  --color-utility-brand-700: #0b5cad;
   --color-utility-red-50: #fdeceb;
   --color-utility-red-200: #f3b6b6;
   --color-utility-red-500: #c25b62;
