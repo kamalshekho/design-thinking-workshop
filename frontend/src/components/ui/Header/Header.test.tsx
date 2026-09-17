@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { expectNoA11yViolations } from '../../../test/a11y';
 import { Header } from './Header';
@@ -21,9 +21,6 @@ describe('Header', () => {
         menuCloseLabel="Menü schließen"
         menuLabel="Menü öffnen"
         navItems={navItems}
-        language="de"
-        languageLabel="Sprache"
-        onLanguageChange={() => undefined}
         searchLabel="Suche"
       />,
     );
@@ -57,9 +54,6 @@ describe('Header', () => {
         menuCloseLabel="Menü schließen"
         menuLabel="Menü öffnen"
         navItems={navItems}
-        language="de"
-        languageLabel="Sprache"
-        onLanguageChange={() => undefined}
         searchLabel="Suche"
       />,
     );
@@ -79,9 +73,7 @@ describe('Header', () => {
     expect(menuButton).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('marks the current language and reports a language change', async () => {
-    const user = userEvent.setup();
-    const onLanguageChange = vi.fn();
+  it('offers no language switch', () => {
     render(
       <Header
         donateHref="https://example.org/spende"
@@ -91,19 +83,12 @@ describe('Header', () => {
         menuCloseLabel="Menü schließen"
         menuLabel="Menü öffnen"
         navItems={navItems}
-        language="de"
-        languageLabel="Sprache"
-        onLanguageChange={onLanguageChange}
         searchLabel="Suche"
       />,
     );
 
-    expect(screen.getByRole('button', { name: 'DE' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-    await user.click(screen.getByRole('button', { name: 'EN' }));
-    expect(onLanguageChange).toHaveBeenCalledWith('en');
+    expect(screen.queryByRole('button', { name: 'EN' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'DE' })).toBeNull();
   });
 
   it('has no detectable accessibility violations', async () => {
@@ -116,9 +101,6 @@ describe('Header', () => {
         menuCloseLabel="Menü schließen"
         menuLabel="Menü öffnen"
         navItems={navItems}
-        language="de"
-        languageLabel="Sprache"
-        onLanguageChange={() => undefined}
         searchLabel="Suche"
       />,
     );

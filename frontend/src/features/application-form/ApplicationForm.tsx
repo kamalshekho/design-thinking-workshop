@@ -8,8 +8,8 @@ import { Field } from '../../components/ui/Field/Field';
 import { FormCard } from '../../components/ui/FormCard/FormCard';
 import { RoutePanel } from '../../components/ui/RoutePanel/RoutePanel';
 import { Select } from '../../components/ui/Select/Select';
+import { de as content } from '../../content/de';
 import { links } from '../../content/links';
-import { useLocale } from '../../content/useLocale';
 import { ApplicationFields } from './ApplicationFields';
 import styles from './ApplicationForm.module.css';
 import { Confirmation } from './Confirmation';
@@ -28,7 +28,6 @@ import { useRouteAnalytics } from './useRouteAnalytics';
  * responsive rules in ApplicationForm.module.css, not a separate branch.
  */
 export function ApplicationForm() {
-  const { content } = useLocale();
   const {
     control,
     register,

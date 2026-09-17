@@ -19,11 +19,8 @@
 
 The form must feel like a native part of **ichbinhier.eu**, not like an embedded SaaS form.
 
-The interface is available in German and English. The compact DE/EN switch is
-the final item in the header navigation, before the donation action; its active
-state is explicit and it remains available inside the mobile navigation drawer.
-The switch changes all fixed applicant-facing copy and the document language.
-Backend-managed category labels remain in the language returned by the API.
+The interface is German only. An earlier DE/EN switch in the header was
+removed (`A22`).
 
 Core UX principle:
 
@@ -352,9 +349,8 @@ The form card is page content, not a modal.
 
 ## 12. Header
 
-Keep the existing site language and offer the adjacent DE/EN control after the
-five navigation links. German is active by default (`A6`, `A22`); the active
-language is visibly marked and the control must have an accessible name.
+Keep the existing site language. The header offers no language control; the
+page is German only (`A6`, `A22`).
 
 Desktop navigation:
 
@@ -1504,8 +1500,7 @@ Use a small spinner only.
 
 # 49. Content Rules
 
-Use the specified German copy exactly when DE is active, and the approved
-English counterpart exactly when EN is active (`A22`).
+Use the specified German copy exactly.
 
 Do not:
 

@@ -4,8 +4,6 @@ import type {
   WeeklyTime,
 } from '../features/application-form/routes';
 
-export type Locale = 'de' | 'en';
-
 export interface Content {
   nav: {
     items: readonly [string, string, string, string, string];
@@ -13,7 +11,6 @@ export interface Content {
     menuLabel: string;
     menuCloseLabel: string;
     searchLabel: string;
-    languageLabel: string;
     logoAlt: string;
   };
   hero: { tagline: string };

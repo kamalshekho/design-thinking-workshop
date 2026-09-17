@@ -4,25 +4,21 @@ import { cx } from '../../../lib/cx';
 import { Button } from '../Button/Button';
 import styles from './Header.module.css';
 
-type Language = 'de' | 'en';
-
 export interface HeaderNavItem {
   label: string;
-  href: string;
+  /** Omitted in the prototype, where the item leads nowhere. */
+  href?: string;
 }
 
 interface HeaderProps {
   logoAlt: string;
-  homeHref: string;
+  homeHref?: string;
   navItems: HeaderNavItem[];
   donateLabel: string;
-  donateHref: string;
+  donateHref?: string;
   searchLabel: string;
   menuLabel: string;
   menuCloseLabel: string;
-  language: Language;
-  languageLabel: string;
-  onLanguageChange: (language: Language) => void;
 }
 
 /** Scroll distance, in either direction, needed to flip the header state.
@@ -118,9 +114,6 @@ export function Header({
   searchLabel,
   menuLabel,
   menuCloseLabel,
-  language,
-  languageLabel,
-  onLanguageChange,
 }: HeaderProps) {
   const isScrolled = useIsScrolled();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -150,7 +143,7 @@ export function Header({
                 <a
                   className={styles.navLink}
                   href={item.href}
-                  key={item.href}
+                  key={item.label}
                   onClick={() => {
                     setIsMenuOpen(false);
                   }}
@@ -158,39 +151,13 @@ export function Header({
                   {item.label}
                 </a>
               ))}
-              <div
-                aria-label={languageLabel}
-                className={styles.languageSwitcher}
-              >
-                <button
-                  aria-pressed={language === 'de'}
-                  className={styles.languageButton}
-                  onClick={() => {
-                    onLanguageChange('de');
-                    setIsMenuOpen(false);
-                  }}
-                  type="button"
-                >
-                  DE
-                </button>
-                <button
-                  aria-pressed={language === 'en'}
-                  className={styles.languageButton}
-                  onClick={() => {
-                    onLanguageChange('en');
-                    setIsMenuOpen(false);
-                  }}
-                  type="button"
-                >
-                  EN
-                </button>
-              </div>
             </nav>
 
             <div className={styles.actions}>
               <Button
                 className={styles.donateButton}
                 href={donateHref}
+                type="button"
                 variant="secondary"
               >
                 {donateLabel}
