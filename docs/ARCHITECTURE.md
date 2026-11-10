@@ -25,17 +25,32 @@ UML-Verteilungsdiagramm der Plattform, so wie
 Die Verbindungen zwischen Browser und nginx laufen im Prototyp über HTTP. TLS
 käme erst mit einem Produktivbetrieb, der nicht zum MVP gehört.
 
-## Diagramm neu erzeugen
+## Anwendungsfälle des MVP
 
-Quelle ist [`diagrams/deployment.puml`](./diagrams/deployment.puml). Lokal ist
+UML-Anwendungsfalldiagramm: wer was mit der Plattform tut, Stand `main` am
+10.11.2026. Die Beschriftungen folgen der deutschen Oberfläche, deshalb heißt
+eine Application hier _Anfrage_.
+
+![Anwendungsfalldiagramm](./diagrams/use-cases.svg)
+
+- Der Bewerber wählt im ersten Feld einen Weg. Community und Fördermitglied
+  enden bei einem externen Link, nur Vereinsarbeit erzeugt eine Anfrage.
+- Jede abgeschickte Anfrage löst die Bestätigungsmail aus, die Resend
+  verschickt.
+- Alle Anwendungsfälle im Dashboard setzen eine Anmeldung voraus.
+
+## Diagramme neu erzeugen
+
+Die Quellen liegen in [`diagrams/`](./diagrams/) als `.puml`-Dateien. Lokal ist
 kein Java nötig, PlantUML läuft im Container:
 
 ```sh
 cd docs/diagrams
 docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data -w /data \
-  plantuml/plantuml -tsvg deployment.puml
+  plantuml/plantuml -tsvg *.puml
 docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/data -w /data \
-  plantuml/plantuml -tpng -Sdpi=200 deployment.puml
+  plantuml/plantuml -tpng -Sdpi=200 *.puml
 ```
 
-Die PNG-Datei ist für die Folien gedacht, die SVG-Datei für dieses Dokument.
+Die PNG-Dateien sind für die Folien gedacht, die SVG-Dateien für dieses
+Dokument.

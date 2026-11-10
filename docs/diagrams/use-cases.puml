@@ -1,0 +1,50 @@
+@startuml use-cases
+' UML-Anwendungsfalldiagramm des MVP, Stand main am 10.11.2026.
+' Beschriftungen folgen der deutschen Oberfläche (ADR-0007).
+' Rendern: siehe docs/ARCHITECTURE.md.
+
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.4
+skinparam nodesep 25
+skinparam ranksep 60
+left to right direction
+
+actor "Bewerber" as applicant
+actor "Mitarbeitende" as staff
+actor "Resend\n(E-Mail-Dienst)" <<System>> as resend
+
+rectangle "Plattform" {
+  rectangle "Formular" {
+    usecase "Weg wählen\n(Community, Fördermitglied,\nVereinsarbeit)" as chooseRoute
+    usecase "Anfrage zur\nVereinsarbeit abschicken" as submit
+    usecase "Bestätigungsmail\nsenden" as confirm
+  }
+  rectangle "Dashboard" {
+    usecase "Anmelden" as signIn
+    usecase "Übersicht ansehen" as overview
+    usecase "Neue Anfragen\nlive sehen" as live
+    usecase "Anfragen suchen\nund filtern" as search
+    usecase "Anfrage bearbeiten\n(Status, Zuständigkeit, Notizen)" as edit
+    usecase "Anfrage aussortieren,\nwiederherstellen, löschen" as discard
+    usecase "Kategorien verwalten" as categories
+  }
+}
+
+applicant -- chooseRoute
+applicant -- submit
+submit ..> confirm : <<include>>
+confirm -- resend
+' Nur fürs Layout: legt das Dashboard rechts neben das Formular.
+confirm -[hidden]- live
+
+signIn -- staff
+overview -- staff
+live -- staff
+search -- staff
+edit -- staff
+discard -- staff
+categories -- staff
+@enduml
