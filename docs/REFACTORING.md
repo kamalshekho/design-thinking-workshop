@@ -181,7 +181,7 @@ der Zielwert ist eine Schätzung aus #76.
 | # | Stelle | Problem | Vorschlag | Muster | Gemessen (vorher) | Ziel (Schätzung) | Status |
 |---|---|---|---|---|---|---|---|
 | C1 | `DashboardApplicationController.update()` | lange Methode, Controller greift direkt auf drei Repositories zu | `ApplicationStaffService` extrahieren | Service Layer | Komplexität 13, Methode 50 Zeilen, Klasse 182 Zeilen | Komplexität höchstens 4, Klasse ca. 100 Zeilen | offen |
-| C2 | `DashboardCategoryController` | Antwort zweimal gleich aufgebaut, N+1 in `reorder()` | `CategoryDto.of`, `findMaxDisplayOrder`, `saveAll` | Repository, Mapper | 2n + 2 Repository-Aufrufe in `reorder()`, 2 Kopien des Antwortaufbaus, 162 Zeilen | 2 Datenbankzugriffe | in Umsetzung (#84) |
+| C2 | `DashboardCategoryController` | Antwort zweimal gleich aufgebaut, N+1 in `reorder()` | `CategoryDto.of`, `findMaxDisplayOrder`, `saveAll` | Repository, Mapper | 17 SQL-Anweisungen in `reorder()` bei 5 Kategorien, 2 Kopien des Antwortaufbaus, 162 Zeilen | 2 SQL-Anweisungen | umgesetzt (#89), nachher 2 Anweisungen |
 | C3 | `application-table.tsx` | große Komponente, viele Hooks | `useTableSort`, `usePagination`, `useRowSelection`, `ApplicationRow` | Strategy, Container/Presenter | 557 Zeilen, 11 Hook-Aufrufe, `ApplicationTable` allein 374 Zeilen | unter 200 Zeilen | offen |
 | C4 | `ApplicationDrawer.tsx` | große Komponente, drei Effekte | `useDrawerA11y`, `useCopyToClipboard` | Custom Hook | 416 Zeilen, 3 `useEffect`, `ApplicationDrawer` allein 269 Zeilen | ca. 180 Zeilen | offen |
 | C5 | `frontend/src/features/application-form/api.ts` und `dashboard/src/api/transport.ts` | Decoder für Feldfehler aus `problem+json` und die Liste der `WeeklyTime`-Werte doppelt | gemeinsames Modul oder Contract-Test | Adapter | 2 Kopien des Decoders, 2 Kopien der `WeeklyTime`-Liste in TypeScript | 1 Kopie | offen |
@@ -203,21 +203,25 @@ bedient aber nur das Formular.
 `reorder()` ruft auf: einmal `count()`, für jede der n Kategorien
 `findById()` und `save()`, am Ende einmal `findByOrderByDisplayOrderAsc()`. Das
 sind 2n + 2 Repository-Aufrufe, aus dem Code gezählt. #76 und #84 sprechen von
-2n. Wie viele SQL-Anweisungen Hibernate daraus macht, ist noch nicht gemessen.
+2n. Hibernate macht daraus 3n + 2 SQL-Anweisungen, weil `save()` jede
+Kategorie vor dem Update noch einmal liest.
 Der Antwortaufbau (`new DashboardCategoriesResponse()`, Liste über `toDto`)
 steht zweimal, in `list()` und `reorder()`. Außerdem lädt `create()` mit
 `findAll()` alle Kategorien, nur um die höchste `displayOrder` zu finden.
 
-Messwerte aus #84, sobald umgesetzt:
-
-<!-- TODO(#84): gemessene Werte eintragen -->
+Umgesetzt in #89: `reorder()` lädt alle Kategorien mit einem `findAll()` und
+schreibt sie mit `saveAll()` zurück. Mit `hibernate.jdbc.batch_size` gehen die
+Updates als ein JDBC-Batch an die Datenbank. Die Methode läuft jetzt in einer
+Transaktion, ein Abbruch hinterlässt keine halbe Sortierung. Der Test
+`CategoryReorderQueryCountTests` zählt die Anweisungen mit der
+Hibernate-Statistik und schlägt fehl, wenn es mehr als 2 werden.
 
 | Messung | vorher | nachher |
 |---|---|---|
-| SQL-Anweisungen in `reorder()` bei n Kategorien (Hibernate-Statistik) | _offen (#84)_ | _offen (#84)_ |
-| Repository-Aufrufe in `reorder()` | 2n + 2 | _offen (#84)_ |
-| Kopien des Antwortaufbaus | 2 | _offen (#84)_ |
-| Zeilen `DashboardCategoryController.java` | 162 | _offen (#84)_ |
+| SQL-Anweisungen in `reorder()` bei 5 Kategorien (Hibernate-Statistik) | 17 | 2 |
+| Repository-Aufrufe in `reorder()` | 2n + 2 | 2 |
+| Kopien des Antwortaufbaus | 2 | 1 |
+| Zeilen `DashboardCategoryController.java` | 162 | 148 |
 
 ### C3: `application-table.tsx`
 
@@ -309,6 +313,5 @@ Automatisieren ließe sich die Messung so:
 - Die Ausgaben in der CI speichern, damit vorher und nachher pro Pull Request
   vergleichbar sind.
 
-Für C2 ist der Messweg schon festgelegt: #84 zählt die Datenbankzugriffe mit
-der Hibernate-Statistik in einem Test. Das ist die erste Metrik in diesem
+Für C2 zählt ein Test in #89 die SQL-Anweisungen mit der Hibernate-Statistik. Das ist die erste Metrik in diesem
 Dokument, die ein Werkzeug erhebt und nicht ein Mensch.
