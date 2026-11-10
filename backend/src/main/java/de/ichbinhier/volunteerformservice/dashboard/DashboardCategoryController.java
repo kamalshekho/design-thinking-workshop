@@ -2,14 +2,18 @@ package de.ichbinhier.volunteerformservice.dashboard;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -38,15 +42,9 @@ public class DashboardCategoryController {
 
     @GetMapping
     ResponseEntity<DashboardCategoriesResponse> list() {
-        List<CategoryDto> cats = categoryRepo.findByOrderByDisplayOrderAsc().stream()
-            .map(this::toDto)
-            .toList();
-
-        DashboardCategoriesResponse response = new DashboardCategoriesResponse();
-        response.setCategories(cats);
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noStore())
-            .body(response);
+            .body(DashboardCategoriesResponse.of(categoryRepo.findByOrderByDisplayOrderAsc()));
     }
 
     @PostMapping
@@ -56,20 +54,15 @@ public class DashboardCategoryController {
 
         requireNameIsFree(name, null);
 
-        int maxOrder = categoryRepo.findAll().stream()
-            .mapToInt(Category::getDisplayOrder)
-            .max()
-            .orElse(0);
-
         Category cat = Category.builder()
             .name(name)
             .description(desc)
             .active(req.getActive() != null ? req.getActive() : true)
-            .displayOrder(maxOrder + 1)
+            .displayOrder(categoryRepo.findMaxDisplayOrder() + 1)
             .build();
 
         categoryRepo.save(cat);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(cat));
+        return ResponseEntity.status(HttpStatus.CREATED).body(CategoryDto.of(cat));
     }
 
     @PatchMapping("/{id}")
@@ -94,7 +87,7 @@ public class DashboardCategoryController {
         }
 
         categoryRepo.save(cat);
-        return ResponseEntity.ok(toDto(cat));
+        return ResponseEntity.ok(CategoryDto.of(cat));
     }
 
     @DeleteMapping("/{id}")
@@ -111,28 +104,30 @@ public class DashboardCategoryController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * One read for every Category and one batched write for the changed ones,
+     * however many there are. The response is built from the same entities, in
+     * the order just written, rather than read back.
+     */
     @PutMapping("/order")
+    @Transactional
     ResponseEntity<DashboardCategoriesResponse> reorder(@Valid @RequestBody ReorderRequest req) {
-        Set<UUID> sent = new HashSet<>(req.getIds());
-        if (sent.size() != req.getIds().size() || sent.size() != categoryRepo.count()) {
+        List<UUID> ids = req.getIds();
+        Map<UUID, Category> byId = categoryRepo.findAll().stream()
+            .collect(Collectors.toMap(Category::getId, Function.identity()));
+
+        Set<UUID> sent = new HashSet<>(ids);
+        if (sent.size() != ids.size() || !sent.equals(byId.keySet())) {
             throw orderIncomplete();
         }
 
-        for (int i = 0; i < req.getIds().size(); i++) {
-            var cat = categoryRepo.findById(req.getIds().get(i))
-                .orElseThrow(DashboardCategoryController::orderIncomplete);
-
-            cat.setDisplayOrder(i);
-            categoryRepo.save(cat);
+        List<Category> ordered = ids.stream().map(byId::get).toList();
+        for (int i = 0; i < ordered.size(); i++) {
+            ordered.get(i).setDisplayOrder(i);
         }
 
-        List<CategoryDto> cats = categoryRepo.findByOrderByDisplayOrderAsc().stream()
-            .map(this::toDto)
-            .toList();
-
-        DashboardCategoriesResponse response = new DashboardCategoriesResponse();
-        response.setCategories(cats);
-        return ResponseEntity.ok(response);
+        categoryRepo.saveAll(ordered);
+        return ResponseEntity.ok(DashboardCategoriesResponse.of(ordered));
     }
 
     /**
@@ -148,15 +143,6 @@ public class DashboardCategoryController {
 
     private static FieldValidationException orderIncomplete() {
         return new FieldValidationException("ids", "ORDER_INCOMPLETE");
-    }
-
-    private CategoryDto toDto(Category cat) {
-        CategoryDto dto = new CategoryDto();
-        dto.setId(cat.getId());
-        dto.setName(cat.getName());
-        dto.setDescription(cat.getDescription());
-        dto.setActive(cat.isActive());
-        return dto;
     }
 
 }
