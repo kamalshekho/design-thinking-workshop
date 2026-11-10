@@ -443,6 +443,32 @@ English page always showed a mixed-language category list.
   Bringing English back means a second copy file, the switch, and a way for
   the backend to return category labels in more than one language.
 
+### A23 — Running the platform costs under 10 € a month
+
+One small cloud server carries the whole Compose stack. Hetzner lists its
+cheapest shared cloud servers from 5.49 € a month excluding VAT (hetzner.com,
+checked 2026-11-10), about 6.53 € including 19 % VAT. Resend's free plan sends
+up to 100 emails a day, 3,000 a month, at no cost (resend.com, same date).
+
+- **Confidence:** medium — list prices on one date; hosting prices rose in 2026.
+- **Not included:** a domain, backups, and the hours someone spends running
+  updates. Who would do that is an open question (see below).
+- **What breaks if wrong:** more than 100 confirmation mails on one day need a
+  paid Resend plan. At `A5`'s share that means a burst of several hundred
+  applicants in a day.
+
+### A24 — An hour of staff time costs the association about 25 €
+
+Our estimate of the employer's cost for one hour of a staff member's time,
+including social contributions. We have no salary data from the association.
+
+- **Confidence:** low.
+- **Why it matters:** it turns saved time into a figure that can be set against
+  `A23`. At 25 € an hour, the server costs about 16 minutes of staff time a
+  month.
+- **What breaks if wrong:** little. Even at half the rate the server costs
+  about half an hour of staff time a month.
+
 ---
 
 ## Open questions we cannot answer ourselves
