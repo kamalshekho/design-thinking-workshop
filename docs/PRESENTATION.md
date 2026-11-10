@@ -22,8 +22,8 @@ Daraus folgt:
 - UML, Architektur, Lösungsvergleich und Refactoring kommen fachlich und ohne
   Umweg auf die Folien.
 - Zahlen, die wir nicht vom Verein haben, stehen auf der Folie als Annahme, zum
-  Beispiel `A3` (rund 1.000 Mails) und `A5` (vier von fünf wollen in die
-  Community).
+  Beispiel `A5` (vier von fünf wollen in die Community). Die rund 1.000 Mails
+  hat der Verein selbst genannt (`C2`).
 
 ## 2. Roter Faden
 
@@ -72,12 +72,15 @@ Aus dem Scope in `DISNEY.md`, aber nicht gebaut:
 
 - E-Mail-Eingang: Abruf des Postfachs und Antwort mit Verweis auf das
   Formular.
-- Backlog-Modus für die rund 1.000 alten Mails (`A3`).
 - Buchung der Intro sessions über das Formular (`A10`).
 - Konkreter nächster Schritt in der Bestätigungsmail (`A8`). Er fehlt, weil es
   für Intro sessions noch kein Datenmodell gibt.
 - Tags an Applications.
 - Peer onboarder als Rolle im Datenmodell (`A11`).
+
+Verworfen: der Backlog-Modus für die alten Mails. Die rund 1.000 Mails sind
+das ganze Postfach mit Rechnungen, Presse und Spam, keine 1.000 Bewerbungen
+(`A3`).
 
 Bewusst ausgeschlossen, schon in `DISNEY.md`: WhatsApp und Direktnachrichten,
 automatische Antworten auf Fragen, Empfehlungen und Anmeldung bei
@@ -93,7 +96,7 @@ vor.
 | # | Teil | Inhalt | Zeit | Sprecher |
 |---|---|---|---|---|
 | 1 | Einstieg | Titel, Gliederung, Zielgruppe | 0:45 | Kamal |
-| 2 | Verstehen | Verein, Problem `C2`, rund 1.000 Mails `A3` | 1:00 | Kamal |
+| 2 | Verstehen | Verein, Problem: Bewerbungen gehen unter rund 1.000 Mails unter (`C2`) | 1:00 | Kamal |
 | 3 | Definieren und Ideen | Auffindbarkeit und Kapazität, zwei Wege `A5`, Disney-Methode | 1:30 | Kamal |
 | 4 | Soll-Prozess | UML-Aktivitätsdiagramm von der Bewerbung bis zum Onboarding | 1:30 | Kamal |
 | 5 | Prototyp | Video, MVP als UML-Anwendungsfalldiagramm, daneben was nicht dabei ist | 1:45 | Ilias |
