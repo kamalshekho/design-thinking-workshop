@@ -1,0 +1,47 @@
+@startuml ist-process
+' UML-Aktivitätsdiagramm des Ist-Prozesses, so wie wir ihn rekonstruiert
+' haben (A25). Rendern: siehe docs/ARCHITECTURE.md.
+
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam ArrowThickness 1.4
+skinparam swimlaneWidth same
+
+|Bewerber|
+start
+:Aufruf des Vereins lesen;
+:Mail an info@ichbinhier.online
+schreiben;
+
+|Postfach|
+:Mail liegt zwischen
+rund 1.000 Mails aller Art;
+note right
+  keine automatische Antwort
+end note
+
+|Mitarbeitende|
+:Postfach durchsehen,
+wenn Zeit ist;
+if (Bewerbung gefunden?) then (nein)
+  |Bewerber|
+  :wartet ohne Antwort;
+  :gibt auf;
+  stop
+else (ja)
+  |Mitarbeitende|
+  :Mail lesen und Anliegen
+  herausfinden;
+  repeat
+    :per Mail nachfragen
+    oder Termin vorschlagen;
+    |Bewerber|
+    :per Mail antworten;
+    |Mitarbeitende|
+  repeat while (Termin steht?) is (nein) not (ja)
+  :Einzelgespräch führen;
+  :Onboarding;
+  stop
+endif
+@enduml

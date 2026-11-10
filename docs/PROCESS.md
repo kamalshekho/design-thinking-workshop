@@ -2,11 +2,35 @@
 
 ## Ist-Prozess
 
-Heute schreibt ein Interessent eine Mail an das allgemeine Postfach des Vereins.
-Dort liegt sie zwischen rund 1.000 anderen Mails (`A3`) und ist für die
-Mitarbeitenden kaum auffindbar (`C2`). Eine automatische Antwort gibt es nicht,
-der Interessent hört oft wochenlang nichts (`A8`). Die Beschreibung in
-nummerierten Schritten und als Diagramm steht noch aus (#74).
+So läuft die Bewerbungsannahme heute, rekonstruiert aus dem, was der Verein
+uns gesagt hat (`C2`, [`CASE.md`](./CASE.md)). Die Reihenfolge der Schritte und
+das Einzelgespräch sind unsere Annahme (`A25`), weil der Verein uns seinen
+Ablauf nie gezeigt hat (`C1`).
+
+1. Ein Interessent liest einen Aufruf des Vereins und schreibt eine Mail an
+   `info@ichbinhier.online` (`A6`).
+2. Die Mail landet im allgemeinen Postfach, zwischen rund 1.000 Mails aller
+   Art: Rechnungen, Presse, Newsletter, Spam (`C2`, `A3`).
+3. Niemand antwortet automatisch. Der Interessent weiß nicht, ob seine Mail
+   angekommen ist (`A8`).
+4. Jemand aus dem Team sieht das Postfach durch, wenn Zeit ist, und muss die
+   Bewerbung darin erst finden (`C2`).
+5. Wird die Mail nicht gefunden, bleibt sie liegen. Der Interessent hört nichts
+   und gibt irgendwann auf (`A8`).
+6. Wird sie gefunden, liest jemand sie und klärt, was der Interessent will. Wer
+   nur in der Community mitmachen will, geht denselben Weg, obwohl er niemanden
+   im Team braucht (`A5`).
+7. Rückfragen und Terminvorschläge gehen per Mail hin und her, bis ein Termin
+   steht.
+8. Jemand aus dem Team führt ein Einzelgespräch mit dem Interessenten.
+9. Danach beginnt das Onboarding.
+
+![Ist-Prozess](./diagrams/ist-process.svg)
+
+Die Schwachstellen liegen in den Schritten 2 bis 7: Bewerbungen sind nicht
+auffindbar, Bewerber bekommen keine Antwort, Community-Anfragen kosten
+Arbeitszeit, und jeder Termin braucht mehrere Mails. Der Soll-Prozess setzt
+genau dort an.
 
 ## Soll-Prozess
 
