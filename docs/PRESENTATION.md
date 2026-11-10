@@ -42,8 +42,9 @@ aufgebaut war:
 ## 3. MVP
 
 Grundlage ist der Scope in [`DISNEY.md`](./DISNEY.md), Abschnitt "What
-survives". Das MVP ist kleiner. Die Folie nennt beides offen, eine Zeile pro
-Punkt.
+survives". Das MVP ist kleiner. Auf der Folie zeigt ein
+UML-Anwendungsfalldiagramm, was fertig ist. Daneben steht, was nicht dabei ist,
+eine Zeile pro Punkt.
 
 ### Fertig
 
@@ -95,7 +96,7 @@ vor.
 | 2 | Verstehen | Verein, Problem `C2`, rund 1.000 Mails `A3` | 1:00 | Kamal |
 | 3 | Definieren und Ideen | Auffindbarkeit und Kapazität, zwei Wege `A5`, Disney-Methode | 1:30 | Kamal |
 | 4 | Soll-Prozess | UML-Aktivitätsdiagramm von der Bewerbung bis zum Onboarding | 1:30 | Kamal |
-| 5 | Prototyp | Video, MVP: fertig und nicht dabei | 1:45 | Ilias |
+| 5 | Prototyp | Video, MVP als UML-Anwendungsfalldiagramm, daneben was nicht dabei ist | 1:45 | Ilias |
 | 6 | Architektur | UML-Verteilungsdiagramm: Formular, Dashboard, nginx, Backend, PostgreSQL, REST, SSE | 1:30 | Ilias |
 | 7 | Lösungen verglichen | ADR-0002 und ADR-0004, jeweils Alternativen und Begründung | 1:30 | Ilias |
 | 8 | Refactoring | Umgesetzte Refactorings und Kandidaten mit Design Pattern | 1:15 | Bohdan |
