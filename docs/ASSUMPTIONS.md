@@ -130,9 +130,9 @@ about helping with *Vereinsarbeit*. Public communication is in German.
 
 - **Confidence:** high for the channel and the language, medium for the shape.
 - **Consequence:** German is the applicant form's default language. The staff
-  dashboard UI is German too, since staff members are German speakers; only our
-  documents, code and presentation stay English. The public form is German
-  only (`A22`).
+  dashboard UI is German too, since staff members are German speakers. Code
+  stays English; new documents and the presentation are German from 2026-11-10
+  (ADR-0007). The public form is German only (`A22`).
 
 ### A7 — The categories are the association's own four
 
