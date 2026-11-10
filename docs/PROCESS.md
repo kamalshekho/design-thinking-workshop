@@ -60,3 +60,17 @@ Das Backend prüft die Statusübergänge heute nicht, jeder Übergang ist erlaub
 Die Quelle ist [`diagrams/soll-process.puml`](./diagrams/soll-process.puml). Zum
 Rendern wird die PNG-Datei wegen ihrer Breite mit
 `-e PLANTUML_LIMIT_SIZE=8192` erzeugt.
+
+## Vorher und Nachher
+
+Die Tabelle vergleicht beide Prozesse Schritt für Schritt. Sie beruht auf
+unserer Rekonstruktion des Ist-Prozesses (`A25`). Sortiert der Verein heute
+schon anders, als wir annehmen, fällt der Gewinn kleiner aus.
+
+| Schritt | Vorher | Nachher | Warum besser |
+|---|---|---|---|
+| Eingang | Freitext-Mail an `info@ichbinhier.online`, zwischen rund 1.000 Mails aller Art (`C2`, `A3`, `A6`). | Formular. Jede Bewerbung wird eine Anfrage mit Kategorie, Status "Neu" und Eingangsdatum und erscheint ohne Neuladen im Dashboard ([ADR-0004](./adr/0004-server-sent-events-for-the-dashboard.md)). | Niemand muss Bewerbungen im Postfach suchen. Sie stehen getrennt von Rechnungen, Presse und Spam in einer eigenen Liste. |
+| Antwort | Keine automatische Antwort. Der Interessent weiß nicht, ob seine Mail angekommen ist (`A8`). | Bestätigungsmail direkt nach dem Absenden. | Kein Bewerber bleibt ohne Rückmeldung. Nachfragen wie "Ist meine Mail angekommen?" fallen weg (`A8`). |
+| Triage | Jemand liest jede Mail und klärt, was der Interessent will. Community-Anfragen gehen denselben Weg (`A5`). | Das erste Formularfeld trennt Community, Fördermitglied und Vereinsarbeit. Nur Vereinsarbeit erzeugt eine Anfrage. Mitarbeitende übernehmen die Zuständigkeit, und nach 7 Tagen ohne Bewegung steht die Anfrage unter "Lange offen" (`A19`). | Wenn `A5` stimmt, erreichen vier von fünf Interessenten das Team gar nicht mehr. Jede Anfrage hat eine zuständige Person und ein sichtbares Alter. |
+| Termin | Rückfragen und Terminvorschläge per Mail, bis ein Einzelgespräch steht (`A25`). | Info-Runde alle zwei Wochen für alle Bewerber, Status "Info-Runde gebucht" (`A10`). Den Termin nennt die Bestätigungsmail im MVP noch nicht. | Eine Stunde einer Person reicht für bis zu fünfzig Bewerber statt eines Gesprächs pro Person (`A10`). Die Mails zur Terminfindung entfallen erst, wenn die Bestätigungsmail den Termin nennt. |
+| Onboarding | Beginnt nach dem Einzelgespräch. Wie es abläuft, wissen wir nicht (`C1`). | Status "Aktiv" markiert den Beginn. Das Onboarding selbst läuft weiter außerhalb der Plattform. | Im MVP keine Verbesserung, nur der Überblick, wer aktiv ist. Erfahrene Freiwillige als Paten (`A11`) sind eine Idee und nicht gebaut. |
