@@ -25,6 +25,9 @@ answered since. There will be no second round of requirements, no process
 walkthrough and no validation of the prototype by the client within these three
 weeks.
 
+Update, November 2026: the association has been in touch again, and we are
+sending them a link to the MVP to try out.
+
 - **Confidence:** high — observed directly.
 - **Consequence:** the one conversation is our only source of client
   requirements, and it outranks every inference we drew from public sources.

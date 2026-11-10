@@ -2,33 +2,48 @@
 
 Gemeinsame Präsentation von Kamal, Bohdan und Ilias: 15 Minuten Vortrag, danach
 5 Minuten Fragen. Bewertet wird nach dem Bewertungsbogen der Handelskammer
-(#80). Dieses Dokument hält die drei Entscheidungen fest, die bis Mittwoch,
-11.11., stehen müssen. Inhalte und Folien folgen ab Donnerstag.
+(#80). Die Präsentation ist eine Übung für die echte Prüfung. Dieses Dokument
+hält fest, was das Team am 10.11. entschieden hat.
 
 Stand des Codes: `main` am 10.11.2026.
 
-## 1. Zielgruppe der Präsentation
+## 1. Zielgruppe
 
-Entwickler, die das Projekt übernehmen und weiterführen.
+Der Lehrer und die Klasse, als IT-Fachpublikum. Sie kennen die Aufgabe des
+letzten Blocks: einen Verein finden, sein Problem verstehen und eine Lösung für
+ihn entwickeln. Der Verein "Ich bin hier e.V." ist der Kunde in dieser
+Geschichte, nicht das Publikum.
 
-Daraus folgt, was auf die Folien kommt:
+Die Zielgruppe steht auf der Folie "Gliederung", damit der Bewerter den Punkt
+"Inhalt passt zur Zielgruppe" daran messen kann.
 
-- Das Produkt bekommt zwei Minuten. Die Zuhörer müssen verstehen, wofür der
-  Code da ist, aber nicht vom Problem überzeugt werden.
-- Architektur, Entscheidungen und Refactoring tragen den Hauptteil. Zu jeder
-  Entscheidung gehören die verworfene Alternative und der Grund dafür, weil ein
-  Nachfolger genau das braucht, um sie nicht versehentlich rückgängig zu machen.
-- Bekannte Schulden werden offen genannt, zum Beispiel die Befunde aus #79. Ein
-  Nachfolger soll wissen, wo er anfängt.
-- Zielgruppe und Wirtschaftlichkeit des Produkts bekommen nur eine Folie, wie
-  die Aufgabe es verlangt.
+Daraus folgt:
 
-## 2. MVP
+- UML, Architektur, Lösungsvergleich und Refactoring kommen fachlich und ohne
+  Umweg auf die Folien.
+- Zahlen, die wir nicht vom Verein haben, stehen auf der Folie als Annahme, zum
+  Beispiel `A3` (rund 1.000 Mails) und `A5` (vier von fünf wollen in die
+  Community).
+
+## 2. Roter Faden
+
+Die Präsentation folgt den Phasen des Design Thinking, so wie die Aufgabe
+aufgebaut war:
+
+1. **Verstehen:** der Verein und sein Problem (`C2`). Der Ist-Prozess per Mail
+   steht nur als ein Satz auf der Folie, das Diagramm liegt in `docs/` (#74).
+2. **Definieren:** zwei Probleme in einem Satz, Auffindbarkeit und Kapazität.
+   Daraus folgen die zwei Wege Community und Vereinsarbeit (`A5`).
+3. **Ideen:** die Disney-Methode und was davon übrig blieb.
+4. **Prototyp:** Soll-Prozess, MVP, Architektur, Lösungsvergleich, Refactoring.
+5. **Testen:** der Verein hat sich gemeldet und bekommt einen Link zum MVP
+   (`C1`). Dazu eine Zeile zu den automatischen Tests.
+
+## 3. MVP
 
 Grundlage ist der Scope in [`DISNEY.md`](./DISNEY.md), Abschnitt "What
-survives". Das MVP ist kleiner als dieser Scope. Die Abweichungen stehen unten
-unter "Nicht dabei" und gehören auf die MVP-Folie, damit die Frage "was ist aus
-dem Backlog-Modus geworden?" nicht erst in der Fragerunde kommt.
+survives". Das MVP ist kleiner. Die Folie nennt beides offen, eine Zeile pro
+Punkt.
 
 ### Fertig
 
@@ -50,18 +65,6 @@ dem Backlog-Modus geworden?" nicht erst in der Fragerunde kommt.
   Dashboard. Formular und Dashboard liefert je ein nginx aus, das `/api` an das
   Backend weiterleitet.
 
-### Geplant bis zur Präsentation
-
-- Refactoring C2 in `DashboardCategoryController`, Datenbankzugriffe von 2n auf
-  2 (#76, #80).
-- `docs/REFACTORING.md` mit den umgesetzten Refactorings und den Kandidaten C1
-  bis C7 (#76, #80).
-- Ist- und Soll-Prozess als UML-Aktivitätsdiagramm (#74).
-- MVP-Kriterien und Geschäftsmodell in `docs/BUSINESS.md` (#75).
-
-Die übrigen Punkte aus #77, #78 und #79 sind nicht Teil des MVP. Sie stehen auf
-der Fazit-Folie als nächste Schritte für Nachfolger.
-
 ### Nicht dabei
 
 Aus dem Scope in `DISNEY.md`, aber nicht gebaut:
@@ -80,27 +83,43 @@ automatische Antworten auf Fragen, Empfehlungen und Anmeldung bei
 Veranstaltungen, Zuordnung zu Mentoren, Produktivbetrieb und eine Freigabe nach
 DSGVO.
 
-## 3. Gliederung und Zeitplan
+## 4. Ablauf und Sprecher
 
-Jeder spricht rund fünf Minuten. Die Zeiten summieren sich auf 14:15, die
-übrigen 45 Sekunden sind für die Übergaben. Die Sprecher folgen den Rollen aus
-dem Team Canvas in [`CASE.md`](./CASE.md): Kamal als Product Owner, Bohdan für
-das Backend, Ilias für Frontend und DevOps.
+Die Zeiten summieren sich auf 14:15, die übrigen 45 Sekunden sind für die zwei
+Übergaben. Wer einen Teil vorträgt, bereitet auch dessen Folien und Material
+vor.
 
-| # | Teil | Folien | Zeit | Sprecher |
+| # | Teil | Inhalt | Zeit | Sprecher |
 |---|---|---|---|---|
-| 1 | Einstieg | Titel, Gliederung, Zielgruppe der Präsentation | 0:45 | Kamal |
-| 2 | Produkt | Problem (`C2`, `A3`), Lösung, zwei Screenshots | 2:15 | Kamal |
-| 3 | MVP | Fertig, geplant, nicht dabei | 1:45 | Kamal |
-| 4 | Soll-Prozess | UML-Aktivitätsdiagramm von der Bewerbung bis zum Onboarding | 1:30 | Bohdan |
-| 5 | Architektur | UML-Verteilungsdiagramm: Formular, Dashboard, nginx, Backend, PostgreSQL, REST, SSE | 1:45 | Bohdan |
-| 6 | Lösungen verglichen | ADR-0002 und ADR-0004, jeweils Alternativen und Begründung | 1:30 | Bohdan |
-| 7 | Refactoring | Umgesetzte Refactorings und Kandidaten mit Design Pattern | 1:15 | Ilias |
-| 8 | Refactoring C2 | Code vorher und nachher, Datenbankzugriffe 2n auf 2 | 2:00 | Ilias |
-| 9 | Zielgruppe und Wirtschaftlichkeit | Wer profitiert, mögliches Geschäftsmodell (#75) | 1:00 | Ilias |
-| 10 | Fazit | Was steht, was offen ist, wo ein Nachfolger anfängt | 0:30 | Ilias |
+| 1 | Einstieg | Titel, Gliederung, Zielgruppe | 0:45 | Kamal |
+| 2 | Verstehen | Verein, Problem `C2`, rund 1.000 Mails `A3` | 1:00 | Kamal |
+| 3 | Definieren und Ideen | Auffindbarkeit und Kapazität, zwei Wege `A5`, Disney-Methode | 1:30 | Kamal |
+| 4 | Soll-Prozess | UML-Aktivitätsdiagramm von der Bewerbung bis zum Onboarding | 1:30 | Kamal |
+| 5 | Prototyp | Video, MVP: fertig und nicht dabei | 1:45 | Ilias |
+| 6 | Architektur | UML-Verteilungsdiagramm: Formular, Dashboard, nginx, Backend, PostgreSQL, REST, SSE | 1:30 | Ilias |
+| 7 | Lösungen verglichen | ADR-0002 und ADR-0004, jeweils Alternativen und Begründung | 1:30 | Ilias |
+| 8 | Refactoring | Umgesetzte Refactorings und Kandidaten mit Design Pattern | 1:15 | Bohdan |
+| 9 | Refactoring C2 | Code vorher und nachher, Datenbankzugriffe 2n auf 2 | 1:30 | Bohdan |
+| 10 | Testen | Verein bekommt den MVP-Link, automatische Tests | 0:45 | Bohdan |
+| 11 | Wirtschaftlichkeit | Kosten und Nutzen für den Verein, Ausblick auf andere Vereine | 0:45 | Bohdan |
+| 12 | Fazit | Was steht, was offen ist | 0:30 | Bohdan |
 
-Die Demo läuft nicht innerhalb der 15 Minuten. Eine Live-Demo frisst bei einer
-Panne die Zeit eines ganzen Teils. Die Screenshots in Teil 2 zeigen das
-Produkt; der Compose-Stack läuft trotzdem, damit wir in der Fragerunde live
-zeigen können, wenn jemand fragt.
+## 5. Demo
+
+Keine Live-Demo. Ein Video von 20 bis 30 Sekunden ohne Ton zeigt eine Szene:
+eine Application wird im Formular abgeschickt und erscheint ohne Neuladen im
+Dashboard. Ilias erstellt es. Das Video ist in die Folien eingebettet und liegt
+als MP4 auf dem USB-Stick. Am Montag braucht der Laptop nur die Folien und das
+Video, keinen laufenden Compose-Stack.
+
+## 6. Einzelne Folien
+
+**Wirtschaftlichkeit.** Der Verein ist gemeinnützig, ein Geschäftsmodell für
+ihn passt nicht. Die Folie stellt die Kosten für den Verein (Hosting pro Monat)
+der eingesparten Arbeitszeit der Mitarbeitenden gegenüber. Als Ausblick folgt
+dieselbe Lösung als Dienst für andere kleine Vereine (#75). Neue Zahlen kommen
+zuerst als Annahme mit ID in [`ASSUMPTIONS.md`](./ASSUMPTIONS.md).
+
+**Testen.** Neben dem Link für den Verein eine Zeile zu den automatischen Tests.
+Im Code gezählt am 10.11.: 64 Testfälle im Backend, 76 im Formular und 181 im
+Dashboard.
