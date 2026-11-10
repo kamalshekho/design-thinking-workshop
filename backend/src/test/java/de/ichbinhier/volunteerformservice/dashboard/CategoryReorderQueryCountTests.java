@@ -12,8 +12,8 @@ import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,14 +24,14 @@ import de.ichbinhier.volunteerformservice.category.CategoryRepository;
 /**
  * How many SQL statements one reorder costs. The dashboard sends the whole
  * display order on every swap, so the cost of `reorder()` must not grow with
- * one query and one save per Category. The controller is called directly so
- * that the sign-in lookup of a real request does not blur the count.
+ * one query and one save per Category. Two sizes run against the same bound,
+ * so a count that grows with n fails one of them. The controller is called
+ * directly so that the sign-in lookup of a real request does not blur the
+ * count.
  */
 @SpringBootTest(properties = "spring.jpa.properties.hibernate.generate_statistics=true")
 @ActiveProfiles("test")
 class CategoryReorderQueryCountTests {
-
-    private static final int CATEGORIES = 5;
 
     @Autowired private DashboardCategoryController controller;
 
@@ -39,13 +39,10 @@ class CategoryReorderQueryCountTests {
 
     @Autowired private EntityManagerFactory entityManagerFactory;
 
-    private List<UUID> ids;
-
-    @BeforeEach
-    void seed() {
+    private List<UUID> seed(int count) {
         categories.deleteAll();
-        ids = new ArrayList<>();
-        for (int i = 0; i < CATEGORIES; i++) {
+        List<UUID> ids = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
             Category saved = categories.save(Category.builder()
                     .name("Category " + i)
                     .description("")
@@ -54,6 +51,7 @@ class CategoryReorderQueryCountTests {
                     .build());
             ids.add(saved.getId());
         }
+        return ids;
     }
 
     @AfterEach
@@ -61,9 +59,10 @@ class CategoryReorderQueryCountTests {
         categories.deleteAll();
     }
 
-    @Test
-    void reordersWithAConstantNumberOfStatements() {
-        List<UUID> reversed = new ArrayList<>(ids);
+    @ParameterizedTest
+    @ValueSource(ints = {5, 20})
+    void reordersWithAConstantNumberOfStatements(int count) {
+        List<UUID> reversed = new ArrayList<>(seed(count));
         Collections.reverse(reversed);
 
         Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
@@ -73,17 +72,15 @@ class CategoryReorderQueryCountTests {
                 controller.reorder(new ReorderRequest(reversed)).getBody();
 
         long statements = statistics.getPrepareStatementCount();
-        System.out.printf(
-                "reorder() with n=%d: %d prepared statements, %d queries, %d entity loads, %d entity updates%n",
-                CATEGORIES, statements, statistics.getQueryExecutionCount(),
-                statistics.getEntityLoadCount(), statistics.getEntityUpdateCount());
 
         assertThat(response).isNotNull();
         assertThat(response.getCategories()).extracting(CategoryDto::getId)
                 .containsExactlyElementsOf(reversed);
         assertThat(categories.findByOrderByDisplayOrderAsc()).extracting(Category::getId)
                 .containsExactlyElementsOf(reversed);
-        assertThat(statements).isLessThanOrEqualTo(2);
+        assertThat(statements)
+                .as("prepared statements for n=%d", count)
+                .isLessThanOrEqualTo(2);
     }
 
 }

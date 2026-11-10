@@ -16,7 +16,7 @@ public class CategoryDto {
     private String description;
     private boolean active;
 
-    public static CategoryDto of(Category category) {
+    static CategoryDto of(Category category) {
         return new CategoryDto(
             category.getId(),
             category.getName(),

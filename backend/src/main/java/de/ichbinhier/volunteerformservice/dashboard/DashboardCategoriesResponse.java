@@ -14,7 +14,7 @@ public class DashboardCategoriesResponse {
     private List<CategoryDto> categories;
 
     /** The response for Categories already in display order. */
-    public static DashboardCategoriesResponse of(List<Category> ordered) {
+    static DashboardCategoriesResponse of(List<Category> ordered) {
         return new DashboardCategoriesResponse(ordered.stream().map(CategoryDto::of).toList());
     }
 }
