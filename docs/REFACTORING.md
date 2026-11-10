@@ -313,5 +313,6 @@ Automatisieren ließe sich die Messung so:
 - Die Ausgaben in der CI speichern, damit vorher und nachher pro Pull Request
   vergleichbar sind.
 
-Für C2 zählt ein Test in #89 die SQL-Anweisungen mit der Hibernate-Statistik. Das ist die erste Metrik in diesem
+Für C2 zählt ein Test in #89 die SQL-Anweisungen mit der Hibernate-Statistik.
+Das ist die erste Metrik in diesem
 Dokument, die ein Werkzeug erhebt und nicht ein Mensch.
