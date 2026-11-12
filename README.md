@@ -24,6 +24,17 @@ docker compose up -d --build
 The form is then on <http://localhost:8081>; the staff dashboard is on
 <http://localhost:8082>.
 
+The stack starts with no Applications. To present the dashboard with the
+seeded demo week (`A21`), turn the `demo` profile on when you start it:
+
+```bash
+SPRING_PROFILES_ACTIVE=demo docker compose up -d --build
+```
+
+Setting `SPRING_PROFILES_ACTIVE=demo` in `.env` does the same. The seeder skips
+a database that already holds an Application; `docker compose down -v` empties
+it first.
+
 Run the demo on the presenting machine and open both addresses as
 `localhost`. The dashboard's Sign-in cookie is deliberately `Secure`, so a
 browser will reject it over plain HTTP on a network name or IP address. Do not

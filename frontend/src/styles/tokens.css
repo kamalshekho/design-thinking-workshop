@@ -172,8 +172,6 @@
   --footer-row-gap: 40px;
   --footer-column-gap: var(--wp--preset--spacing--40);
   --footer-donate-gap: 10px;
-  --footer-social-gap: var(--wp--preset--spacing--40);
-  --footer-aside-gap: 20px;
   --footer-icon-size: 22px;
   --footer-text-size: 14px;
   --footer-divider-color: rgb(255 255 255 / 25%);

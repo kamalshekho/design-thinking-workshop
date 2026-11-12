@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import { de } from '@/content/de';
-import { mockCategories, mockOwners } from '@/data/mockApplications';
 import type { Application } from '@/domain/application';
 import { setDiscarded } from '@/domain/application';
 import type { NotesDraft } from '@/features/applications/useNotesDraft';
+import { mockCategories, mockOwners } from '@/test/mockApplications';
 
 import { OpenApplicationsPanel } from './OpenApplicationsPanel';
 

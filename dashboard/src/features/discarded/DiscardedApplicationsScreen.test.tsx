@@ -3,13 +3,13 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { de } from '@/content/de';
+import type { Application } from '@/domain/application';
+import { setDiscarded } from '@/domain/application';
 import {
   createMockApplications,
   mockCategories,
   mockOwners,
-} from '@/data/mockApplications';
-import type { Application } from '@/domain/application';
-import { setDiscarded } from '@/domain/application';
+} from '@/test/mockApplications';
 
 import { DiscardedApplicationsScreen } from './DiscardedApplicationsScreen';
 
