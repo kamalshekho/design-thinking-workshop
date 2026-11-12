@@ -1,0 +1,47 @@
+@startuml deployment
+' UML-Verteilungsdiagramm der Plattform, Stand docker-compose.yml auf main.
+' Rendern: siehe docs/ARCHITECTURE.md.
+
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 15
+skinparam shadowing false
+left to right direction
+skinparam nodesep 40
+skinparam ranksep 90
+skinparam ArrowFontSize 14
+skinparam ArrowThickness 1.6
+
+node "Gerät des Bewerbers" <<device>> as applicantDevice {
+  node "Browser" <<executionEnvironment>> as applicantBrowser
+}
+
+node "Gerät der Mitarbeitenden" <<device>> as staffDevice {
+  node "Browser" <<executionEnvironment>> as staffBrowser
+}
+
+node "Server" <<device>> as server {
+  node "Docker Compose" <<executionEnvironment>> {
+    node "frontend\nnginx 1.27" <<container>> as formNginx {
+      artifact "Formular\n(React-Build)" as formBundle
+    }
+    node "dashboard\nnginx 1.27" <<container>> as dashNginx {
+      artifact "Dashboard\n(React-Build)" as dashBundle
+    }
+    node "backend\nJava 25 JRE\nnur intern" <<container>> as backend {
+      artifact "Spring-Boot-Anwendung\n(JAR)" as backendJar
+    }
+    node "db\nPostgreSQL 17\nnur intern" <<container>> as db {
+      database "Volume db-data" as volume
+    }
+  }
+}
+
+cloud "Resend\n(E-Mail-Dienst)" <<externalSystem>> as resend
+
+applicantBrowser --> formNginx : HTTP, REST
+staffBrowser --> dashNginx : HTTP, REST, SSE
+formNginx --> backend : /api
+dashNginx --> backend : /api, SSE
+backend --> db : JDBC
+backend --> resend : HTTPS, REST
+@enduml
