@@ -1,5 +1,8 @@
 package de.ichbinhier.volunteerformservice.application;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 import de.ichbinhier.volunteerformservice.category.Category;
 import de.ichbinhier.volunteerformservice.category.CategoryRepository;
 import de.ichbinhier.volunteerformservice.email.ConfirmationMailer;
+import de.ichbinhier.volunteerformservice.web.ApiException;
 import de.ichbinhier.volunteerformservice.web.FieldValidationException;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +26,7 @@ public class ApplicationService {
     private final CategoryRepository categories;
     private final ConfirmationMailer confirmationMailer;
     private final ApplicationEventPublisher events;
+    private final ApplicationLimitProperties limits;
 
 
     public UUID submit(ApplicationRequest request) {
@@ -33,6 +38,8 @@ public class ApplicationService {
         if (existing.isPresent()) {
             return existing.get().getId();
         }
+
+        throwIfEmailOverLimit(request.getEmail().trim());
 
         Category category = categories.findById(request.getCategoryId())
                 .orElseThrow(() -> new FieldValidationException("categoryId", "CATEGORY_UNKNOWN"));
@@ -52,6 +59,27 @@ public class ApplicationService {
         events.publishEvent(new ApplicationSubmitted(saved));
         confirmationMailer.sendConfirmation(saved);
         return saved.getId();
+    }
+
+    /**
+     * Every Application sends a confirmation email to the address it names, so
+     * one address gets a limited number of them per window (`A26`). Read after
+     * the {@code submissionId} check, so a retry of an Application that already
+     * went through still answers {@code 201}.
+     */
+    private void throwIfEmailOverLimit(String email) {
+        int limit = limits.getPerEmail();
+        Duration window = limits.getWindow();
+        Instant now = StoredInstant.now();
+
+        List<Application> recent = applications
+                .findByEmailIgnoreCaseAndSubmittedAtAfterOrderBySubmittedAtAsc(email, now.minus(window));
+        if (recent.size() < limit) {
+            return;
+        }
+
+        Instant freedAt = recent.get(recent.size() - limit).getSubmittedAt().plus(window);
+        throw ApiException.rateLimited(Duration.between(now, freedAt));
     }
 
 

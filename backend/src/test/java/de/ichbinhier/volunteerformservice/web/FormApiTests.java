@@ -148,6 +148,33 @@ class FormApiTests {
         assertThat(applications.findAll()).isEmpty();
     }
 
+    /** Three Applications per email address in 24 hours (`A26`). */
+    @Test
+    void limitsApplicationsFromOneEmailAddress() throws Exception {
+        UUID first = UUID.randomUUID();
+        mvc.perform(submit(body(first, socialMedia.getId(), "anna@example.de")))
+                .andExpect(status().isCreated());
+        mvc.perform(submit(body(UUID.randomUUID(), socialMedia.getId(), "Anna@Example.de")))
+                .andExpect(status().isCreated());
+        mvc.perform(submit(body(UUID.randomUUID(), socialMedia.getId(), "anna@EXAMPLE.DE")))
+                .andExpect(status().isCreated());
+
+        mvc.perform(submit(body(UUID.randomUUID(), socialMedia.getId(), "ANNA@example.de")))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.code").value("RATE_LIMITED"))
+                .andExpect(header().exists("Retry-After"));
+
+        assertThat(applications.findAll()).hasSize(3);
+
+        // A retry of an Application that went through is not a fourth one.
+        mvc.perform(submit(body(first, socialMedia.getId(), "anna@example.de")))
+                .andExpect(status().isCreated());
+
+        mvc.perform(submit(body(UUID.randomUUID(), socialMedia.getId(), "ben@example.de")))
+                .andExpect(status().isCreated());
+    }
+
     private String applicationId(String body) throws Exception {
         String response =
                 mvc.perform(submit(body))
@@ -164,12 +191,21 @@ class FormApiTests {
 
     private static String body(
             UUID submissionId, UUID categoryId, String weeklyTime, String website) {
+        return body(submissionId, categoryId, "anna@example.de", weeklyTime, website);
+    }
+
+    private static String body(UUID submissionId, UUID categoryId, String email) {
+        return body(submissionId, categoryId, email, "HOURS_1_2", "");
+    }
+
+    private static String body(
+            UUID submissionId, UUID categoryId, String email, String weeklyTime, String website) {
         return """
                {
                  "submissionId": "%s",
                  "categoryId": "%s",
                  "name": "Anna Müller",
-                 "email": "anna@example.de",
+                 "email": "%s",
                  "weeklyTime": "%s",
                  "about": "Ich arbeite seit drei Jahren in der Moderation.",
                  "privacyConsent": true,
@@ -177,7 +213,7 @@ class FormApiTests {
                  "website": "%s"
                }
                """
-                .formatted(submissionId, categoryId, weeklyTime, website);
+                .formatted(submissionId, categoryId, email, weeklyTime, website);
     }
 
     private static Category category(String name, int displayOrder, boolean active) {

@@ -291,6 +291,11 @@ Top-level codes:
 | 429           | `RATE_LIMITED`      | one general message, submission stays retryable |
 | 500, 502, 503 | `INTERNAL_ERROR`    | one general message, submission stays retryable |
 
+`RATE_LIMITED` answers an email address that already has three Applications
+from the last 24 hours, with a `Retry-After` in seconds (`A26`). It is checked
+after `submissionId`, so a retry of an Application that went through still gets
+its `201`.
+
 An unknown `code` falls back to the general message. Adding a code therefore
 never breaks the form — but it does mean the applicant sees generic wording, so
 tell the frontend when the list grows.
