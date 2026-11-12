@@ -30,10 +30,10 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       RESEND_FROM: ${RESEND_FROM:-}
-      # This stack is the environment the platform is demonstrated on, so the
-      # demo week of Applications (A21) is on by default. Set the variable to
-      # an empty value in .env for a stack that starts with no Applications.
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE-demo}
+      # Empty unless asked for, so a stack starts with no Applications. Set it
+      # to `demo` to seed the demo week of Applications (A21); README.md,
+      # "Running the prototype", has the command.
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-}
       # Passed through empty rather than required with `:?`: whether a missing
       # password is fatal is StaffSeeder's call, and it only refuses to start
       # for an account it still has to create (A17).
