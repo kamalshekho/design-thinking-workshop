@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { de } from '@/content/de';
-import {
-  createMockApplications,
-  mockCategories,
-} from '@/data/mockApplications';
 import type { Application } from '@/domain/application';
 import { setDiscarded } from '@/domain/application';
 import type { Category } from '@/domain/category';
+import {
+  createMockApplications,
+  mockCategories,
+} from '@/test/mockApplications';
 
 import { CategoriesScreen } from './CategoriesScreen';
 

@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { ApiProblem } from '@/api/problem';
 import { de } from '@/content/de';
-import { mockStaffMember } from '@/data/mockApplications';
+import { mockStaffMember } from '@/test/mockApplications';
 
 import { SignInForm } from './SignInForm';
 
