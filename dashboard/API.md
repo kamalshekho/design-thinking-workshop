@@ -191,9 +191,10 @@ lockout: with five staff members and no administrator, a locked account stays
 locked (`A17`).
 
 The address is taken from `X-Forwarded-For`, which both nginx configurations
-send. Behind a proxy that does not, every request would arrive with the proxy's
-own address and one person's typing mistakes would throttle all five staff
-members at once.
+set to the address they see, overwriting any value the client sent. Behind a
+proxy that does not set it, every request would arrive with the proxy's own
+address and one person's typing mistakes would throttle all five staff members
+at once.
 
 ### DELETE /api/v1/staff/session
 
