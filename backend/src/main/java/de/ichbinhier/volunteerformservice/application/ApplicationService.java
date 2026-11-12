@@ -82,8 +82,6 @@ public class ApplicationService {
         throw ApiException.rateLimited(Duration.between(now, freedAt));
     }
 
-
-    // todo: move to mapper?
     private static Application build(ApplicationRequest request, Category category) {
         String about = request.getAbout() == null ? null : request.getAbout().trim();
 
