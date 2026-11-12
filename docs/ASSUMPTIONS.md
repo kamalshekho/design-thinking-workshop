@@ -25,6 +25,9 @@ answered since. There will be no second round of requirements, no process
 walkthrough and no validation of the prototype by the client within these three
 weeks.
 
+Update, November 2026: the association has been in touch again, and we are
+sending them a link to the MVP to try out.
+
 - **Confidence:** high — observed directly.
 - **Consequence:** the one conversation is our only source of client
   requirements, and it outranks every inference we drew from public sources.
@@ -130,9 +133,9 @@ about helping with *Vereinsarbeit*. Public communication is in German.
 
 - **Confidence:** high for the channel and the language, medium for the shape.
 - **Consequence:** German is the applicant form's default language. The staff
-  dashboard UI is German too, since staff members are German speakers; only our
-  documents, code and presentation stay English. The public form is German
-  only (`A22`).
+  dashboard UI is German too, since staff members are German speakers. Code
+  stays English; new documents and the presentation are German from 2026-11-10
+  (ADR-0007). The public form is German only (`A22`).
 
 ### A7 — The categories are the association's own four
 
