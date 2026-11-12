@@ -7,7 +7,7 @@ uns gesagt hat (`C2`, [`CASE.md`](./CASE.md)). Die Reihenfolge der Schritte und
 das Einzelgespräch sind unsere Annahme (`A25`), weil der Verein uns seinen
 Ablauf nie gezeigt hat (`C1`).
 
-1. Ein Interessent liest einen Aufruf des Vereins und schreibt eine Mail an
+1. Ein Interessent will sich ehrenamtlich engagieren und schreibt eine Mail an
    `info@ichbinhier.online` (`A6`).
 2. Die Mail landet im allgemeinen Postfach, zwischen rund 1.000 Mails aller
    Art: Rechnungen, Presse, Newsletter, Spam (`C2`, `A3`).
