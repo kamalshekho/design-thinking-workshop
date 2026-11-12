@@ -294,7 +294,9 @@ Top-level codes:
 `RATE_LIMITED` answers an email address that already has three Applications
 from the last 24 hours, with a `Retry-After` in seconds (`A26`). It is checked
 after `submissionId`, so a retry of an Application that went through still gets
-its `201`.
+its `201`. nginx answers `429` as well, with an HTML body and no `code`, when
+one client address posts too often (`A26`); the form goes by the status alone,
+so both read as `RATE_LIMITED`.
 
 An unknown `code` falls back to the general message. Adding a code therefore
 never breaks the form — but it does mean the applicant sees generic wording, so

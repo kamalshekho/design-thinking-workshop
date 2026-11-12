@@ -452,9 +452,12 @@ Resend. So an email address that already has three Applications from the last
 24 hours gets `429 RATE_LIMITED` on the fourth, until the oldest of them leaves
 the window. Case does not matter, and discarded Applications count. A retry of
 an Application that already went through still answers `201`
-(`frontend/API.md`, "Idempotency"). The limit per client address that nginx
-puts in front of the same path belongs to this entry too, and its numbers go
-here when it lands.
+(`frontend/API.md`, "Idempotency").
+
+In front of the backend, nginx limits the same path per client address, so
+one machine cannot cycle through addresses instead: ten `POST
+/api/v1/applications` in a row pass, after that one a minute, and the rest get
+`429` from nginx before the backend sees them.
 
 - **Confidence:** low — our invention. Nothing tells us how often one person
   applies; three leaves room for applying to two Categories and correcting a
@@ -466,7 +469,12 @@ here when it lands.
   fourth Category sees a general error and has to wait a day. Too loose, and
   one address can still be sent a handful of unwanted mails a day. Both are one
   pair of configured values, `application-limit.per-email` and
-  `application-limit.window`.
+  `application-limit.window`. The per-client limit is too strict when many
+  applicants share one public address, say a room full of people at an
+  association event: the eleventh within a few minutes waits a minute. Too
+  loose, and one machine can still trigger about 1,400 mails a day to
+  different strangers. Its numbers are `rate` and `burst` in the
+  `applications` zone of both `nginx.conf` files.
 
 ---
 

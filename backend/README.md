@@ -68,10 +68,10 @@ somebody asks for it:
 SPRING_PROFILES_ACTIVE=demo ./mvnw spring-boot:run
 ```
 
-`docker-compose.yml` sets the profile for you, since that stack _is_ the demo
-environment; `SPRING_PROFILES_ACTIVE=` in `.env` turns it off again. The seeder
-is skipped whole once there is any Application at all, so a restart mid-demo
-neither duplicates the week nor brings back a set somebody cleared.
+`docker-compose.yml` leaves the profile off; `SPRING_PROFILES_ACTIVE=demo
+docker compose up -d --build` (or the same variable in `.env`) turns it on. The
+seeder is skipped whole once there is any Application at all, so a restart
+mid-demo neither duplicates the week nor brings back a set somebody cleared.
 
 Every Application carries the **State changes that lead to it**, dated when they
 happened — that is what makes Übersicht's sparklines a real trend rather than
