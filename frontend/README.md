@@ -56,7 +56,7 @@ frontend/
 ├── API.md                        contract with the backend
 ├── token.json                    design tokens for Figma
 ├── references/                   screenshots of the form, one per state
-├── public/                       favicon, robots.txt, mock service worker
+├── public/                       favicon, robots.txt, mock service worker (dev only)
 └── src/
     ├── app/                      entry point and page shell
     ├── features/
