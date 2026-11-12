@@ -171,6 +171,23 @@ flow (superseded, see the staff dashboard issue tracker).
 - **Confidence:** low.
 - **Mitigation:** statuses are data rows, renameable without code changes.
 
+### A25 — Today's intake runs through one inbox, by hand, step by step
+
+Our reconstruction of the current process: a person writes to
+`info@ichbinhier.online` (`A6`), the mail sits among about a thousand others
+(`C2`), nobody replies automatically, and a staff member who finds it clarifies
+the request and arranges an individual appointment by mail before any
+onboarding. Community requests, which need no staff at all (`A5`), take the
+same path.
+
+- **Confidence:** medium. The inbox, the volume and the lack of time come from
+  the client (`C2`, `CASE.md`). The order of the steps, the back-and-forth by
+  mail and the individual appointment are our inference; the association never
+  walked us through its process (`C1`).
+- **What breaks if wrong:** if the association already sorts or answers
+  requests in a way we did not see, the before-and-after comparison in
+  `PROCESS.md` overstates the gain.
+
 ### A10 — A group intro session is acceptable
 
 We replace the individual appointment with a recurring group introduction

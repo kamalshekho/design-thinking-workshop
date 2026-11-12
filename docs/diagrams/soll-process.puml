@@ -1,0 +1,61 @@
+@startuml soll-process
+' UML-Aktivitätsdiagramm des Soll-Prozesses, von der Bewerbung bis zum
+' Onboarding. Status nach A9, Info-Runde nach A10. Grau: im MVP noch nicht
+' gebaut. Rendern: siehe docs/ARCHITECTURE.md.
+
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam ArrowThickness 1.4
+skinparam swimlaneWidth same
+
+|Bewerber|
+start
+:Formular öffnen;
+:Weg wählen;
+switch (Welcher Weg?)
+case (Community)
+  :Link zur Aktionsgruppe erhalten;
+  stop
+case (Fördermitglied)
+  :Zum Mitgliedsantrag weitergeleitet;
+  stop
+case (Vereinsarbeit)
+  :Kategorie wählen,
+  Anfrage ausfüllen und abschicken;
+endswitch
+
+|Plattform|
+:Anfrage speichern
+Status "Neu";
+fork
+  :Bestätigungsmail senden;
+  :Termin der nächsten
+  Info-Runde in der Mail nennen; <<#lightgray>>
+fork again
+  :Anfrage live
+  im Dashboard zeigen;
+end fork
+
+|Mitarbeitende|
+:Zuständigkeit übernehmen
+Status "In Prüfung";
+if (Passt die Anfrage?) then (ja)
+  if (Platz in der nächsten Info-Runde?) then (ja)
+    :Status "Info-Runde gebucht";
+    :Info-Runde durchführen; <<#lightgray>>
+    :Status "Aktiv";
+    stop
+  else (nein)
+    :Status "Warteliste";
+    stop
+  endif
+else (nein)
+  :Status "Abgelehnt";
+  stop
+endif
+
+legend right
+  grau = im MVP noch nicht gebaut
+endlegend
+@enduml
