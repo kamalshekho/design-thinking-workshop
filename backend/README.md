@@ -73,8 +73,9 @@ The confirmation email an applicant gets on submit (`A8` in
 API directly — no SDK dependency, the API is one POST request.
 
 Without `RESEND_API_KEY` set, `email/NoopEmailSender.java` takes over
-automatically and logs the email instead of sending it. Local development and
-the test suite need nothing configured.
+automatically and logs the subject instead of sending the email. Local
+development and the test suite need nothing configured. No log line carries an
+applicant's address; the confirmation is logged with the Application's id.
 
 **To send real email:**
 

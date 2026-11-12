@@ -12,8 +12,11 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -146,6 +149,17 @@ class FormApiTests {
                 .andExpect(jsonPath("$.errors[0].code").value("CATEGORY_UNAVAILABLE"));
 
         assertThat(applications.findAll()).isEmpty();
+    }
+
+    @Test
+    @ExtendWith(OutputCaptureExtension.class)
+    void logsTheApplicationIdAndNotTheApplicantsAddress(CapturedOutput output) throws Exception {
+        String applicationId = applicationId(
+                body(UUID.randomUUID(), socialMedia.getId(), "log.check@example.de"));
+
+        assertThat(output.getAll())
+                .contains(applicationId)
+                .doesNotContain("log.check@example.de");
     }
 
     /** Three Applications per email address in 24 hours (`A26`). */
