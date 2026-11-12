@@ -21,16 +21,16 @@ node "Gerät der Mitarbeitenden" <<device>> as staffDevice {
 
 node "Server" <<device>> as server {
   node "Docker Compose" <<executionEnvironment>> {
-    node "frontend\nnginx 1.27\nPort 8081" <<container>> as formNginx {
+    node "frontend\nnginx 1.27" <<container>> as formNginx {
       artifact "Formular\n(React-Build)" as formBundle
     }
-    node "dashboard\nnginx 1.27\nPort 8082" <<container>> as dashNginx {
+    node "dashboard\nnginx 1.27" <<container>> as dashNginx {
       artifact "Dashboard\n(React-Build)" as dashBundle
     }
-    node "backend\nJava 25 JRE\nPort 8080, nur intern" <<container>> as backend {
+    node "backend\nJava 25 JRE\nnur intern" <<container>> as backend {
       artifact "Spring-Boot-Anwendung\n(JAR)" as backendJar
     }
-    node "db\nPostgreSQL 17\nPort 5432, nur intern" <<container>> as db {
+    node "db\nPostgreSQL 17\nnur intern" <<container>> as db {
       database "Volume db-data" as volume
     }
   }
