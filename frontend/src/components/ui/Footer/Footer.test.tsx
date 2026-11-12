@@ -5,32 +5,24 @@ import { describe, expect, it, vi } from 'vitest';
 import { expectNoA11yViolations } from '../../../test/a11y';
 import { Footer } from './Footer';
 
-const socialLinks = [
-  {
-    label: 'Facebook',
-    href: 'https://example.org/facebook',
-    icon: 'facebook.svg',
-  },
-  {
-    label: 'Instagram',
-    href: 'https://example.org/instagram',
-    icon: 'instagram.svg',
-  },
-];
-
 function renderFooter(onBackToTop = vi.fn()) {
   return render(
     <Footer
       content={{
         backToTopLabel: 'Nach oben',
-        copyright: 'Copyright 2026 ichbinhier e.V. – Alle Rechte vorbehalten.',
+        copyright:
+          'Copyright 2026 Musterverein e.V. – Alle Rechte vorbehalten.',
         donateHref: 'https://example.org/spende',
         donateLabel: 'SPENDE HIER',
         kontakt: {
           title: 'Kontakt',
           talkToUsLabel: 'Sprich mit uns',
           talkToUsHref: 'https://example.org/kontakt',
-          address: ['Postfach 25588', '10129 Berlin', 'info@ichbinhier.online'],
+          address: [
+            'Musterstraße 1',
+            '12345 Musterstadt',
+            'kontakt@example.org',
+          ],
         },
         rechtliches: {
           title: 'Rechtliches',
@@ -39,7 +31,6 @@ function renderFooter(onBackToTop = vi.fn()) {
           datenschutzLabel: 'Datenschutz',
           datenschutzHref: 'https://example.org/datenschutz',
         },
-        socialLinks,
       }}
       onBackToTop={onBackToTop}
     />,
@@ -47,7 +38,7 @@ function renderFooter(onBackToTop = vi.fn()) {
 }
 
 describe('Footer', () => {
-  it('renders the supplied contact, legal and social destinations', () => {
+  it('renders the supplied contact and legal destinations', () => {
     renderFooter();
 
     expect(
@@ -61,11 +52,7 @@ describe('Footer', () => {
       'href',
       'https://example.org/datenschutz',
     );
-    expect(screen.getByRole('link', { name: 'Facebook' })).toHaveAttribute(
-      'href',
-      'https://example.org/facebook',
-    );
-    expect(screen.getByText('info@ichbinhier.online')).toBeVisible();
+    expect(screen.getByText('kontakt@example.org')).toBeVisible();
   });
 
   it('calls onBackToTop when the back-to-top button is pressed', async () => {

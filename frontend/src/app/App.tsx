@@ -1,8 +1,3 @@
-import iconBluesky from '../assets/icons/icon_bluesky.svg';
-import iconFacebook from '../assets/icons/icon_facebook.svg';
-import iconInstagram from '../assets/icons/icon_instagram.svg';
-import iconLinkedin from '../assets/icons/icon_linkedin.svg';
-import iconTiktok from '../assets/icons/icon_tiktok.svg';
 import { Footer } from '../components/ui/Footer/Footer';
 import { Header } from '../components/ui/Header/Header';
 import { HeroSection } from '../components/ui/HeroSection/HeroSection';
@@ -16,28 +11,6 @@ function scrollToTop() {
 
 export function App() {
   const navItems = content.nav.items.map((label) => ({ label }));
-  const socialLinks = [
-    {
-      label: content.footer.socialLabels.facebook,
-      icon: iconFacebook,
-    },
-    {
-      label: content.footer.socialLabels.instagram,
-      icon: iconInstagram,
-    },
-    {
-      label: content.footer.socialLabels.linkedin,
-      icon: iconLinkedin,
-    },
-    {
-      label: content.footer.socialLabels.bluesky,
-      icon: iconBluesky,
-    },
-    {
-      label: content.footer.socialLabels.tiktok,
-      icon: iconTiktok,
-    },
-  ];
   const footerContent = {
     kontakt: {
       title: content.footer.kontakt.title,
@@ -50,7 +23,6 @@ export function App() {
       datenschutzLabel: content.footer.rechtliches.datenschutz,
     },
     donateLabel: content.footer.donateLabel,
-    socialLinks,
     copyright: content.footer.copyright,
     backToTopLabel: content.footer.backToTopLabel,
   };
