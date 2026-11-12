@@ -25,6 +25,9 @@ answered since. There will be no second round of requirements, no process
 walkthrough and no validation of the prototype by the client within these three
 weeks.
 
+Update, November 2026: the association has been in touch again, and we are
+sending them a link to the MVP to try out.
+
 - **Confidence:** high — observed directly.
 - **Consequence:** the one conversation is our only source of client
   requirements, and it outranks every inference we drew from public sources.
@@ -130,9 +133,9 @@ about helping with *Vereinsarbeit*. Public communication is in German.
 
 - **Confidence:** high for the channel and the language, medium for the shape.
 - **Consequence:** German is the applicant form's default language. The staff
-  dashboard UI is German too, since staff members are German speakers; only our
-  documents, code and presentation stay English. The public form is German
-  only (`A22`).
+  dashboard UI is German too, since staff members are German speakers. Code
+  stays English; new documents and the presentation are German from 2026-11-10
+  (ADR-0007). The public form is German only (`A22`).
 
 ### A7 — The categories are the association's own four
 
@@ -167,6 +170,23 @@ flow (superseded, see the staff dashboard issue tracker).
 
 - **Confidence:** low.
 - **Mitigation:** statuses are data rows, renameable without code changes.
+
+### A25 — Today's intake runs through one inbox, by hand, step by step
+
+Our reconstruction of the current process: a person writes to
+`info@ichbinhier.online` (`A6`), the mail sits among about a thousand others
+(`C2`), nobody replies automatically, and a staff member who finds it clarifies
+the request and arranges an individual appointment by mail before any
+onboarding. Community requests, which need no staff at all (`A5`), take the
+same path.
+
+- **Confidence:** medium. The inbox, the volume and the lack of time come from
+  the client (`C2`, `CASE.md`). The order of the steps, the back-and-forth by
+  mail and the individual appointment are our inference; the association never
+  walked us through its process (`C1`).
+- **What breaks if wrong:** if the association already sorts or answers
+  requests in a way we did not see, the before-and-after comparison in
+  `PROCESS.md` overstates the gain.
 
 ### A10 — A group intro session is acceptable
 

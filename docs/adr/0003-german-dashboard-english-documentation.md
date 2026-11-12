@@ -4,6 +4,12 @@ status: accepted
 
 # Staff read German; code and documentation use English
 
+**Partially superseded by
+[ADR-0007](./0007-german-documents-and-presentation.md):** new documents, the
+presentation, and tracker prose are German from 2026-11-10. English
+identifiers and wire formats remain required. The original rationale is
+preserved below as history.
+
 The staff dashboard UI uses German (`A6`). Code identifiers, enum values, wire
 formats, documents, specifications, comments, and tracker prose use English.
 German UI strings belong in the dashboard's UI copy; documentation refers to
