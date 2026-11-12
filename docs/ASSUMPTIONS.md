@@ -443,6 +443,31 @@ English page always showed a mixed-language category list.
   Bringing English back means a second copy file, the switch, and a way for
   the backend to return category labels in more than one language.
 
+### A26 — Three Applications per email address in 24 hours
+
+Every Application sends a confirmation email to the address it names (`A8`),
+and the form asks nobody to prove that the address is theirs. Without a limit,
+anyone could make the platform send any number of mails to a stranger through
+Resend. So an email address that already has three Applications from the last
+24 hours gets `429 RATE_LIMITED` on the fourth, until the oldest of them leaves
+the window. Case does not matter, and discarded Applications count. A retry of
+an Application that already went through still answers `201`
+(`frontend/API.md`, "Idempotency"). The limit per client address that nginx
+puts in front of the same path belongs to this entry too, and its numbers go
+here when it lands.
+
+- **Confidence:** low — our invention. Nothing tells us how often one person
+  applies; three leaves room for applying to two Categories and correcting a
+  mistake in a third attempt.
+- **Why it matters:** each Application costs a mail from the association's
+  sending quota and lands in a stranger's inbox under the association's name.
+  The honeypot stops simple bots only.
+- **What breaks if wrong:** too strict, and a person who wants to apply for a
+  fourth Category sees a general error and has to wait a day. Too loose, and
+  one address can still be sent a handful of unwanted mails a day. Both are one
+  pair of configured values, `application-limit.per-email` and
+  `application-limit.window`.
+
 ---
 
 ## Open questions we cannot answer ourselves

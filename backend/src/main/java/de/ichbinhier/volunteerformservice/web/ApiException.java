@@ -52,9 +52,10 @@ public class ApiException extends RuntimeException {
     }
 
     /**
-     * Too many failed sign-ins from one address (`A20`). {@code Retry-After} is
-     * a courtesy for anything reading the API by hand — the dashboard shows one
-     * general message and leaves the action retryable.
+     * Too many failed sign-ins from one address (`A20`), or too many
+     * Applications from one email address (`A26`). {@code Retry-After} is a
+     * courtesy for anything reading the API by hand — the dashboard and the
+     * form each show one general message and leave the action retryable.
      */
     public static ApiException rateLimited(Duration retryAfter) {
         HttpHeaders headers = new HttpHeaders();

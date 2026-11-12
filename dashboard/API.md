@@ -182,7 +182,12 @@ at once and every staff member meets the sign-in screen (`A17`).
 
 On failure: `401` with `code: INVALID_CREDENTIALS`, and **the same response for
 an unknown address as for a wrong password** — the dashboard has no
-"registered?" question to answer. After five failures from one address inside
+"registered?" question to answer. An unknown address is compared against a
+bcrypt hash made at startup, so it also takes as long as a wrong password. A blank `email`
+or `password`, or a password over 72 bytes (all bcrypt reads), answers `400
+VALIDATION_FAILED` with `EMAIL_REQUIRED`, `PASSWORD_REQUIRED` or
+`PASSWORD_TOO_LONG` on the field; the dashboard shows its general message for
+these. After five failures from one address inside
 fifteen minutes, `429` with `code: RATE_LIMITED` and a `Retry-After` in seconds,
 until the window runs out; a successful sign-in clears the address (`A20`). The
 throttle is read **before** the password is checked, so a throttled address gets
