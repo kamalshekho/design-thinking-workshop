@@ -331,19 +331,18 @@ account card at the bottom. Three things went differently:
 
 ## How `src/` is laid out
 
-Eight directories, each with one job, so a reader can tell copied UI from this
+Seven directories, each with one job, so a reader can tell copied UI from this
 application's own code, both from the domain, and all three from the wire:
 
-| Directory         | Holds                                                                                                                                   |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`, `RequestFailures`                                        |
-| `src/features/`   | one folder per screen — `overview`, `applications`, `categories`, `discarded`, `auth`: each holds its screen and the container above it |
-| `src/components/` | UI shared across screens (see below)                                                                                                    |
-| `src/domain/`     | `Application`, `Category`, `StaffMember` and the predicates over them                                                                   |
-| `src/api/`        | the wire: one transport over `fetch`, one module per resource. No React                                                                 |
-| `src/queries/`    | the cache: query keys, the Query hooks, the stream's bridge into `setQueryData`                                                         |
-| `src/data/`       | test fixtures, and nothing else                                                                                                         |
-| `src/test/`       | the Vitest setup, and the `fetch`/`EventSource` stub a whole-application test renders against                                           |
+| Directory         | Holds                                                                                                                                    |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/`        | routing and the shell: `App`, `AppShell`, `useCurrentScreen`, `DashboardGate`, `RequestFailures`                                         |
+| `src/features/`   | one folder per screen — `overview`, `applications`, `categories`, `discarded`, `auth`: each holds its screen and the container above it  |
+| `src/components/` | UI shared across screens (see below)                                                                                                     |
+| `src/domain/`     | `Application`, `Category`, `StaffMember` and the predicates over them                                                                    |
+| `src/api/`        | the wire: one transport over `fetch`, one module per resource. No React                                                                  |
+| `src/queries/`    | the cache: query keys, the Query hooks, the stream's bridge into `setQueryData`                                                          |
+| `src/test/`       | the Vitest setup, the fixtures a test renders a screen with, and the `fetch`/`EventSource` stub a whole-application test renders against |
 
 Inside `src/components/`:
 
@@ -510,7 +509,8 @@ marker waits out a grace period before admitting the stream is down (`A18`).
   cache is `createQueryClient`'s, with `retry` and `gcTime` overridden per
   render, so the `401` recognition is under test rather than stubbed out.
 
-There is no Mock Service Worker, and `src/data/` is fixtures only.
+There is no Mock Service Worker, and `src/test/mockApplications.ts` is
+fixtures only.
 
 ### What a screen hands upward
 

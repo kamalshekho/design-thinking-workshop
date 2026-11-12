@@ -1,4 +1,4 @@
-# Prototype deployment carrying another organisation's branding.
+# Prototype deployment whose copy names another organisation.
 # Not to be indexed. See ../README.md.
 User-agent: *
 Disallow: /

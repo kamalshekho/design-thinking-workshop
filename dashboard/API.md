@@ -906,8 +906,8 @@ browsers count `localhost` as a trustworthy origin and store the cookie anyway.
 promised one behind an unset `VITE_API_BASE_URL`; the promise existed because
 the backend did not, and the backend does now. What replaces it is the proxy
 above — a real backend on the other end of `/api` from the first request. The
-mock data (`src/data/`) stays exactly what it is: fixtures for the tests and
-for props handed to a screen, never a request handler.
+mock data (`src/test/mockApplications.ts`) stays exactly what it is: fixtures
+for the tests and for props handed to a screen, never a request handler.
 
 ## Not in this contract
 

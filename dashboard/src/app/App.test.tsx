@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { de } from '@/content/de';
-import { mockStaffMember } from '@/data/mockApplications';
+import { mockStaffMember } from '@/test/mockApplications';
 import { renderApp, renderSignedIn } from '@/test/renderApp';
 import type { StubbedApi } from '@/test/stubApi';
 import { REFERENCE_DATE, stubApi } from '@/test/stubApi';
