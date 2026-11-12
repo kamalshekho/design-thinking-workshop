@@ -3,6 +3,27 @@
 Spring Boot service backing the applicant form and the staff dashboard. See
 [`../AGENTS.md`](../AGENTS.md) for repo-wide conventions.
 
+## Running locally
+
+`docker compose up` from the repo root runs the backend with the rest of the
+stack and passes `DB_PASSWORD` from `.env` (see `../README.md`). To run the
+backend on its own, on port 8080 where both dev servers expect it, start a
+Postgres with a password of your choice and hand the same password to the
+backend:
+
+```
+export DB_PASSWORD=pick-a-local-password
+docker run -d --name volunteer-form-db -p 5432:5432 \
+  -e POSTGRES_DB=volunteer_form -e POSTGRES_USER=volunteer_form \
+  -e POSTGRES_PASSWORD="$DB_PASSWORD" docker.io/library/postgres:17-alpine
+STAFF_1_PASSWORD=… STAFF_2_PASSWORD=… STAFF_3_PASSWORD=… \
+  STAFF_4_PASSWORD=… STAFF_5_PASSWORD=… ./mvnw spring-boot:run
+```
+
+**`DB_PASSWORD` has no default.** Without it the backend refuses to start and
+says so, rather than trying a password written in this repo. The test suite
+runs on H2 and needs none of these variables.
+
 ## Staff accounts
 
 The dashboard has no self-registration and no user administration, so
