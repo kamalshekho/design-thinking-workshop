@@ -120,9 +120,15 @@ Video, keinen laufenden Compose-Stack.
 
 **Wirtschaftlichkeit.** Der Verein ist gemeinnützig, ein Geschäftsmodell für
 ihn passt nicht. Die Folie stellt die Kosten für den Verein (Hosting pro Monat)
-der eingesparten Arbeitszeit der Mitarbeitenden gegenüber. Als Ausblick folgt
-dieselbe Lösung als Dienst für andere kleine Vereine (#75). Neue Zahlen kommen
-zuerst als Annahme mit ID in [`ASSUMPTIONS.md`](./ASSUMPTIONS.md).
+der eingesparten Arbeitszeit der Mitarbeitenden gegenüber (`A23`, `A24`). Wer
+die Plattform bezahlt, erklärt ein Satz: Der Verein kann Fördergelder für
+Digitalisierung beantragen und uns daraus bezahlen. Der Verein trägt meist 10 %
+selbst (`A27`). Zwei Beispiele reichen: 100xDigital (bundesweit, bis 20.000 €,
+mindestens 10 % Eigenanteil) und "Ehrenamt digitalisiert!" (Hessen, bis 90 %).
+Welches Programm gilt, hängt vom Bundesland des Vereins ab und ist noch zu
+klären; mehr als diese zwei Sätze gehören nicht auf die Folie. Als Ausblick
+folgt dieselbe Lösung als Dienst für andere kleine Vereine (#75). Neue Zahlen
+kommen zuerst als Annahme mit ID in [`ASSUMPTIONS.md`](./ASSUMPTIONS.md).
 
 **Testen.** Neben dem Link für den Verein eine Zeile zu den automatischen Tests.
 Im Code gezählt am 10.11.: 64 Testfälle im Backend, 76 im Formular und 181 im

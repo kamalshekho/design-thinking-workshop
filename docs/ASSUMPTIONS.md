@@ -463,6 +463,32 @@ English page always showed a mixed-language category list.
   Bringing English back means a second copy file, the switch, and a way for
   the backend to return category labels in more than one language.
 
+### A23 — Running the platform costs under 10 € a month
+
+One small cloud server carries the whole Compose stack. Hetzner lists its
+cheapest shared cloud servers from 5.49 € a month excluding VAT (hetzner.com,
+checked 2026-11-10), about 6.53 € including 19 % VAT. Resend's free plan sends
+up to 100 emails a day, 3,000 a month, at no cost (resend.com, same date).
+
+- **Confidence:** medium — list prices on one date; hosting prices rose in 2026.
+- **Not included:** a domain, backups, and the hours someone spends running
+  updates. Who would do that is an open question (see below).
+- **What breaks if wrong:** more than 100 confirmation mails on one day need a
+  paid Resend plan. At `A5`'s share that means a burst of several hundred
+  applicants in a day.
+
+### A24 — An hour of staff time costs the association about 25 €
+
+Our estimate of the employer's cost for one hour of a staff member's time,
+including social contributions. We have no salary data from the association.
+
+- **Confidence:** low.
+- **Why it matters:** it turns saved time into a figure that can be set against
+  `A23`. At 25 € an hour, the server costs about 16 minutes of staff time a
+  month.
+- **What breaks if wrong:** little. Even at half the rate the server costs
+  about half an hour of staff time a month.
+
 ### A26 — Three Applications per email address in 24 hours
 
 Every Application sends a confirmation email to the address it names (`A8`),
@@ -496,6 +522,33 @@ one machine cannot cycle through addresses instead: ten `POST
   different strangers. Its numbers are `rate` and `burst` in the
   `applications` zone of both `nginx.conf` files.
 
+### A27 — Digitalisation grants can pay for the platform, in part
+
+The association is a registered, non-profit *e.V.* with about five staff
+(`A1`). Associations like it can apply for digitalisation grants, and the
+association, not we, would be the applicant: it receives the money and pays us
+for the work. Two examples, as listed by the funders in November 2026:
+
+- **100xDigital** (Deutsche Stiftung für Engagement und Ehrenamt, nationwide):
+  up to 20,000 € per project for non-profits with up to 20 full-time staff,
+  with at least 10 % of the eligible costs paid by the applicant in cash. The
+  2026 round has closed and no 2027 round is announced yet.
+- **Ehrenamt digitalisiert!** (Hesse): up to 90 % of the eligible costs, up to
+  15,000 €, with the rest paid by the association. It is open only to
+  associations in Hesse. The 2026 round ran from 27 April to 12 May.
+
+Other states run their own programmes, for example Lower Saxony and North
+Rhine-Westphalia. We have not found one for Berlin or Hamburg.
+
+- **Confidence:** low — we do not know the association's seat, so we do not
+  know which state programme applies, and the call dates change every year.
+- **Why it matters:** it is the first way the project earns money, and it
+  answers who pays for `A23`. The association pays its share itself, so the
+  saving in staff time (`A24`) has to cover that share.
+- **What breaks if wrong:** the association pays the full price, or nobody
+  pays and the platform stays a prototype. The slide says only that funding
+  is possible and that each state has to be checked.
+
 ---
 
 ## Open questions we cannot answer ourselves
@@ -507,3 +560,5 @@ one machine cannot cycle through addresses instead: ten `POST
   own subject is discrimination?
 - How many applicants does the association actually receive, and how many can it
   actually absorb?
+- Where is the association based, and may it pay us for the platform out of a
+  grant? Who issues the invoice for a school team (`A27`)?
