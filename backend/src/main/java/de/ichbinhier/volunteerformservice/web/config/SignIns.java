@@ -7,7 +7,9 @@ import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import de.ichbinhier.volunteerformservice.staff.Staff;
@@ -49,8 +51,8 @@ public class SignIns {
     /**
      * The Staff member this token signs in, sliding the Sign-in's expiry forward
      * in the same step — reading a Sign-in <em>is</em> the activity that keeps it
-     * alive. An expired Sign-in is dropped here rather than by a sweep: at this
-     * volume the only entry worth evicting is one someone has just asked for.
+     * alive. An expired Sign-in found here is dropped at once; the ones nobody
+     * asks for again are left to {@link #sweepExpired()}.
      */
     public Optional<UUID> touch(String token) {
         if (token == null || token.isBlank()) {
@@ -66,6 +68,22 @@ public class SignIns {
         });
 
         return Optional.ofNullable(open).map(OpenSignIn::staffId);
+    }
+
+    /**
+     * Drops every Sign-in that has expired. A token whose cookie was thrown
+     * away, by a closed browser or a cleared profile, is never presented again,
+     * so without this its entry would stay until the next restart. The hourly
+     * run decides only how long such an entry lingers, not how long a Sign-in
+     * is valid: {@link #touch} checks expiry on every request regardless (`A17`).
+     */
+    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    public void sweepExpired() {
+        sweepExpiredBy(Instant.now());
+    }
+
+    void sweepExpiredBy(Instant now) {
+        byToken.values().removeIf(open -> open.hasExpiredBy(now, inactivity));
     }
 
     /** Ends the Sign-in. Answers alike whether or not the token named one. */

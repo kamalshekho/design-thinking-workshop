@@ -193,7 +193,8 @@ export const de = {
   /**
    * Not yet in DESIGN.md — section 11 only names the footer as "existing site
    * continuation" without wording. Ported from the live site's footer, needs
-   * a copy review.
+   * a copy review. The contact block and the copyright line hold placeholders
+   * rather than the association's details.
    */
   footer: {
     kontakt: {
@@ -207,14 +208,7 @@ export const de = {
       datenschutz: 'Datenschutz',
     },
     donateLabel: 'SPENDE HIER',
-    socialLabels: {
-      facebook: 'Facebook',
-      instagram: 'Instagram',
-      linkedin: 'LinkedIn',
-      bluesky: 'Bluesky',
-      tiktok: 'TikTok',
-    },
-    copyright: 'Copyright 2026 ichbinhier e.V. – Alle Rechte vorbehalten.',
+    copyright: 'Copyright 2026 Musterverein e.V. – Alle Rechte vorbehalten.',
     backToTopLabel: 'Nach oben',
   },
 } as const satisfies Content;

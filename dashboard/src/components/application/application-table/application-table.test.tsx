@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { mockCategories, mockOwners } from '@/data/mockApplications';
 import type { Application } from '@/domain/application';
+import { mockCategories, mockOwners } from '@/test/mockApplications';
 
 import { ApplicationTable } from './application-table';
 

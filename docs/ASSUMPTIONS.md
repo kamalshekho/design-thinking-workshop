@@ -25,6 +25,9 @@ answered since. There will be no second round of requirements, no process
 walkthrough and no validation of the prototype by the client within these three
 weeks.
 
+Update, November 2026: the association has been in touch again, and we are
+sending them a link to the MVP to try out.
+
 - **Confidence:** high — observed directly.
 - **Consequence:** the one conversation is our only source of client
   requirements, and it outranks every inference we drew from public sources.
@@ -130,9 +133,9 @@ about helping with *Vereinsarbeit*. Public communication is in German.
 
 - **Confidence:** high for the channel and the language, medium for the shape.
 - **Consequence:** German is the applicant form's default language. The staff
-  dashboard UI is German too, since staff members are German speakers; only our
-  documents, code and presentation stay English. The public form is German
-  only (`A22`).
+  dashboard UI is German too, since staff members are German speakers. Code
+  stays English; new documents and the presentation are German from 2026-11-10
+  (ADR-0007). The public form is German only (`A22`).
 
 ### A7 — The categories are the association's own four
 
@@ -167,6 +170,23 @@ flow (superseded, see the staff dashboard issue tracker).
 
 - **Confidence:** low.
 - **Mitigation:** statuses are data rows, renameable without code changes.
+
+### A25 — Today's intake runs through one inbox, by hand, step by step
+
+Our reconstruction of the current process: a person writes to
+`info@ichbinhier.online` (`A6`), the mail sits among about a thousand others
+(`C2`), nobody replies automatically, and a staff member who finds it clarifies
+the request and arranges an individual appointment by mail before any
+onboarding. Community requests, which need no staff at all (`A5`), take the
+same path.
+
+- **Confidence:** medium. The inbox, the volume and the lack of time come from
+  the client (`C2`, `CASE.md`). The order of the steps, the back-and-forth by
+  mail and the individual appointment are our inference; the association never
+  walked us through its process (`C1`).
+- **What breaks if wrong:** if the association already sorts or answers
+  requests in a way we did not see, the before-and-after comparison in
+  `PROCESS.md` overstates the gain.
 
 ### A10 — A group intro session is acceptable
 
@@ -468,6 +488,39 @@ including social contributions. We have no salary data from the association.
   month.
 - **What breaks if wrong:** little. Even at half the rate the server costs
   about half an hour of staff time a month.
+
+### A26 — Three Applications per email address in 24 hours
+
+Every Application sends a confirmation email to the address it names (`A8`),
+and the form asks nobody to prove that the address is theirs. Without a limit,
+anyone could make the platform send any number of mails to a stranger through
+Resend. So an email address that already has three Applications from the last
+24 hours gets `429 RATE_LIMITED` on the fourth, until the oldest of them leaves
+the window. Case does not matter, and discarded Applications count. A retry of
+an Application that already went through still answers `201`
+(`frontend/API.md`, "Idempotency").
+
+In front of the backend, nginx limits the same path per client address, so
+one machine cannot cycle through addresses instead: ten `POST
+/api/v1/applications` in a row pass, after that one a minute, and the rest get
+`429` from nginx before the backend sees them.
+
+- **Confidence:** low — our invention. Nothing tells us how often one person
+  applies; three leaves room for applying to two Categories and correcting a
+  mistake in a third attempt.
+- **Why it matters:** each Application costs a mail from the association's
+  sending quota and lands in a stranger's inbox under the association's name.
+  The honeypot stops simple bots only.
+- **What breaks if wrong:** too strict, and a person who wants to apply for a
+  fourth Category sees a general error and has to wait a day. Too loose, and
+  one address can still be sent a handful of unwanted mails a day. Both are one
+  pair of configured values, `application-limit.per-email` and
+  `application-limit.window`. The per-client limit is too strict when many
+  applicants share one public address, say a room full of people at an
+  association event: the eleventh within a few minutes waits a minute. Too
+  loose, and one machine can still trigger about 1,400 mails a day to
+  different strangers. Its numbers are `rate` and `burst` in the
+  `applications` zone of both `nginx.conf` files.
 
 ---
 

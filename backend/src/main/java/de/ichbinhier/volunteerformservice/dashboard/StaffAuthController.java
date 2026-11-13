@@ -1,8 +1,10 @@
 package de.ichbinhier.volunteerformservice.dashboard;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 import de.ichbinhier.volunteerformservice.staff.Staff;
 import de.ichbinhier.volunteerformservice.staff.StaffRepository;
 import de.ichbinhier.volunteerformservice.web.ApiException;
+import de.ichbinhier.volunteerformservice.web.FieldValidationException;
 import de.ichbinhier.volunteerformservice.web.config.SignInAttempts;
 import de.ichbinhier.volunteerformservice.web.config.SignInCookie;
 import de.ichbinhier.volunteerformservice.web.config.SignIns;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 
 
 @RestController
 @RequestMapping("/api/v1/staff")
-@RequiredArgsConstructor
 public class StaffAuthController {
+
+    /** The most bcrypt reads of a password; anything past it is ignored. */
+    static final int BCRYPT_MAX_BYTES = 72;
 
     private final StaffRepository staffRepo;
     private final PasswordEncoder passwordEncoder;
@@ -36,8 +41,30 @@ public class StaffAuthController {
     private final SignInAttempts attempts;
     private final SignInCookie cookie;
 
+    /**
+     * What an unknown address is compared against. Without a comparison, a
+     * wrong address would answer faster than a wrong password and tell a
+     * caller which addresses belong to a Staff member. Hashed once, by the
+     * same encoder, so the comparison costs what a real one costs.
+     */
+    private final String unknownEmailHash;
+
+    StaffAuthController(StaffRepository staffRepo, PasswordEncoder passwordEncoder, SignIns signIns,
+                        SignInAttempts attempts, SignInCookie cookie) {
+        this.staffRepo = staffRepo;
+        this.passwordEncoder = passwordEncoder;
+        this.signIns = signIns;
+        this.attempts = attempts;
+        this.cookie = cookie;
+        this.unknownEmailHash = passwordEncoder.encode(UUID.randomUUID().toString());
+    }
+
     @PostMapping("/session")
-    ResponseEntity<StaffResponse> login(@RequestBody LoginRequest request, HttpServletRequest http) {
+    ResponseEntity<StaffResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest http) {
+        if (request.getPassword().getBytes(StandardCharsets.UTF_8).length > BCRYPT_MAX_BYTES) {
+            throw new FieldValidationException("password", "PASSWORD_TOO_LONG");
+        }
+
         String address = http.getRemoteAddr();
 
         Optional<Duration> throttled = attempts.throttleFor(address);
@@ -45,13 +72,16 @@ public class StaffAuthController {
             throw ApiException.rateLimited(throttled.get());
         }
 
-        var staff = staffRepo.findByEmail(request.getEmail())
-            .orElse(null);
+        Optional<Staff> found = staffRepo.findByEmail(request.getEmail());
+        String hash = found.map(Staff::getPasswordHash).orElse(unknownEmailHash);
+        boolean matches = passwordEncoder.matches(request.getPassword(), hash);
 
-        if (staff == null || !passwordEncoder.matches(request.getPassword(), staff.getPasswordHash())) {
+        if (found.isEmpty() || !matches) {
             attempts.failed(address);
             throw ApiException.invalidCredentials();
         }
+
+        Staff staff = found.get();
 
         attempts.succeeded(address);
 

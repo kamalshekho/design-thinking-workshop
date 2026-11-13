@@ -1,8 +1,8 @@
 /**
  * The backend, stubbed at `fetch` and at `EventSource`.
  *
- * There is no Mock Service Worker (issue #29) and `src/data/` is fixtures
- * only, so a test that renders the whole application stubs the two globals
+ * There is no Mock Service Worker (issue #29) and `mockApplications.ts` is
+ * fixtures only, so a test that renders the whole application stubs the two globals
  * the wire uses and answers from those fixtures. It is deliberately stateful:
  * signing out has to make `GET /me` answer `401`, or the sign-out test would
  * sign straight back in.
@@ -23,16 +23,16 @@
 
 import { vi } from 'vitest';
 
+import type { Application, Owner } from '@/domain/application';
+import type { Category } from '@/domain/category';
+import type { StaffMember } from '@/domain/staffMember';
+import type { StateChange } from '@/domain/stateChange';
 import {
   createMockApplications,
   mockCategories,
   mockOwners,
   mockStaffMember,
-} from '@/data/mockApplications';
-import type { Application, Owner } from '@/domain/application';
-import type { Category } from '@/domain/category';
-import type { StaffMember } from '@/domain/staffMember';
-import type { StateChange } from '@/domain/stateChange';
+} from '@/test/mockApplications';
 
 export class StubEventSource {
   static latest: StubEventSource | null = null;

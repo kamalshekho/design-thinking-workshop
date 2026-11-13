@@ -50,10 +50,17 @@ an invented figure held openly beats an implied fact.
 
 ## Language split
 
-German for anything a person outside the team reads — form copy, auto-replies,
-templates, and the staff dashboard UI, since staff members are German speakers
-(`A6`). English for the documents in this repo, the code, the specifications,
-and the presentation.
+German for anything a person reads as prose: form copy, auto-replies,
+templates, the staff dashboard UI (`A6`), new documents in this repo, the
+presentation, and issue and PR text
+([ADR-0007](./docs/adr/0007-german-documents-and-presentation.md)).
+
+English for code: identifiers, enum values, wire formats, code comments, and
+commit subjects.
+
+An existing English document keeps its language when you edit it, so no
+document mixes the two. German documents use the `CONTEXT.md` terms unchanged
+(_Application_, _Category_); slides may show the German UI label instead.
 
 ## Prose shape
 

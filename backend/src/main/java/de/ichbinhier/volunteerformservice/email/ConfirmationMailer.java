@@ -43,6 +43,7 @@ public class ConfirmationMailer {
 
         try {
             sender.send(application.getEmail(), subject, body);
+            log.info("Confirmation email handed to the sender for application {}", application.getId());
         } catch (RuntimeException exception) {
             log.warn("Confirmation email failed for application {}", application.getId(), exception);
         }

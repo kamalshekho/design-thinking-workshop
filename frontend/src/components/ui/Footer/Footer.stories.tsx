@@ -1,10 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import iconBluesky from '../../../assets/icons/icon_bluesky.svg';
-import iconFacebook from '../../../assets/icons/icon_facebook.svg';
-import iconInstagram from '../../../assets/icons/icon_instagram.svg';
-import iconLinkedin from '../../../assets/icons/icon_linkedin.svg';
-import iconTiktok from '../../../assets/icons/icon_tiktok.svg';
 import { de } from '../../../content/de';
 import { Footer } from './Footer';
 
@@ -20,29 +15,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const socialLinks = [
-  {
-    label: de.footer.socialLabels.facebook,
-    icon: iconFacebook,
-  },
-  {
-    label: de.footer.socialLabels.instagram,
-    icon: iconInstagram,
-  },
-  {
-    label: de.footer.socialLabels.linkedin,
-    icon: iconLinkedin,
-  },
-  {
-    label: de.footer.socialLabels.bluesky,
-    icon: iconBluesky,
-  },
-  {
-    label: de.footer.socialLabels.tiktok,
-    icon: iconTiktok,
-  },
-];
-
 export const Desktop: Story = {
   args: {
     content: {
@@ -57,7 +29,6 @@ export const Desktop: Story = {
         datenschutzLabel: de.footer.rechtliches.datenschutz,
       },
       donateLabel: de.footer.donateLabel,
-      socialLinks,
       copyright: de.footer.copyright,
       backToTopLabel: de.footer.backToTopLabel,
     },

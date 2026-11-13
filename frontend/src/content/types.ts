@@ -49,13 +49,6 @@ export interface Content {
     kontakt: { title: string; talkToUs: string; address: readonly string[] };
     rechtliches: { title: string; impressum: string; datenschutz: string };
     donateLabel: string;
-    socialLabels: {
-      facebook: string;
-      instagram: string;
-      linkedin: string;
-      bluesky: string;
-      tiktok: string;
-    };
     copyright: string;
     backToTopLabel: string;
   };

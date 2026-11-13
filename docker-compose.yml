@@ -2,6 +2,11 @@
 services:
   db:
     image: docker.io/library/postgres:17-alpine
+    # Started as the image's postgres user rather than as root, so the
+    # entrypoint never needs CHOWN, SETUID or SETGID to hand the data directory
+    # over and drop privileges: the volume is created owned by postgres.
+    user: postgres
+    cap_drop: [ALL]
     environment:
       POSTGRES_DB: volunteer_form
       POSTGRES_USER: volunteer_form
@@ -25,10 +30,10 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       RESEND_FROM: ${RESEND_FROM:-}
-      # This stack is the environment the platform is demonstrated on, so the
-      # demo week of Applications (A21) is on by default. Set the variable to
-      # an empty value in .env for a stack that starts with no Applications.
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE-demo}
+      # Empty unless asked for, so a stack starts with no Applications. Set it
+      # to `demo` to seed the demo week of Applications (A21); README.md,
+      # "Running the prototype", has the command.
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-}
       # Passed through empty rather than required with `:?`: whether a missing
       # password is fatal is StaffSeeder's call, and it only refuses to start
       # for an account it still has to create (A17).
@@ -37,6 +42,15 @@ services:
       STAFF_3_PASSWORD: ${STAFF_3_PASSWORD:-}
       STAFF_4_PASSWORD: ${STAFF_4_PASSWORD:-}
       STAFF_5_PASSWORD: ${STAFF_5_PASSWORD:-}
+    cap_drop: [ALL]
+    healthcheck:
+      # GET only: the health endpoint is not permitted for HEAD, which is what
+      # `wget --spider` would send.
+      test: [ 'CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/actuator/health' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     depends_on:
       db:
         condition: service_healthy
@@ -47,7 +61,13 @@ services:
       context: ./frontend
     image: ichbinhier-form:local
     ports:
-      - '8081:80'
+      - '8081:8080'
+    cap_drop: [ALL]
+    healthcheck:
+      test: [ 'CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       - backend
     restart: unless-stopped
@@ -57,7 +77,13 @@ services:
       context: ./dashboard
     image: ichbinhier-dashboard:local
     ports:
-      - '8082:80'
+      - '8082:8080'
+    cap_drop: [ALL]
+    healthcheck:
+      test: [ 'CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
       - backend
     restart: unless-stopped

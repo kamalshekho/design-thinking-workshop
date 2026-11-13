@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import { de } from '@/content/de';
+import type { Application } from '@/domain/application';
+import { setDiscarded } from '@/domain/application';
 import {
   createMockApplications,
   mockCategories,
   mockOwners,
-} from '@/data/mockApplications';
-import type { Application } from '@/domain/application';
-import { setDiscarded } from '@/domain/application';
+} from '@/test/mockApplications';
 
 import { ApplicationsScreen } from './ApplicationsScreen';
 import type { NotesDraft } from './useNotesDraft';

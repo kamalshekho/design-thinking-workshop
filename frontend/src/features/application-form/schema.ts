@@ -3,6 +3,11 @@ import { z } from 'zod';
 import { isUuid } from '../../lib/uuid';
 import { isFixedRoute, WEEKLY_TIME_OPTIONS } from './routes';
 
+// Zod otherwise probes `new Function` to decide whether it may compile
+// parsers, and the Content-Security-Policy in nginx forbids eval, so the probe
+// shows up as a violation in the console.
+z.config({ jitless: true });
+
 /**
  * Validation rules for the form. This schema is the only place a rule lives —
  * a component must never re-check a length or a format.

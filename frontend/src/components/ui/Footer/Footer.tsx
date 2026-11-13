@@ -4,12 +4,6 @@ import iconPig from '../../../assets/icons/icon_pig.png';
 import iconRecurring from '../../../assets/icons/icon_recurring.png';
 import styles from './Footer.module.css';
 
-export interface FooterSocialLink {
-  label: string;
-  href?: string;
-  icon: string;
-}
-
 export interface FooterKontakt {
   title: string;
   talkToUsLabel: string;
@@ -30,7 +24,6 @@ export interface FooterContent {
   rechtliches: FooterRechtliches;
   donateLabel: string;
   donateHref?: string;
-  socialLinks: FooterSocialLink[];
   copyright: string;
   backToTopLabel: string;
 }
@@ -52,7 +45,6 @@ export function Footer({ content, onBackToTop }: FooterProps) {
     rechtliches,
     donateLabel,
     donateHref,
-    socialLinks,
     copyright,
     backToTopLabel,
   } = content;
@@ -89,19 +81,6 @@ export function Footer({ content, onBackToTop }: FooterProps) {
               <img alt="" className={styles.donateIcon} src={iconPig} />
               <img alt="" className={styles.donateIcon} src={iconRecurring} />
             </a>
-
-            <div className={styles.socialRow}>
-              {socialLinks.map((social) => (
-                <a
-                  aria-label={social.label}
-                  className={styles.socialLink}
-                  href={social.href}
-                  key={social.label}
-                >
-                  <img alt="" className={styles.socialIcon} src={social.icon} />
-                </a>
-              ))}
-            </div>
           </div>
         </div>
 
