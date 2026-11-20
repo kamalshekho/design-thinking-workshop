@@ -38,22 +38,9 @@
 }
 
 .logo {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
+  display: block;
+  width: auto;
   height: var(--header-logo-height);
-  aspect-ratio: 4 / 1;
-  border: var(--border-width-default) dashed var(--color-border);
-  border-radius: var(--radius-control);
-  background: var(--color-divider);
-  color: var(--color-text-muted);
-  font-family: var(--font-button);
-  font-size: 11px;
-  font-weight: var(--font-weight-button);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  user-select: none;
 }
 
 .right {
@@ -73,7 +60,7 @@
   padding: var(--header-nav-link-padding-block)
     var(--header-nav-link-padding-inline);
   border-radius: var(--radius-none);
-  color: var(--color-primary-text);
+  color: var(--color-primary);
   font-family: var(--font-button);
   font-size: var(--header-nav-link-font-size);
   text-decoration: none;
@@ -85,7 +72,7 @@
 }
 
 .navLink:hover {
-  background: var(--color-primary-text);
+  background: var(--color-primary);
   color: var(--color-text-inverse);
 }
 
