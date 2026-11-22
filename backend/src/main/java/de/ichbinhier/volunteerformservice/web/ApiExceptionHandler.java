@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import de.ichbinhier.volunteerformservice.application.WeeklyTime;
+import de.ichbinhier.volunteerformservice.application.domain.WeeklyTime;
 
 import tools.jackson.databind.exc.InvalidFormatException;
 

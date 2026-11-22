@@ -2,7 +2,6 @@ package de.ichbinhier.volunteerformservice.web;
 
 import lombok.Getter;
 
-
 @Getter
 public class FieldValidationException extends RuntimeException {
 

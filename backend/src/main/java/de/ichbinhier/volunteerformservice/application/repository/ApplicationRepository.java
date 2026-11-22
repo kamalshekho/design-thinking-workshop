@@ -1,0 +1,24 @@
+package de.ichbinhier.volunteerformservice.application.repository;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import de.ichbinhier.volunteerformservice.application.domain.Application;
+
+public interface ApplicationRepository extends JpaRepository<Application, UUID> {
+
+    Optional<Application> findBySubmissionId(UUID submissionId);
+
+    List<Application> findByEmailIgnoreCaseAndSubmittedAtAfterOrderBySubmittedAtAsc(String email, Instant since);
+
+    List<Application> findAllByOrderBySubmittedAtDesc();
+
+    List<Application> findAllByOwnerId(UUID ownerId);
+
+    long countByCategoryId(UUID categoryId);
+
+}

@@ -7,10 +7,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import de.ichbinhier.volunteerformservice.application.domain.WeeklyTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @NoArgsConstructor
@@ -46,7 +48,7 @@ public class ApplicationRequest {
 
     String website;
 
-    boolean looksLikeABot() {
+    public boolean looksLikeABot() {
         return website != null && !website.isBlank();
     }
 

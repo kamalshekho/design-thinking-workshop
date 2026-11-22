@@ -2,7 +2,7 @@ package de.ichbinhier.volunteerformservice.email;
 
 import org.springframework.stereotype.Component;
 
-import de.ichbinhier.volunteerformservice.application.Application;
+import de.ichbinhier.volunteerformservice.application.domain.Application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

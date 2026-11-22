@@ -24,10 +24,28 @@ STAFF_1_PASSWORD=… STAFF_2_PASSWORD=… STAFF_3_PASSWORD=… \
 says so, rather than trying a password written in this repo. The test suite
 runs on H2 and needs none of these variables.
 
+## Code and tests
+
+The packages group code by feature. Within a feature, `web` handles HTTP,
+`service` implements operations, `repository` reads and writes data, `domain`
+holds the domain model, and `config` contains configuration and seed data.
+The dashboard's request and response types live in `dashboard/dto`.
+
+The application and dashboard service interfaces sit in their feature's root
+package; their implementations are package-private in `service`. This keeps
+controllers dependent on the service contract instead of its implementation.
+Java subpackages are separate packages, so domain types and repositories shared
+across features still need public visibility.
+
+Run `./mvnw test` with Java 25. A `*Test` checks an isolated part, while an
+`*IntegrationTest` checks several parts together using the test database. The
+`ApplicationEndToEndTest` starts the backend on a local port and follows a
+submission through staff sign-in and review over HTTP. It does not run a browser.
+
 ## Staff accounts
 
 The dashboard has no self-registration and no user administration, so
-`staff/StaffSeeder.java` is the only way an account comes into being: five of
+`staff/config/StaffSeeder.java` is the only way an account comes into being: five of
 them, one per staff member (`A1`, `A17`), invented people at the association's
 domain. The addresses are sign-in identities and nothing else — no mail is ever
 sent to a staff member, so none of these mailboxes has to exist.

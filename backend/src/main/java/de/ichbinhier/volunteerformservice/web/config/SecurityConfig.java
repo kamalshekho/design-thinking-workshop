@@ -14,8 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import de.ichbinhier.volunteerformservice.staff.StaffRepository;
-
+import de.ichbinhier.volunteerformservice.staff.repository.StaffRepository;
 
 @Configuration
 @EnableWebSecurity

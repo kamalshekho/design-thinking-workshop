@@ -12,8 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import de.ichbinhier.volunteerformservice.staff.Staff;
-import de.ichbinhier.volunteerformservice.staff.StaffRepository;
+import de.ichbinhier.volunteerformservice.staff.domain.Staff;
+import de.ichbinhier.volunteerformservice.staff.repository.StaffRepository;
 
 /**
  * Turns the {@code ibh_session} cookie into an authenticated request, and slides

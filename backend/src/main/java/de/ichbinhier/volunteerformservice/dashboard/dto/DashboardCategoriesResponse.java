@@ -1,0 +1,22 @@
+package de.ichbinhier.volunteerformservice.dashboard.dto;
+
+import java.util.List;
+
+import de.ichbinhier.volunteerformservice.category.domain.Category;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class DashboardCategoriesResponse {
+    private List<CategoryDto> categories;
+
+    /** The response for Categories already in display order. */
+    public static DashboardCategoriesResponse of(List<Category> ordered) {
+        return new DashboardCategoriesResponse(ordered.stream().map(CategoryDto::of).toList());
+    }
+}
+

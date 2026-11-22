@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import de.ichbinhier.volunteerformservice.staff.Staff;
+import de.ichbinhier.volunteerformservice.staff.domain.Staff;
 
 /**
  * Every open Sign-in, keyed by the opaque token that travels in the
