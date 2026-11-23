@@ -1,5 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 
+import { DESK_WIDTH, setViewportWidth } from './viewport';
+
 /**
  * jsdom implements no `ResizeObserver`, which Recharts' `ResponsiveContainer`
  * behind the sparklines observes its box with.
@@ -30,16 +32,28 @@ Element.prototype.releasePointerCapture = (): void => undefined;
 Element.prototype.scrollIntoView = (): void => undefined;
 
 /**
- * jsdom implements no media queries. The copied account card asks for one to
- * decide where its menu opens; in tests every query reports no match, which is
- * the phone placement.
+ * jsdom implements no media queries. This one answers `min-width` queries
+ * against `window.innerWidth`, which a test starts at 1600 px, wider than every
+ * breakpoint, so a screen renders its desk layout. A test of the phone layout
+ * sets `window.innerWidth` before it renders (`setViewportWidth`). Any other
+ * query reports no match.
  */
+setViewportWidth(DESK_WIDTH);
+afterEach(() => {
+  setViewportWidth(DESK_WIDTH);
+});
+
+function matchesQuery(query: string): boolean {
+  const minWidth = /\(min-width:\s*(\d+)px\)/.exec(query)?.[1];
+  return minWidth !== undefined && window.innerWidth >= Number(minWidth);
+}
+
 if (typeof window.matchMedia !== 'function') {
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     writable: true,
     value: (query: string): MediaQueryList => ({
-      matches: false,
+      matches: matchesQuery(query),
       media: query,
       onchange: null,
       addEventListener: () => undefined,
