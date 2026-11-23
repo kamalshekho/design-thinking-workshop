@@ -549,6 +549,36 @@ Rhine-Westphalia. We have not found one for Berlin or Hamburg.
   pays and the platform stays a prototype. The slide says only that funding
   is possible and that each state has to be checked.
 
+## The devices people use
+
+### A28 — Applicants mostly open the form on a smartphone
+
+Most applicants come from the #ichbinhier community on Facebook (`A2`, `A5`).
+They follow a link from a post or a message, so they open the form on a phone.
+A laptop or desktop works as well and stays supported.
+
+- **Confidence:** low — our inference. We have no traffic data.
+- **Why it matters:** it sets the order of work. A form bug below 640 px
+  reaches more applicants than one at 1440 px.
+- **What breaks if wrong:** little. The form works at every width from 320 px,
+  so only the order of fixes changes.
+
+### A29 — Staff members work at a desk and use a phone for one Application
+
+The five staff members (`A1`) do the intake on a laptop or desktop. On a phone,
+a staff member reads a new Application, becomes its Owner and changes its
+status. Maintaining Categories and working through the lists happen at the
+desk.
+
+- **Confidence:** low — our invention. The association never told us how it
+  works (`C1`).
+- **Why it matters:** it sets what the dashboard has to do below 1024 px. Every
+  screen works from 320 px, but only the actions on one Application need a
+  layout made for a phone.
+- **What breaks if wrong:** if staff members do most of their work on a phone,
+  the lists and the Categories screen need a phone layout for every action. If
+  nobody uses a phone, the phone layout is work spent for nothing.
+
 ---
 
 ## Open questions we cannot answer ourselves
