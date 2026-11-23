@@ -21,10 +21,20 @@ import { cx } from '@/utils/cx';
  * rather than the `tailwindcss-animate` plugin, which this application does
  * not carry.
  */
-export const MobileNavigationHeader = ({ children }: PropsWithChildren) => {
+export const MobileNavigationHeader = ({
+  children,
+  hiddenFrom = 'lg',
+}: PropsWithChildren<{ hiddenFrom?: 'lg' | 'xl' }>) => {
+  // PROTOTYPE (issue #109): variant B keeps the menu button up to 1280 px.
+  const hidden = hiddenFrom === 'xl' ? 'xl:hidden' : 'lg:hidden';
   return (
     <AriaDialogTrigger>
-      <header className="border-secondary bg-primary flex h-14 items-center justify-between border-b p-3 pl-4 lg:hidden">
+      <header
+        className={cx(
+          'border-secondary bg-primary flex h-14 items-center justify-between border-b p-3 pl-4',
+          hidden,
+        )}
+      >
         <AssociationWordmark />
 
         <AriaButton
@@ -40,7 +50,8 @@ export const MobileNavigationHeader = ({ children }: PropsWithChildren) => {
         isDismissable
         className={({ isEntering, isExiting }) =>
           cx(
-            'bg-overlay/70 fixed inset-0 z-50 cursor-pointer pr-16 backdrop-blur-md transition-opacity duration-300 ease-in-out lg:hidden',
+            'bg-overlay/70 fixed inset-0 z-50 cursor-pointer pr-16 backdrop-blur-md transition-opacity duration-300 ease-in-out',
+            hidden,
             isEntering && 'opacity-0',
             isExiting && 'opacity-0 duration-200',
           )

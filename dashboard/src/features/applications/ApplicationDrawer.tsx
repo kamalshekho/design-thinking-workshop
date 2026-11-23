@@ -58,6 +58,12 @@ import {
   APPLICATION_STATUSES,
   INTERNAL_NOTES_MAX_LENGTH,
 } from '@/domain/application';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
+import {
+  ApplicationPage,
+  ApplicationSheet,
+} from '@/prototype/ApplicationDetailVariants';
+import { usePrototypeVariant } from '@/prototype/variant';
 import { cx } from '@/utils/cx';
 
 import { CONTROL_CLASSNAME } from './controlStyles';
@@ -145,7 +151,21 @@ function MetaChip({
   );
 }
 
-export function ApplicationDrawer({
+/** PROTOTYPE (issue #109): variant B and C replace the drawer on narrow screens. */
+export function ApplicationDrawer(props: ApplicationDrawerProps) {
+  const variant = usePrototypeVariant();
+  const sm = useBreakpoint('sm');
+  const lg = useBreakpoint('lg');
+  if (variant === 'B' && !sm) {
+    return <ApplicationSheet {...props} />;
+  }
+  if (variant === 'C' && !lg) {
+    return <ApplicationPage {...props} />;
+  }
+  return <ApplicationDrawerToday {...props} />;
+}
+
+function ApplicationDrawerToday({
   application,
   categories,
   owners,

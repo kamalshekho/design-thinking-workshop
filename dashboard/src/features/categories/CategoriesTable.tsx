@@ -22,6 +22,12 @@ import { Table, TableCard } from '@/components/application/table/table';
 import { Toggle } from '@/components/base/toggle/toggle';
 import { de } from '@/content/de';
 import type { Category } from '@/domain/category';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
+import {
+  CategoryCards,
+  CategoryListDeskOnly,
+} from '@/prototype/CategoryVariants';
+import { usePrototypeVariant } from '@/prototype/variant';
 import { cx } from '@/utils/cx';
 
 type CategoriesTableProps = {
@@ -60,7 +66,28 @@ function maxUsage(usage: ReadonlyMap<string, number>): number {
   return Math.max(1, ...usage.values());
 }
 
-export function CategoriesTable({
+/** PROTOTYPE (issue #109): one entry per variant. */
+export function CategoriesTable(props: CategoriesTableProps) {
+  const variant = usePrototypeVariant();
+  const sm = useBreakpoint('sm');
+  const md = useBreakpoint('md');
+  const lg = useBreakpoint('lg');
+  if (variant === 'B' && !md) {
+    return <CategoryCards {...props} />;
+  }
+  if (variant === 'C' && !lg) {
+    return <CategoryListDeskOnly {...props} />;
+  }
+  return (
+    <CategoriesTableToday
+      {...props}
+      showOrder={variant !== 'A' || sm}
+      showUsage={variant !== 'A' || md}
+    />
+  );
+}
+
+function CategoriesTableToday({
   categories,
   usage,
   namedBy,
@@ -71,7 +98,9 @@ export function CategoriesTable({
   onToggleActive,
   onMove,
   emptyState,
-}: CategoriesTableProps) {
+  showOrder,
+  showUsage,
+}: CategoriesTableProps & { showOrder: boolean; showUsage: boolean }) {
   const scale = maxUsage(usage);
 
   return (
@@ -84,7 +113,9 @@ export function CategoriesTable({
 
       <Table aria-label={de.categories.title}>
         <Table.Header>
-          <Table.Head id="order" label={de.categories.columns.order} />
+          {showOrder ? (
+            <Table.Head id="order" label={de.categories.columns.order} />
+          ) : null}
           <Table.Head
             id="name"
             label={de.categories.columns.name}
@@ -92,7 +123,9 @@ export function CategoriesTable({
             className="w-full max-w-full md:min-w-64"
           />
           <Table.Head id="status" label={de.categories.columns.status} />
-          <Table.Head id="usage" label={de.categories.columns.usage} />
+          {showUsage ? (
+            <Table.Head id="usage" label={de.categories.columns.usage} />
+          ) : null}
           <Table.Head id="actions" aria-label={de.categories.columns.actions} />
         </Table.Header>
 
@@ -106,7 +139,14 @@ export function CategoriesTable({
          */}
         <Table.Body
           items={categories}
-          dependencies={[allCategories, usage, namedBy, canReorder]}
+          dependencies={[
+            allCategories,
+            usage,
+            namedBy,
+            canReorder,
+            showOrder,
+            showUsage,
+          ]}
           renderEmptyState={() => emptyState}
         >
           {(category) => {
@@ -121,39 +161,41 @@ export function CategoriesTable({
 
             return (
               <Table.Row id={category.id}>
-                <Table.Cell>
-                  <div className="flex items-center gap-1">
-                    <span className="text-quaternary w-5 text-xs tabular-nums">
-                      {position + 1}
-                    </span>
-                    <MoveButton
-                      icon={ArrowUp}
-                      label={de.categories.moveUpOne(category.name)}
-                      isDisabled={!canReorder || isFirst}
-                      title={
-                        canReorder
-                          ? de.categories.moveUp
-                          : de.categories.moveBlocked
-                      }
-                      onClick={() => {
-                        onMove(category, -1);
-                      }}
-                    />
-                    <MoveButton
-                      icon={ArrowDown}
-                      label={de.categories.moveDownOne(category.name)}
-                      isDisabled={!canReorder || isLast}
-                      title={
-                        canReorder
-                          ? de.categories.moveDown
-                          : de.categories.moveBlocked
-                      }
-                      onClick={() => {
-                        onMove(category, 1);
-                      }}
-                    />
-                  </div>
-                </Table.Cell>
+                {showOrder ? (
+                  <Table.Cell>
+                    <div className="flex items-center gap-1">
+                      <span className="text-quaternary w-5 text-xs tabular-nums">
+                        {position + 1}
+                      </span>
+                      <MoveButton
+                        icon={ArrowUp}
+                        label={de.categories.moveUpOne(category.name)}
+                        isDisabled={!canReorder || isFirst}
+                        title={
+                          canReorder
+                            ? de.categories.moveUp
+                            : de.categories.moveBlocked
+                        }
+                        onClick={() => {
+                          onMove(category, -1);
+                        }}
+                      />
+                      <MoveButton
+                        icon={ArrowDown}
+                        label={de.categories.moveDownOne(category.name)}
+                        isDisabled={!canReorder || isLast}
+                        title={
+                          canReorder
+                            ? de.categories.moveDown
+                            : de.categories.moveBlocked
+                        }
+                        onClick={() => {
+                          onMove(category, 1);
+                        }}
+                      />
+                    </div>
+                  </Table.Cell>
+                ) : null}
 
                 <Table.Cell>
                   {/*
@@ -211,22 +253,24 @@ export function CategoriesTable({
                   </div>
                 </Table.Cell>
 
-                <Table.Cell>
-                  <div className="flex min-w-24 flex-col gap-1.5">
-                    <span className="text-secondary text-sm tabular-nums">
-                      {de.categories.usageCount(count)}
-                    </span>
-                    <span
-                      aria-hidden="true"
-                      className="bg-tertiary block h-1 w-20 overflow-hidden rounded-full"
-                    >
+                {showUsage ? (
+                  <Table.Cell>
+                    <div className="flex min-w-24 flex-col gap-1.5">
+                      <span className="text-secondary text-sm tabular-nums">
+                        {de.categories.usageCount(count)}
+                      </span>
                       <span
-                        style={{ width: `${String((count / scale) * 100)}%` }}
-                        className="bg-fuut-purple/60 block h-full rounded-full transition-[width] duration-200 ease-out"
-                      />
-                    </span>
-                  </div>
-                </Table.Cell>
+                        aria-hidden="true"
+                        className="bg-tertiary block h-1 w-20 overflow-hidden rounded-full"
+                      >
+                        <span
+                          style={{ width: `${String((count / scale) * 100)}%` }}
+                          className="bg-fuut-purple/60 block h-full rounded-full transition-[width] duration-200 ease-out"
+                        />
+                      </span>
+                    </div>
+                  </Table.Cell>
+                ) : null}
 
                 <Table.Cell>
                   <div className="flex items-center justify-end gap-1">

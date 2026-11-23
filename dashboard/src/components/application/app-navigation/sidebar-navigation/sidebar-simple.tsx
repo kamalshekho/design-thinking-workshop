@@ -7,10 +7,14 @@ import { NavAccountCard } from '@/components/application/app-navigation/base-com
 import { NavItemBase } from '@/components/application/app-navigation/base-components/nav-item';
 import { NavList } from '@/components/application/app-navigation/base-components/nav-list';
 import type { NavItemType } from '@/components/application/app-navigation/config';
+import { Avatar } from '@/components/base/avatar/avatar';
 import { AssociationWordmark } from '@/components/foundations/logo/association-wordmark';
 import { de } from '@/content/de';
 import type { StaffMember } from '@/domain/staffMember';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { usePrototypeVariant } from '@/prototype/variant';
 import { cx } from '@/utils/cx';
+import { initialsOf } from '@/utils/initials';
 
 /**
  * Copied from the Untitled UI clone
@@ -58,7 +62,14 @@ export const SidebarNavigationSimple = ({
   hideBorder = false,
   className,
 }: SidebarNavigationProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // PROTOTYPE (issue #109): A and C start as the 72 px rail between 1024 and
+  // 1279 px; the button still overrides it until the next reload.
+  const variant = usePrototypeVariant();
+  const xl = useBreakpoint('xl');
+  const [userCollapsed, setUserCollapsed] = useState<boolean | null>(null);
+  const isCollapsed =
+    userCollapsed ?? ((variant === 'A' || variant === 'C') && !xl);
+  const fixedFrom = variant === 'B' ? 'xl' : 'lg';
   const sidebarWidth = isCollapsed ? SLIM_SIDEBAR_WIDTH : MAIN_SIDEBAR_WIDTH;
 
   const content = (
@@ -82,7 +93,7 @@ export const SidebarNavigationSimple = ({
             isCollapsed ? de.navigation.expand : de.navigation.collapse
           }
           onPress={() => {
-            setIsCollapsed((collapsed) => !collapsed);
+            setUserCollapsed(!isCollapsed);
           }}
           className={cx(
             'peer/toggle group text-fg-quaternary outline-focus-ring hover:bg-primary_hover absolute top-4 left-[calc(100%-30px)] z-10 hidden size-9 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md transition-[left,transform] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100 lg:flex',
@@ -144,12 +155,33 @@ export const SidebarNavigationSimple = ({
 
   return (
     <>
-      <MobileNavigationHeader>{content}</MobileNavigationHeader>
+      {variant === 'C' ? (
+        <header className="border-secondary bg-primary flex h-14 items-center justify-between border-b px-4 lg:hidden">
+          <AssociationWordmark />
+          {account ? (
+            <button
+              type="button"
+              title="Abmelden"
+              onClick={onSignOut}
+              className="cursor-pointer rounded-full"
+            >
+              <Avatar size="sm" initials={initialsOf(account.name)} />
+            </button>
+          ) : null}
+        </header>
+      ) : (
+        <MobileNavigationHeader hiddenFrom={fixedFrom}>
+          {content}
+        </MobileNavigationHeader>
+      )}
 
       <div
         style={{ width: sidebarWidth, left: SIDEBAR_GUTTER }}
         className={cx(
-          'hidden overflow-hidden transition-[width] motion-reduce:transition-none lg:fixed lg:inset-y-0 lg:flex',
+          'hidden overflow-hidden transition-[width] motion-reduce:transition-none',
+          fixedFrom === 'xl'
+            ? 'xl:fixed xl:inset-y-0 xl:flex'
+            : 'lg:fixed lg:inset-y-0 lg:flex',
           'duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)]',
         )}
       >
@@ -159,7 +191,10 @@ export const SidebarNavigationSimple = ({
       <div
         style={{ paddingLeft: sidebarWidth + SIDEBAR_GUTTER }}
         className={cx(
-          'invisible hidden transition-[padding] motion-reduce:transition-none lg:sticky lg:top-0 lg:bottom-0 lg:left-0 lg:block',
+          'invisible hidden transition-[padding] motion-reduce:transition-none',
+          fixedFrom === 'xl'
+            ? 'xl:sticky xl:top-0 xl:bottom-0 xl:left-0 xl:block'
+            : 'lg:sticky lg:top-0 lg:bottom-0 lg:left-0 lg:block',
           'duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)]',
         )}
       />

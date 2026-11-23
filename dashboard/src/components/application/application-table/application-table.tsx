@@ -54,6 +54,8 @@ import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { de } from '@/content/de';
 import type { Application, Category, Owner } from '@/domain/application';
 import { isUnassigned, WEEKLY_TIMES } from '@/domain/application';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { usePrototypeVariant } from '@/prototype/variant';
 import { cx } from '@/utils/cx';
 import { daysSince } from '@/utils/dates';
 import { initialsOf } from '@/utils/initials';
@@ -228,7 +230,26 @@ export function ApplicationTable({
     });
   }, [applications, sortDescriptor, sortValues]);
 
-  const selectionEnabled = rowActions.length > 0;
+  // PROTOTYPE (issue #109): variant A keeps the table and shows a column
+  // only from the width where it fits. Below 640 px the row has no checkbox
+  // and no discard: bulk work happens at the desk (`A29`).
+  const variant = usePrototypeVariant();
+  const sm = useBreakpoint('sm');
+  const md = useBreakpoint('md');
+  const lg = useBreakpoint('lg');
+  const xl = useBreakpoint('xl');
+  const xxl = useBreakpoint('2xl');
+  const A = variant === 'A';
+  const show = {
+    email: !A || xxl,
+    weeklyTime: !A || xxl,
+    category: !A || xxl,
+    owner: !A || xl,
+    submittedAt: !A || md,
+    status: !A || sm,
+  };
+
+  const selectionEnabled = rowActions.length > 0 && (!A || sm);
 
   const [page, setPage] = useState(1);
 
@@ -308,20 +329,36 @@ export function ApplicationTable({
             allowsSorting
             className="w-full max-w-full md:min-w-52"
           />
-          <Table.Head id="email" label={de.columns.email} allowsSorting />
-          <Table.Head id="category" label={de.columns.category} allowsSorting />
-          <Table.Head
-            id="weeklyTime"
-            label={de.columns.weeklyTime}
-            allowsSorting
-          />
-          <Table.Head id="status" label={de.columns.status} allowsSorting />
-          <Table.Head
-            id="submittedAt"
-            label={de.columns.submittedAt}
-            allowsSorting
-          />
-          <Table.Head id="owner" label={de.columns.owner} allowsSorting />
+          {show.email ? (
+            <Table.Head id="email" label={de.columns.email} allowsSorting />
+          ) : null}
+          {show.category ? (
+            <Table.Head
+              id="category"
+              label={de.columns.category}
+              allowsSorting
+            />
+          ) : null}
+          {show.weeklyTime ? (
+            <Table.Head
+              id="weeklyTime"
+              label={de.columns.weeklyTime}
+              allowsSorting
+            />
+          ) : null}
+          {show.status ? (
+            <Table.Head id="status" label={de.columns.status} allowsSorting />
+          ) : null}
+          {show.submittedAt ? (
+            <Table.Head
+              id="submittedAt"
+              label={de.columns.submittedAt}
+              allowsSorting
+            />
+          ) : null}
+          {show.owner ? (
+            <Table.Head id="owner" label={de.columns.owner} allowsSorting />
+          ) : null}
           {selectionEnabled ? (
             <Table.Head id="actions" aria-label={de.columns.actions} />
           ) : null}
@@ -331,7 +368,7 @@ export function ApplicationTable({
             so the collection has to be told to re-render rows when it moves. */}
         <Table.Body
           items={pageItems}
-          dependencies={[activeId]}
+          dependencies={[activeId, variant, sm, md, lg, xl, xxl]}
           {...(emptyState === undefined
             ? {}
             : { renderEmptyState: () => emptyState })}
@@ -386,78 +423,113 @@ export function ApplicationTable({
                         initials={initialsOf(application.name)}
                       />
                     </span>
-                    <p
+                    <div
                       className={cx(
-                        'text-sm whitespace-nowrap',
-                        unassigned
-                          ? 'text-primary font-semibold'
-                          : 'text-secondary font-medium',
+                        'min-w-0',
+                        A && 'max-w-[13rem] sm:max-w-[16rem]',
                       )}
                     >
-                      {application.name}
-                    </p>
+                      <p
+                        title={A ? application.name : undefined}
+                        className={cx(
+                          'text-sm whitespace-nowrap',
+                          A && 'truncate',
+                          unassigned
+                            ? 'text-primary font-semibold'
+                            : 'text-secondary font-medium',
+                        )}
+                      >
+                        {application.name}
+                      </p>
+                      {A && !show.status ? (
+                        <p className="text-tertiary truncate text-xs leading-5">
+                          {de.statuses[application.status]} ·{' '}
+                          {de.application.daysAgo(
+                            daysSince(application.submittedAt, now),
+                          )}
+                        </p>
+                      ) : A && !show.category ? (
+                        <p className="text-tertiary truncate text-xs leading-5">
+                          {categoryNames.get(application.categoryId) ??
+                            application.categoryId}
+                          {ownerName === null || show.owner ? '' : ` · ${ownerName}`}
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
                 </Table.Cell>
 
-                <Table.Cell className="whitespace-nowrap">
-                  {application.email}
-                </Table.Cell>
+                {show.email ? (
+                  <Table.Cell className="whitespace-nowrap">
+                    {application.email}
+                  </Table.Cell>
+                ) : null}
 
-                <Table.Cell className="whitespace-nowrap">
-                  {categoryNames.get(application.categoryId) ??
-                    application.categoryId}
-                </Table.Cell>
+                {show.category ? (
+                  <Table.Cell className="whitespace-nowrap">
+                    {categoryNames.get(application.categoryId) ??
+                      application.categoryId}
+                  </Table.Cell>
+                ) : null}
 
-                <Table.Cell className="whitespace-nowrap">
-                  {de.weeklyTimes[application.weeklyTime]}
-                </Table.Cell>
+                {show.weeklyTime ? (
+                  <Table.Cell className="whitespace-nowrap">
+                    {de.weeklyTimes[application.weeklyTime]}
+                  </Table.Cell>
+                ) : null}
 
-                <Table.Cell>
-                  <BadgeWithDot
-                    size="sm"
-                    type="pill-color"
-                    color={STATUS_BADGE_COLORS[application.status]}
-                    className={PLAIN_STATUS_BADGE_CLASSNAME}
-                  >
-                    {de.statuses[application.status]}
-                  </BadgeWithDot>
-                </Table.Cell>
+                {show.status ? (
+                  <Table.Cell>
+                    <BadgeWithDot
+                      size="sm"
+                      type="pill-color"
+                      color={STATUS_BADGE_COLORS[application.status]}
+                      className={PLAIN_STATUS_BADGE_CLASSNAME}
+                    >
+                      {de.statuses[application.status]}
+                    </BadgeWithDot>
+                  </Table.Cell>
+                ) : null}
 
-                <Table.Cell className="whitespace-nowrap tabular-nums">
-                  <time dateTime={application.submittedAt}>
-                    {dateFormatter.format(new Date(application.submittedAt))}
-                  </time>
-                  <span className="text-tertiary block text-xs leading-5">
-                    {de.application.daysAgo(
-                      daysSince(application.submittedAt, now),
-                    )}
-                  </span>
-                </Table.Cell>
+                {show.submittedAt ? (
+                  <Table.Cell className="whitespace-nowrap tabular-nums">
+                    <time dateTime={application.submittedAt}>
+                      {dateFormatter.format(new Date(application.submittedAt))}
+                    </time>
+                    <span className="text-tertiary block text-xs leading-5">
+                      {de.application.daysAgo(
+                        daysSince(application.submittedAt, now),
+                      )}
+                    </span>
+                  </Table.Cell>
+                ) : null}
 
-                <Table.Cell>
-                  <div className="flex items-center gap-2.5">
-                    {/* Initials when an Owner is assigned, and the empty-user
+                {show.owner ? (
+                  <Table.Cell>
+                    <div className="flex items-center gap-2.5">
+                      {/* Initials when an Owner is assigned, and the empty-user
                         glyph when nobody is. There is no photo to show: the
                         wire carries none (`API.md`). `alt=""` either way — the
                         name is right beside it, so a screen reader would only
                         hear it twice. */}
-                    <Avatar
-                      size="xs"
-                      alt=""
-                      initials={
-                        ownerName === null ? undefined : initialsOf(ownerName)
-                      }
-                    />
-                    <span
-                      className={cx(
-                        'whitespace-nowrap',
-                        ownerName === null && 'text-quaternary',
-                      )}
-                    >
-                      {ownerName ?? de.application.unassigned}
-                    </span>
-                  </div>
-                </Table.Cell>
+                      <Avatar
+                        size="xs"
+                        alt=""
+                        initials={
+                          ownerName === null ? undefined : initialsOf(ownerName)
+                        }
+                      />
+                      <span
+                        className={cx(
+                          'whitespace-nowrap',
+                          ownerName === null && 'text-quaternary',
+                        )}
+                      >
+                        {ownerName ?? de.application.unassigned}
+                      </span>
+                    </div>
+                  </Table.Cell>
+                ) : null}
 
                 {selectionEnabled ? (
                   <Table.Cell>

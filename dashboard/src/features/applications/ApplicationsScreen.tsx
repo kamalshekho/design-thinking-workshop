@@ -27,6 +27,8 @@ import type {
   Owner,
 } from '@/domain/application';
 import { APPLICATION_VIEWS, isDiscarded } from '@/domain/application';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { usePrototypeVariant } from '@/prototype/variant';
 
 import { ApplicationDrawer } from './ApplicationDrawer';
 import { ApplicationsList } from './ApplicationsList';
@@ -111,6 +113,17 @@ export function ApplicationsScreen({
 
   const { selected } = actions;
 
+  // PROTOTYPE (issue #109): no bulk button where the list has no checkboxes.
+  const variant = usePrototypeVariant();
+  const sm = useBreakpoint('sm');
+  const md = useBreakpoint('md');
+  const xl = useBreakpoint('xl');
+  const canBulk =
+    variant === '0' ||
+    (variant === 'A' && sm) ||
+    (variant === 'B' && md) ||
+    (variant === 'C' && xl);
+
   /**
    * Two empty states, the pair Kategorien and Aussortiert already draw: a
    * backend with no Applications at all is the platform's first day, while an
@@ -191,15 +204,17 @@ export function ApplicationsScreen({
              * It discards rather than deletes (`A16`) — hence the label and
              * the archive icon, not a trash can.
              */}
-            <Button
-              size="md"
-              color="secondary"
-              iconLeading={Archive}
-              isDisabled={actions.selectedIds.size === 0}
-              onClick={actions.discardSelected}
-            >
-              {de.applications.discardSelected(actions.selectedIds.size)}
-            </Button>
+            {canBulk ? (
+              <Button
+                size="md"
+                color="secondary"
+                iconLeading={Archive}
+                isDisabled={actions.selectedIds.size === 0}
+                onClick={actions.discardSelected}
+              >
+                {de.applications.discardSelected(actions.selectedIds.size)}
+              </Button>
+            ) : null}
           </>
         }
       />

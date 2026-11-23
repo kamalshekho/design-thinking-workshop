@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "prototype": "vite --mode prototype --port 5179 --open \"/?variant=A#applications\"",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",

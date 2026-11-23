@@ -17,6 +17,13 @@ import { useMemo } from 'react';
 import { ApplicationTable } from '@/components/application/application-table/application-table';
 import { de } from '@/content/de';
 import type { Application, Category, Owner } from '@/domain/application';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
+import {
+  ApplicationCards,
+  ApplicationInbox,
+} from '@/prototype/ApplicationListVariants';
+import { ScrollHint } from '@/prototype/ScrollHint';
+import { usePrototypeVariant } from '@/prototype/variant';
 
 type ApplicationsListProps = {
   applications: readonly Application[];
@@ -76,23 +83,61 @@ export function ApplicationsList({
     [onDiscard],
   );
 
-  const table = (
-    <ApplicationTable
-      applications={applications}
-      categories={categories}
-      owners={owners}
-      now={now}
-      oldestFirst={oldestFirst}
-      paginated={paginated}
-      onSelect={onSelect}
-      selectedIds={selectedIds}
-      onSelectedIdsChange={onSelectedIdsChange}
-      rowActions={rowActions}
-      activeId={activeId}
-      ariaLabel={ariaLabel}
-      emptyState={emptyState}
-    />
-  );
+  // PROTOTYPE (issue #109): variant B and C swap the table on narrow screens.
+  const variant = usePrototypeVariant();
+  const md = useBreakpoint('md');
+  const xl = useBreakpoint('xl');
+  const listProps = {
+    applications,
+    categories,
+    owners,
+    now,
+    oldestFirst,
+    onSelect,
+    activeId,
+    emptyState,
+  };
+
+  const table =
+    variant === 'B' && !md ? (
+      <ApplicationCards {...listProps} />
+    ) : variant === 'C' && !xl ? (
+      <ApplicationInbox {...listProps} />
+    ) : variant === 'B' ? (
+      <ScrollHint>
+        <ApplicationTable
+          applications={applications}
+          categories={categories}
+          owners={owners}
+          now={now}
+          oldestFirst={oldestFirst}
+          paginated={paginated}
+          onSelect={onSelect}
+          selectedIds={selectedIds}
+          onSelectedIdsChange={onSelectedIdsChange}
+          rowActions={rowActions}
+          activeId={activeId}
+          ariaLabel={ariaLabel}
+          emptyState={emptyState}
+        />
+      </ScrollHint>
+    ) : (
+      <ApplicationTable
+        applications={applications}
+        categories={categories}
+        owners={owners}
+        now={now}
+        oldestFirst={oldestFirst}
+        paginated={paginated}
+        onSelect={onSelect}
+        selectedIds={selectedIds}
+        onSelectedIdsChange={onSelectedIdsChange}
+        rowActions={rowActions}
+        activeId={activeId}
+        ariaLabel={ariaLabel}
+        emptyState={emptyState}
+      />
+    );
 
   if (toolbar === undefined) {
     return table;

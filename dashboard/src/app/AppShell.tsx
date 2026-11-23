@@ -42,7 +42,11 @@ import {
 } from '@/components/application/app-navigation/sidebar-navigation/sidebar-simple';
 import { de } from '@/content/de';
 import type { StaffMember } from '@/domain/staffMember';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { TabBar } from '@/prototype/TabBar';
+import { usePrototypeVariant } from '@/prototype/variant';
 import { useApplicationStream } from '@/queries/useApplicationStream';
+import { cx } from '@/utils/cx';
 
 import { RequestFailureNotice } from './RequestFailures';
 import { StreamMarker } from './StreamMarker';
@@ -98,11 +102,19 @@ export function AppShell({
   children,
 }: AppShellProps) {
   const { connected } = useApplicationStream({ enabled: !signInExpired });
+  // PROTOTYPE (issue #109): 16 px inset below 640 px in A, B and C; B keeps
+  // the menu button up to 1280 px; C has a tab bar below 1024 px.
+  const variant = usePrototypeVariant();
+  const sm = useBreakpoint('sm');
+  const gutter = variant !== '0' && !sm ? 16 : SIDEBAR_GUTTER;
 
   return (
     <div
       inert={signInExpired}
-      className="bg-primary text-primary flex min-h-screen flex-col lg:flex-row"
+      className={cx(
+        'bg-primary text-primary flex min-h-screen flex-col',
+        variant === 'B' ? 'xl:flex-row' : 'lg:flex-row',
+      )}
     >
       <SidebarNavigationSimple
         activeUrl={`#${current}`}
@@ -119,8 +131,11 @@ export function AppShell({
         content. `px-8` made it 32px.
       */}
       <main
-        style={{ paddingInline: SIDEBAR_GUTTER }}
-        className="bg-bg-canvas flex min-w-0 flex-1 flex-col gap-3 py-6"
+        style={{ paddingInline: gutter }}
+        className={cx(
+          'bg-bg-canvas flex min-w-0 flex-1 flex-col gap-3 py-6',
+          variant === 'C' && 'max-lg:pb-24',
+        )}
       >
         {/*
          * The strip. Whatever is added here reads from the left and keeps
@@ -146,6 +161,7 @@ export function AppShell({
         <RequestFailureNotice />
         {children}
       </main>
+      {variant === 'C' ? <TabBar current={current} /> : null}
     </div>
   );
 }
