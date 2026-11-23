@@ -118,3 +118,13 @@ longer term. Also avoid: login, auth
 **Platform**:
 The system this team is designing.
 _Avoid_: System, tool, app, form-like program
+
+**Applicant form**:
+The part of the platform an applicant fills in to send an application or to
+reach the membership form. Called _Bewerbungsformular_ in the German UI.
+_Avoid_: Frontend, formular, signup page
+
+**Dashboard**:
+The part of the platform where staff members work through applications and
+maintain categories, reached only after sign-in.
+_Avoid_: Admin panel, backoffice, CRM
