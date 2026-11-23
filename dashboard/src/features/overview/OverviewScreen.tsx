@@ -21,6 +21,8 @@ import { OverviewStats } from './OverviewStats';
 type OverviewScreenProps = {
   /** The signed-in Staff member's name, for the welcome headline. */
   staffName: string;
+  /** The signed-in Staff member, whom "Übernehmen" on the phone page makes the Owner. */
+  staffMemberId: string;
   applications: readonly Application[];
   /** The state history behind the three cards' sparklines; only they read it. */
   stateChanges: readonly StateChange[];
@@ -35,6 +37,7 @@ type OverviewScreenProps = {
 
 export function OverviewScreen({
   staffName,
+  staffMemberId,
   applications,
   stateChanges,
   onEdit,
@@ -60,6 +63,7 @@ export function OverviewScreen({
       </div>
 
       <OpenApplicationsPanel
+        staffMemberId={staffMemberId}
         applications={applications}
         onEdit={onEdit}
         onDiscard={onDiscard}

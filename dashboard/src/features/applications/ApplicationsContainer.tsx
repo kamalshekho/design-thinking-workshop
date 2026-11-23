@@ -16,6 +16,8 @@ import type { ApplicationFilters } from './filterApplications';
 import { useApplicationWrites } from './useApplicationWrites';
 
 type ApplicationsContainerProps = {
+  /** The signed-in Staff member, whom "Übernehmen" on the phone page makes the Owner. */
+  staffMemberId: string;
   /** The reference date the relative ages and the "Lange offen" view are read against. */
   now: Date;
   /** The view/status a Übersicht metric card linked in with, if any. */
@@ -23,6 +25,7 @@ type ApplicationsContainerProps = {
 };
 
 export function ApplicationsContainer({
+  staffMemberId,
   now,
   initialFilters,
 }: ApplicationsContainerProps) {
@@ -33,6 +36,7 @@ export function ApplicationsContainer({
 
   return (
     <ApplicationsScreen
+      staffMemberId={staffMemberId}
       now={now}
       initialFilters={initialFilters}
       applications={applications}

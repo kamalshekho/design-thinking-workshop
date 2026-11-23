@@ -171,11 +171,16 @@ function Screens({
   return (
     <>
       {current === 'overview' && (
-        <OverviewContainer staffName={staffMember.name} now={now} />
+        <OverviewContainer
+          staffName={staffMember.name}
+          staffMemberId={staffMember.id}
+          now={now}
+        />
       )}
 
       {current === 'applications' && (
         <ApplicationsContainer
+          staffMemberId={staffMember.id}
           now={now}
           initialFilters={parseFiltersFromHash(window.location.hash)}
         />

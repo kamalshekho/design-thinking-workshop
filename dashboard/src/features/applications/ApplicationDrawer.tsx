@@ -31,13 +31,7 @@
  * one on screen.
  */
 
-import {
-  Check,
-  ChevronDown,
-  Copy01,
-  Mail01,
-  ShieldTick,
-} from '@untitledui/icons';
+import { Check, ChevronDown, Copy01, Mail01 } from '@untitledui/icons';
 import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -54,16 +48,19 @@ import type {
   Category,
   Owner,
 } from '@/domain/application';
-import {
-  APPLICATION_STATUSES,
-  INTERNAL_NOTES_MAX_LENGTH,
-} from '@/domain/application';
+import { APPLICATION_STATUSES } from '@/domain/application';
 import { cx } from '@/utils/cx';
 
+import {
+  ConsentSection,
+  MessageSection,
+  NotesSection,
+  SectionLabel,
+} from './ApplicationDetailSections';
 import { CONTROL_CLASSNAME } from './controlStyles';
 import { OwnerSelect } from './OwnerSelect';
 
-type ApplicationDrawerProps = {
+export type ApplicationDrawerProps = {
   application: Application;
   categories: readonly Category[];
   owners: readonly Owner[];
@@ -89,38 +86,6 @@ const SELECT_CLASSNAME = cx(
   CONTROL_CLASSNAME,
   'h-control cursor-pointer appearance-none py-0 pr-9 pl-9 font-medium',
 );
-
-/**
- * The eyebrow the page header already uses, reused so a section label inside
- * the drawer reads as the same rank of heading as everywhere else.
- */
-function SectionLabel({
-  children,
-  icon: Icon,
-  htmlFor,
-}: {
-  children: ReactNode;
-  icon?: typeof ShieldTick;
-  /** Given when the section *is* a field, so the label names the control. */
-  htmlFor?: string;
-}) {
-  const className =
-    'text-text-tertiary flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.06em] uppercase';
-  const content = (
-    <>
-      {Icon ? <Icon className="size-3.5" aria-hidden="true" /> : null}
-      {children}
-    </>
-  );
-
-  return htmlFor === undefined ? (
-    <h3 className={className}>{content}</h3>
-  ) : (
-    <label htmlFor={htmlFor} className={className}>
-      {content}
-    </label>
-  );
-}
 
 /** Status, Kategorie and Verfügbarkeit as one neutral strip; only the dot carries colour. */
 function MetaChip({
@@ -166,7 +131,6 @@ export function ApplicationDrawer({
     (entry) => entry.id === application.categoryId,
   );
   const notesId = `application-notes-${application.id}`;
-  const notesHintId = `${notesId}-hint`;
 
   /**
    * A drawer that opens over the list closes on Escape wherever focus sits —
@@ -326,69 +290,14 @@ export function ApplicationDrawer({
           </div>
         </section>
 
-        <section className="mt-7">
-          <SectionLabel>{de.detail.about}</SectionLabel>
-          {/* Content, not a field: a reading surface, and the drawer — not an
-              inner box — is what scrolls when the message runs long. */}
-          <div className="border-secondary bg-secondary text-primary mt-2.5 rounded-[10px] border px-4 py-3.5 text-sm leading-relaxed break-words whitespace-pre-line">
-            {application.about}
-          </div>
-        </section>
-
-        <section className="mt-7">
-          <SectionLabel htmlFor={notesId}>
-            {de.detail.internalNotes}
-          </SectionLabel>
-          <textarea
-            id={notesId}
-            aria-describedby={notesHintId}
-            value={notesValue}
-            maxLength={INTERNAL_NOTES_MAX_LENGTH}
-            placeholder={de.detail.notesPlaceholder}
-            onChange={(event) => {
-              onNotesChange(event.target.value);
-            }}
-            className={cx(
-              CONTROL_CLASSNAME,
-              // `text-quaternary`, not the reference Input's `text-placeholder`:
-              // the theme defines the former and never defined the latter.
-              'placeholder:text-quaternary mt-2.5 min-h-28 resize-y px-3 py-2.5 leading-relaxed',
-            )}
-          />
-          {/* The hint and the countdown are one description, so the field
-              names its limit to a screen reader as well as on screen. */}
-          <div
-            id={notesHintId}
-            className="text-tertiary mt-1 flex justify-between gap-3 text-xs"
-          >
-            <span>{de.detail.notesHint}</span>
-            <span className="tabular-nums">
-              {de.fields.remaining(
-                INTERNAL_NOTES_MAX_LENGTH - notesValue.length,
-              )}
-            </span>
-          </div>
-        </section>
-
-        <section className="border-secondary mt-7 border-t pt-5">
-          <SectionLabel icon={ShieldTick}>{de.detail.consent}</SectionLabel>
-          <dl className="mt-2.5 flex flex-col gap-1.5 text-[13px]">
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="text-tertiary">{de.detail.consentAt}</dt>
-              <dd className="text-secondary tabular-nums">
-                {new Date(application.consentAt).toLocaleDateString('de-DE')}
-              </dd>
-            </div>
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="text-tertiary">{de.detail.consentTextVersion}</dt>
-              <dd className="text-secondary tabular-nums">
-                {de.detail.consentTextVersionValue(
-                  application.consentTextVersion,
-                )}
-              </dd>
-            </div>
-          </dl>
-        </section>
+        <MessageSection application={application} className="mt-7" />
+        <NotesSection
+          id={notesId}
+          value={notesValue}
+          onChange={onNotesChange}
+          className="mt-7"
+        />
+        <ConsentSection application={application} className="mt-7" />
       </div>
 
       <div className="border-secondary bg-primary flex shrink-0 items-center gap-2 border-t px-6 py-4">

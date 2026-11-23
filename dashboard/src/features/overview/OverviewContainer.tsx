@@ -13,10 +13,16 @@ import { OverviewScreen } from './OverviewScreen';
 
 type OverviewContainerProps = {
   staffName: string;
+  /** The signed-in Staff member, whom "Übernehmen" on the phone page makes the Owner. */
+  staffMemberId: string;
   now: Date;
 };
 
-export function OverviewContainer({ staffName, now }: OverviewContainerProps) {
+export function OverviewContainer({
+  staffName,
+  staffMemberId,
+  now,
+}: OverviewContainerProps) {
   const applications = useApplications();
   const stateChanges = useStateChanges();
   const categories = useCategories();
@@ -26,6 +32,7 @@ export function OverviewContainer({ staffName, now }: OverviewContainerProps) {
   return (
     <OverviewScreen
       staffName={staffName}
+      staffMemberId={staffMemberId}
       now={now}
       applications={applications}
       stateChanges={stateChanges}

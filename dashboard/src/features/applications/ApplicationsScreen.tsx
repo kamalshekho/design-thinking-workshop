@@ -27,8 +27,9 @@ import type {
   Owner,
 } from '@/domain/application';
 import { APPLICATION_VIEWS, isDiscarded } from '@/domain/application';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 
-import { ApplicationDrawer } from './ApplicationDrawer';
+import { ApplicationDetail } from './ApplicationDetail';
 import { ApplicationsList } from './ApplicationsList';
 import { ApplicationsToolbar } from './ApplicationsToolbar';
 import { DiscardSelectedDialog } from './DiscardSelectedDialog';
@@ -39,6 +40,8 @@ import type { NotesField } from './useNotesDraft';
 import { notesValueFor } from './useNotesDraft';
 
 type ApplicationsScreenProps = {
+  /** The signed-in Staff member, whom "Übernehmen" on the phone page makes the Owner. */
+  staffMemberId: string;
   /** The reference date the relative ages and the "Lange offen" view are read against. */
   now: Date;
   /** The view/status a Übersicht metric card linked in with, if any. */
@@ -63,6 +66,7 @@ type ApplicationsScreenProps = {
 };
 
 export function ApplicationsScreen({
+  staffMemberId,
   now,
   initialFilters,
   applications,
@@ -110,6 +114,9 @@ export function ApplicationsScreen({
   );
 
   const { selected } = actions;
+
+  /** Below 640 px the rows have no checkbox, so a bulk button could never be pressed. */
+  const canSelectRows = useBreakpoint('sm');
 
   /**
    * Two empty states, the pair Kategorien and Aussortiert already draw: a
@@ -165,7 +172,7 @@ export function ApplicationsScreen({
         }
         toolbar={
           <>
-            <div className="flex min-w-0 flex-1 flex-wrap gap-3">
+            <div className="flex max-w-full flex-[1_0_auto] gap-3">
               <TabStrip
                 ariaLabel={de.applications.title}
                 views={APPLICATION_VIEWS}
@@ -191,21 +198,24 @@ export function ApplicationsScreen({
              * It discards rather than deletes (`A16`) — hence the label and
              * the archive icon, not a trash can.
              */}
-            <Button
-              size="md"
-              color="secondary"
-              iconLeading={Archive}
-              isDisabled={actions.selectedIds.size === 0}
-              onClick={actions.discardSelected}
-            >
-              {de.applications.discardSelected(actions.selectedIds.size)}
-            </Button>
+            {canSelectRows ? (
+              <Button
+                size="md"
+                color="secondary"
+                iconLeading={Archive}
+                isDisabled={actions.selectedIds.size === 0}
+                onClick={actions.discardSelected}
+              >
+                {de.applications.discardSelected(actions.selectedIds.size)}
+              </Button>
+            ) : null}
           </>
         }
       />
 
       {selected ? (
-        <ApplicationDrawer
+        <ApplicationDetail
+          staffMemberId={staffMemberId}
           application={selected}
           categories={categories}
           owners={owners}

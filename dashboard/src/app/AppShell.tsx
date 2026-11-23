@@ -33,7 +33,7 @@
  */
 
 import { Archive, BarChartSquare02, Inbox01, Tag01 } from '@untitledui/icons';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 import type { NavItemType } from '@/components/application/app-navigation/config';
 import {
@@ -113,14 +113,16 @@ export function AppShell({
       />
 
       {/*
-        The inset is `SIDEBAR_GUTTER`, not a Tailwind step: the sidebar is
-        fixed at that gutter and the spacer reserves gutter + width, so this
-        padding is exactly the gap between the sidebar's right edge and the
-        content. `px-8` made it 32px.
+        From 640 px the inset is `SIDEBAR_GUTTER`, not a Tailwind step: the
+        sidebar is fixed at that gutter and the spacer reserves gutter + width,
+        so this padding is exactly the gap between the sidebar's right edge and
+        the content. `px-8` made it 32px. Below 640 px it is 16 px, because 30
+        px on each side of a 360 px phone leaves a sixth of the width unused
+        (issue #109).
       */}
       <main
-        style={{ paddingInline: SIDEBAR_GUTTER }}
-        className="bg-bg-canvas flex min-w-0 flex-1 flex-col gap-3 py-6"
+        style={{ '--gutter': `${String(SIDEBAR_GUTTER)}px` } as CSSProperties}
+        className="bg-bg-canvas flex min-w-0 flex-1 flex-col gap-3 px-4 py-6 sm:px-(--gutter)"
       >
         {/*
          * The strip. Whatever is added here reads from the left and keeps

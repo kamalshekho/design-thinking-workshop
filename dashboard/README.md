@@ -178,6 +178,38 @@ four screens are walked against it, and each answers emptiness the same way
   line on the very bottom edge in the card's own colour — a semantic red on the
   overdue card. One grey rule says the same thing on all three.
 
+## Small screens
+
+The dashboard works from 320 px, with breakpoints at 640, 768, 1024 and 1280 px
+(issue #108). Only the work on one Application has a layout made for a phone:
+reading it, becoming its Owner and changing its Status (`A29`). Issue #109 chose
+the rest with a prototype, kept on the branch
+`prototype/109-dashboard-kleine-bildschirme`:
+
+- **the Applications table drops columns instead of scrolling.** Status shows
+  from 640 px, Eingegangen from 768, Zuständig from 1280 and Kategorie from 1536. A hidden column's value moves to a second line under the name. E-Mail
+  and Verfügbarkeit are not columns at all: with them the table scrolled even
+  at 1920 px, and the drawer shows both. A long name ends in an ellipsis;
+- **below 640 px a row has no checkbox and no row action**, and the bulk
+  buttons on Anfragen and Aussortiert are gone with them. Bulk work and
+  discarding happen at the desk;
+- **below 1024 px an Application opens as a page** (`ApplicationPage`) that
+  covers the list, not as the drawer. It leads with "Übernehmen" and the six
+  Statuses as buttons of at least 44 px. The message, the notes and the consent
+  record are the drawer's own sections (`ApplicationDetailSections`);
+- **between 1024 and 1279 px the sidebar starts as the 72 px rail.** The
+  button still opens it until the next reload. Below 1024 px the menu button
+  opens the full sidebar as before;
+- **below 768 px Kategorien shows a card per Category** (`CategoryCards`) with
+  every action of the table, each a 40 px button;
+- **below 640 px the screen inset is 16 px** instead of `SIDEBAR_GUTTER`;
+- **view tabs never wrap.** When they do not fit beside the search, the search
+  moves to the next line; below that the tabs scroll sideways.
+
+In tests, `src/test/setup.ts` answers `min-width` media queries against
+`window.innerWidth`, which starts at 1600 px. A test of a phone layout calls
+`setViewportWidth` from `src/test/viewport.ts` before it renders.
+
 ## Language
 
 The dashboard UI is German (`A6`) — staff members are German speakers. Code

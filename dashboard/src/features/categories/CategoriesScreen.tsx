@@ -245,7 +245,7 @@ export function CategoriesScreen({
 
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-3 max-md:flex-col max-md:items-stretch">
-          <div className="flex min-w-0 flex-1 flex-wrap gap-3">
+          <div className="flex max-w-full flex-[1_0_auto] gap-3">
             <TabStrip
               ariaLabel={de.categories.title}
               views={CATEGORY_VIEWS}

@@ -24,7 +24,7 @@ import type {
   Category,
   Owner,
 } from '@/domain/application';
-import { ApplicationDrawer } from '@/features/applications/ApplicationDrawer';
+import { ApplicationDetail } from '@/features/applications/ApplicationDetail';
 import { ApplicationsList } from '@/features/applications/ApplicationsList';
 import { DiscardSelectedDialog } from '@/features/applications/DiscardSelectedDialog';
 import { buildApplicationsHref } from '@/features/applications/filterApplications';
@@ -41,6 +41,8 @@ import {
 } from './selectOpenApplications';
 
 type OpenApplicationsPanelProps = {
+  /** The signed-in Staff member, whom "Übernehmen" on the phone page makes the Owner. */
+  staffMemberId: string;
   applications: readonly Application[];
   /** Changes one field of one Application, the same handler Anfragen gets. */
   onEdit: (id: string, change: ApplicationEdit) => void;
@@ -64,6 +66,7 @@ function hasActiveFilters(filters: OpenApplicationsFilters): boolean {
 }
 
 export function OpenApplicationsPanel({
+  staffMemberId,
   applications,
   onEdit,
   onDiscard,
@@ -207,7 +210,8 @@ export function OpenApplicationsPanel({
       )}
 
       {selected ? (
-        <ApplicationDrawer
+        <ApplicationDetail
+          staffMemberId={staffMemberId}
           application={selected}
           categories={categories}
           owners={owners}

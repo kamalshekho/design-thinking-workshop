@@ -7,7 +7,11 @@ import { de } from '@/content/de';
 import type { Application } from '@/domain/application';
 import { setDiscarded } from '@/domain/application';
 import type { NotesDraft } from '@/features/applications/useNotesDraft';
-import { mockCategories, mockOwners } from '@/test/mockApplications';
+import {
+  mockCategories,
+  mockOwners,
+  mockStaffMember,
+} from '@/test/mockApplications';
 
 import { OpenApplicationsPanel } from './OpenApplicationsPanel';
 
@@ -44,6 +48,7 @@ function Host({ initial }: { initial: Application[] }) {
   const [draft, setDraft] = useState<NotesDraft | null>(null);
   return (
     <OpenApplicationsPanel
+      staffMemberId={mockStaffMember.id}
       applications={applications}
       onEdit={(id, change) => {
         setApplications((current) =>
