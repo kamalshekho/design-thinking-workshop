@@ -1,0 +1,14 @@
+import { chromium } from 'playwright-core';
+import { readFileSync } from 'node:fs';
+const env = Object.fromEntries(readFileSync(process.argv[2], 'utf8').split('\n').filter(l => l.includes('=')).map(l => [l.slice(0, l.indexOf('=')), l.slice(l.indexOf('=') + 1)]));
+const b = await chromium.launch({ executablePath: process.env.HOME + '/.cache/ms-playwright/chromium-1254/chrome-linux64/chrome' });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
+const p = await ctx.newPage();
+await p.goto('http://localhost:8082/', { waitUntil: 'networkidle' });
+await p.getByRole('textbox', { name: 'E-Mail' }).fill('ashton.blackwell@ichbinhier.online');
+await p.getByRole('textbox', { name: 'Passwort' }).fill(env.STAFF_1_PASSWORD);
+await p.getByRole('button', { name: 'Anmelden' }).click();
+await p.waitForTimeout(2500);
+await ctx.storageState({ path: '/tmp/resp102/state.json' });
+console.log((await p.locator('body').ariaSnapshot()).split('\n').slice(0, 70).join('\n'));
+await b.close();

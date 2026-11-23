@@ -1,0 +1,1130 @@
+[
+  {
+    "app": "form",
+    "state": "01-start",
+    "width": 360,
+    "file": "form-01-start-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "02-category",
+    "width": 360,
+    "file": "form-02-category-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 2,
+    "smallTargetSample": [
+      "input#_r_7_._checkbox_n1o7h_7 \"\" 22x22",
+      "a \"Datenschutzerklärung\" 126x15"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "03-errors",
+    "width": 360,
+    "file": "form-03-errors-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 2,
+    "smallTargetSample": [
+      "input#_r_7_._checkbox_n1o7h_7 \"\" 22x22",
+      "a \"Datenschutzerklärung\" 126x15"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "04-thanks",
+    "width": 360,
+    "file": "form-04-thanks-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "05-community",
+    "width": 360,
+    "file": "form-05-community-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "06-supporting-member",
+    "width": 360,
+    "file": "form-06-supporting-member-360.png",
+    "vw": 367,
+    "docScrollWidth": 367,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "dashboard",
+    "state": "01-sign-in",
+    "width": 360,
+    "file": "dashboard-01-sign-in-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 1,
+    "smallTargetSample": [
+      "button#react-aria8995086253-_r_a_.text-fg-quaternary.hover:text-fg-quaternary_hover \"Passwort anzeigen oder verbergen\" 16x16"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "02-overview",
+    "width": 360,
+    "file": "dashboard-02-overview-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 250/1400"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 7,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria4733873192-_r_u_ \"Select\" 13x13",
+      "input#react-aria4733873192-_r_1c_ \"Select\" 13x13",
+      "input#react-aria4733873192-_r_1q_ \"Select\" 13x13",
+      "input#react-aria4733873192-_r_28_ \"Select\" 13x13",
+      "input#react-aria4733873192-_r_2m_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "03-applications",
+    "width": 360,
+    "file": "dashboard-03-applications-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 300/1553"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 11,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria8353496619-_r_10_ \"Select\" 13x13",
+      "input#react-aria8353496619-_r_1e_ \"Select\" 13x13",
+      "input#react-aria8353496619-_r_1s_ \"Select\" 13x13",
+      "input#react-aria8353496619-_r_2a_ \"Select\" 13x13",
+      "input#react-aria8353496619-_r_2o_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "04-application-drawer",
+    "width": 360,
+    "file": "dashboard-04-application-drawer-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 300/1553"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 12,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria8353496619-_r_10_ \"Select\" 13x13",
+      "input#react-aria8353496619-_r_1e_ \"Select\" 13x13",
+      "input#react-aria8353496619-_r_1s_ \"Select\" 13x13",
+      "input#react-aria8353496619-_r_2a_ \"Select\" 13x13",
+      "input#react-aria8353496619-_r_2o_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "05-filter",
+    "width": 360,
+    "file": "dashboard-05-filter-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 300/1553"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 12,
+    "smallTargetSample": [
+      "button.text-secondary.hover:text-primary \"Filter zurücksetzen\" 128x20",
+      "input \"Select All\" 13x13",
+      "input#react-aria6150799688-_r_10_ \"Select\" 13x13",
+      "input#react-aria6150799688-_r_1e_ \"Select\" 13x13",
+      "input#react-aria6150799688-_r_1s_ \"Select\" 13x13",
+      "input#react-aria6150799688-_r_2a_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "06-categories",
+    "width": 360,
+    "file": "dashboard-06-categories-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Reihenfolge Kategorie Im Formular Anfrag\" 300/631"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 4,
+    "smallTargetSample": [
+      "input \"Social Media im Formular anzeigen\" 13x13",
+      "input \"Redaktion / Öffentlichkeitsarbeit im For\" 13x13",
+      "input \"Rechtliche Unterstützung im Formular anz\" 13x13",
+      "input \"Etwas anderes im Formular anzeigen\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "07-category-dialog",
+    "width": 360,
+    "file": "dashboard-07-category-dialog-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Reihenfolge Kategorie Im Formular Anfrag\" 300/631"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 6,
+    "smallTargetSample": [
+      "input \"Social Media im Formular anzeigen\" 13x13",
+      "input \"Redaktion / Öffentlichkeitsarbeit im For\" 13x13",
+      "input \"Rechtliche Unterstützung im Formular anz\" 13x13",
+      "input \"Etwas anderes im Formular anzeigen\" 13x13",
+      "button#react-aria1529925848-_r_1t_ \"Dismiss\" 1x1",
+      "input \"\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "08-discarded",
+    "width": 360,
+    "file": "dashboard-08-discarded-360.png",
+    "vw": 360,
+    "docScrollWidth": 360,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 300/1287"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 3,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria5485723321-_r_12_ \"Select\" 13x13",
+      "input#react-aria5485723321-_r_1g_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "01-start",
+    "width": 768,
+    "file": "form-01-start-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "02-category",
+    "width": 768,
+    "file": "form-02-category-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 2,
+    "smallTargetSample": [
+      "input#_r_7_._checkbox_n1o7h_7 \"\" 22x22",
+      "a \"Datenschutzerklärung\" 126x15"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "03-errors",
+    "width": 768,
+    "file": "form-03-errors-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 2,
+    "smallTargetSample": [
+      "input#_r_7_._checkbox_n1o7h_7 \"\" 22x22",
+      "a \"Datenschutzerklärung\" 126x15"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "04-thanks",
+    "width": 768,
+    "file": "form-04-thanks-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "05-community",
+    "width": 768,
+    "file": "form-05-community-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "06-supporting-member",
+    "width": 768,
+    "file": "form-06-supporting-member-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "dashboard",
+    "state": "01-sign-in",
+    "width": 768,
+    "file": "dashboard-01-sign-in-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 1,
+    "smallTargetSample": [
+      "button#react-aria5108148363-_r_a_.text-fg-quaternary.hover:text-fg-quaternary_hover \"Passwort anzeigen oder verbergen\" 16x16"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "02-overview",
+    "width": 768,
+    "file": "dashboard-02-overview-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 658/1408"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 7,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria7275732539-_r_u_ \"Select\" 13x13",
+      "input#react-aria7275732539-_r_1c_ \"Select\" 13x13",
+      "input#react-aria7275732539-_r_1q_ \"Select\" 13x13",
+      "input#react-aria7275732539-_r_28_ \"Select\" 13x13",
+      "input#react-aria7275732539-_r_2m_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "03-applications",
+    "width": 768,
+    "file": "dashboard-03-applications-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 708/1561"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 11,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria6265475271-_r_10_ \"Select\" 13x13",
+      "input#react-aria6265475271-_r_1e_ \"Select\" 13x13",
+      "input#react-aria6265475271-_r_1s_ \"Select\" 13x13",
+      "input#react-aria6265475271-_r_2a_ \"Select\" 13x13",
+      "input#react-aria6265475271-_r_2o_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "04-application-drawer",
+    "width": 768,
+    "file": "dashboard-04-application-drawer-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 708/1561"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 12,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria6265475271-_r_10_ \"Select\" 13x13",
+      "input#react-aria6265475271-_r_1e_ \"Select\" 13x13",
+      "input#react-aria6265475271-_r_1s_ \"Select\" 13x13",
+      "input#react-aria6265475271-_r_2a_ \"Select\" 13x13",
+      "input#react-aria6265475271-_r_2o_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "05-filter",
+    "width": 768,
+    "file": "dashboard-05-filter-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 708/1561"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 12,
+    "smallTargetSample": [
+      "button.text-secondary.hover:text-primary \"Filter zurücksetzen\" 128x20",
+      "input \"Select All\" 13x13",
+      "input#react-aria7879742080-_r_10_ \"Select\" 13x13",
+      "input#react-aria7879742080-_r_1e_ \"Select\" 13x13",
+      "input#react-aria7879742080-_r_1s_ \"Select\" 13x13",
+      "input#react-aria7879742080-_r_2a_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "06-categories",
+    "width": 768,
+    "file": "dashboard-06-categories-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Reihenfolge Kategorie Im Formular Anfrag\" 708/719"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 4,
+    "smallTargetSample": [
+      "input \"Social Media im Formular anzeigen\" 13x13",
+      "input \"Redaktion / Öffentlichkeitsarbeit im For\" 13x13",
+      "input \"Rechtliche Unterstützung im Formular anz\" 13x13",
+      "input \"Etwas anderes im Formular anzeigen\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "07-category-dialog",
+    "width": 768,
+    "file": "dashboard-07-category-dialog-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Reihenfolge Kategorie Im Formular Anfrag\" 708/719"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 6,
+    "smallTargetSample": [
+      "input \"Social Media im Formular anzeigen\" 13x13",
+      "input \"Redaktion / Öffentlichkeitsarbeit im For\" 13x13",
+      "input \"Rechtliche Unterstützung im Formular anz\" 13x13",
+      "input \"Etwas anderes im Formular anzeigen\" 13x13",
+      "button#react-aria5270314783-_r_1t_ \"Dismiss\" 1x1",
+      "input \"\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "08-discarded",
+    "width": 768,
+    "file": "dashboard-08-discarded-768.png",
+    "vw": 768,
+    "docScrollWidth": 768,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 708/1317"
+    ],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 3,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria904866178-_r_12_ \"Select\" 13x13",
+      "input#react-aria904866178-_r_1g_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "01-start",
+    "width": 1024,
+    "file": "form-01-start-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "02-category",
+    "width": 1024,
+    "file": "form-02-category-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 2,
+    "smallTargetSample": [
+      "input#_r_7_._checkbox_n1o7h_7 \"\" 22x22",
+      "a \"Datenschutzerklärung\" 126x15"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "03-errors",
+    "width": 1024,
+    "file": "form-03-errors-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 2,
+    "smallTargetSample": [
+      "input#_r_7_._checkbox_n1o7h_7 \"\" 22x22",
+      "a \"Datenschutzerklärung\" 126x15"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "04-thanks",
+    "width": 1024,
+    "file": "form-04-thanks-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "05-community",
+    "width": 1024,
+    "file": "form-05-community-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "06-supporting-member",
+    "width": 1024,
+    "file": "form-06-supporting-member-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "dashboard",
+    "state": "01-sign-in",
+    "width": 1024,
+    "file": "dashboard-01-sign-in-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 1,
+    "smallTargetSample": [
+      "button#react-aria9221843504-_r_a_.text-fg-quaternary.hover:text-fg-quaternary_hover \"Passwort anzeigen oder verbergen\" 16x16"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "02-overview",
+    "width": 1024,
+    "file": "dashboard-02-overview-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 604/1408"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 7,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria6375392326-_r_u_ \"Select\" 13x13",
+      "input#react-aria6375392326-_r_1c_ \"Select\" 13x13",
+      "input#react-aria6375392326-_r_1q_ \"Select\" 13x13",
+      "input#react-aria6375392326-_r_28_ \"Select\" 13x13",
+      "input#react-aria6375392326-_r_2m_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "03-applications",
+    "width": 1024,
+    "file": "dashboard-03-applications-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 654/1561"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 11,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria4669496266-_r_10_ \"Select\" 13x13",
+      "input#react-aria4669496266-_r_1e_ \"Select\" 13x13",
+      "input#react-aria4669496266-_r_1s_ \"Select\" 13x13",
+      "input#react-aria4669496266-_r_2a_ \"Select\" 13x13",
+      "input#react-aria4669496266-_r_2o_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "04-application-drawer",
+    "width": 1024,
+    "file": "dashboard-04-application-drawer-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 654/1561"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 12,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria4669496266-_r_10_ \"Select\" 13x13",
+      "input#react-aria4669496266-_r_1e_ \"Select\" 13x13",
+      "input#react-aria4669496266-_r_1s_ \"Select\" 13x13",
+      "input#react-aria4669496266-_r_2a_ \"Select\" 13x13",
+      "input#react-aria4669496266-_r_2o_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "05-filter",
+    "width": 1024,
+    "file": "dashboard-05-filter-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 654/1561"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 12,
+    "smallTargetSample": [
+      "button.text-secondary.hover:text-primary \"Filter zurücksetzen\" 128x20",
+      "input \"Select All\" 13x13",
+      "input#react-aria8420871215-_r_10_ \"Select\" 13x13",
+      "input#react-aria8420871215-_r_1e_ \"Select\" 13x13",
+      "input#react-aria8420871215-_r_1s_ \"Select\" 13x13",
+      "input#react-aria8420871215-_r_2a_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "06-categories",
+    "width": 1024,
+    "file": "dashboard-06-categories-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Reihenfolge Kategorie Im Formular Anfrag\" 654/719"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 4,
+    "smallTargetSample": [
+      "input \"Social Media im Formular anzeigen\" 13x13",
+      "input \"Redaktion / Öffentlichkeitsarbeit im For\" 13x13",
+      "input \"Rechtliche Unterstützung im Formular anz\" 13x13",
+      "input \"Etwas anderes im Formular anzeigen\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "07-category-dialog",
+    "width": 1024,
+    "file": "dashboard-07-category-dialog-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Reihenfolge Kategorie Im Formular Anfrag\" 654/719"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 6,
+    "smallTargetSample": [
+      "input \"Social Media im Formular anzeigen\" 13x13",
+      "input \"Redaktion / Öffentlichkeitsarbeit im For\" 13x13",
+      "input \"Rechtliche Unterstützung im Formular anz\" 13x13",
+      "input \"Etwas anderes im Formular anzeigen\" 13x13",
+      "button#react-aria7465471065-_r_1t_ \"Dismiss\" 1x1",
+      "input \"\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "08-discarded",
+    "width": 1024,
+    "file": "dashboard-08-discarded-1024.png",
+    "vw": 1024,
+    "docScrollWidth": 1024,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 654/1317"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 3,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria9415372898-_r_12_ \"Select\" 13x13",
+      "input#react-aria9415372898-_r_1g_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "01-start",
+    "width": 1440,
+    "file": "form-01-start-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "02-category",
+    "width": 1440,
+    "file": "form-02-category-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 2,
+    "smallTargetSample": [
+      "input#_r_7_._checkbox_n1o7h_7 \"\" 22x22",
+      "a \"Datenschutzerklärung\" 126x15"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "03-errors",
+    "width": 1440,
+    "file": "form-03-errors-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 2,
+    "smallTargetSample": [
+      "input#_r_7_._checkbox_n1o7h_7 \"\" 22x22",
+      "a \"Datenschutzerklärung\" 126x15"
+    ]
+  },
+  {
+    "app": "form",
+    "state": "04-thanks",
+    "width": 1440,
+    "file": "form-04-thanks-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "05-community",
+    "width": 1440,
+    "file": "form-05-community-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "form",
+    "state": "06-supporting-member",
+    "width": 1440,
+    "file": "form-06-supporting-member-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 0,
+    "smallTargetSample": []
+  },
+  {
+    "app": "dashboard",
+    "state": "01-sign-in",
+    "width": 1440,
+    "file": "dashboard-01-sign-in-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 0,
+    "truncatedSample": [],
+    "smallTargets": 1,
+    "smallTargetSample": [
+      "button#react-aria4583724578-_r_a_.text-fg-quaternary.hover:text-fg-quaternary_hover \"Passwort anzeigen oder verbergen\" 16x16"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "02-overview",
+    "width": 1440,
+    "file": "dashboard-02-overview-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 1020/1408"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 7,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria8209537064-_r_u_ \"Select\" 13x13",
+      "input#react-aria8209537064-_r_1c_ \"Select\" 13x13",
+      "input#react-aria8209537064-_r_1q_ \"Select\" 13x13",
+      "input#react-aria8209537064-_r_28_ \"Select\" 13x13",
+      "input#react-aria8209537064-_r_2m_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "03-applications",
+    "width": 1440,
+    "file": "dashboard-03-applications-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 1070/1561"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 11,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria3392861995-_r_10_ \"Select\" 13x13",
+      "input#react-aria3392861995-_r_1e_ \"Select\" 13x13",
+      "input#react-aria3392861995-_r_1s_ \"Select\" 13x13",
+      "input#react-aria3392861995-_r_2a_ \"Select\" 13x13",
+      "input#react-aria3392861995-_r_2o_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "04-application-drawer",
+    "width": 1440,
+    "file": "dashboard-04-application-drawer-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 1070/1561"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 12,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria3392861995-_r_10_ \"Select\" 13x13",
+      "input#react-aria3392861995-_r_1e_ \"Select\" 13x13",
+      "input#react-aria3392861995-_r_1s_ \"Select\" 13x13",
+      "input#react-aria3392861995-_r_2a_ \"Select\" 13x13",
+      "input#react-aria3392861995-_r_2o_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "05-filter",
+    "width": 1440,
+    "file": "dashboard-05-filter-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 1070/1561"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 12,
+    "smallTargetSample": [
+      "button.text-secondary.hover:text-primary \"Filter zurücksetzen\" 128x20",
+      "input \"Select All\" 13x13",
+      "input#react-aria1963807178-_r_10_ \"Select\" 13x13",
+      "input#react-aria1963807178-_r_1e_ \"Select\" 13x13",
+      "input#react-aria1963807178-_r_1s_ \"Select\" 13x13",
+      "input#react-aria1963807178-_r_2a_ \"Select\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "06-categories",
+    "width": 1440,
+    "file": "dashboard-06-categories-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 4,
+    "smallTargetSample": [
+      "input \"Social Media im Formular anzeigen\" 13x13",
+      "input \"Redaktion / Öffentlichkeitsarbeit im For\" 13x13",
+      "input \"Rechtliche Unterstützung im Formular anz\" 13x13",
+      "input \"Etwas anderes im Formular anzeigen\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "07-category-dialog",
+    "width": 1440,
+    "file": "dashboard-07-category-dialog-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 6,
+    "smallTargetSample": [
+      "input \"Social Media im Formular anzeigen\" 13x13",
+      "input \"Redaktion / Öffentlichkeitsarbeit im For\" 13x13",
+      "input \"Rechtliche Unterstützung im Formular anz\" 13x13",
+      "input \"Etwas anderes im Formular anzeigen\" 13x13",
+      "button#react-aria4458557811-_r_1t_ \"Dismiss\" 1x1",
+      "input \"\" 13x13"
+    ]
+  },
+  {
+    "app": "dashboard",
+    "state": "08-discarded",
+    "width": 1440,
+    "file": "dashboard-08-discarded-1440.png",
+    "vw": 1440,
+    "docScrollWidth": 1440,
+    "pageOverflow": false,
+    "offenders": [],
+    "scrollers": [
+      "div.overflow-x-auto \"Name E-Mail Kategorie Verfügbarkeit Stat\" 1070/1317"
+    ],
+    "truncated": 1,
+    "truncatedSample": [
+      "p.text-tertiary.truncate \"ashton.blackwell@ichbinhier.online\""
+    ],
+    "smallTargets": 3,
+    "smallTargetSample": [
+      "input \"Select All\" 13x13",
+      "input#react-aria996405105-_r_12_ \"Select\" 13x13",
+      "input#react-aria996405105-_r_1g_ \"Select\" 13x13"
+    ]
+  }
+]
