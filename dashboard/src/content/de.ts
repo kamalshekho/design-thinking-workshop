@@ -553,5 +553,12 @@ export const de = {
     /** The footer button's visible label; `copyMail` stays its accessible name. */
     copyMailShort: 'Kopieren',
     copied: 'Kopiert',
+    /** The phone page's way back; `backLabel` is its accessible name. */
+    back: 'Anfragen',
+    backLabel: 'Zurück zu den Anfragen',
+    /** Makes the signed-in Staff member the Owner (`A29`). */
+    takeOver: 'Übernehmen',
+    ownedByYou: 'Du bist zuständig',
+    ownedBy: (name: string) => `Zuständig: ${name}`,
   },
 } as const;

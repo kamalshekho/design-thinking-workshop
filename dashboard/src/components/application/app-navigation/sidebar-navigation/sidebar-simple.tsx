@@ -10,15 +10,19 @@ import type { NavItemType } from '@/components/application/app-navigation/config
 import { AssociationWordmark } from '@/components/foundations/logo/association-wordmark';
 import { de } from '@/content/de';
 import type { StaffMember } from '@/domain/staffMember';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cx } from '@/utils/cx';
 
 /**
  * Copied from the Untitled UI clone
  * (`components/application/app-navigation/sidebar-navigation/sidebar-simple.tsx`).
  *
- * Two changes. The association wordmark stands in for `UntitledLogo`. The
+ * Three changes. The association wordmark stands in for `UntitledLogo`. The
  * clone's two search inputs are gone: the Anfragen screen has its own filter
- * bar, and a second search box that searches nothing is dead UI.
+ * bar, and a second search box that searches nothing is dead UI. And the
+ * sidebar starts as the 72 px rail between 1024 and 1279 px, where 280 px of
+ * labels would leave the tables too little room (issue #109). The button
+ * still opens or closes it; that choice holds until the next reload.
  */
 
 interface SidebarNavigationProps {
@@ -58,7 +62,12 @@ export const SidebarNavigationSimple = ({
   hideBorder = false,
   className,
 }: SidebarNavigationProps) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const lg = useBreakpoint('lg');
+  const xl = useBreakpoint('xl');
+  /** `null` until the Staff member presses the button; the width decides until then. */
+  const [chosen, setChosen] = useState<boolean | null>(null);
+  // Below 1024 px the same content sits in the menu drawer, which is never a rail.
+  const isCollapsed = lg && (chosen ?? !xl);
   const sidebarWidth = isCollapsed ? SLIM_SIDEBAR_WIDTH : MAIN_SIDEBAR_WIDTH;
 
   const content = (
@@ -82,7 +91,7 @@ export const SidebarNavigationSimple = ({
             isCollapsed ? de.navigation.expand : de.navigation.collapse
           }
           onPress={() => {
-            setIsCollapsed((collapsed) => !collapsed);
+            setChosen(!isCollapsed);
           }}
           className={cx(
             'peer/toggle group text-fg-quaternary outline-focus-ring hover:bg-primary_hover absolute top-4 left-[calc(100%-30px)] z-10 hidden size-9 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md transition-[left,transform] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100 lg:flex',

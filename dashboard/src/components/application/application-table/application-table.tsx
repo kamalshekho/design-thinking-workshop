@@ -36,6 +36,15 @@
  * The row whose Application the drawer shows carries a rail at its leading
  * edge (`activeId`), which is what ties the panel to a row without competing
  * with either the unread tint or the checkbox selection.
+ *
+ * A column appears only from the width where the row still fits without
+ * sideways scrolling (issue #109, measured in the prototype): Status from
+ * 640 px, Eingegangen from 768, Zuständig from 1280, Kategorie from 1536.
+ * What a hidden column would say moves into a second line under the name.
+ * E-Mail and Verfügbarkeit are not columns at all: with them the table
+ * scrolled even at 1920 px, and the drawer shows both. Below 640 px there is
+ * no checkbox and no row action either, because bulk work and discarding
+ * happen at the desk (`A29`).
  */
 
 import type { FC, Key, ReactNode } from 'react';
@@ -53,7 +62,8 @@ import { BadgeWithDot } from '@/components/base/badges/badges';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { de } from '@/content/de';
 import type { Application, Category, Owner } from '@/domain/application';
-import { isUnassigned, WEEKLY_TIMES } from '@/domain/application';
+import { isUnassigned } from '@/domain/application';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cx } from '@/utils/cx';
 import { daysSince } from '@/utils/dates';
 import { initialsOf } from '@/utils/initials';
@@ -193,12 +203,8 @@ export function ApplicationTable({
   >(
     () => ({
       name: (application) => application.name,
-      email: (application) => application.email,
       category: (application) =>
         categoryNames.get(application.categoryId) ?? application.categoryId,
-      // Sorted by the band's own order — 1–2 hours before "irregular" —
-      // rather than by its label or its spelling.
-      weeklyTime: (application) => WEEKLY_TIMES.indexOf(application.weeklyTime),
       status: (application) => de.statuses[application.status],
       submittedAt: (application) => new Date(application.submittedAt).getTime(),
       owner: (application) =>
@@ -228,7 +234,13 @@ export function ApplicationTable({
     });
   }, [applications, sortDescriptor, sortValues]);
 
-  const selectionEnabled = rowActions.length > 0;
+  const sm = useBreakpoint('sm');
+  const md = useBreakpoint('md');
+  const xl = useBreakpoint('xl');
+  const xxl = useBreakpoint('2xl');
+  const show = { status: sm, submittedAt: md, owner: xl, category: xxl };
+
+  const selectionEnabled = rowActions.length > 0 && sm;
 
   const [page, setPage] = useState(1);
 
@@ -308,30 +320,37 @@ export function ApplicationTable({
             allowsSorting
             className="w-full max-w-full md:min-w-52"
           />
-          <Table.Head id="email" label={de.columns.email} allowsSorting />
-          <Table.Head id="category" label={de.columns.category} allowsSorting />
-          <Table.Head
-            id="weeklyTime"
-            label={de.columns.weeklyTime}
-            allowsSorting
-          />
-          <Table.Head id="status" label={de.columns.status} allowsSorting />
-          <Table.Head
-            id="submittedAt"
-            label={de.columns.submittedAt}
-            allowsSorting
-          />
-          <Table.Head id="owner" label={de.columns.owner} allowsSorting />
+          {show.category ? (
+            <Table.Head
+              id="category"
+              label={de.columns.category}
+              allowsSorting
+            />
+          ) : null}
+          {show.status ? (
+            <Table.Head id="status" label={de.columns.status} allowsSorting />
+          ) : null}
+          {show.submittedAt ? (
+            <Table.Head
+              id="submittedAt"
+              label={de.columns.submittedAt}
+              allowsSorting
+            />
+          ) : null}
+          {show.owner ? (
+            <Table.Head id="owner" label={de.columns.owner} allowsSorting />
+          ) : null}
           {selectionEnabled ? (
             <Table.Head id="actions" aria-label={de.columns.actions} />
           ) : null}
         </Table.Header>
 
-        {/* `activeId` is read by the row renderer but is not part of `items`,
-            so the collection has to be told to re-render rows when it moves. */}
+        {/* `activeId` and the widths are read by the row renderer but are not
+            part of `items`, so the collection has to be told to re-render
+            rows when they change. */}
         <Table.Body
           items={pageItems}
-          dependencies={[activeId]}
+          dependencies={[activeId, sm, md, xl, xxl]}
           {...(emptyState === undefined
             ? {}
             : { renderEmptyState: () => emptyState })}
@@ -346,6 +365,22 @@ export function ApplicationTable({
               application.ownerId === null
                 ? null
                 : (owner?.name ?? application.ownerId);
+            const categoryName =
+              categoryNames.get(application.categoryId) ??
+              application.categoryId;
+            // The second line under the name: below 640 px the Status and the
+            // age, above it whichever of Kategorie and Zuständig has no
+            // column yet.
+            const secondLine = !show.status
+              ? `${de.statuses[application.status]} · ${de.application.daysAgo(
+                  daysSince(application.submittedAt, now),
+                )}`
+              : [
+                  show.category ? null : categoryName,
+                  show.owner ? null : ownerName,
+                ]
+                  .filter((part) => part !== null)
+                  .join(' · ');
 
             return (
               <Table.Row
@@ -379,85 +414,96 @@ export function ApplicationTable({
                         unassigned ? 'bg-fuut-purple' : 'bg-transparent',
                       )}
                     />
-                    {/* Initials repeat the name beside them — decorative. */}
-                    <span aria-hidden="true" className="flex">
+                    {/* Initials repeat the name beside them — decorative, and
+                        left out below 640 px, where the name needs the room. */}
+                    <span aria-hidden="true" className="hidden sm:flex">
                       <Avatar
                         size="sm"
                         initials={initialsOf(application.name)}
                       />
                     </span>
-                    <p
-                      className={cx(
-                        'text-sm whitespace-nowrap',
-                        unassigned
-                          ? 'text-primary font-semibold'
-                          : 'text-secondary font-medium',
+                    {/* Capped with an ellipsis, so a long name cannot push the
+                        other columns out of the card: half the screen on a
+                        phone, 11rem up to 1279 px, 13rem from there. */}
+                    <div className="max-w-[50vw] min-w-0 sm:max-w-44 xl:max-w-52">
+                      <p
+                        title={application.name}
+                        className={cx(
+                          'truncate text-sm',
+                          unassigned
+                            ? 'text-primary font-semibold'
+                            : 'text-secondary font-medium',
+                        )}
+                      >
+                        {application.name}
+                      </p>
+                      {secondLine === '' ? null : (
+                        <p className="text-tertiary truncate text-xs leading-5">
+                          {secondLine}
+                        </p>
                       )}
-                    >
-                      {application.name}
-                    </p>
+                    </div>
                   </div>
                 </Table.Cell>
 
-                <Table.Cell className="whitespace-nowrap">
-                  {application.email}
-                </Table.Cell>
+                {show.category ? (
+                  <Table.Cell className="whitespace-nowrap">
+                    {categoryName}
+                  </Table.Cell>
+                ) : null}
 
-                <Table.Cell className="whitespace-nowrap">
-                  {categoryNames.get(application.categoryId) ??
-                    application.categoryId}
-                </Table.Cell>
+                {show.status ? (
+                  <Table.Cell>
+                    <BadgeWithDot
+                      size="sm"
+                      type="pill-color"
+                      color={STATUS_BADGE_COLORS[application.status]}
+                      className={PLAIN_STATUS_BADGE_CLASSNAME}
+                    >
+                      {de.statuses[application.status]}
+                    </BadgeWithDot>
+                  </Table.Cell>
+                ) : null}
 
-                <Table.Cell className="whitespace-nowrap">
-                  {de.weeklyTimes[application.weeklyTime]}
-                </Table.Cell>
+                {show.submittedAt ? (
+                  <Table.Cell className="whitespace-nowrap tabular-nums">
+                    <time dateTime={application.submittedAt}>
+                      {dateFormatter.format(new Date(application.submittedAt))}
+                    </time>
+                    <span className="text-tertiary block text-xs leading-5">
+                      {de.application.daysAgo(
+                        daysSince(application.submittedAt, now),
+                      )}
+                    </span>
+                  </Table.Cell>
+                ) : null}
 
-                <Table.Cell>
-                  <BadgeWithDot
-                    size="sm"
-                    type="pill-color"
-                    color={STATUS_BADGE_COLORS[application.status]}
-                    className={PLAIN_STATUS_BADGE_CLASSNAME}
-                  >
-                    {de.statuses[application.status]}
-                  </BadgeWithDot>
-                </Table.Cell>
-
-                <Table.Cell className="whitespace-nowrap tabular-nums">
-                  <time dateTime={application.submittedAt}>
-                    {dateFormatter.format(new Date(application.submittedAt))}
-                  </time>
-                  <span className="text-tertiary block text-xs leading-5">
-                    {de.application.daysAgo(
-                      daysSince(application.submittedAt, now),
-                    )}
-                  </span>
-                </Table.Cell>
-
-                <Table.Cell>
-                  <div className="flex items-center gap-2.5">
-                    {/* Initials when an Owner is assigned, and the empty-user
+                {show.owner ? (
+                  <Table.Cell>
+                    <div className="flex items-center gap-2.5">
+                      {/* Initials when an Owner is assigned, and the empty-user
                         glyph when nobody is. There is no photo to show: the
                         wire carries none (`API.md`). `alt=""` either way — the
                         name is right beside it, so a screen reader would only
                         hear it twice. */}
-                    <Avatar
-                      size="xs"
-                      alt=""
-                      initials={
-                        ownerName === null ? undefined : initialsOf(ownerName)
-                      }
-                    />
-                    <span
-                      className={cx(
-                        'whitespace-nowrap',
-                        ownerName === null && 'text-quaternary',
-                      )}
-                    >
-                      {ownerName ?? de.application.unassigned}
-                    </span>
-                  </div>
-                </Table.Cell>
+                      <Avatar
+                        size="xs"
+                        alt=""
+                        initials={
+                          ownerName === null ? undefined : initialsOf(ownerName)
+                        }
+                      />
+                      <span
+                        className={cx(
+                          'whitespace-nowrap',
+                          ownerName === null && 'text-quaternary',
+                        )}
+                      >
+                        {ownerName ?? de.application.unassigned}
+                      </span>
+                    </div>
+                  </Table.Cell>
+                ) : null}
 
                 {selectionEnabled ? (
                   <Table.Cell>

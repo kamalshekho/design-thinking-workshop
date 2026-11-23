@@ -10,7 +10,9 @@ import {
   createMockApplications,
   mockCategories,
   mockOwners,
+  mockStaffMember,
 } from '@/test/mockApplications';
+import { setViewportWidth } from '@/test/viewport';
 
 import { ApplicationsScreen } from './ApplicationsScreen';
 import type { NotesDraft } from './useNotesDraft';
@@ -31,6 +33,7 @@ function Host({ initial }: { initial?: Application[] } = {}) {
 
   return (
     <ApplicationsScreen
+      staffMemberId={mockStaffMember.id}
       now={NOW}
       applications={applications}
       onEdit={(id, change) => {
@@ -246,5 +249,51 @@ describe('ApplicationsScreen', () => {
     await user.click(screen.getByRole('columnheader', { name: 'Eingegangen' }));
 
     expect(rowIds()).toEqual(newestFirst.toReversed());
+  });
+
+  describe('below 1024 px (issue #109)', () => {
+    it('opens an Application as a page with Übernehmen and the Status first', async () => {
+      setViewportWidth(360);
+      const user = userEvent.setup();
+      render(<Host />);
+
+      await user.click(
+        within(screen.getByRole('grid')).getByText('Mara Weber'),
+      );
+      const page = screen.getByRole('region', { name: de.detail.title });
+
+      await user.click(
+        within(page).getByRole('button', { name: de.detail.takeOver }),
+      );
+      expect(within(page).getByText(de.detail.ownedByYou)).toBeInTheDocument();
+      expect(
+        within(page).queryByRole('button', { name: de.detail.takeOver }),
+      ).not.toBeInTheDocument();
+
+      await user.click(
+        within(page).getByRole('radio', { name: de.statuses.IN_REVIEW }),
+      );
+      expect(
+        within(page).getByRole('radio', { name: de.statuses.IN_REVIEW }),
+      ).toHaveAttribute('aria-checked', 'true');
+
+      await user.click(
+        within(page).getByRole('button', { name: de.detail.backLabel }),
+      );
+      expect(
+        screen.queryByRole('region', { name: de.detail.title }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('offers no bulk discard below 640 px, where rows have no checkbox', () => {
+      setViewportWidth(360);
+      render(<Host />);
+
+      expect(
+        screen.queryByRole('button', {
+          name: de.applications.discardSelected(0),
+        }),
+      ).not.toBeInTheDocument();
+    });
   });
 });

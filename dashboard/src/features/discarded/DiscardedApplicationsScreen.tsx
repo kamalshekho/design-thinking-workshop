@@ -42,6 +42,7 @@ import { de } from '@/content/de';
 import type { Application, Category, Owner } from '@/domain/application';
 import { matchesSearch } from '@/features/applications/filterApplications';
 import { SearchField } from '@/features/applications/SearchField';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useSearchShortcut } from '@/hooks/use-search-shortcut';
 
 type DiscardedApplicationsScreenProps = {
@@ -79,6 +80,7 @@ export function DiscardedApplicationsScreen({
    * behind it cannot be ticked while the dialog holds focus.
    */
   const [eraseConfirmOpen, setEraseConfirmOpen] = useState(false);
+  const canSelectRows = useBreakpoint('sm');
 
   const searchRef = useRef<HTMLInputElement>(null);
   useSearchShortcut(searchRef);
@@ -155,36 +157,41 @@ export function DiscardedApplicationsScreen({
             <SearchField ref={searchRef} value={search} onChange={setSearch} />
           </div>
 
-          {/*
-           * Wiederherstellen leads: it is the reason this screen exists, and
-           * the irreversible action sits after it in the danger colour, so the
-           * two never read as a pair of equals.
-           */}
-          <Button
-            size="md"
-            color="secondary"
-            iconLeading={FlipBackward}
-            isDisabled={selectedIds.size === 0}
-            onClick={() => {
-              restore(selectedIds);
-            }}
-          >
-            {de.discarded.restoreSelected(selectedIds.size)}
-          </Button>
+          {/* Below 640 px the rows have no checkbox to act on (`A29`). */}
+          {canSelectRows ? (
+            <>
+              {/*
+               * Wiederherstellen leads: it is the reason this screen exists, and
+               * the irreversible action sits after it in the danger colour, so the
+               * two never read as a pair of equals.
+               */}
+              <Button
+                size="md"
+                color="secondary"
+                iconLeading={FlipBackward}
+                isDisabled={selectedIds.size === 0}
+                onClick={() => {
+                  restore(selectedIds);
+                }}
+              >
+                {de.discarded.restoreSelected(selectedIds.size)}
+              </Button>
 
-          <Button
-            size="md"
-            color="secondary-destructive"
-            iconLeading={Trash01}
-            isDisabled={selectedIds.size === 0}
-            onClick={() => {
-              if (selectedIds.size > 0) {
-                setEraseConfirmOpen(true);
-              }
-            }}
-          >
-            {de.discarded.eraseSelected(selectedIds.size)}
-          </Button>
+              <Button
+                size="md"
+                color="secondary-destructive"
+                iconLeading={Trash01}
+                isDisabled={selectedIds.size === 0}
+                onClick={() => {
+                  if (selectedIds.size > 0) {
+                    setEraseConfirmOpen(true);
+                  }
+                }}
+              >
+                {de.discarded.eraseSelected(selectedIds.size)}
+              </Button>
+            </>
+          ) : null}
         </div>
 
         <ApplicationTable

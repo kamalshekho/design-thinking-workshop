@@ -11,6 +11,7 @@ import {
   createMockApplications,
   mockCategories,
 } from '@/test/mockApplications';
+import { setViewportWidth } from '@/test/viewport';
 
 import { CategoriesScreen } from './CategoriesScreen';
 
@@ -285,5 +286,26 @@ describe('CategoriesScreen', () => {
         name: de.categories.editOne('Veranstaltungen'),
       }),
     ).not.toBeInTheDocument();
+  });
+
+  it('shows a card per Category below 768 px, with every action of the table (issue #109)', async () => {
+    setViewportWidth(360);
+    const user = userEvent.setup();
+    render(<Host />);
+
+    expect(screen.queryByRole('grid')).not.toBeInTheDocument();
+    for (const name of [
+      de.categories.editOne('Social Media'),
+      de.categories.deleteOne('Social Media'),
+      de.categories.moveDownOne('Social Media'),
+    ]) {
+      expect(screen.getByRole('button', { name })).toBeInTheDocument();
+    }
+
+    const toggle = screen.getByRole('switch', {
+      name: de.categories.toggleOne('Social Media'),
+    });
+    await user.click(toggle);
+    expect(toggle).not.toBeChecked();
   });
 });
