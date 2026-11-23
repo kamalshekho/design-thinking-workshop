@@ -1,0 +1,21 @@
+# Hand-assigned comment classes, one letter per block, in the order dump.mjs prints them.
+# W = explains why, R = repeats the code, D = repeats a document (README, API.md),
+# F = reference or status only (e.g. "DESIGN.md section 17"), H = provenance header of a copy,
+# X = directive.
+#
+# Reproduce from the repository root, with each app's node_modules installed:
+#   node docs/research/unkraut-inventar/count.mjs frontend blocks > /tmp/frontend-blocks.json
+#   node docs/research/unkraut-inventar/count.mjs dashboard blocks > /tmp/dashboard-blocks.json
+#   node docs/research/unkraut-inventar/dump.mjs /tmp/frontend-blocks.json '^frontend/'
+#   node docs/research/unkraut-inventar/dump.mjs /tmp/dashboard-blocks.json '^dashboard/' 60 7 own
+#   node docs/research/unkraut-inventar/dump.mjs /tmp/dashboard-blocks.json '^dashboard/' 40 11 copy
+#   node docs/research/unkraut-inventar/tally.mjs <blocks.json> <filter> <n> <seed> <mode> <classes> [<pop blocks> <pop lines>]
+
+frontend all (105 blocks):
+W,W,D,D,W,R,W,D,W,W,D,W,W,W,W,R,W,W,W,W,W,D,D,D,D,W,W,W,D,F,F,F,F,W,F,F,W,F,F,F,F,F,W,W,W,F,W,F,F,F,W,W,D,D,D,W,W,W,R,W,W,D,W,W,W,W,W,W,W,W,R,R,R,R,R,R,W,W,W,W,R,W,W,W,W,D,F,R,R,W,R,W,W,W,W,W,W,F,F,W,W,W,X,W,W
+
+dashboard own code, sample 60 of 343, seed 7:
+W,W,F,W,W,D,W,W,W,W,R,R,W,W,W,W,W,W,W,W,W,R,R,R,W,W,W,W,W,W,W,W,R,R,F,R,W,W,W,W,W,R,W,R,R,W,W,R,W,W,W,W,W,W,R,R,W,R,W,W
+
+dashboard copies, sample 40 of 282, seed 11:
+R,R,R,R,H,W,W,R,W,W,W,W,W,W,W,R,R,R,R,R,R,H,R,R,R,R,H,R,W,R,R,H,R,W,R,R,W,W,R,R
