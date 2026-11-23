@@ -21,10 +21,10 @@ type TabStripProps<TView extends string> = {
 };
 
 const TAB_CLASSNAME =
-  'text-tertiary outline-focus-ring hover:text-secondary z-10 border-b-2 border-transparent px-1 pt-2 pb-3 text-sm font-semibold transition duration-150 ease-linear focus-visible:outline-2';
+  'text-tertiary outline-focus-ring hover:text-secondary z-10 shrink-0 border-b-2 whitespace-nowrap border-transparent px-1 pt-2 pb-3 text-sm font-semibold transition duration-150 ease-linear focus-visible:outline-2';
 
 const SELECTED_TAB_CLASSNAME =
-  'border-fuut-purple text-primary outline-focus-ring z-10 border-b-2 px-1 pt-2 pb-3 text-sm font-semibold focus-visible:outline-2';
+  'border-fuut-purple text-primary outline-focus-ring z-10 shrink-0 border-b-2 whitespace-nowrap px-1 pt-2 pb-3 text-sm font-semibold focus-visible:outline-2';
 
 export function TabStrip<TView extends string>({
   ariaLabel,
@@ -38,7 +38,7 @@ export function TabStrip<TView extends string>({
     <div
       role="tablist"
       aria-label={ariaLabel}
-      className="before:bg-border-secondary relative flex gap-3 before:absolute before:inset-x-0 before:bottom-0 before:h-px"
+      className="before:bg-border-secondary relative flex max-w-full gap-3 overflow-x-auto before:absolute before:inset-x-0 before:bottom-0 before:h-px"
     >
       {views.map((view) => {
         const selected = view === current;
