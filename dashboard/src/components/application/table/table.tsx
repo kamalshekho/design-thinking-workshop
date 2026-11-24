@@ -24,6 +24,7 @@ import type {
   CellProps as AriaCellProps,
   ColumnProps as AriaColumnProps,
   RowProps as AriaRowProps,
+  TableBodyProps as AriaTableBodyProps,
   TableHeaderProps as AriaTableHeaderProps,
   TableProps as AriaTableProps,
 } from 'react-aria-components';
@@ -51,9 +52,11 @@ import { cx } from '@/utils/cx';
  * pulled `base/dropdown` and `base/radio-buttons` into the application.
  */
 
-const TableContext = createContext<{ size: 'sm' | 'md' }>({ size: 'md' });
+const TableContext = createContext<{ size: 'sm' | 'md' } | undefined>(
+  undefined,
+);
 
-const TableCardRoot = ({
+export const TableCardRoot = ({
   children,
   className,
   size = 'md',
@@ -83,14 +86,14 @@ interface TableCardHeaderProps {
   className?: string;
 }
 
-const TableCardHeader = ({
+export const TableCardHeader = ({
   title,
   badge,
   description,
   contentTrailing,
   className,
 }: TableCardHeaderProps) => {
-  const { size } = useContext(TableContext);
+  const size = useContext(TableContext)?.size ?? 'md';
 
   return (
     <div
@@ -127,7 +130,7 @@ interface TableRootProps
   size?: 'sm' | 'md';
 }
 
-const TableRoot = ({ className, size = 'md', ...props }: TableRootProps) => {
+export const Table = ({ className, size = 'md', ...props }: TableRootProps) => {
   const context = useContext(TableContext);
 
   return (
@@ -146,7 +149,12 @@ const TableRoot = ({ className, size = 'md', ...props }: TableRootProps) => {
     </TableContext.Provider>
   );
 };
-TableRoot.displayName = 'Table';
+Table.displayName = 'Table';
+
+export const TableBody = <T extends object>(props: AriaTableBodyProps<T>) => {
+  return <AriaTableBody {...props} />;
+};
+TableBody.displayName = 'TableBody';
 
 interface TableHeaderProps<T extends object>
   extends
@@ -159,7 +167,7 @@ interface TableHeaderProps<T extends object>
   size?: 'sm' | 'md';
 }
 
-const TableHeader = <T extends object>({
+export const TableHeader = <T extends object>({
   columns,
   children,
   bordered = true,
@@ -170,7 +178,7 @@ const TableHeader = <T extends object>({
   const context = useContext(TableContext);
   const { selectionBehavior, selectionMode } = useTableOptions();
 
-  const size = sizeProp ?? context.size;
+  const size = sizeProp ?? context?.size ?? 'md';
 
   return (
     <AriaTableHeader
@@ -220,7 +228,7 @@ interface TableHeadProps
   tooltip?: string;
 }
 
-const TableHead = ({
+export const TableHead = ({
   className,
   tooltip,
   label,
@@ -293,7 +301,7 @@ interface TableRowProps<T extends object>
   size?: 'sm' | 'md';
 }
 
-const TableRow = <T extends object>({
+export const TableRow = <T extends object>({
   columns,
   children,
   className,
@@ -304,7 +312,7 @@ const TableRow = <T extends object>({
   const context = useContext(TableContext);
   const { selectionBehavior } = useTableOptions();
 
-  const size = sizeProp ?? context.size;
+  const size = sizeProp ?? context?.size ?? 'md';
 
   return (
     <AriaRow
@@ -352,7 +360,7 @@ interface TableCellProps
   size?: 'sm' | 'md';
 }
 
-const TableCell = ({
+export const TableCell = ({
   className,
   children,
   size: sizeProp,
@@ -361,7 +369,7 @@ const TableCell = ({
   const context = useContext(TableContext);
   const { selectionBehavior } = useTableOptions();
 
-  const size = sizeProp ?? context.size;
+  const size = sizeProp ?? context?.size ?? 'md';
 
   return (
     <AriaCell
@@ -383,18 +391,3 @@ const TableCell = ({
   );
 };
 TableCell.displayName = 'TableCell';
-
-const TableCard = {
-  Root: TableCardRoot,
-  Header: TableCardHeader,
-};
-
-const Table = Object.assign(TableRoot, {
-  Body: AriaTableBody,
-  Cell: TableCell,
-  Head: TableHead,
-  Header: TableHeader,
-  Row: TableRow,
-});
-
-export { Table, TableCard };

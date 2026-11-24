@@ -55,7 +55,15 @@ import {
   STATUS_BADGE_COLORS,
 } from '@/components/application/application-status/statusStyles';
 import { PaginationCardDefault } from '@/components/application/pagination/pagination';
-import { Table, TableCard } from '@/components/application/table/table';
+import {
+  Table,
+  TableBody,
+  TableCardRoot,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/application/table/table';
 import { Avatar } from '@/components/base/avatar/avatar';
 import { BadgeWithDot } from '@/components/base/badges/badges';
 import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
@@ -275,7 +283,7 @@ export function ApplicationTable({
   );
 
   return (
-    <TableCard.Root>
+    <TableCardRoot>
       <Table
         aria-label={ariaLabel}
         selectionMode={selectionEnabled ? 'multiple' : 'none'}
@@ -312,8 +320,8 @@ export function ApplicationTable({
             }
           : {})}
       >
-        <Table.Header>
-          <Table.Head
+        <TableHeader>
+          <TableHead
             id="name"
             label={de.columns.name}
             isRowHeader
@@ -321,34 +329,34 @@ export function ApplicationTable({
             className="w-full max-w-full md:min-w-52"
           />
           {show.category ? (
-            <Table.Head
+            <TableHead
               id="category"
               label={de.columns.category}
               allowsSorting
             />
           ) : null}
           {show.status ? (
-            <Table.Head id="status" label={de.columns.status} allowsSorting />
+            <TableHead id="status" label={de.columns.status} allowsSorting />
           ) : null}
           {show.submittedAt ? (
-            <Table.Head
+            <TableHead
               id="submittedAt"
               label={de.columns.submittedAt}
               allowsSorting
             />
           ) : null}
           {show.owner ? (
-            <Table.Head id="owner" label={de.columns.owner} allowsSorting />
+            <TableHead id="owner" label={de.columns.owner} allowsSorting />
           ) : null}
           {selectionEnabled ? (
-            <Table.Head id="actions" aria-label={de.columns.actions} />
+            <TableHead id="actions" aria-label={de.columns.actions} />
           ) : null}
-        </Table.Header>
+        </TableHeader>
 
         {/* `activeId` and the widths are read by the row renderer but are not
             part of `items`, so the collection has to be told to re-render
             rows when they change. */}
-        <Table.Body
+        <TableBody
           items={pageItems}
           dependencies={[activeId, sm, md, xl, xxl]}
           {...(emptyState === undefined
@@ -383,7 +391,7 @@ export function ApplicationTable({
                   .join(' · ');
 
             return (
-              <Table.Row
+              <TableRow
                 id={application.id}
                 className={cx(
                   onSelect && 'cursor-pointer',
@@ -399,7 +407,7 @@ export function ApplicationTable({
                   application.id === activeId && 'row-rail',
                 )}
               >
-                <Table.Cell>
+                <TableCell>
                   <div className="flex items-center gap-3">
                     {/*
                      * Decorative: the Zuständigkeit column already says
@@ -444,16 +452,16 @@ export function ApplicationTable({
                       )}
                     </div>
                   </div>
-                </Table.Cell>
+                </TableCell>
 
                 {show.category ? (
-                  <Table.Cell className="whitespace-nowrap">
+                  <TableCell className="whitespace-nowrap">
                     {categoryName}
-                  </Table.Cell>
+                  </TableCell>
                 ) : null}
 
                 {show.status ? (
-                  <Table.Cell>
+                  <TableCell>
                     <BadgeWithDot
                       size="sm"
                       type="pill-color"
@@ -462,11 +470,11 @@ export function ApplicationTable({
                     >
                       {de.statuses[application.status]}
                     </BadgeWithDot>
-                  </Table.Cell>
+                  </TableCell>
                 ) : null}
 
                 {show.submittedAt ? (
-                  <Table.Cell className="whitespace-nowrap tabular-nums">
+                  <TableCell className="whitespace-nowrap tabular-nums">
                     <time dateTime={application.submittedAt}>
                       {dateFormatter.format(new Date(application.submittedAt))}
                     </time>
@@ -475,11 +483,11 @@ export function ApplicationTable({
                         daysSince(application.submittedAt, now),
                       )}
                     </span>
-                  </Table.Cell>
+                  </TableCell>
                 ) : null}
 
                 {show.owner ? (
-                  <Table.Cell>
+                  <TableCell>
                     <div className="flex items-center gap-2.5">
                       {/* Initials when an Owner is assigned, and the empty-user
                         glyph when nobody is. There is no photo to show: the
@@ -502,11 +510,11 @@ export function ApplicationTable({
                         {ownerName ?? de.application.unassigned}
                       </span>
                     </div>
-                  </Table.Cell>
+                  </TableCell>
                 ) : null}
 
                 {selectionEnabled ? (
-                  <Table.Cell>
+                  <TableCell>
                     {/* 8px between adjacent icon buttons, so a row with two
                         actions cannot be mis-clicked into the wrong one. */}
                     <div className="flex items-center gap-2">
@@ -534,12 +542,12 @@ export function ApplicationTable({
                         </button>
                       ))}
                     </div>
-                  </Table.Cell>
+                  </TableCell>
                 ) : null}
-              </Table.Row>
+              </TableRow>
             );
           }}
-        </Table.Body>
+        </TableBody>
       </Table>
 
       {/* No pager under an empty table: with no rows it reads
@@ -562,7 +570,7 @@ export function ApplicationTable({
           }}
         />
       )}
-    </TableCard.Root>
+    </TableCardRoot>
   );
 }
 
