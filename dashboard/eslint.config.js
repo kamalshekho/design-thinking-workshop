@@ -87,7 +87,7 @@ export default tseslint.config(
   /* Typed linting needs a TypeScript program, which plain JS config files are
      not part of. */
   {
-    files: ['**/*.js'],
+    files: ['**/*.{js,mjs}'],
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: {
       globals: globals.node,
