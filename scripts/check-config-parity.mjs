@@ -44,6 +44,7 @@ const SHARED_TOOLS = [
   'jscpd',
   'eslint-plugin-sonarjs',
   '@eslint-community/eslint-plugin-eslint-comments',
+  'eslint-plugin-check-file',
 ];
 
 const APPS = ['frontend', 'dashboard'];

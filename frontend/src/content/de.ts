@@ -196,15 +196,15 @@ export const de = {
    * placeholders rather than the association's details.
    */
   footer: {
-    kontakt: {
+    contact: {
       title: 'Kontakt',
       talkToUs: 'Sprich mit uns',
       address: ['Musterstraße 1', '12345 Musterstadt', 'kontakt@example.org'],
     },
-    rechtliches: {
+    legal: {
       title: 'Rechtliches',
-      impressum: 'Impressum',
-      datenschutz: 'Datenschutz',
+      imprint: 'Impressum',
+      privacy: 'Datenschutz',
     },
     donateLabel: 'SPENDE HIER',
     copyright: 'Copyright 2026 Musterverein e.V. – Alle Rechte vorbehalten.',

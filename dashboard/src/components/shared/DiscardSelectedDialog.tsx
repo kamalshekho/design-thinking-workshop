@@ -15,7 +15,7 @@
 
 import { Archive } from '@untitledui/icons';
 
-import { ConfirmDialog } from '@/components/shared/confirm-dialog';
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { de } from '@/content/de';
 
 type DiscardSelectedDialogProps = {

@@ -236,6 +236,7 @@ function CategoriesGrid({
                       className="bg-tertiary block h-1 w-20 overflow-hidden rounded-full"
                     >
                       <span
+                        // eslint-disable-next-line no-restricted-syntax -- bar width is computed from runtime usage data
                         style={{ width: `${String((count / scale) * 100)}%` }}
                         className="bg-fuut-purple/60 block h-full rounded-full transition-[width] duration-200 ease-out"
                       />

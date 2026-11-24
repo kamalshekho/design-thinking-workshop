@@ -35,15 +35,15 @@ import { useMemo, useRef, useState } from 'react';
 import type { ApplicationRowAction } from '@/components/application/application-table/application-table';
 import { ApplicationTable } from '@/components/application/application-table/application-table';
 import { Button } from '@/components/base/buttons/button';
-import { ConfirmDialog } from '@/components/shared/confirm-dialog';
-import { EmptyState } from '@/components/shared/empty-state';
-import { PageHeader } from '@/components/shared/page-header';
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { SearchField } from '@/components/shared/SearchField';
 import { de } from '@/content/de';
 import type { Application, Owner } from '@/domain/application';
 import type { Category } from '@/domain/category';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { useSearchShortcut } from '@/hooks/use-search-shortcut';
+import { useSearchShortcut } from '@/hooks/useSearchShortcut';
 import { matchesSearch } from '@/utils/filterApplications';
 
 type DiscardedApplicationsScreenProps = {

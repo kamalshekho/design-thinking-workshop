@@ -20,13 +20,21 @@ export function sharedConfig({
   simpleImportSort,
   sonarjs,
   eslintComments,
+  checkFile,
   globals,
   tsconfigRootDir,
   extraIgnores = [],
   extraTestFiles = [],
-  extraRestrictedSyntax = [],
   tryStatementIgnores = [],
+  styleBanIgnores = [],
+  filenameNamingIgnores = [],
 }) {
+  const componentStyleBanIgnores = styleBanIgnores.filter(
+    (pattern) =>
+      pattern.startsWith('src/features/') ||
+      pattern.startsWith('src/components/'),
+  );
+
   return tseslint.config(
     {
       ignores: ['dist/**', 'coverage/**', ...extraIgnores],
@@ -62,24 +70,95 @@ export function sharedConfig({
           { assertionStyle: 'never' },
         ],
 
-        'no-restricted-syntax': [
+        // A default export makes a module harder to find by name and lets the
+        // same export be imported under different names (docs/STANDARD.md).
+        'no-restricted-exports': [
           'error',
-          ...reExportBan,
-          ...extraRestrictedSyntax,
+          { restrictDefaultExports: { direct: true } },
         ],
+
+        'no-restricted-syntax': ['error', ...reExportBan, styleBan],
       },
     },
 
     /* Only the transport layer throws and catches (docs/STANDARD.md). */
     {
       files: ['src/features/**/*.{ts,tsx}', 'src/components/**/*.{ts,tsx}'],
-      ignores: [...tryStatementIgnores],
+      ignores: [...tryStatementIgnores, ...styleBanIgnores],
       rules: {
         'no-restricted-syntax': [
           'error',
           ...reExportBan,
-          ...extraRestrictedSyntax,
+          styleBan,
           tryStatementBan,
+        ],
+      },
+    },
+
+    /* Third-party copies keep inline styles while still obeying the re-export
+       and transport-layer rules (docs/STANDARD.md). */
+    ...(styleBanIgnores.length > 0
+      ? [
+          {
+            files: styleBanIgnores,
+            rules: {
+              'no-restricted-syntax': ['error', ...reExportBan],
+            },
+          },
+        ]
+      : []),
+    ...(componentStyleBanIgnores.length > 0
+      ? [
+          {
+            files: componentStyleBanIgnores,
+            ignores: [...tryStatementIgnores],
+            rules: {
+              'no-restricted-syntax': [
+                'error',
+                ...reExportBan,
+                tryStatementBan,
+              ],
+            },
+          },
+        ]
+      : []),
+
+    /* Component files are PascalCase, non-component modules are camelCase
+       (docs/STANDARD.md). Middle extensions like .test and .stories are
+       ignored. Non-component .tsx files (entry points, JSX test helpers,
+       hook tests) follow camelCase. */
+    {
+      files: ['src/**/*.{ts,tsx}'],
+      ignores: [
+        'src/**/*.d.ts',
+        'src/**/main.tsx',
+        'src/test/*.tsx',
+        'src/**/use*.test.tsx',
+        ...filenameNamingIgnores,
+      ],
+      plugins: { 'check-file': checkFile },
+      rules: {
+        'check-file/filename-naming-convention': [
+          'error',
+          {
+            'src/**/*.tsx': 'PASCAL_CASE',
+            'src/**/*.ts': 'CAMEL_CASE',
+          },
+          { ignoreMiddleExtensions: true },
+        ],
+      },
+    },
+    {
+      files: ['src/**/main.tsx', 'src/test/*.tsx', 'src/**/use*.test.tsx'],
+      ignores: [...filenameNamingIgnores],
+      plugins: { 'check-file': checkFile },
+      rules: {
+        'check-file/filename-naming-convention': [
+          'error',
+          {
+            'src/**/*.tsx': 'CAMEL_CASE',
+          },
+          { ignoreMiddleExtensions: true },
         ],
       },
     },
@@ -114,11 +193,15 @@ export function sharedConfig({
       },
     },
 
-    /* The Vite config runs in Node, not in the browser. */
+    /* The Vite config runs in Node, not in the browser, and Vite resolves it
+       from a default export. */
     {
       files: ['vite.config.ts'],
       languageOptions: {
         globals: globals.node,
+      },
+      rules: {
+        'no-restricted-exports': 'off',
       },
     },
 
@@ -149,6 +232,11 @@ const reExportBan = [
     message: 'Import from the defining file instead of re-exporting it.',
   },
 ];
+
+const styleBan = {
+  selector: "JSXAttribute[name.name='style']",
+  message: 'Use styles and design tokens instead of an inline style.',
+};
 
 const tryStatementBan = {
   selector: 'TryStatement',

@@ -6,24 +6,24 @@ import { cx } from '../../../lib/cx';
 import tapTargetStyles from '../tapTarget.module.css';
 import styles from './Footer.module.css';
 
-interface FooterKontakt {
+interface FooterContact {
   title: string;
   talkToUsLabel: string;
   talkToUsHref?: string;
   address: string[];
 }
 
-interface FooterRechtliches {
+interface FooterLegal {
   title: string;
-  impressumLabel: string;
-  impressumHref?: string;
-  datenschutzLabel: string;
-  datenschutzHref?: string;
+  imprintLabel: string;
+  imprintHref?: string;
+  privacyLabel: string;
+  privacyHref?: string;
 }
 
 interface FooterContent {
-  kontakt: FooterKontakt;
-  rechtliches: FooterRechtliches;
+  contact: FooterContact;
+  legal: FooterLegal;
   donateLabel: string;
   donateHref?: string;
   copyright: string;
@@ -42,14 +42,8 @@ interface FooterProps {
  * leads nowhere, which is how the prototype shows it.
  */
 export function Footer({ content, onBackToTop }: FooterProps) {
-  const {
-    kontakt,
-    rechtliches,
-    donateLabel,
-    donateHref,
-    copyright,
-    backToTopLabel,
-  } = content;
+  const { contact, legal, donateLabel, donateHref, copyright, backToTopLabel } =
+    content;
   const linkClassName = cx(styles.link, tapTargetStyles.tapTarget);
   const donateClassName = cx(styles.donateRow, tapTargetStyles.tapTarget);
 
@@ -58,24 +52,24 @@ export function Footer({ content, onBackToTop }: FooterProps) {
       <div className={styles.inner}>
         <div className={styles.topRow}>
           <div className={styles.column}>
-            <p className={styles.title}>{kontakt.title}</p>
-            <a className={linkClassName} href={kontakt.talkToUsHref}>
-              {kontakt.talkToUsLabel}
+            <p className={styles.title}>{contact.title}</p>
+            <a className={linkClassName} href={contact.talkToUsHref}>
+              {contact.talkToUsLabel}
             </a>
             <address className={styles.address}>
-              {kontakt.address.map((line) => (
+              {contact.address.map((line) => (
                 <span key={line}>{line}</span>
               ))}
             </address>
           </div>
 
           <div className={styles.column}>
-            <p className={styles.title}>{rechtliches.title}</p>
-            <a className={linkClassName} href={rechtliches.impressumHref}>
-              {rechtliches.impressumLabel}
+            <p className={styles.title}>{legal.title}</p>
+            <a className={linkClassName} href={legal.imprintHref}>
+              {legal.imprintLabel}
             </a>
-            <a className={linkClassName} href={rechtliches.datenschutzHref}>
-              {rechtliches.datenschutzLabel}
+            <a className={linkClassName} href={legal.privacyHref}>
+              {legal.privacyLabel}
             </a>
           </div>
 

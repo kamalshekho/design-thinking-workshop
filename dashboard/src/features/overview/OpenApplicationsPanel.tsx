@@ -20,7 +20,7 @@ import {
   DiscardSelectedButton,
 } from '@/components/shared/ApplicationActionControls';
 import { ApplicationsList } from '@/components/shared/ApplicationsList';
-import { EmptyState } from '@/components/shared/empty-state';
+import { EmptyState } from '@/components/shared/EmptyState';
 import { de } from '@/content/de';
 import type { Application, ApplicationEdit, Owner } from '@/domain/application';
 import type { Category } from '@/domain/category';

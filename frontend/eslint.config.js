@@ -1,6 +1,7 @@
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import js from '@eslint/js';
 import boundaries from 'eslint-plugin-boundaries';
+import checkFile from 'eslint-plugin-check-file';
 import cssModules from 'eslint-plugin-css-modules';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -32,34 +33,14 @@ export default tseslint.config(
     simpleImportSort,
     sonarjs,
     eslintComments,
+    checkFile,
     globals,
     tsconfigRootDir: import.meta.dirname,
     extraIgnores: ['storybook-static/**', 'public/mockServiceWorker.js'],
     extraTestFiles: ['src/mocks/**'],
-    // Design tokens live in CSS. An inline style bypasses the token layer and
-    // cannot be linted for literal values (see README.md).
-    extraRestrictedSyntax: [
-      {
-        selector: "JSXAttribute[name.name='style']",
-        message:
-          'Use a CSS module and design tokens instead of an inline style.',
-      },
-    ],
     // The form's transport layer still sits under features/ until it moves out.
     tryStatementIgnores: ['src/features/application-form/api.ts'],
   }),
-
-  {
-    files: ['**/*.{ts,tsx}'],
-    rules: {
-      // A default export makes a component harder to find by name and lets the
-      // same component be imported under different names.
-      'no-restricted-exports': [
-        'error',
-        { restrictDefaultExports: { direct: true } },
-      ],
-    },
-  },
 
   /* The import direction of ADR-0008, after the decision in issue #106:
      components/ui, content, lib, styles and assets are shared, the one feature
@@ -184,14 +165,6 @@ export default tseslint.config(
   /* Storybook metadata is the documented exception to named exports. */
   {
     files: ['src/**/*.stories.{ts,tsx}'],
-    rules: {
-      'no-restricted-exports': 'off',
-    },
-  },
-
-  /* Vite and Vitest resolve their config from a default export. */
-  {
-    files: ['vite.config.ts'],
     rules: {
       'no-restricted-exports': 'off',
     },

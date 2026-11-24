@@ -43,8 +43,8 @@ export interface Content {
   unknownError: string;
   a11y: { submitting: string; honeypotLabel: string };
   footer: {
-    kontakt: { title: string; talkToUs: string; address: readonly string[] };
-    rechtliches: { title: string; impressum: string; datenschutz: string };
+    contact: { title: string; talkToUs: string; address: readonly string[] };
+    legal: { title: string; imprint: string; privacy: string };
     donateLabel: string;
     copyright: string;
     backToTopLabel: string;

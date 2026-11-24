@@ -53,12 +53,12 @@ import type { Selection, SortDescriptor } from 'react-aria-components';
 import {
   PLAIN_STATUS_BADGE_CLASSNAME,
   STATUS_BADGE_COLORS,
-} from '@/components/application/application-status/status-styles';
+} from '@/components/application/application-status/statusStyles';
 import { PaginationCardDefault } from '@/components/application/pagination/pagination';
 import { Table, TableCard } from '@/components/application/table/table';
 import { Avatar } from '@/components/base/avatar/avatar';
 import { BadgeWithDot } from '@/components/base/badges/badges';
-import { ConfirmDialog } from '@/components/shared/confirm-dialog';
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
 import { de } from '@/content/de';
 import type { Application, Owner } from '@/domain/application';
 import { isUnassigned } from '@/domain/application';

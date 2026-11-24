@@ -15,7 +15,7 @@
 import { ArrowLeft, Mail01, UserCheck01 } from '@untitledui/icons';
 import { useEffect, useRef } from 'react';
 
-import { STATUS_DOT_CLASSNAME } from '@/components/application/application-status/status-styles';
+import { STATUS_DOT_CLASSNAME } from '@/components/application/application-status/statusStyles';
 import { Avatar } from '@/components/base/avatar/avatar';
 import { Button } from '@/components/base/buttons/button';
 import { Dot } from '@/components/foundations/dot-icon';

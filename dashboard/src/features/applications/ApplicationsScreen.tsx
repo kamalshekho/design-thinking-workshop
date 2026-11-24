@@ -19,8 +19,8 @@ import {
   DiscardSelectedButton,
 } from '@/components/shared/ApplicationActionControls';
 import { ApplicationsList } from '@/components/shared/ApplicationsList';
-import { EmptyState } from '@/components/shared/empty-state';
-import { PageHeader } from '@/components/shared/page-header';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { TabStrip } from '@/components/shared/tab-strip';
 import { de } from '@/content/de';
 import type {

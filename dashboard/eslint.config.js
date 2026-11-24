@@ -1,6 +1,7 @@
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import js from '@eslint/js';
 import boundaries from 'eslint-plugin-boundaries';
+import checkFile from 'eslint-plugin-check-file';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
@@ -43,6 +44,24 @@ const UNTITLED_UI_COPIES = [
   'src/utils/is-react-component.ts',
 ];
 
+/* The files copied in from shadcn/ui, one per `-> ...` line in
+   THIRD_PARTY_LICENSES. */
+const SHADCN_COPIES = [
+  'src/components/ui/card.tsx',
+  'src/components/ui/select.tsx',
+  'src/components/ui/sparkline.tsx',
+];
+
+/* Every third-party copy: exempt from PascalCase/camelCase filename checks and
+   the inline style ban (docs/STANDARD.md). */
+const THIRD_PARTY_COPIES = [...UNTITLED_UI_COPIES, ...SHADCN_COPIES];
+
+/* Test files co-located with kebab-case third-party copies keep the same stem. */
+const THIRD_PARTY_COPY_TESTS = [
+  'src/components/application/application-table/application-table.test.tsx',
+  'src/components/ui/sparkline.test.tsx',
+];
+
 /* The layers shared UI code may import. Used by the components element
    (everything under components/) and by the Untitled UI copies, some of which
    sit in hooks/ and utils/. */
@@ -80,8 +99,11 @@ export default tseslint.config(
     simpleImportSort,
     sonarjs,
     eslintComments,
+    checkFile,
     globals,
     tsconfigRootDir: import.meta.dirname,
+    styleBanIgnores: THIRD_PARTY_COPIES,
+    filenameNamingIgnores: [...THIRD_PARTY_COPIES, ...THIRD_PARTY_COPY_TESTS],
   }),
 
   /* The import direction of ADR-0008, after the layer table in issue #106.
