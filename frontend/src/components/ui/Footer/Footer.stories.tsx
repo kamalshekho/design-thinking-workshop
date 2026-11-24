@@ -18,15 +18,15 @@ type Story = StoryObj<typeof meta>;
 export const Desktop: Story = {
   args: {
     content: {
-      kontakt: {
-        title: de.footer.kontakt.title,
-        talkToUsLabel: de.footer.kontakt.talkToUs,
-        address: [...de.footer.kontakt.address],
+      contact: {
+        title: de.footer.contact.title,
+        talkToUsLabel: de.footer.contact.talkToUs,
+        address: [...de.footer.contact.address],
       },
-      rechtliches: {
-        title: de.footer.rechtliches.title,
-        impressumLabel: de.footer.rechtliches.impressum,
-        datenschutzLabel: de.footer.rechtliches.datenschutz,
+      legal: {
+        title: de.footer.legal.title,
+        imprintLabel: de.footer.legal.imprint,
+        privacyLabel: de.footer.legal.privacy,
       },
       donateLabel: de.footer.donateLabel,
       copyright: de.footer.copyright,

@@ -14,7 +14,7 @@ function renderFooter(onBackToTop = vi.fn()) {
           'Copyright 2026 Musterverein e.V. – Alle Rechte vorbehalten.',
         donateHref: 'https://example.org/spende',
         donateLabel: 'SPENDE HIER',
-        kontakt: {
+        contact: {
           title: 'Kontakt',
           talkToUsLabel: 'Sprich mit uns',
           talkToUsHref: 'https://example.org/kontakt',
@@ -24,12 +24,12 @@ function renderFooter(onBackToTop = vi.fn()) {
             'kontakt@example.org',
           ],
         },
-        rechtliches: {
+        legal: {
           title: 'Rechtliches',
-          impressumLabel: 'Impressum',
-          impressumHref: 'https://example.org/impressum',
-          datenschutzLabel: 'Datenschutz',
-          datenschutzHref: 'https://example.org/datenschutz',
+          imprintLabel: 'Impressum',
+          imprintHref: 'https://example.org/impressum',
+          privacyLabel: 'Datenschutz',
+          privacyHref: 'https://example.org/datenschutz',
         },
       }}
       onBackToTop={onBackToTop}

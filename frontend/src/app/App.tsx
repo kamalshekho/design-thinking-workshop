@@ -12,15 +12,15 @@ function scrollToTop() {
 export function App() {
   const navItems = content.nav.items.map((label) => ({ label }));
   const footerContent = {
-    kontakt: {
-      title: content.footer.kontakt.title,
-      talkToUsLabel: content.footer.kontakt.talkToUs,
-      address: [...content.footer.kontakt.address],
+    contact: {
+      title: content.footer.contact.title,
+      talkToUsLabel: content.footer.contact.talkToUs,
+      address: [...content.footer.contact.address],
     },
-    rechtliches: {
-      title: content.footer.rechtliches.title,
-      impressumLabel: content.footer.rechtliches.impressum,
-      datenschutzLabel: content.footer.rechtliches.datenschutz,
+    legal: {
+      title: content.footer.legal.title,
+      imprintLabel: content.footer.legal.imprint,
+      privacyLabel: content.footer.legal.privacy,
     },
     donateLabel: content.footer.donateLabel,
     copyright: content.footer.copyright,
