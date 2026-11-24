@@ -115,7 +115,7 @@ jobs:
 
       - name: Test
         id: test
-        run: npx vitest run --coverage
+        run: npm test -- --coverage
 
       - name: Upload coverage report on failure
         if: failure() && steps.test.outcome == 'failure'
@@ -191,7 +191,7 @@ jobs:
 
       - name: Test
         id: test
-        run: npx vitest run --coverage
+        run: npm test -- --coverage
 
       - name: Upload coverage report on failure
         if: failure() && steps.test.outcome == 'failure'
