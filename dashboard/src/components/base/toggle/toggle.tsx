@@ -20,7 +20,7 @@ interface ToggleBaseProps {
   isDisabled?: boolean;
 }
 
-export const ToggleBase = ({
+const ToggleBase = ({
   className,
   isHovered,
   isDisabled,

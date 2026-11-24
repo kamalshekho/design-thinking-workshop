@@ -325,7 +325,7 @@ interface PaginationItemRenderProps {
   'aria-label'?: string;
 }
 
-export interface PaginationItemProps {
+interface PaginationItemProps {
   /** The value of the pagination item. */
   value: number;
   /** Whether the pagination item is the current page. */

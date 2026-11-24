@@ -30,7 +30,7 @@ import { Tooltip, TooltipTrigger } from '@/components/base/tooltip/tooltip';
 import { de } from '@/content/de';
 import { cx, sortCx } from '@/utils/cx';
 
-export interface InputBaseProps extends Omit<AriaInputProps, 'size'> {
+interface InputBaseProps extends Omit<AriaInputProps, 'size'> {
   /** Tooltip message on hover. */
   tooltip?: string;
   /** Whether the input is invalid. */
@@ -62,7 +62,7 @@ export interface InputBaseProps extends Omit<AriaInputProps, 'size'> {
   icon?: ComponentType<HTMLAttributes<HTMLOrSVGElement>>;
 }
 
-export const InputBase = ({
+const InputBase = ({
   ref,
   tooltip,
   shortcut,
@@ -262,10 +262,9 @@ interface TextFieldContextProps extends Partial<
 
 const TextFieldContext = createContext<TextFieldContextProps>({});
 
-export interface TextFieldProps
-  extends AriaTextFieldProps, TextFieldContextProps {}
+interface TextFieldProps extends AriaTextFieldProps, TextFieldContextProps {}
 
-export const TextField = ({
+const TextField = ({
   className,
   size = 'md',
   inputClassName,

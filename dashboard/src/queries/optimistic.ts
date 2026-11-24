@@ -22,7 +22,7 @@
 
 import type { QueryClient, QueryKey } from '@tanstack/react-query';
 
-export type ListChange<T> = (current: readonly T[]) => T[];
+type ListChange<T> = (current: readonly T[]) => T[];
 
 export type OptimisticList<T> = {
   /**

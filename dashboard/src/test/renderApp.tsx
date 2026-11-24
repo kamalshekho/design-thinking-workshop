@@ -20,7 +20,7 @@ import { createQueryClient } from '@/queries/queryClient';
 
 import { REFERENCE_DATE } from './stubApi';
 
-export function testQueryClient(): QueryClient {
+function testQueryClient(): QueryClient {
   const client = createQueryClient();
 
   client.setDefaultOptions({

@@ -21,14 +21,8 @@ export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
  * the form asks for one of these four and `IRREGULAR` is not a quantity at
  * all (`API.md`, "Wire names").
  */
-export const WEEKLY_TIMES = [
-  'HOURS_1_2',
-  'HOURS_3_5',
-  'HOURS_5_PLUS',
-  'IRREGULAR',
-] as const;
-
-export type WeeklyTime = (typeof WEEKLY_TIMES)[number];
+export type WeeklyTime =
+  'HOURS_1_2' | 'HOURS_3_5' | 'HOURS_5_PLUS' | 'IRREGULAR';
 
 /**
  * The statuses that mean an Application is done, one way or the other.

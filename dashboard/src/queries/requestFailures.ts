@@ -26,7 +26,7 @@
 import { createContext, useContext } from 'react';
 
 /** A failed write, and when it was reported. */
-export type ReportedFailure = {
+type ReportedFailure = {
   failure: unknown;
   /**
    * `Date.now()` at the moment it was reported, compared against the failed

@@ -1,6 +1,6 @@
 /**
  * Clone path: `components/base/buttons/button.tsx`. The `xs` and `xl` sizes
- * are cut, as no call site sets them.
+ * and the unread `Props` union are cut, as no call site uses them.
  */
 
 import type { FC, ReactElement, ReactNode } from 'react';
@@ -14,7 +14,7 @@ import { Button as AriaButton, Link as AriaLink } from 'react-aria-components';
 import { cx, sortCx } from '@/utils/cx';
 import { isReactComponent } from '@/utils/is-react-component';
 
-export const styles = sortCx({
+const styles = sortCx({
   common: {
     root: [
       'group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-focus-ring transition-colors duration-150 ease-out before:absolute focus-visible:outline-2 focus-visible:outline-offset-2',
@@ -128,7 +128,7 @@ export const styles = sortCx({
 /**
  * Common props shared between button and anchor variants
  */
-export interface CommonProps {
+interface CommonProps {
   /** Disables the button and shows a disabled state */
   isDisabled?: boolean;
   /** Shows a loading spinner and disables the button */
@@ -162,9 +162,6 @@ interface LinkProps
   extends CommonProps, Omit<AriaLinkProps, 'children' | 'className'> {
   href: NonNullable<AriaLinkProps['href']>;
 }
-
-/** Union type of button and link props */
-export type Props = ButtonProps | LinkProps;
 
 export const Button: {
   (props: LinkProps): ReactElement<LinkProps>;

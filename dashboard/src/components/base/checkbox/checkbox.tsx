@@ -12,7 +12,7 @@ import {
 
 import { cx } from '@/utils/cx';
 
-export interface CheckboxBaseProps {
+interface CheckboxBaseProps {
   size?: 'sm' | 'md';
   className?: string;
   isFocusVisible?: boolean;
@@ -21,7 +21,7 @@ export interface CheckboxBaseProps {
   isIndeterminate?: boolean;
 }
 
-export const CheckboxBase = ({
+const CheckboxBase = ({
   className,
   isSelected,
   isDisabled,

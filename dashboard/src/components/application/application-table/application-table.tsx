@@ -74,7 +74,7 @@ import { initialsOf } from '@/utils/initials';
  * action. Three parts rather than one string, because the dialog has room for
  * the consequence under the question and for a button that names the action.
  */
-export type ApplicationRowConfirmation = {
+type ApplicationRowConfirmation = {
   /** The question. Becomes the dialog's accessible name. */
   title: string;
   /** The consequence, under the question. */
