@@ -44,6 +44,7 @@
   --spacing-sidebar-toggle: calc(100% - 30px);
   --spacing-filter-select: 200px;
   --spacing-search: 280px;
+  --spacing-search-max: 320px;
   --spacing-popover: 320px;
   --spacing-popover-offset: calc(100% + 8px);
   --spacing-popover-max: calc(100vw - 60px);
@@ -65,6 +66,7 @@
   --tracking-heading: -0.025em;
   --tracking-eyebrow: 0.06em;
   --default-transition-duration: 150ms;
+  --ease-sidebar: cubic-bezier(0.23, 1, 0.32, 1);
   --shadow-xs: 0 1px 2px rgb(24 24 27 / 0.03);
   --shadow-md: 0 4px 12px rgb(24 24 27 / 0.08);
   --shadow-lg: 0 8px 24px rgb(24 24 27 / 0.1);
@@ -348,7 +350,8 @@ details summary::-webkit-details-marker {
 
 @utility ring-hairline {
   --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0
-    calc(0.5px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    calc(var(--spacing-hairline) + var(--tw-ring-offset-width))
+    var(--tw-ring-color, currentcolor);
   box-shadow:
     var(--tw-inset-shadow), var(--tw-inset-ring-shadow),
     var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -356,11 +359,11 @@ details summary::-webkit-details-marker {
 
 @utility outline-hairline {
   outline-style: var(--tw-outline-style);
-  outline-width: 0.5px;
+  outline-width: var(--spacing-hairline);
 }
 
 @utility -outline-offset-hairline {
-  outline-offset: -0.5px;
+  outline-offset: calc(-1 * var(--spacing-hairline));
 }
 
 @utility mask-avatar-sheen {

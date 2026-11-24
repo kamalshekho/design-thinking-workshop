@@ -78,7 +78,7 @@ export const SidebarNavigationSimple = ({
       className={cx(
         'bg-primary flex h-full w-full max-w-full flex-col justify-between overflow-auto pt-4 motion-reduce:transition-none lg:w-(--width) lg:pt-5 lg:transition-[width]',
         !hideBorder && 'border-secondary md:border-r',
-        'duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)]',
+        'ease-sidebar duration-200',
         className,
       )}
     >
@@ -95,14 +95,14 @@ export const SidebarNavigationSimple = ({
             setChosen(!isCollapsed);
           }}
           className={cx(
-            'peer/toggle group text-fg-quaternary outline-focus-ring hover:bg-primary_hover left-sidebar-toggle absolute top-4 z-10 hidden size-9 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md transition-[left,transform] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100 lg:flex',
+            'peer/toggle group text-fg-quaternary outline-focus-ring hover:bg-primary_hover left-sidebar-toggle ease-sidebar absolute top-4 z-10 hidden size-9 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md transition-[left,transform] duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100 lg:flex',
             isCollapsed && 'lg:left-1/2',
           )}
         >
           <Menu01
             aria-hidden="true"
             className={cx(
-              'size-4.5 transition-[opacity,transform] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none',
+              'ease-sidebar size-4.5 transition-[opacity,transform] duration-200 motion-reduce:transition-none',
               isCollapsed &&
                 'lg:scale-90 lg:opacity-0 lg:group-hover:scale-100 lg:group-hover:opacity-100 lg:group-focus-visible:scale-100 lg:group-focus-visible:opacity-100',
             )}
@@ -110,7 +110,7 @@ export const SidebarNavigationSimple = ({
         </AriaButton>
         <span
           className={cx(
-            'absolute top-0 left-6 transition-[left,transform,opacity] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none',
+            'ease-sidebar absolute top-0 left-6 transition-[left,transform,opacity] duration-200 motion-reduce:transition-none',
             isCollapsed &&
               'lg:left-1/2 lg:-translate-x-1/2 lg:peer-hover/toggle:opacity-0 lg:peer-focus-visible/toggle:opacity-0',
           )}
@@ -160,7 +160,7 @@ export const SidebarNavigationSimple = ({
         style={{ width: sidebarWidth, left: SIDEBAR_GUTTER }}
         className={cx(
           'hidden overflow-hidden transition-[width] motion-reduce:transition-none lg:fixed lg:inset-y-0 lg:flex',
-          'duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)]',
+          'ease-sidebar duration-200',
         )}
       >
         {content}
@@ -170,7 +170,7 @@ export const SidebarNavigationSimple = ({
         style={{ paddingLeft: sidebarWidth + SIDEBAR_GUTTER }}
         className={cx(
           'invisible hidden transition-[padding] motion-reduce:transition-none lg:sticky lg:top-0 lg:bottom-0 lg:left-0 lg:block',
-          'duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)]',
+          'ease-sidebar duration-200',
         )}
       />
     </>

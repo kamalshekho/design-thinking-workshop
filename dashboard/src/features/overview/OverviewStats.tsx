@@ -222,7 +222,7 @@ export function OverviewStats({
               chartClassName="h-10"
               strokeWidth={1.75}
               labelClassName="text-2xs @max-xs/card:hidden"
-              className="col-start-2 row-start-3 mt-3 w-16 self-end @[16rem]/card:w-24 @[20rem]/card:w-28"
+              className="col-start-2 row-start-3 mt-3 w-16 self-end @2xs/card:w-24 @xs/card:w-28"
             />
           </Card>
         </a>

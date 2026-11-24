@@ -24,6 +24,8 @@ async function lintSnippet(
 
 const ARBITRARY_WIDTH = ['w', '[321px]'].join('-');
 const ARBITRARY_BREAKPOINT = ['min', '[400px]:flex'].join('-');
+const ARBITRARY_VAR_FALLBACK = ['w', '[var(--x,10px)]'].join('-');
+const ALLOWED_VAR_WITH_DIGIT = ['w', '[var(--x-1)]'].join('-');
 
 describe(
   'better-tailwindcss/no-restricted-classes in dashboard/eslint.config.js',
@@ -51,11 +53,26 @@ describe(
       expect(messages.length).toBeGreaterThan(0);
     });
 
+    it('rejects arbitrary classes with digits in camelCase exported string constants', async () => {
+      const messages = await lintSnippet(
+        `export const drawerReserve = '${ARBITRARY_WIDTH}';`,
+        'src/app/strip.ts',
+      );
+      expect(messages.length).toBeGreaterThan(0);
+    });
+
+    it('rejects var(--...) with a numeric fallback value', async () => {
+      const messages = await lintSnippet(
+        `export function Sample() { return <div className="${ARBITRARY_VAR_FALLBACK}" />; }`,
+      );
+      expect(messages.length).toBeGreaterThan(0);
+    });
+
     it('allows data-[...], transition-[...], var(--...), and inherit', async () => {
       const messages = await lintSnippet(
         `export function Sample() {
         return (
-          <div className="data-[state=open]:block transition-[width] w-[var(--x)] rounded-[inherit]" />
+          <div className="data-[state=open]:block transition-[width] w-[var(--x)] ${ALLOWED_VAR_WITH_DIGIT} rounded-[inherit]" />
         );
       }`,
       );

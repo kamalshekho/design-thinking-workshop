@@ -64,7 +64,7 @@ export function OpenApplicationsFilterBar({
 
   return (
     <div className="flex flex-col gap-3 sm:contents">
-      <span className="sm:max-w-popover sm:min-w-search relative block sm:flex-1">
+      <span className="sm:max-w-search-max sm:min-w-search relative block sm:flex-1">
         <SearchLg
           className="text-text-quaternary pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
           aria-hidden="true"

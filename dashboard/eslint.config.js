@@ -335,7 +335,7 @@ export default tseslint.config(
           },
           {
             kind: SelectorKind.Variable,
-            name: '^(?:styles?|sizes|classNames?|classes|.*Class(?:Name)?|[A-Z][A-Z0-9_]*)$',
+            name: '.*',
             match: [
               { type: MatcherType.String },
               { type: MatcherType.ObjectValue },
@@ -350,7 +350,8 @@ export default tseslint.config(
         {
           restrict: [
             {
-              pattern: '(?<!\\bdata|\\btransition)-\\[(?!var\\(--)[^\\]]*\\d',
+              pattern:
+                '(?<!\\bdata|\\btransition)-\\[(?!var\\(--[^),]+\\)\\])[^\\]]*\\d',
               message:
                 'Literal Tailwind values with digits belong in `@theme` under `src/styles/` or as standard Tailwind classes (docs/STANDARD.md).',
             },
