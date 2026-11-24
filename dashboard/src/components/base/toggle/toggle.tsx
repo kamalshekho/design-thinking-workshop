@@ -1,5 +1,7 @@
 /**
- * Clone path: `components/base/toggle/toggle.tsx`, unchanged.
+ * Clone path: `components/base/toggle/toggle.tsx`. One change: the track does
+ * not shrink (`shrink-0`), so beside a long label it keeps its width and the
+ * knob stays inside it instead of covering the label's first letters (#116).
  */
 
 import type { ReactNode } from 'react';
@@ -55,7 +57,7 @@ export const ToggleBase = ({
   return (
     <div
       className={cx(
-        'bg-tertiary ring-secondary outline-focus-ring cursor-pointer rounded-full ring-[0.5px] transition duration-150 ease-linear ring-inset',
+        'bg-tertiary ring-secondary outline-focus-ring shrink-0 cursor-pointer rounded-full ring-[0.5px] transition duration-150 ease-linear ring-inset',
         isSelected && 'bg-brand-solid',
         isSelected && isHovered && 'bg-brand-solid_hover',
         isDisabled && 'cursor-not-allowed opacity-50',
