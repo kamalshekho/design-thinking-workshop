@@ -94,10 +94,10 @@ export function CategoryDialog({
           onClose();
         }
       }}
-      className="bg-overlay/40 data-[entering]:overlay-entering data-[exiting]:overlay-exiting fixed inset-0 z-50 flex items-end justify-center p-4 backdrop-blur-[2px] sm:items-center"
+      className="bg-overlay/40 data-[entering]:overlay-entering data-[exiting]:overlay-exiting backdrop-blur-scrim fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
     >
       <AriaModal className="data-[entering]:dialog-entering data-[exiting]:dialog-exiting w-full max-w-lg">
-        <AriaDialog className="bg-primary ring-secondary flex max-h-[85vh] flex-col overflow-y-auto rounded-2xl shadow-lg ring-1 outline-none">
+        <AriaDialog className="bg-primary ring-secondary max-h-dialog-max flex flex-col overflow-y-auto rounded-2xl shadow-lg ring-1 outline-none">
           <form
             onSubmit={(event) => {
               event.preventDefault();
@@ -194,7 +194,7 @@ export function CategoryDialog({
             </div>
 
             <div className="border-secondary flex flex-col gap-2 rounded-xl border border-dashed p-4">
-              <p className="text-tertiary text-[11px] font-semibold tracking-[0.06em] uppercase">
+              <p className="text-tertiary text-caption tracking-eyebrow font-semibold uppercase">
                 {de.categories.dialog.preview}
               </p>
               <div

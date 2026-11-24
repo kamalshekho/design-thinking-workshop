@@ -34,13 +34,39 @@
   --radius-md: 0.5rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
+  --radius-inner: 7px;
+  --radius-surface: 10px;
+  --blur-scrim: 2px;
   --spacing-control: 2.5rem;
+  --spacing-hairline: 0.5px;
+  --spacing-avatar-border: 1.5px;
+  --spacing-sidebar-header: 52px;
+  --spacing-sidebar-toggle: calc(100% - 30px);
+  --spacing-filter-select: 200px;
+  --spacing-search: 280px;
+  --spacing-search-max: 320px;
+  --spacing-popover: 320px;
+  --spacing-popover-offset: calc(100% + 8px);
+  --spacing-popover-max: calc(100vw - 60px);
+  --spacing-drawer: 460px;
+  --spacing-drawer-lg: 480px;
+  --spacing-header-copy: 700px;
+  --spacing-empty-copy: 42ch;
+  --spacing-category-copy: 46ch;
+  --spacing-half-viewport: 50vw;
+  --spacing-dialog-max: 85vh;
+  --spacing-safe-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  --text-2xs: 10px;
+  --text-caption: 11px;
+  --text-body-sm: 13px;
   --text-page-title: 2rem;
   --text-page-title--line-height: 1.2;
   --text-metric: 2.125rem;
   --text-metric--line-height: 1.1;
   --tracking-heading: -0.025em;
+  --tracking-eyebrow: 0.06em;
   --default-transition-duration: 150ms;
+  --ease-sidebar: cubic-bezier(0.23, 1, 0.32, 1);
   --shadow-xs: 0 1px 2px rgb(24 24 27 / 0.03);
   --shadow-md: 0 4px 12px rgb(24 24 27 / 0.08);
   --shadow-lg: 0 8px 24px rgb(24 24 27 / 0.1);
@@ -307,4 +333,53 @@
 /* Hide the default expand arrow on Safari. */
 details summary::-webkit-details-marker {
   display: none;
+}
+
+/* Utilities for values without a Tailwind 4 `@theme` namespace (#133). */
+@utility stroke-icon-thin {
+  stroke-width: 1.5px;
+}
+
+@utility stroke-icon-medium {
+  stroke-width: 2.25px;
+}
+
+@utility stroke-icon-bold {
+  stroke-width: 2.5px;
+}
+
+@utility ring-hairline {
+  --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0
+    calc(var(--spacing-hairline) + var(--tw-ring-offset-width))
+    var(--tw-ring-color, currentcolor);
+  box-shadow:
+    var(--tw-inset-shadow), var(--tw-inset-ring-shadow),
+    var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+}
+
+@utility outline-hairline {
+  outline-style: var(--tw-outline-style);
+  outline-width: var(--spacing-hairline);
+}
+
+@utility -outline-offset-hairline {
+  outline-offset: calc(-1 * var(--spacing-hairline));
+}
+
+@utility mask-avatar-sheen {
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    transparent 25%,
+    transparent 75%,
+    black 100%
+  );
+}
+
+@utility flex-grow-only {
+  flex: 1 0 auto;
+}
+
+@utility grid-cols-metric-card {
+  grid-template-columns: minmax(0, 1fr) auto;
 }

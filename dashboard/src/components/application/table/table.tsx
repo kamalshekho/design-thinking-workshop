@@ -264,7 +264,7 @@ const TableHead = ({
             (state.sortDirection ? (
               <ArrowDown
                 className={cx(
-                  'text-fg-quaternary size-3 stroke-[1.5px]',
+                  'text-fg-quaternary stroke-icon-thin size-3',
                   state.sortDirection === 'ascending' && 'rotate-180',
                 )}
               />

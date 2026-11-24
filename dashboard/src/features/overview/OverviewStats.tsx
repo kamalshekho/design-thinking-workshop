@@ -191,7 +191,7 @@ export function OverviewStats({
           href={hrefFor(card.filters)}
           className="group outline-focus-ring rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2"
         >
-          <Card className="border-border-secondary group-hover:border-border-primary @container/card relative grid h-full min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 rounded-xl p-5 shadow-none transition-colors duration-150">
+          <Card className="border-border-secondary group-hover:border-border-primary grid-cols-metric-card @container/card relative grid h-full min-w-0 gap-x-4 gap-y-2 rounded-xl p-5 shadow-none transition-colors duration-150">
             <CardDescription className="text-text-secondary col-span-2 pr-7 text-sm font-medium">
               {card.title}
             </CardDescription>
@@ -221,8 +221,8 @@ export function OverviewStats({
               labels={weekdayLabels}
               chartClassName="h-10"
               strokeWidth={1.75}
-              labelClassName="text-[10px] @max-[20rem]/card:hidden"
-              className="col-start-2 row-start-3 mt-3 w-16 self-end @[16rem]/card:w-24 @[20rem]/card:w-28"
+              labelClassName="text-2xs @max-xs/card:hidden"
+              className="col-start-2 row-start-3 mt-3 w-16 self-end @2xs/card:w-24 @xs/card:w-28"
             />
           </Card>
         </a>

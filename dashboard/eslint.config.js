@@ -1,5 +1,11 @@
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import js from '@eslint/js';
+import betterTailwindcss from 'eslint-plugin-better-tailwindcss';
+import { getDefaultSelectors } from 'eslint-plugin-better-tailwindcss/defaults';
+import {
+  MatcherType,
+  SelectorKind,
+} from 'eslint-plugin-better-tailwindcss/types';
 import boundaries from 'eslint-plugin-boundaries';
 import checkFile from 'eslint-plugin-check-file';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
@@ -299,6 +305,59 @@ export default tseslint.config(
       'jsx-a11y/no-static-element-interactions': 'off',
       'react-hooks/set-state-in-effect': 'off',
       'react-refresh/only-export-components': 'off',
+    },
+  },
+
+  /* No arbitrary Tailwind values with digits outside `@theme` (docs/STANDARD.md,
+     issue #133). Applies to all files in `src/`, including third-party copies. */
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: {
+      'better-tailwindcss': betterTailwindcss,
+    },
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: `${import.meta.dirname}/src/styles/globals.css`,
+        selectors: [
+          ...getDefaultSelectors(),
+          {
+            kind: SelectorKind.Attribute,
+            name: '^.*ClassName$',
+            match: [{ type: MatcherType.String }],
+          },
+          {
+            kind: SelectorKind.Callee,
+            name: '^sortCx$',
+            match: [
+              { type: MatcherType.String },
+              { type: MatcherType.ObjectValue },
+            ],
+          },
+          {
+            kind: SelectorKind.Variable,
+            name: '.*',
+            match: [
+              { type: MatcherType.String },
+              { type: MatcherType.ObjectValue },
+            ],
+          },
+        ],
+      },
+    },
+    rules: {
+      'better-tailwindcss/no-restricted-classes': [
+        'error',
+        {
+          restrict: [
+            {
+              pattern:
+                '(?<!\\bdata|\\btransition)-\\[(?!var\\(--[^),]+\\)\\])[^\\]]*\\d',
+              message:
+                'Literal Tailwind values with digits belong in `@theme` under `src/styles/` or as standard Tailwind classes (docs/STANDARD.md).',
+            },
+          ],
+        },
+      ],
     },
   },
 );

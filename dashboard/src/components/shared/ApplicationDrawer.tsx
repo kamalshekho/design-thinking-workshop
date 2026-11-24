@@ -162,7 +162,7 @@ export function ApplicationDrawer({
       ref={panelRef}
       tabIndex={-1}
       aria-label={de.detail.title}
-      className="drawer-entering border-secondary bg-primary fixed inset-y-0 right-0 z-30 flex w-full flex-col border-l shadow-lg outline-hidden sm:w-[460px] lg:w-[480px]"
+      className="drawer-entering border-secondary bg-primary sm:w-drawer lg:w-drawer-lg fixed inset-y-0 right-0 z-30 flex w-full flex-col border-l shadow-lg outline-hidden"
     >
       <header className="border-secondary shrink-0 border-b px-6 pt-5 pb-4">
         <div className="flex items-start gap-3">
@@ -174,7 +174,7 @@ export function ApplicationDrawer({
               type="button"
               title={de.detail.copyMail}
               onClick={copyEmail}
-              className="text-tertiary hover:text-secondary outline-focus-ring tap-target relative mt-0.5 flex max-w-full cursor-pointer items-center gap-1.5 rounded text-[13px] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="text-tertiary hover:text-secondary outline-focus-ring tap-target text-body-sm relative mt-0.5 flex max-w-full cursor-pointer items-center gap-1.5 rounded transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <span className="truncate">{application.email}</span>
               {/* Same state the footer button reads, so a click here confirms
@@ -226,7 +226,7 @@ export function ApplicationDrawer({
 
           <div className="mt-3 flex flex-col gap-3.5">
             <label className="block">
-              <span className="text-secondary mb-1.5 block text-[13px] font-medium">
+              <span className="text-secondary text-body-sm mb-1.5 block font-medium">
                 {de.detail.status}
               </span>
               <span className="relative block">

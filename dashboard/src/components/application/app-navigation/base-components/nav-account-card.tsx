@@ -132,7 +132,7 @@ export const NavAccountCard = ({
           aria-label={de.account.menu}
           className="text-fg-quaternary outline-focus-ring hover:bg-primary_hover hover:text-fg-quaternary_hover data-pressed:bg-primary_hover data-pressed:text-fg-quaternary_hover absolute top-4 right-0 flex cursor-pointer items-center justify-center rounded-md p-1.5 transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2"
         >
-          <ChevronSelectorVertical className="size-4 shrink-0 stroke-[2.25px]" />
+          <ChevronSelectorVertical className="stroke-icon-medium size-4 shrink-0" />
         </AriaButton>
         {menu}
       </AriaMenuTrigger>

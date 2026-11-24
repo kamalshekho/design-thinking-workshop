@@ -80,7 +80,7 @@ const styles = {
   },
   lg: {
     root: 'size-12',
-    rootWithBorder: 'p-[1.5px]',
+    rootWithBorder: 'p-avatar-border',
     initials: 'text-lg font-semibold',
     icon: 'size-7',
   },
@@ -161,7 +161,7 @@ export const Avatar = ({
     <div
       data-avatar
       className={cx(
-        'relative inline-flex shrink-0 rounded-[7px]',
+        'rounded-inner relative inline-flex shrink-0',
         rounded && 'rounded-full',
         // Focus styles
         focusable &&
@@ -174,11 +174,11 @@ export const Avatar = ({
     >
       <div
         className={cx(
-          'bg-secondary outline-border-secondary relative inline-flex size-full shrink-0 items-center justify-center overflow-hidden rounded-md outline-[0.5px] -outline-offset-[0.5px] before:inset-[0.5px]',
+          'bg-secondary outline-border-secondary outline-hairline -outline-offset-hairline before:inset-hairline relative inline-flex size-full shrink-0 items-center justify-center overflow-hidden rounded-md',
           rounded && 'rounded-full',
           canShowImage &&
             size !== 'xs' &&
-            'before:absolute before:inset-0 before:rounded-[inherit] before:border before:border-white/32 before:mask-[linear-gradient(to_bottom,black_0%,transparent_25%,transparent_75%,black_100%)]',
+            'before:mask-avatar-sheen before:absolute before:inset-0 before:rounded-[inherit] before:border before:border-white/32',
           contentClassName,
         )}
       >

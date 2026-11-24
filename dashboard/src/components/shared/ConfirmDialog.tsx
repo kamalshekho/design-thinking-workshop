@@ -78,7 +78,7 @@ export function ConfirmDialog({
           onCancel();
         }
       }}
-      className="bg-overlay/40 data-[entering]:overlay-entering data-[exiting]:overlay-exiting fixed inset-0 z-50 flex items-end justify-center p-4 backdrop-blur-[2px] sm:items-center"
+      className="bg-overlay/40 data-[entering]:overlay-entering data-[exiting]:overlay-exiting backdrop-blur-scrim fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
     >
       <AriaModal className="data-[entering]:dialog-entering data-[exiting]:dialog-exiting w-full max-w-md">
         <AriaDialog

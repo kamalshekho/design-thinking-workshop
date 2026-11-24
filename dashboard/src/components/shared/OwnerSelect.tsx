@@ -106,7 +106,7 @@ export function OwnerSelect({ ownerId, owners, onChange }: OwnerSelectProps) {
         onChange(key === UNASSIGNED_KEY ? null : String(key));
       }}
     >
-      <AriaLabel className="text-secondary mb-1.5 block cursor-pointer text-[13px] font-medium">
+      <AriaLabel className="text-secondary text-body-sm mb-1.5 block cursor-pointer font-medium">
         {de.detail.owner}
       </AriaLabel>
 

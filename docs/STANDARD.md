@@ -347,12 +347,13 @@ abgeschaltet. Sie laufen im Hook und im CI-Job `frontend`. Ein `style`-Attribut
 umgeht die Tokens, siehe [Kein `style`-Attribut](#kein-style-attribut).
 
 Prüfung im Dashboard: `eslint-plugin-better-tailwindcss` mit
-`no-restricted-classes`, noch nicht eingeschaltet. Die Regel verbietet jeden
-beliebigen Wert, der eine Ziffer enthält, Muster `-\[[^\]]*\d`. Das trifft
-Werte wie `w-[320px]` und `top-[calc(100%+8px)]` und Varianten wie
-`min-[400px]:`. Erlaubt bleiben `data-[…]`, `transition-[<Eigenschaft>]`,
-`var(--…)` und `inherit`, weil sie keine Zahl festlegen. #133 schaltet sie
-ein.
+`no-restricted-classes`, eingeschaltet in `dashboard/eslint.config.js`, im Hook
+und im CI-Job `dashboard`. Die Regel verbietet jeden beliebigen Wert, der eine
+Ziffer enthält, Muster `-\[[^\]]*\d`, und gilt auch für die Kopien aus
+Untitled UI und shadcn. Das trifft Werte wie `w-[320px]` und
+`top-[calc(100%+8px)]` und Varianten wie `min-[400px]:`. Erlaubt bleiben
+`data-[…]`, `transition-[<Eigenschaft>]`, `var(--…)` und `inherit`, weil sie
+keine Zahl festlegen.
 
 ### Breakpoints
 
@@ -372,8 +373,8 @@ Prüfung im Applicant form: Stylelint mit
 1024 px erlaubt, eingeschaltet in `frontend/.stylelintrc.json`, im Hook und im
 CI-Job `frontend`. Prüfung im Dashboard: `no-restricted-classes` aus dem
 Abschnitt [Literale Werte](#literale-werte-nur-in-der-quelle-der-tokens) trifft
-auch Varianten wie `min-[400px]:`, noch nicht eingeschaltet. #133 schaltet es
-ein.
+auch Varianten wie `min-[400px]:`, eingeschaltet in
+`dashboard/eslint.config.js`, im Hook und im CI-Job `dashboard`.
 
 ### `tokens.css` ist die Quelle für `token.json`
 
