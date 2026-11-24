@@ -8,7 +8,8 @@
  *
  * The clone's labels are English literals in the component; this copy reads
  * them from `content/de.ts` instead, since a Staff member sees them and the
- * dashboard UI is German (`A6`).
+ * dashboard UI is German (`A6`). Page buttons and ellipses sit inside `<ul>` /
+ * `<li>` elements, importing individual components from `pagination-base.tsx`.
  *
  * Prop comments that only restate the prop name are dropped.
  */
@@ -21,7 +22,14 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cx } from '@/utils/cx';
 
 import type { PaginationRootProps } from './pagination-base';
-import { Pagination } from './pagination-base';
+import {
+  PaginationContextComponent,
+  PaginationEllipsis,
+  PaginationItem as PaginationBaseItem,
+  PaginationNextTrigger,
+  PaginationPrevTrigger,
+  PaginationRoot,
+} from './pagination-base';
 
 interface PaginationProps extends Partial<
   Omit<PaginationRootProps, 'children'>
@@ -64,7 +72,7 @@ const PaginationItem = ({
   isCurrent: boolean;
 }) => {
   return (
-    <Pagination.Item
+    <PaginationBaseItem
       value={value}
       isCurrent={isCurrent}
       className={({ isSelected }) =>
@@ -76,7 +84,7 @@ const PaginationItem = ({
       }
     >
       {value}
-    </Pagination.Item>
+    </PaginationBaseItem>
   );
 };
 
@@ -89,52 +97,51 @@ export const PaginationCardDefault = ({
   const isDesktop = useBreakpoint('md');
 
   return (
-    <Pagination.Root
+    <PaginationRoot
       {...props}
       page={page}
       total={total}
       className="border-secondary flex w-full items-center justify-between gap-3 border-t px-4 py-3 md:px-6 md:pt-3 md:pb-4"
     >
       <div className="flex flex-1 justify-start">
-        <Pagination.PrevTrigger asChild>
+        <PaginationPrevTrigger asChild>
           <Button iconLeading={ArrowLeft} color="secondary" size="sm">
             {isDesktop ? de.pagination.previous : undefined}
           </Button>
-        </Pagination.PrevTrigger>
+        </PaginationPrevTrigger>
       </div>
 
-      <Pagination.Context>
+      <PaginationContextComponent>
         {({ pages, currentPage, total }) => (
           <>
-            <div className="hidden justify-center gap-0.5 md:flex">
-              {pages.map((page, index) =>
-                page.type === 'page' ? (
-                  <PaginationItem key={index} rounded={rounded} {...page} />
-                ) : (
-                  <Pagination.Ellipsis
-                    key={index}
-                    className="text-tertiary flex size-9 shrink-0 items-center justify-center"
-                  >
-                    &#8230;
-                  </Pagination.Ellipsis>
-                ),
-              )}
-            </div>
+            <ul className="hidden justify-center gap-0.5 md:flex">
+              {pages.map((page, index) => (
+                <li key={index}>
+                  {page.type === 'page' ? (
+                    <PaginationItem rounded={rounded} {...page} />
+                  ) : (
+                    <PaginationEllipsis className="text-tertiary flex size-9 shrink-0 items-center justify-center">
+                      &#8230;
+                    </PaginationEllipsis>
+                  )}
+                </li>
+              ))}
+            </ul>
 
             <div className="text-fg-secondary flex justify-center text-sm whitespace-pre md:hidden">
               <PageCounter currentPage={currentPage} total={total} />
             </div>
           </>
         )}
-      </Pagination.Context>
+      </PaginationContextComponent>
 
       <div className="flex flex-1 justify-end">
-        <Pagination.NextTrigger asChild>
+        <PaginationNextTrigger asChild>
           <Button iconTrailing={ArrowRight} color="secondary" size="sm">
             {isDesktop ? de.pagination.next : undefined}
           </Button>
-        </Pagination.NextTrigger>
+        </PaginationNextTrigger>
       </div>
-    </Pagination.Root>
+    </PaginationRoot>
   );
 };

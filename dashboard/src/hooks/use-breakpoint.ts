@@ -1,8 +1,9 @@
 /**
- * Clone path: `hooks/use-breakpoint.ts`, unchanged.
+ * Clone path: `hooks/use-breakpoint.ts`. Replaced `useState` + `useEffect`
+ * with `useSyncExternalStore` subscribing to `window.matchMedia`.
  */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 const screens = {
   sm: '640px',
@@ -11,6 +12,8 @@ const screens = {
   xl: '1280px',
   '2xl': '1536px',
 };
+
+const getServerSnapshot = () => true;
 
 /**
  * Checks whether a particular Tailwind CSS viewport size applies.
@@ -21,26 +24,27 @@ const screens = {
  * @returns A boolean indicating whether the viewport size applies.
  */
 export const useBreakpoint = (size: 'sm' | 'md' | 'lg' | 'xl' | '2xl') => {
-  const [matches, setMatches] = useState(
-    typeof window !== 'undefined'
-      ? window.matchMedia(`(min-width: ${screens[size]})`).matches
-      : true,
+  const query = `(min-width: ${screens[size]})`;
+
+  const subscribe = useCallback(
+    (onStoreChange: () => void) => {
+      if (typeof window === 'undefined') {
+        return () => undefined;
+      }
+      const breakpoint = window.matchMedia(query);
+      breakpoint.addEventListener('change', onStoreChange);
+      return () => {
+        breakpoint.removeEventListener('change', onStoreChange);
+      };
+    },
+    [query],
   );
 
-  useEffect(() => {
-    const breakpoint = window.matchMedia(`(min-width: ${screens[size]})`);
+  const getSnapshot = useCallback(
+    () =>
+      typeof window !== 'undefined' ? window.matchMedia(query).matches : true,
+    [query],
+  );
 
-    setMatches(breakpoint.matches);
-
-    const handleChange = (value: MediaQueryListEvent) => {
-      setMatches(value.matches);
-    };
-
-    breakpoint.addEventListener('change', handleChange);
-    return () => {
-      breakpoint.removeEventListener('change', handleChange);
-    };
-  }, [size]);
-
-  return matches;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 };

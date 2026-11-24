@@ -1,7 +1,9 @@
 /**
- * Clone path: `components/base/checkbox/checkbox.tsx`. Two changes:
+ * Clone path: `components/base/checkbox/checkbox.tsx`. Changes from the clone:
  * - a checked box reads as a white tick on a lilac fill;
- * - the box carries `tap-target` (#116).
+ * - the box carries `tap-target` (#116);
+ * - uses `CheckboxField` + `CheckboxButton` in place of the deprecated
+ *   `Checkbox` primitive.
  *
  * Cut: the `label` and `hint` props and the text beside the box, as both call
  * sites render a bare selection checkbox.
@@ -9,8 +11,9 @@
 
 import type { Ref } from 'react';
 import {
-  Checkbox as AriaCheckbox,
-  type CheckboxProps as AriaCheckboxProps,
+  CheckboxButton as AriaCheckboxButton,
+  CheckboxField as AriaCheckboxField,
+  type CheckboxFieldProps as AriaCheckboxFieldProps,
 } from 'react-aria-components';
 
 import { cx } from '@/utils/cx';
@@ -88,8 +91,8 @@ const CheckboxBase = ({
 };
 CheckboxBase.displayName = 'CheckboxBase';
 
-interface CheckboxProps extends AriaCheckboxProps {
-  ref?: Ref<HTMLLabelElement>;
+interface CheckboxProps extends AriaCheckboxFieldProps {
+  ref?: Ref<HTMLDivElement>;
   size?: 'sm' | 'md';
 }
 
@@ -104,7 +107,7 @@ export const Checkbox = ({
   };
 
   return (
-    <AriaCheckbox
+    <AriaCheckboxField
       {...ariaCheckboxProps}
       className={(state) =>
         cx(
@@ -115,16 +118,18 @@ export const Checkbox = ({
         )
       }
     >
-      {({ isSelected, isIndeterminate, isDisabled, isFocusVisible }) => (
-        <CheckboxBase
-          size={size}
-          isSelected={isSelected}
-          isIndeterminate={isIndeterminate}
-          isDisabled={isDisabled}
-          isFocusVisible={isFocusVisible}
-        />
-      )}
-    </AriaCheckbox>
+      <AriaCheckboxButton>
+        {({ isSelected, isIndeterminate, isDisabled, isFocusVisible }) => (
+          <CheckboxBase
+            size={size}
+            isSelected={isSelected}
+            isIndeterminate={isIndeterminate}
+            isDisabled={isDisabled}
+            isFocusVisible={isFocusVisible}
+          />
+        )}
+      </AriaCheckboxButton>
+    </AriaCheckboxField>
   );
 };
 Checkbox.displayName = 'Checkbox';

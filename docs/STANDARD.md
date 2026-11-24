@@ -395,12 +395,13 @@ Code. Nur bei `jsx-a11y/click-events-have-key-events` und
 Begründung, wo react-aria die Tastatur schon bedient. Sonst wird die Stelle
 behoben.
 
-Heute schaltet ein Block in `dashboard/eslint.config.js` für die Kopien eine
-Reihe von Regeln ab. Seine Begründung, die Kopien leicht neu abzugleichen,
-entfällt mit [Kopien aus Untitled UI](#kopien-aus-untitled-ui).
+Der frühere Ausnahmeblock für die Untitled-UI-Kopien in
+`dashboard/eslint.config.js` ist abgebaut; seine Begründung, die Kopien leicht
+neu abzugleichen, entfiel mit
+[Kopien aus Untitled UI](#kopien-aus-untitled-ui).
 
-Prüfung: die ESLint-Regeln selbst, sobald der Block sie nicht mehr abschaltet.
-Noch nicht eingeschaltet, #134 baut den Block ab.
+Prüfung: die ESLint-Regeln selbst, eingeschaltet in
+`dashboard/eslint.config.js`, im Hook und im CI-Job `dashboard`.
 
 ## Bildschirmbreiten und Bedienung
 

@@ -18,7 +18,16 @@
 import { ArrowDown, ArrowUp } from '@untitledui/icons';
 import type { ReactNode } from 'react';
 
-import { Table, TableCard } from '@/components/application/table/table';
+import {
+  Table,
+  TableBody,
+  TableCardHeader,
+  TableCardRoot,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/application/table/table';
 import { Toggle } from '@/components/base/toggle/toggle';
 import { de } from '@/content/de';
 import type { Category } from '@/domain/category';
@@ -90,26 +99,26 @@ function CategoriesGrid({
   const scale = maxUsage(usage);
 
   return (
-    <TableCard.Root>
-      <TableCard.Header
+    <TableCardRoot>
+      <TableCardHeader
         title={de.categories.tableTitle}
         description={de.categories.tableDescription}
         badge={de.categories.count(categories.length, allCategories.length)}
       />
 
       <Table aria-label={de.categories.title}>
-        <Table.Header>
-          <Table.Head id="order" label={de.categories.columns.order} />
-          <Table.Head
+        <TableHeader>
+          <TableHead id="order" label={de.categories.columns.order} />
+          <TableHead
             id="name"
             label={de.categories.columns.name}
             isRowHeader
             className="w-full max-w-full lg:min-w-64"
           />
-          <Table.Head id="status" label={de.categories.columns.status} />
-          <Table.Head id="usage" label={de.categories.columns.usage} />
-          <Table.Head id="actions" aria-label={de.categories.columns.actions} />
-        </Table.Header>
+          <TableHead id="status" label={de.categories.columns.status} />
+          <TableHead id="usage" label={de.categories.columns.usage} />
+          <TableHead id="actions" aria-label={de.categories.columns.actions} />
+        </TableHeader>
 
         {/*
          * `dependencies` is not optional here. React Aria caches a rendered
@@ -119,7 +128,7 @@ function CategoriesGrid({
          * all read from outside the item. Without this, switching to Aktiv
          * would leave the arrows enabled.
          */}
-        <Table.Body
+        <TableBody
           items={categories}
           dependencies={[allCategories, usage, namedBy, canReorder]}
           renderEmptyState={() => emptyState}
@@ -135,8 +144,8 @@ function CategoriesGrid({
             const blocking = namedBy.get(category.id) ?? 0;
 
             return (
-              <Table.Row id={category.id}>
-                <Table.Cell>
+              <TableRow id={category.id}>
+                <TableCell>
                   <div className="flex items-center gap-1">
                     <span className="text-quaternary w-5 text-xs tabular-nums">
                       {position + 1}
@@ -168,9 +177,9 @@ function CategoriesGrid({
                       }}
                     />
                   </div>
-                </Table.Cell>
+                </TableCell>
 
-                <Table.Cell>
+                <TableCell>
                   {/*
                    * The name is the row's own edit affordance, so the common
                    * action needs no aim at a 16px icon at the far right.
@@ -196,9 +205,9 @@ function CategoriesGrid({
                         : category.description}
                     </span>
                   </button>
-                </Table.Cell>
+                </TableCell>
 
-                <Table.Cell>
+                <TableCell>
                   <div className="flex items-center gap-2.5">
                     <Toggle
                       isSelected={category.active}
@@ -224,9 +233,9 @@ function CategoriesGrid({
                         : de.categories.inactive}
                     </span>
                   </div>
-                </Table.Cell>
+                </TableCell>
 
-                <Table.Cell>
+                <TableCell>
                   <div className="flex min-w-24 flex-col gap-1.5">
                     <span className="text-secondary text-sm tabular-nums">
                       {de.categories.usageCount(count)}
@@ -242,9 +251,9 @@ function CategoriesGrid({
                       />
                     </span>
                   </div>
-                </Table.Cell>
+                </TableCell>
 
-                <Table.Cell>
+                <TableCell>
                   <div className="flex items-center justify-end gap-1">
                     <CategoryEditDelete
                       category={category}
@@ -254,13 +263,13 @@ function CategoriesGrid({
                       button={RowActionButton}
                     />
                   </div>
-                </Table.Cell>
-              </Table.Row>
+                </TableCell>
+              </TableRow>
             );
           }}
-        </Table.Body>
+        </TableBody>
       </Table>
-    </TableCard.Root>
+    </TableCardRoot>
   );
 }
 

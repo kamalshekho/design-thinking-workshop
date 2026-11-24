@@ -1,6 +1,8 @@
 /**
- * Clone path: `components/base/input/input.tsx`. One change: the password
- * visibility button carries `tap-target` (#116).
+ * Clone path: `components/base/input/input.tsx`. Changes from the clone:
+ * - the password visibility button carries `tap-target` (#116);
+ * - `TextFieldContextProps` is a type alias and `context` properties are read
+ *   without redundant optional chaining.
  *
  * Prop comments that only restate the prop name are dropped.
  */
@@ -77,7 +79,7 @@ const InputBase = ({
   // If the input is inside a `TextFieldContext`, use its context to simplify applying styles
   const context = useContext(TextFieldContext);
 
-  const inputSize = context?.size || size;
+  const inputSize = context.size || size;
 
   const sizes = sortCx({
     sm: {
@@ -134,7 +136,7 @@ const InputBase = ({
           isInvalid && isFocusWithin && 'ring-error ring-2',
           isFocusWithin && 'group-invalid:ring-error group-invalid:ring-2',
 
-          context?.wrapperClassName,
+          context.wrapperClassName,
           wrapperClassName,
         )
       }
@@ -144,7 +146,7 @@ const InputBase = ({
           className={cx(
             'text-fg-quaternary pointer-events-none absolute',
             sizes[inputSize].iconLeading,
-            context?.iconClassName,
+            context.iconClassName,
             iconClassName,
           )}
         />
@@ -160,7 +162,7 @@ const InputBase = ({
         className={cx(
           'text-primary placeholder:text-placeholder autofill:text-primary m-0 w-full bg-transparent ring-0 outline-hidden autofill:rounded-lg disabled:cursor-not-allowed',
           sizes[inputSize].root,
-          context?.inputClassName,
+          context.inputClassName,
           inputClassName,
         )}
       />
@@ -172,7 +174,7 @@ const InputBase = ({
             className={cx(
               'text-fg-quaternary hover:text-fg-quaternary_hover focus:text-fg-quaternary_hover absolute cursor-pointer transition duration-100 ease-linear group-invalid/input:hidden',
               sizes[inputSize].iconTrailing,
-              context?.tooltipClassName,
+              context.tooltipClassName,
               tooltipClassName,
             )}
           >
@@ -187,7 +189,7 @@ const InputBase = ({
           className={cx(
             'text-fg-error-secondary stroke-icon-medium pointer-events-none absolute hidden size-4 group-invalid/input:block',
             sizes[inputSize].iconTrailing,
-            context?.tooltipClassName,
+            context.tooltipClassName,
             tooltipClassName,
           )}
         />
@@ -236,7 +238,7 @@ const InputBase = ({
 
 InputBase.displayName = 'InputBase';
 
-interface TextFieldContextProps extends Partial<
+type TextFieldContextProps = Partial<
   Pick<
     InputBaseProps,
     | 'size'
@@ -245,7 +247,7 @@ interface TextFieldContextProps extends Partial<
     | 'iconClassName'
     | 'tooltipClassName'
   >
-> {}
+>;
 
 const TextFieldContext = createContext<TextFieldContextProps>({});
 

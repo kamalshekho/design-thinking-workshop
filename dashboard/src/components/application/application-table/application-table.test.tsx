@@ -1,5 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 
 import { de } from '@/content/de';
 import type { Application } from '@/domain/application';
@@ -146,5 +147,53 @@ describe('ApplicationTable', () => {
         screen.queryByRole('button', { name: 'Mara Weber aussortieren' }),
       ).not.toBeInTheDocument();
     });
+  });
+
+  it('toggles row selection via click and keyboard on the selection checkbox', async () => {
+    const user = userEvent.setup();
+    const onSelectedIdsChange = vi.fn();
+
+    render(
+      <ApplicationTable
+        applications={[
+          application({ id: 'a1' }),
+          application({ id: 'a2', name: 'Tom Klein' }),
+        ]}
+        categories={mockCategories}
+        owners={mockOwners}
+        now={NOW}
+        onSelect={() => undefined}
+        selectedIds={new Set()}
+        onSelectedIdsChange={onSelectedIdsChange}
+        rowActions={[
+          {
+            id: 'discard',
+            icon: () => null,
+            label: (row) => `${row.name} aussortieren`,
+            onAction: () => undefined,
+          },
+        ]}
+        ariaLabel="Anfragen"
+      />,
+    );
+
+    const rowFor = (id: string) =>
+      screen
+        .getAllByRole('row')
+        .find((row) => row.getAttribute('data-key') === id);
+    const firstRow = rowFor('a1');
+    const secondRow = rowFor('a2');
+    expect(firstRow).toBeDefined();
+    expect(secondRow).toBeDefined();
+
+    await user.click(within(firstRow as HTMLElement).getByRole('checkbox'));
+    expect(onSelectedIdsChange).toHaveBeenNthCalledWith(1, new Set(['a1']));
+
+    const secondCheckbox = within(secondRow as HTMLElement).getByRole(
+      'checkbox',
+    );
+    secondCheckbox.focus();
+    await user.keyboard(' ');
+    expect(onSelectedIdsChange).toHaveBeenNthCalledWith(2, new Set(['a2']));
   });
 });

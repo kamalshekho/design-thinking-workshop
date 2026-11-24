@@ -1,5 +1,6 @@
 /**
- * Clone path: `components/foundations/dot-icon.tsx`, unchanged.
+ * Clone path: `components/foundations/dot-icon.tsx`. Wraps `wh` in
+ * `String(...)` inside the `viewBox` template literal.
  */
 
 import type { HTMLAttributes } from 'react';
@@ -25,7 +26,7 @@ export const Dot = ({
     <svg
       width={sizes[size].wh}
       height={sizes[size].wh}
-      viewBox={`0 0 ${sizes[size].wh} ${sizes[size].wh}`}
+      viewBox={`0 0 ${String(sizes[size].wh)} ${String(sizes[size].wh)}`}
       fill="none"
       {...props}
     >

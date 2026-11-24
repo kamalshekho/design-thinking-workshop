@@ -1,12 +1,19 @@
 /**
- * Clone path: `components/application/pagination/pagination-base.tsx`. One
- * change: a page button's accessible name comes from `content/de.ts` rather
- * than the clone's English `Page n` literal. The pager variants built on this
- * live in `pagination.tsx`.
+ * Clone path: `components/application/pagination/pagination-base.tsx`. Changes
+ * from the clone:
+ * - a page button's accessible name comes from `content/de.ts` rather than the
+ *   clone's English `Page n` literal;
+ * - derives `pages` with `useMemo` instead of `useState` + `useEffect`;
+ * - renders `<button type="button">` without `role="listitem"` (list items are
+ *   wrapped in `<li>` by `pagination.tsx`);
+ * - exports individual named components instead of a compound `Pagination`
+ *   object.
  *
- * Cut: the render-prop and `asChild` branches of `Pagination.Item`, as the
- * one pager here renders a plain page button. Prop comments that only restate
- * the prop name are dropped too.
+ * The pager variants built on this live in `pagination.tsx`.
+ *
+ * Cut: the render-prop and `asChild` branches of `PaginationItem`, as the one
+ * pager here renders a plain page button. Prop comments that only restate the
+ * prop name are dropped too.
  */
 
 import type { CSSProperties, FC, HTMLAttributes, ReactNode } from 'react';
@@ -14,10 +21,8 @@ import {
   cloneElement,
   createContext,
   isValidElement,
-  useCallback,
   useContext,
-  useEffect,
-  useState,
+  useMemo,
 } from 'react';
 
 import { de } from '@/content/de';
@@ -57,7 +62,7 @@ export interface PaginationRootProps {
   onPageChange?: (page: number) => void;
 }
 
-const PaginationRoot = ({
+export const PaginationRoot = ({
   total,
   siblingCount = 1,
   page,
@@ -66,9 +71,7 @@ const PaginationRoot = ({
   style,
   className,
 }: PaginationRootProps) => {
-  const [pages, setPages] = useState<PaginationItemType[]>([]);
-
-  const createPaginationItems = useCallback((): PaginationItemType[] => {
+  const pages = useMemo((): PaginationItemType[] => {
     const items: PaginationItemType[] = [];
     // Calculate the maximum number of pagination elements (pages, potential ellipsis, first and last) to show
     const totalPageNumbers = siblingCount * 2 + 5;
@@ -169,11 +172,6 @@ const PaginationRoot = ({
     return items;
   }, [total, siblingCount, page]);
 
-  useEffect(() => {
-    const paginationItems = createPaginationItems();
-    setPages(paginationItems);
-  }, [createPaginationItems]);
-
   const onPageChangeHandler = (newPage: number) => {
     onPageChange?.(newPage);
   };
@@ -259,7 +257,7 @@ const Trigger: FC<TriggerProps> = ({
     if (isDisabled) return;
 
     const newPage = direction === 'prev' ? currentPage - 1 : currentPage + 1;
-    onPageChange?.(newPage);
+    onPageChange(newPage);
   };
 
   const computedClassName =
@@ -303,13 +301,13 @@ const Trigger: FC<TriggerProps> = ({
   );
 };
 
-const PaginationPrevTrigger: FC<Omit<TriggerProps, 'direction'>> = (props) => (
-  <Trigger {...props} direction="prev" />
-);
+export const PaginationPrevTrigger: FC<Omit<TriggerProps, 'direction'>> = (
+  props,
+) => <Trigger {...props} direction="prev" />;
 
-const PaginationNextTrigger: FC<Omit<TriggerProps, 'direction'>> = (props) => (
-  <Trigger {...props} direction="next" />
-);
+export const PaginationNextTrigger: FC<Omit<TriggerProps, 'direction'>> = (
+  props,
+) => <Trigger {...props} direction="next" />;
 
 interface PaginationItemProps {
   value: number;
@@ -323,7 +321,7 @@ interface PaginationItemProps {
   ariaLabel?: string;
 }
 
-const PaginationItem = ({
+export const PaginationItem = ({
   value,
   isCurrent,
   children,
@@ -334,7 +332,7 @@ const PaginationItem = ({
   const context = useContext(PaginationContext);
   if (!context) {
     throw new Error(
-      'Pagination components must be used within a <Pagination.Root />',
+      'Pagination components must be used within a <PaginationRoot />',
     );
   }
 
@@ -343,7 +341,7 @@ const PaginationItem = ({
   const isSelected = isCurrent;
 
   const handleClick = () => {
-    onPageChange?.(value);
+    onPageChange(value);
   };
 
   const computedClassName =
@@ -351,25 +349,24 @@ const PaginationItem = ({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       style={style}
       className={computedClassName}
       aria-current={isCurrent ? 'page' : undefined}
       aria-label={ariaLabel || de.pagination.page(value)}
-      role="listitem"
     >
       {children}
     </button>
   );
 };
 interface PaginationEllipsisProps {
-  key: number;
   children?: ReactNode;
   style?: CSSProperties;
   className?: string | (() => string);
 }
 
-const PaginationEllipsis: FC<PaginationEllipsisProps> = ({
+export const PaginationEllipsis: FC<PaginationEllipsisProps> = ({
   children,
   style,
   className,
@@ -388,24 +385,15 @@ interface PaginationContextComponentProps {
   children: (pagination: PaginationContextType) => ReactNode;
 }
 
-const PaginationContextComponent: FC<PaginationContextComponentProps> = ({
-  children,
-}) => {
+export const PaginationContextComponent: FC<
+  PaginationContextComponentProps
+> = ({ children }) => {
   const context = useContext(PaginationContext);
   if (!context) {
     throw new Error(
-      'Pagination components must be used within a Pagination.Root',
+      'Pagination components must be used within a PaginationRoot',
     );
   }
 
   return <>{children(context)}</>;
-};
-
-export const Pagination = {
-  Root: PaginationRoot,
-  PrevTrigger: PaginationPrevTrigger,
-  NextTrigger: PaginationNextTrigger,
-  Item: PaginationItem,
-  Ellipsis: PaginationEllipsis,
-  Context: PaginationContextComponent,
 };

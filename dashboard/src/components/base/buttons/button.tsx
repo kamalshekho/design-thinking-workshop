@@ -1,7 +1,8 @@
 /**
  * Clone path: `components/base/buttons/button.tsx`. The `xs` and `xl` sizes
- * and the unread `Props` union are cut, as no call site uses them. Comments
- * that only restate a prop or type name are dropped.
+ * and the unread `Props` union are cut, as no call site uses them, and the
+ * redundant `loading` branch in the `pointer-events-none` condition is
+ * simplified. Comments that only restate a prop or type name are dropped.
  */
 
 import type { FC, ReactElement, ReactNode } from 'react';
@@ -241,7 +242,7 @@ export const Button: {
       styles.sizes[size].root,
       styles.colors[color].root,
       isLinkType && styles.sizes[size].linkRoot,
-      (loading || (href && (disabled || loading))) && 'pointer-events-none',
+      (loading || (href && disabled)) && 'pointer-events-none',
       // If in `loading` state, hide everything except the loading icon (and text if `showTextWhileLoading` is true).
       loading &&
         (showTextWhileLoading
