@@ -1,4 +1,3 @@
-/** Requests time out after this long by default; pass `timeoutMs` to override. */
 export const DEFAULT_TIMEOUT_MS = 15_000;
 
 interface PostJsonOptions {
