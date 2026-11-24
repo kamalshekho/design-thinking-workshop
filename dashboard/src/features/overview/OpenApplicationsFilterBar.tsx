@@ -8,6 +8,11 @@
  * above it) rather than labelled form fields — Category and owner open as a
  * checkmarked option menu via the Radix-backed `Select` instead of a native
  * `<select>`.
+ *
+ * Below 640 px the three controls stack in this bar's own column. From 640 px
+ * the bar steps out of the layout (`sm:contents`) and its controls join the
+ * panel's row, so they wrap in one flow with the panel's actions instead of
+ * wrapping apart from them (#116).
  */
 
 import { SearchLg } from '@untitledui/icons';
@@ -57,7 +62,7 @@ export function OpenApplicationsFilterBar({
   ];
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+    <div className="flex flex-col gap-3 sm:contents">
       <span className="relative block sm:max-w-[320px] sm:min-w-[280px] sm:flex-1">
         <SearchLg
           className="text-text-quaternary pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"

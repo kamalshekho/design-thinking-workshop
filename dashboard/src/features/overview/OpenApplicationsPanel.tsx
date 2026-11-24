@@ -128,16 +128,21 @@ export function OpenApplicationsPanel({
             empty because the backend has no Applications at all offer to
             narrow nothing (issue #53). They stay the moment there is one
             open Application, even if a filter then hides it, so filtering
-            down to nothing cannot take away the control that undoes it. */}
+            down to nothing cannot take away the control that undoes it.
+
+            From 640 px the filter bar's controls and the actions share this
+            one wrapping row, so an item only moves to the next line when it
+            does not fit beside the last one, and the actions keep to the
+            right edge of whichever line they land on (#116). */}
         {anyOpen ? (
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 sm:justify-start">
             <OpenApplicationsFilterBar
               filters={filters}
               categories={categories}
               owners={owners}
               onChange={setFilters}
             />
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 sm:ml-auto">
               {hasActiveFilters(filters) && (
                 <button
                   type="button"
