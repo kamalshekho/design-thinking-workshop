@@ -21,7 +21,7 @@ export type CategoryActionButtonProps = {
   onClick: () => void;
 };
 
-/** An icon-only button: the label is its accessible name, the title its hint. */
+/** An icon-only button: `label` is its accessible name, `title` its hint. */
 export function CategoryIconButton({
   icon: Icon,
   label,
