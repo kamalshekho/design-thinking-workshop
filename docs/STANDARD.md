@@ -269,8 +269,10 @@ Logik zu unterscheiden ist.
 
 ### Ordner der Komponenten
 
-Die Ordner bleiben je Anwendung, wie sie sind: ein Ordner je Komponente im
-Applicant form, flache Dateien im Dashboard.
+Die Ordner bleiben je Anwendung, wie sie sind: im Applicant form ein Ordner je
+Komponente. Im Dashboard liegen die eigenen Komponenten als flache Dateien im
+Ordner ihres Features und in `components/shared/`. Die Kopien behalten die
+Ordner des Klons.
 
 Das prüft keine Maschine.
 
