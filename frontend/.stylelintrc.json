@@ -17,6 +17,18 @@
     "declaration-property-value-disallowed-list": {
       "/^color$|^background|^border/": ["/^rgb\\(/", "/^rgba\\(/", "/^hsl/"]
     },
+    "unit-disallowed-list": [
+      ["px", "em", "rem"],
+      {
+        "ignoreMediaFeatureNames": {
+          "px": ["width"]
+        },
+        "message": "Use a design token from src/styles/tokens.css instead of a literal size"
+      }
+    ],
+    "media-feature-name-value-allowed-list": {
+      "width": ["640px", "900px", "1024px"]
+    },
     "at-rule-no-vendor-prefix": true,
     "property-no-vendor-prefix": true,
     "no-descending-specificity": null,
@@ -27,7 +39,8 @@
       "files": ["src/styles/tokens.css"],
       "rules": {
         "color-no-hex": null,
-        "declaration-property-value-disallowed-list": null
+        "declaration-property-value-disallowed-list": null,
+        "unit-disallowed-list": null
       }
     },
     {

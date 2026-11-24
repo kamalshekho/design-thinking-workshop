@@ -235,5 +235,5 @@
   letter-spacing: normal;
   text-align: right;
   white-space: nowrap;
-  transform: translateX(-6px);
+  transform: translateX(var(--hero-tagline-offset-x));
 }

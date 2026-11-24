@@ -85,7 +85,11 @@
   --container-max: 1240px;
   --form-max: 960px;
 
+  --page-min-width: 320px;
   --page-gutter: 48px;
+  --body-font-size-mobile: 18px;
+  --link-underline-offset: 0.14em;
+  --visually-hidden-size: 1px;
   --field-height: 56px;
   --button-height: 56px;
 
@@ -140,6 +144,7 @@
   --form-icon-size: 100px;
 
   --header-control-size: 44px;
+  --header-menu-bar-offset: 7px;
 
   /* Header donate CTA — sized to match the live site's compact nav button
      (ichbinhier.eu) rather than the larger 56px/20px Button component
@@ -152,11 +157,13 @@
 
   --hero-strip-max-width: 1280px;
   --hero-strip-aspect: 1413 / 520;
+  --hero-tagline-offset-x: -6px;
 
   --footer-padding-block: 56px 32px;
   --footer-row-gap: 40px;
   --footer-column-gap: var(--wp--preset--spacing--40);
   --footer-donate-gap: 10px;
+  --footer-donate-letter-spacing: 0.5px;
   --footer-icon-size: 22px;
   --footer-text-size: 14px;
   --footer-divider-color: rgb(255 255 255 / 25%);

@@ -146,7 +146,7 @@
 }
 
 .menuButton[aria-expanded='true'] rect:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
+  transform: translateY(var(--header-menu-bar-offset)) rotate(45deg);
 }
 
 .menuButton[aria-expanded='true'] rect:nth-child(2) {
@@ -154,7 +154,7 @@
 }
 
 .menuButton[aria-expanded='true'] rect:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
+  transform: translateY(calc(-1 * var(--header-menu-bar-offset))) rotate(-45deg);
 }
 
 .searchIcon {
