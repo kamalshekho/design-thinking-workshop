@@ -104,8 +104,9 @@ Two more conventions:
 ## Component rules
 
 **A component in `components/ui/` does not know the domain.** It receives
-finished strings as props. It may not import from `content/` or `features/` —
-ESLint rejects that import.
+finished strings as props. That part is a convention the review checks.
+ESLint rejects an import from `features/` or `app/`, but since ADR-0008 not
+one from `content/`.
 See also [the import rules](../docs/STANDARD.md#importrichtung-und-barrel-dateien).
 
 Two reasons, and the second is the one that matters:
