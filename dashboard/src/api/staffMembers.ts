@@ -7,20 +7,27 @@
  * either screen needs. No photos either — every Owner renders as initials.
  */
 
+import * as z from 'zod/v4-mini';
+
 import type { Owner } from '@/domain/application';
 
 import { request } from './transport';
 
-type StaffMemberWire = {
-  id: string;
-  name: string;
-};
+const staffMemberWireSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
+const staffMembersResponseSchema = z.object({
+  members: z.array(staffMemberWireSchema),
+});
 
 export async function fetchStaffMembers(): Promise<Owner[]> {
-  const { members } = await request<{ members: StaffMemberWire[] }>(
+  const { members } = await request(
     'GET',
     '/members',
+    staffMembersResponseSchema,
   );
 
-  return members.map((member) => ({ id: member.id, name: member.name }));
+  return members;
 }

@@ -1,9 +1,13 @@
+import { z } from 'zod';
+
 import type { SubmitErrorCode } from '../../lib/errorCodes';
 import { getJson, postJson } from '../../lib/http';
 import type { FixedRoute, WeeklyTime } from '../../lib/routes';
 import { CONSENT_TEXT_VERSION } from '../../lib/routes';
 import { isUuid } from '../../lib/uuid';
 import type { ApplicationValues } from './schema';
+
+z.config({ jitless: true });
 
 /**
  * The transport layer for the form. The whole contract with the backend lives
@@ -68,21 +72,35 @@ function buildApplicationRequest(
   };
 }
 
-interface ProblemDetail {
-  code?: unknown;
-  errors?: unknown;
-}
+const fieldErrorSchema = z.object({
+  field: z.string(),
+  code: z.string(),
+});
+
+const problemDetailSchema = z.object({
+  errors: z.array(z.unknown()),
+});
+
+const applicationCreatedSchema = z.object({
+  applicationId: z.string().min(1),
+});
+
+const categoriesResponseSchema = z.object({
+  categories: z.array(
+    z.object({
+      id: z.string(),
+      label: z.string(),
+    }),
+  ),
+});
 
 function readFieldErrors(body: unknown): ServerFieldError[] {
-  if (typeof body !== 'object' || body === null) return [];
-  const { errors } = body as ProblemDetail;
-  if (!Array.isArray(errors)) return [];
+  const parsed = problemDetailSchema.safeParse(body);
+  if (!parsed.success) return [];
 
-  return errors.flatMap((entry): ServerFieldError[] => {
-    if (typeof entry !== 'object' || entry === null) return [];
-    const { field, code } = entry as Record<string, unknown>;
-    if (typeof field !== 'string' || typeof code !== 'string') return [];
-    return [{ field, code }];
+  return parsed.data.errors.flatMap((entry): ServerFieldError[] => {
+    const fieldError = fieldErrorSchema.safeParse(entry);
+    return fieldError.success ? [fieldError.data] : [];
   });
 }
 
@@ -95,11 +113,8 @@ async function readBody(response: Response): Promise<unknown> {
 }
 
 function readApplicationId(body: unknown): string | null {
-  if (typeof body !== 'object' || body === null) return null;
-  const { applicationId } = body as Record<string, unknown>;
-  return typeof applicationId === 'string' && applicationId.length > 0
-    ? applicationId
-    : null;
+  const parsed = applicationCreatedSchema.safeParse(body);
+  return parsed.success ? parsed.data.applicationId : null;
 }
 
 /**
@@ -153,16 +168,12 @@ export type FetchCategoriesResult =
  * must surface as a load failure, never as a silent empty list.
  */
 function readCategories(body: unknown): Category[] | null {
-  if (typeof body !== 'object' || body === null) return null;
-  const { categories } = body as Record<string, unknown>;
-  if (!Array.isArray(categories)) return null;
+  const parsed = categoriesResponseSchema.safeParse(body);
+  if (!parsed.success) return null;
 
   const result: Category[] = [];
   const seenIds = new Set<string>();
-  for (const entry of categories) {
-    if (typeof entry !== 'object' || entry === null) return null;
-    const { id, label } = entry as Record<string, unknown>;
-    if (typeof id !== 'string' || typeof label !== 'string') return null;
+  for (const { id, label } of parsed.data.categories) {
     if (!isUuid(id)) {
       console.warn(`fetchCategories: category id is not a UUID: ${id}`);
       return null;

@@ -16,13 +16,28 @@ export const APPLICATION_STATUSES = [
 
 export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
 
+export function isApplicationStatus(
+  value: unknown,
+): value is ApplicationStatus {
+  return (
+    typeof value === 'string' &&
+    APPLICATION_STATUSES.some((status) => status === value)
+  );
+}
+
 /**
  * How much time an Applicant offers per week. A band, not a number of hours:
  * the form asks for one of these four and `IRREGULAR` is not a quantity at
  * all (`API.md`, "Wire names").
  */
-export type WeeklyTime =
-  'HOURS_1_2' | 'HOURS_3_5' | 'HOURS_5_PLUS' | 'IRREGULAR';
+export const WEEKLY_TIMES = [
+  'HOURS_1_2',
+  'HOURS_3_5',
+  'HOURS_5_PLUS',
+  'IRREGULAR',
+] as const;
+
+export type WeeklyTime = (typeof WEEKLY_TIMES)[number];
 
 /**
  * The statuses that mean an Application is done, one way or the other.
@@ -150,6 +165,13 @@ export const NOTES_DEBOUNCE_MS = 800;
 export const APPLICATION_VIEWS = ['all', 'unassigned', 'stale'] as const;
 
 export type ApplicationView = (typeof APPLICATION_VIEWS)[number];
+
+export function isApplicationView(value: unknown): value is ApplicationView {
+  return (
+    typeof value === 'string' &&
+    APPLICATION_VIEWS.some((view) => view === value)
+  );
+}
 
 /**
  * The age at which an Application counts as stale (`A19`). The German label

@@ -1,17 +1,15 @@
 import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 
 import type { Content } from '../../content/types';
+import { isErrorCode } from '../../lib/errorCodes';
 import type { FormValues } from './schema';
 
 export function toErrorText(
   message: string | undefined,
   content: Content,
 ): string | undefined {
-  return message
-    ? message in content.errors
-      ? content.errors[message as keyof typeof content.errors]
-      : content.unknownError
-    : undefined;
+  if (!message) return undefined;
+  return isErrorCode(message) ? content.errors[message] : content.unknownError;
 }
 
 /**

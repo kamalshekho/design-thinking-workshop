@@ -26,7 +26,7 @@
  */
 
 import type { Application } from '@/domain/application';
-import { APPLICATION_STATUSES } from '@/domain/application';
+import { isApplicationStatus } from '@/domain/application';
 import type { StateChange, StateChangeField } from '@/domain/stateChange';
 
 type ChangesByField = ReadonlyMap<StateChangeField, readonly StateChange[]>;
@@ -78,13 +78,6 @@ function valueAt(
   };
 }
 
-function isStatus(value: unknown): value is Application['status'] {
-  return (
-    typeof value === 'string' &&
-    (APPLICATION_STATUSES as readonly string[]).includes(value)
-  );
-}
-
 /** One Application as it stood on `asOf`. */
 function applicationAsOf(
   application: Application,
@@ -98,7 +91,7 @@ function applicationAsOf(
   /** No `STATUS` row after `asOf` means it still holds today's; `NEW` is what it was submitted with. */
   const statusThen = !status.changedAfter
     ? application.status
-    : isStatus(status.last?.to)
+    : isApplicationStatus(status.last?.to)
       ? status.last.to
       : 'NEW';
 

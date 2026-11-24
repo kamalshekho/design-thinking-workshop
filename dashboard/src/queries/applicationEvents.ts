@@ -5,8 +5,7 @@
  * this; nothing else knows the event names.
  */
 
-import type { ApplicationWire } from '@/api/applications';
-import { toApplication } from '@/api/applications';
+import { applicationWireSchema } from '@/api/applications';
 import type { Application } from '@/domain/application';
 
 /** The three the contract names (`API.md`, "The live stream"). */
@@ -38,14 +37,21 @@ export function parseApplicationEvent(
   type: ApplicationEventType,
   data: string,
 ): ApplicationEvent | null {
+  let raw: unknown;
+
   try {
-    return {
-      type,
-      application: toApplication(JSON.parse(data) as ApplicationWire),
-    };
+    raw = JSON.parse(data);
   } catch {
     return null;
   }
+
+  const parsed = applicationWireSchema.safeParse(raw);
+
+  if (!parsed.success) {
+    return null;
+  }
+
+  return { type, application: parsed.data };
 }
 
 function withoutApplication(

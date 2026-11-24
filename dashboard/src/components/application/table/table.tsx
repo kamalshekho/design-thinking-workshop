@@ -389,17 +389,12 @@ const TableCard = {
   Header: TableCardHeader,
 };
 
-const Table = TableRoot as typeof TableRoot & {
-  Body: typeof AriaTableBody;
-  Cell: typeof TableCell;
-  Head: typeof TableHead;
-  Header: typeof TableHeader;
-  Row: typeof TableRow;
-};
-Table.Body = AriaTableBody;
-Table.Cell = TableCell;
-Table.Head = TableHead;
-Table.Header = TableHeader;
-Table.Row = TableRow;
+const Table = Object.assign(TableRoot, {
+  Body: AriaTableBody,
+  Cell: TableCell,
+  Head: TableHead,
+  Header: TableHeader,
+  Row: TableRow,
+});
 
 export { Table, TableCard };

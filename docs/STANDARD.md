@@ -187,19 +187,22 @@ Ausgenommen sind nur Tests und `mocks/`. Eine Ausnahme ist sonst nur ein
 [`eslint-disable` mit Begründung](#eslint-disable).
 
 Prüfung: `@typescript-eslint/consistent-type-assertions` mit
-`assertionStyle: 'never'`, noch nicht eingeschaltet. #130 schaltet sie in
-beiden Anwendungen ein.
+`assertionStyle: 'never'` in `eslint.base.mjs`, in beiden Anwendungen
+eingeschaltet, im Hook und in den CI-Jobs `frontend` und `dashboard`.
 
 ### Antworten des Servers
 
 Ein Zod-Schema prüft jede Antwort des Servers dort, wo sie ankommt: in
 `features/application-form/api.ts` im Applicant form und in `src/api/` im
-Dashboard. Heute prüft das Applicant form die Antworten in `api.ts` von Hand,
-und das Dashboard reicht sie in `src/api/transport.ts` mit
-`response.json() as T` ungeprüft durch.
+Dashboard. Live-Stream-Ereignisse im Dashboard laufen in
+`src/queries/applicationEvents.ts` durch dasselbe Schema wie die Liste der
+Applications.
 
-Prüfung: noch keine. #130 bringt Zod ins Dashboard und zeigt mit einem Test,
-dass eine Antwort mit falscher Form als Fehler ankommt und nicht als Daten.
+Prüfung: Zod-Schemas in beiden Anwendungen, eingeschaltet über die Tests in
+`frontend/src/features/application-form/api.test.ts`,
+`dashboard/src/api/transport.test.ts`, `dashboard/src/api/applications.test.ts`
+und `dashboard/src/queries/applicationEvents.test.ts`. Die Tests zeigen, dass
+eine Antwort mit falscher Form als Fehler ankommt und nicht als Daten.
 
 ## Fehler
 
@@ -209,10 +212,11 @@ Ein Fehler wird zu einem Code, der Code zu einem deutschen Text aus `content`,
 und dieser Text wird angezeigt. Die Zuordnung vom Code zum Text ist ein
 `Record<ErrorCode, string>`, ein fehlender Text ist also ein Fehler von `tsc`.
 
-Prüfung im Applicant form: `tsc` im CI-Job `frontend`, über den Typ
-`errors: Record<ErrorCode, string>` in `src/content/types.ts`. Im Dashboard noch
-nicht eingeschaltet, dort liest `src/content/errorMessage.ts` die Texte über
-`Record<string, string>`. #130 stellt das Dashboard um.
+Prüfung: `tsc` in den CI-Jobs `frontend` und `dashboard`, eingeschaltet über
+`errors: Record<ErrorCode, string>` in `frontend/src/content/types.ts` und über
+`Record<TopLevelErrorCode, string>` in `dashboard/src/content/errorMessage.ts`
+sowie `satisfies Record<TopLevelErrorCode, string>` in
+`dashboard/src/content/de.ts`.
 
 ### Nur die Transportschicht wirft
 
@@ -223,12 +227,16 @@ Prüfung: `@typescript-eslint/only-throw-error` ist über `strictTypeChecked` in
 `eslint.base.mjs` in beiden Anwendungen eingeschaltet, im Hook und in den
 CI-Jobs `frontend` und `dashboard`. Sie verbietet, etwas anderes als ein
 `Error`-Objekt zu werfen. `no-restricted-syntax` gegen `TryStatement` in
-`features/**` und `components/**` ist noch nicht eingeschaltet, #130 schaltet es
-in beiden Anwendungen ein. `only-throw-error` prüft, was geworfen wird, nicht
-wo, und lässt jede Unterklasse von `Error` zu. Das Verbot von `TryStatement`
-prüft, wo gefangen wird, nicht wo geworfen wird. Ob außerhalb der
-Transportschicht geworfen wird und ob das Geworfene ein `ApiProblem` ist, prüft
-das Review. Die Entscheidung nennt dafür kein Werkzeug.
+`src/features/**` und `src/components/**` steht ebenfalls in `eslint.base.mjs`
+und ist in beiden Anwendungen eingeschaltet, im Hook und in den CI-Jobs
+`frontend` und `dashboard`. Einzige Ausnahme per `ignores` in
+`frontend/eslint.config.js` ist `frontend/src/features/application-form/api.ts`,
+weil die Transportschicht des Applicant form noch unter `features/` liegt; diese
+Ausnahme entfällt, sobald sie aus `features/` herauszieht. `only-throw-error`
+prüft, was geworfen wird, nicht wo, und lässt jede Unterklasse von `Error` zu.
+Das Verbot von `TryStatement` prüft, wo gefangen wird, nicht wo geworfen wird.
+Ob außerhalb der Transportschicht geworfen wird und ob das Geworfene ein
+`ApiProblem` ist, prüft das Review. Die Entscheidung nennt dafür kein Werkzeug.
 
 ## Benennung
 

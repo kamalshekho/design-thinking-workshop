@@ -12,7 +12,9 @@
  */
 
 /** The three fields a card reads, and the only ones recorded (`API.md`). */
-export type StateChangeField = 'STATUS' | 'OWNER' | 'DISCARDED';
+export const STATE_CHANGE_FIELDS = ['STATUS', 'OWNER', 'DISCARDED'] as const;
+
+export type StateChangeField = (typeof STATE_CHANGE_FIELDS)[number];
 
 export type StateChange = {
   /** The Application it happened to; an id in the list. */

@@ -67,10 +67,14 @@ export const SidebarNavigationSimple = ({
   const isCollapsed = lg && (chosen ?? !xl);
   const sidebarWidth = isCollapsed ? SLIM_SIDEBAR_WIDTH : MAIN_SIDEBAR_WIDTH;
 
+  const navStyle: CSSProperties & { '--width': string } = {
+    '--width': `${String(sidebarWidth)}px`,
+  };
+
   const content = (
     <nav
       aria-label={de.navigation.label}
-      style={{ '--width': `${String(sidebarWidth)}px` } as CSSProperties}
+      style={navStyle}
       className={cx(
         'bg-primary flex h-full w-full max-w-full flex-col justify-between overflow-auto pt-4 motion-reduce:transition-none lg:w-(--width) lg:pt-5 lg:transition-[width]',
         !hideBorder && 'border-secondary md:border-r',

@@ -79,6 +79,10 @@ export function AppShell({
 }: AppShellProps) {
   const { connected } = useApplicationStream({ enabled: !signInExpired });
 
+  const mainStyle: CSSProperties & { '--gutter': string } = {
+    '--gutter': `${String(SIDEBAR_GUTTER)}px`,
+  };
+
   return (
     <div
       inert={signInExpired}
@@ -101,7 +105,7 @@ export function AppShell({
         (issue #109).
       */}
       <main
-        style={{ '--gutter': `${String(SIDEBAR_GUTTER)}px` } as CSSProperties}
+        style={mainStyle}
         className="bg-bg-canvas flex min-w-0 flex-1 flex-col gap-3 px-4 py-6 sm:px-(--gutter)"
       >
         {/*

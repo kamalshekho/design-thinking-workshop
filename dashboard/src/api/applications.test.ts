@@ -6,6 +6,7 @@ import {
   fetchStateChanges,
   patchApplication,
 } from './applications';
+import { ApiProblem } from './problem';
 
 function noContent() {
   const mock = vi.fn<(input: string, init?: RequestInit) => Promise<Response>>(
@@ -87,6 +88,20 @@ describe('fetchApplications', () => {
     answer({ applications: [] });
 
     await expect(fetchApplications()).resolves.toEqual([]);
+  });
+
+  it('rejects a 200 response with the wrong shape as an ApiProblem without code', async () => {
+    answer({ applications: [{ id: 'only-an-id' }] });
+
+    const failure = await fetchApplications().catch(
+      (thrown: unknown) => thrown,
+    );
+
+    expect(failure).toBeInstanceOf(ApiProblem);
+    if (failure instanceof ApiProblem) {
+      expect(failure.status).toBe(200);
+      expect(failure.code).toBeUndefined();
+    }
   });
 });
 

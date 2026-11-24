@@ -205,10 +205,14 @@ export function useApplicationStream({
      */
     const listeners = APPLICATION_EVENT_TYPES.map((type) => {
       const listener = (message: Event) => {
-        const event = parseApplicationEvent(
-          type,
-          (message as MessageEvent<string>).data,
-        );
+        if (
+          !(message instanceof MessageEvent) ||
+          typeof message.data !== 'string'
+        ) {
+          return;
+        }
+
+        const event = parseApplicationEvent(type, message.data);
 
         if (event === null) {
           return;

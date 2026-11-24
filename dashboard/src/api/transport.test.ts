@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import * as z from 'zod/v4-mini';
 
 import { ApiProblem, isUnauthenticated } from './problem';
 import { request, requestNoContent } from './transport';
+
+const anyObjectSchema = z.object({});
 
 function respond(body: unknown, init: ResponseInit = {}): Response {
   return new Response(body === null ? null : JSON.stringify(body), {
@@ -31,7 +34,7 @@ describe('request', () => {
   it('sends the Sign-in cookie and asks for nothing from a cache', async () => {
     const mock = fetchMock(respond({ ok: true }));
 
-    await request('GET', '/applications');
+    await request('GET', '/applications', z.object({ ok: z.boolean() }));
 
     expect(mock).toHaveBeenCalledWith(
       '/api/v1/staff/applications',
@@ -45,7 +48,10 @@ describe('request', () => {
 
   it('sends a body as JSON and says so, and nothing when there is none', async () => {
     const withBody = fetchMock(respond({}));
-    await request('POST', '/session', { email: 'a@b.de', password: 'geheim' });
+    await request('POST', '/session', anyObjectSchema, {
+      email: 'a@b.de',
+      password: 'geheim',
+    });
 
     const [, sent] = withBody.mock.calls[0] ?? [];
     expect(sent?.body).toBe('{"email":"a@b.de","password":"geheim"}');
@@ -54,7 +60,7 @@ describe('request', () => {
     });
 
     const withoutBody = fetchMock(respond({}));
-    await request('GET', '/me');
+    await request('GET', '/me', anyObjectSchema);
 
     const [, plain] = withoutBody.mock.calls[0] ?? [];
     expect(plain?.body).toBeUndefined();
@@ -67,6 +73,22 @@ describe('request', () => {
     await expect(
       requestNoContent('DELETE', '/session'),
     ).resolves.toBeUndefined();
+  });
+
+  it('throws an ApiProblem without code when a 200 body does not match the schema', async () => {
+    fetchMock(respond({ unexpected: true }));
+
+    const failure = await request(
+      'GET',
+      '/applications',
+      z.object({ ok: z.boolean() }),
+    ).catch((thrown: unknown) => thrown);
+
+    expect(failure).toBeInstanceOf(ApiProblem);
+    if (failure instanceof ApiProblem) {
+      expect(failure.status).toBe(200);
+      expect(failure.code).toBeUndefined();
+    }
   });
 
   /**
@@ -94,9 +116,12 @@ describe('request', () => {
       ),
     );
 
-    const failure = await request('PATCH', '/applications/1', {}).catch(
-      (thrown: unknown) => thrown,
-    );
+    const failure = await request(
+      'PATCH',
+      '/applications/1',
+      anyObjectSchema,
+      {},
+    ).catch((thrown: unknown) => thrown);
 
     expect(failure).toBeInstanceOf(ApiProblem);
     if (!(failure instanceof ApiProblem)) {
@@ -121,7 +146,7 @@ describe('request', () => {
       ),
     );
 
-    const failure = await request('GET', '/me').catch(
+    const failure = await request('GET', '/me', anyObjectSchema).catch(
       (thrown: unknown) => thrown,
     );
 
@@ -141,9 +166,11 @@ describe('request', () => {
       }),
     );
 
-    const failure = await request('GET', '/applications').catch(
-      (thrown: unknown) => thrown,
-    );
+    const failure = await request(
+      'GET',
+      '/applications',
+      anyObjectSchema,
+    ).catch((thrown: unknown) => thrown);
 
     expect(failure).toBeInstanceOf(ApiProblem);
     if (failure instanceof ApiProblem) {
