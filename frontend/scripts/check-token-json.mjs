@@ -158,9 +158,7 @@ for (const [jsonPath, cssVar] of PRIMITIVE_MAP) {
 }
 
 if (errors.length > 0) {
-  console.error(
-    `${errors.length} token.json / tokens.css mismatch(es) found:`,
-  );
+  console.error(`${errors.length} token.json / tokens.css mismatch(es) found:`);
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
