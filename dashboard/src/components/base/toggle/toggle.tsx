@@ -5,8 +5,12 @@
  */
 
 import type { ReactNode } from 'react';
-import type { SwitchProps as AriaSwitchProps } from 'react-aria-components';
-import { Switch as AriaSwitch } from 'react-aria-components';
+import type { SwitchFieldProps as AriaSwitchFieldProps } from 'react-aria-components';
+import {
+  SwitchButton as AriaSwitchButton,
+  SwitchField as AriaSwitchField,
+  Text as AriaText,
+} from 'react-aria-components';
 
 import { cx } from '@/utils/cx';
 
@@ -95,19 +99,21 @@ const ToggleBase = ({
 const styles = {
   sm: {
     root: 'gap-2',
-    textWrapper: '',
     label: 'text-sm font-medium',
     hint: 'text-sm',
+    hintIndent: 'pl-11',
+    slimHintIndent: 'pl-10',
   },
   md: {
     root: 'gap-3',
-    textWrapper: 'gap-0.5',
     label: 'text-md font-medium',
-    hint: 'text-md',
+    hint: 'mt-0.5 text-md',
+    hintIndent: 'pl-14',
+    slimHintIndent: 'pl-13',
   },
 };
 
-interface ToggleProps extends AriaSwitchProps {
+interface ToggleProps extends AriaSwitchFieldProps {
   size?: 'sm' | 'md';
   label?: string;
   hint?: ReactNode;
@@ -123,55 +129,52 @@ export const Toggle = ({
   ...ariaSwitchProps
 }: ToggleProps) => {
   return (
-    <AriaSwitch
+    <AriaSwitchField
       {...ariaSwitchProps}
       className={(state) =>
         cx(
-          'relative flex w-max items-start',
+          'relative flex w-max flex-col items-start',
           state.isDisabled && 'cursor-not-allowed',
-          styles[size].root,
           typeof className === 'function' ? className(state) : className,
         )
       }
     >
-      {({ isSelected, isDisabled, isFocusVisible, isHovered }) => (
-        <>
-          <ToggleBase
-            slim={slim}
-            size={size}
-            isHovered={isHovered}
-            isDisabled={isDisabled}
-            isFocusVisible={isFocusVisible}
-            isSelected={isSelected}
-            className={slim ? 'mt-0.5' : ''}
-          />
+      <AriaSwitchButton className={cx('flex items-start', styles[size].root)}>
+        {({ isSelected, isDisabled, isFocusVisible, isHovered }) => (
+          <>
+            <ToggleBase
+              slim={slim}
+              size={size}
+              isHovered={isHovered}
+              isDisabled={isDisabled}
+              isFocusVisible={isFocusVisible}
+              isSelected={isSelected}
+              className={slim ? 'mt-0.5' : ''}
+            />
 
-          {(label || hint) && (
-            <div className={cx('flex flex-col', styles[size].textWrapper)}>
-              {label && (
-                <p
-                  className={cx(
-                    'text-secondary select-none',
-                    styles[size].label,
-                  )}
-                >
-                  {label}
-                </p>
-              )}
-              {hint && (
-                <span
-                  className={cx('text-tertiary', styles[size].hint)}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                  }}
-                >
-                  {hint}
-                </span>
-              )}
-            </div>
+            {label && (
+              <p
+                className={cx('text-secondary select-none', styles[size].label)}
+              >
+                {label}
+              </p>
+            )}
+          </>
+        )}
+      </AriaSwitchButton>
+
+      {hint && (
+        <AriaText
+          slot="description"
+          className={cx(
+            'text-tertiary',
+            styles[size].hint,
+            slim ? styles[size].slimHintIndent : styles[size].hintIndent,
           )}
-        </>
+        >
+          {hint}
+        </AriaText>
       )}
-    </AriaSwitch>
+    </AriaSwitchField>
   );
 };
