@@ -55,8 +55,8 @@
  */
 .honeypot {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: var(--visually-hidden-size);
+  height: var(--visually-hidden-size);
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
@@ -98,8 +98,8 @@
 /* Perceivable to assistive tech only — see .honeypot above for why not display:none. */
 .visuallyHidden {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: var(--visually-hidden-size);
+  height: var(--visually-hidden-size);
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;

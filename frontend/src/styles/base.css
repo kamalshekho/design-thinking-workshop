@@ -65,7 +65,7 @@ html {
 }
 
 body {
-  min-width: 320px;
+  min-width: var(--page-min-width);
   margin: 0;
   font-family: var(--font-primary);
   font-size: var(--wp--preset--font-size--medium);
@@ -83,7 +83,7 @@ textarea {
 
 a {
   color: inherit;
-  text-underline-offset: 0.14em;
+  text-underline-offset: var(--link-underline-offset);
 }
 
 /* Only the Regular weight of Akhand Soft is confirmed to exist
@@ -98,7 +98,7 @@ h3 {
 
 @media (width <= 640px) {
   body {
-    font-size: 18px;
+    font-size: var(--body-font-size-mobile);
   }
 }
 
