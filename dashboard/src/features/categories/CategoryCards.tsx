@@ -9,14 +9,15 @@
  * they are.
  */
 
-import { ArrowDown, ArrowUp, Edit01, Trash01 } from '@untitledui/icons';
-import type { ComponentType } from 'react';
+import { ArrowDown, ArrowUp } from '@untitledui/icons';
 
 import { Toggle } from '@/components/base/toggle/toggle';
 import { de } from '@/content/de';
 import { cx } from '@/utils/cx';
 
 import type { CategoriesTableProps } from './CategoriesTable';
+import type { CategoryActionButtonProps } from './CategoryEditDelete';
+import { CategoryEditDelete, CategoryIconButton } from './CategoryEditDelete';
 
 export function CategoryCards({
   categories,
@@ -141,27 +142,12 @@ export function CategoryCards({
                     }}
                   />
                   <span className="flex-1" />
-                  <CardButton
-                    icon={Edit01}
-                    label={de.categories.editOne(category.name)}
-                    title={de.categories.edit}
-                    onClick={() => {
-                      onEdit(category);
-                    }}
-                  />
-                  <CardButton
-                    icon={Trash01}
-                    label={de.categories.deleteOne(category.name)}
-                    title={
-                      blocking > 0
-                        ? de.categories.deleteBlocked(blocking)
-                        : de.categories.delete
-                    }
-                    isDisabled={blocking > 0}
-                    destructive
-                    onClick={() => {
-                      onDelete(category);
-                    }}
+                  <CategoryEditDelete
+                    category={category}
+                    blocking={blocking}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    button={CardButton}
                   />
                 </div>
               </li>
@@ -174,35 +160,15 @@ export function CategoryCards({
 }
 
 /** 40 px, so a thumb hits one button and not its neighbour. */
-function CardButton({
-  icon: Icon,
-  label,
-  title,
-  isDisabled,
-  destructive,
-  onClick,
-}: {
-  icon: ComponentType<{ className?: string }>;
-  /** The accessible name; `title` is the short version of it. */
-  label: string;
-  title: string;
-  isDisabled?: boolean;
-  destructive?: boolean;
-  onClick: () => void;
-}) {
+function CardButton({ destructive, ...props }: CategoryActionButtonProps) {
   return (
-    <button
-      type="button"
-      aria-label={label}
-      title={title}
-      disabled={isDisabled}
-      onClick={onClick}
+    <CategoryIconButton
+      {...props}
       className={cx(
         'border-secondary text-fg-secondary outline-focus-ring flex size-10 cursor-pointer items-center justify-center rounded-lg border focus-visible:outline-2 disabled:cursor-not-allowed disabled:opacity-35',
         destructive && 'text-fg-error-primary',
       )}
-    >
-      <Icon className="size-4.5" />
-    </button>
+      iconClassName="size-4.5"
+    />
   );
 }
