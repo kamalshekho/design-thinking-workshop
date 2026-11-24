@@ -3,6 +3,8 @@
  * change: a page button's accessible name comes from `content/de.ts` rather
  * than the clone's English `Page n` literal. The pager variants built on this
  * live in `pagination.tsx`.
+ *
+ * Prop comments that only restate the prop name are dropped.
  */
 
 import type { CSSProperties, FC, HTMLAttributes, ReactNode } from 'react';
@@ -19,11 +21,8 @@ import {
 import { de } from '@/content/de';
 
 type PaginationPage = {
-  /** The type of the pagination item. */
   type: 'page';
-  /** The value of the pagination item. */
   value: number;
-  /** Whether the pagination item is the current page. */
   isCurrent: boolean;
 };
 
@@ -35,13 +34,9 @@ type PaginationEllipsisType = {
 type PaginationItemType = PaginationPage | PaginationEllipsisType;
 
 interface PaginationContextType {
-  /** The pages of the pagination. */
   pages: PaginationItemType[];
-  /** The current page of the pagination. */
   currentPage: number;
-  /** The total number of pages. */
   total: number;
-  /** The function to call when the page changes. */
   onPageChange: (page: number) => void;
 }
 
@@ -52,16 +47,11 @@ const PaginationContext = createContext<PaginationContextType | undefined>(
 export interface PaginationRootProps {
   /** Number of sibling pages to show on each side of the current page */
   siblingCount?: number;
-  /** Current active page number */
   page: number;
-  /** Total number of pages */
   total: number;
   children: ReactNode;
-  /** The style of the pagination root. */
   style?: CSSProperties;
-  /** The class name of the pagination root. */
   className?: string;
-  /** Callback function that's called when the page changes with the new page number. */
   onPageChange?: (page: number) => void;
 }
 
@@ -326,9 +316,7 @@ interface PaginationItemRenderProps {
 }
 
 interface PaginationItemProps {
-  /** The value of the pagination item. */
   value: number;
-  /** Whether the pagination item is the current page. */
   isCurrent: boolean;
   /** The children of the pagination item. Can be a render prop or a valid element. */
   children?: ReactNode | ((props: PaginationItemRenderProps) => ReactNode);

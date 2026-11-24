@@ -2,6 +2,8 @@
  * Clone path: `components/application/table/table.tsx`. Kept as-is apart from
  * dropping `TableRowActionsDropdown`, which pulled in the clone's
  * `base/dropdown` for a row menu this dashboard does not show.
+ *
+ * Prop comments that only restate the prop name are dropped.
  */
 
 import {
@@ -73,15 +75,11 @@ const TableCardRoot = ({
 };
 
 interface TableCardHeaderProps {
-  /** The title of the table card header. */
   title: string;
-  /** The badge displayed next to the title. */
   badge?: ReactNode;
-  /** The description of the table card header. */
   description?: string;
   /** The content displayed after the title and badge. */
   contentTrailing?: ReactNode;
-  /** The class name of the table card header. */
   className?: string;
 }
 

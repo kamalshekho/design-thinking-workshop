@@ -9,6 +9,8 @@
  * The clone's labels are English literals in the component; this copy reads
  * them from `content/de.ts` instead, since a Staff member sees them and the
  * dashboard UI is German (`A6`).
+ *
+ * Prop comments that only restate the prop name are dropped.
  */
 
 import { ArrowLeft, ArrowRight } from '@untitledui/icons';
@@ -24,7 +26,6 @@ import { Pagination } from './pagination-base';
 interface PaginationProps extends Partial<
   Omit<PaginationRootProps, 'children'>
 > {
-  /** Whether the pagination buttons are rounded. */
   rounded?: boolean;
 }
 

@@ -1,6 +1,8 @@
 /**
  * Clone path: `components/base/input/input.tsx`. One change: the password
  * visibility button carries `tap-target` (#116).
+ *
+ * Prop comments that only restate the prop name are dropped.
  */
 
 import { Eye, EyeOff, HelpCircle, InfoCircle } from '@untitledui/icons';
@@ -31,30 +33,16 @@ import { de } from '@/content/de';
 import { cx, sortCx } from '@/utils/cx';
 
 interface InputBaseProps extends Omit<AriaInputProps, 'size'> {
-  /** Tooltip message on hover. */
   tooltip?: string;
-  /** Whether the input is invalid. */
   isInvalid?: boolean;
-  /** Whether the input is disabled. */
   isDisabled?: boolean;
-  /** Whether the input is required. */
   isRequired?: boolean;
-  /**
-   * Input size.
-   * @default "sm"
-   */
   size?: 'sm' | 'md' | 'lg';
-  /** Placeholder text. */
   placeholder?: string;
-  /** Class name for the icon. */
   iconClassName?: string;
-  /** Class name for the input. */
   inputClassName?: string;
-  /** Class name for the input wrapper. */
   wrapperClassName?: string;
-  /** Class name for the tooltip. */
   tooltipClassName?: string;
-  /** Keyboard shortcut to display. */
   shortcut?: string | boolean;
   ref?: Ref<HTMLInputElement>;
   groupRef?: Ref<HTMLDivElement>;
@@ -151,7 +139,6 @@ const InputBase = ({
         )
       }
     >
-      {/* Leading icon and Payment icon */}
       {Icon && (
         <Icon
           className={cx(
