@@ -1,4 +1,16 @@
-import axe, { type Result } from 'axe-core';
+import axe, { type Result, type RunOptions } from 'axe-core';
+
+const AXE_RUN_OPTIONS: RunOptions = {
+  rules: { 'color-contrast': { enabled: false } },
+};
+
+function formatViolation(violation: Result): string {
+  const header = `  [${violation.impact ?? 'unknown'}] ${violation.id}: ${violation.help}`;
+  const link = `  ${violation.helpUrl}`;
+  const targets = violation.nodes.map((node) => `    ${node.html}`);
+
+  return [header, link, ...targets].join('\n');
+}
 
 /**
  * Runs axe over a rendered container and fails with a readable report.
@@ -14,25 +26,12 @@ import axe, { type Result } from 'axe-core';
 export async function expectNoA11yViolations(
   container: HTMLElement,
 ): Promise<void> {
-  const { violations } = await axe.run(container, {
-    rules: { 'color-contrast': { enabled: false } },
-  });
+  const results = await axe.run(container, AXE_RUN_OPTIONS);
 
-  if (violations.length === 0) return;
-
-  throw new Error(
-    `${String(violations.length)} accessibility violation(s):\n\n${violations
-      .map(describe)
-      .join('\n\n')}`,
-  );
-}
-
-function describe(violation: Result): string {
-  const nodes = violation.nodes.map((node) => `    ${node.html}`).join('\n');
-
-  return [
-    `  [${violation.impact ?? 'unknown'}] ${violation.id}: ${violation.help}`,
-    `  ${violation.helpUrl}`,
-    nodes,
-  ].join('\n');
+  if (results.violations.length > 0) {
+    const details = results.violations.map(formatViolation).join('\n\n');
+    throw new Error(
+      `${String(results.violations.length)} accessibility violation(s):\n\n${details}`,
+    );
+  }
 }
