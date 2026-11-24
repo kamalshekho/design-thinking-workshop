@@ -247,8 +247,11 @@ camelCase. Die Kopien aus Untitled UI und shadcn behalten kebab-case, als
 eigener Elementtyp wie in
 [ADR-0008](./adr/0008-import-direction-checked-by-eslint-boundaries.md).
 
-Prüfung: `eslint-plugin-check-file` mit Glob-Mustern für den eigenen Code,
-noch nicht eingeschaltet. #131 schaltet es in beiden Anwendungen ein.
+Prüfung: `eslint-plugin-check-file` mit `check-file/filename-naming-convention`
+in `eslint.base.mjs`, in beiden Anwendungen eingeschaltet, im Hook und in den
+CI-Jobs `frontend` und `dashboard`. Endungen wie `.test` und `.stories` zählen
+nicht zum Namen. Im Dashboard sind die Kopien aus Untitled UI und shadcn über
+die gemeinsame Liste in `dashboard/eslint.config.js` ausgenommen.
 
 ### Bezeichner auf Englisch
 
@@ -263,21 +266,22 @@ das Review.
 
 Beide Anwendungen exportieren nur benannt, nie mit `export default`.
 
-Prüfung im Applicant form: `no-restricted-exports` mit
-`restrictDefaultExports: { direct: true }` in `frontend/eslint.config.js`,
-eingeschaltet im Hook und im CI-Job `frontend`. Abgeschaltet ist sie für
-Stories, `vite.config.ts` und `.storybook/`, die einen Default-Export brauchen.
-Im Dashboard noch nicht eingeschaltet, #131 schaltet sie ein.
+Prüfung: `no-restricted-exports` mit `restrictDefaultExports: { direct: true }`
+in `eslint.base.mjs`, in beiden Anwendungen eingeschaltet, im Hook und in den
+CI-Jobs `frontend` und `dashboard`. Abgeschaltet ist sie für Konfigurations-
+und Story-Dateien, die einen Default-Export brauchen (`vite.config.ts`,
+Stories und `.storybook/`).
 
 ### Kein `style`-Attribut
 
 Eine Komponente setzt kein `style`-Attribut. In den Kopien bleibt `style` für
 CSS-Variablen erlaubt.
 
-Prüfung im Applicant form: `no-restricted-syntax` mit dem Selektor
-`JSXAttribute[name.name='style']` in `frontend/eslint.config.js`, eingeschaltet
-im Hook und im CI-Job `frontend`. Im Dashboard noch nicht eingeschaltet, #131
-schaltet es ein.
+Prüfung: `no-restricted-syntax` mit dem Selektor
+`JSXAttribute[name.name='style']` in `eslint.base.mjs`, in beiden Anwendungen
+eingeschaltet, im Hook und in den CI-Jobs `frontend` und `dashboard`. Im
+Dashboard sind die Kopien aus Untitled UI und shadcn über dieselbe Liste wie
+bei `check-file` ausgenommen.
 
 ### Eine Komponente lädt keine Daten
 
