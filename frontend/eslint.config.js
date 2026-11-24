@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import boundaries from 'eslint-plugin-boundaries';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
@@ -7,6 +8,16 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 import { reExportBan, sharedConfig } from '../eslint.base.mjs';
+
+/* The layers below the feature: what any production code may import. */
+const SHARED = ['components', 'content', 'lib', 'styles', 'assets'];
+
+function allow(type, types) {
+  return {
+    from: { element: { type } },
+    allow: { to: { element: { types } } },
+  };
+}
 
 export default tseslint.config(
   ...sharedConfig({
@@ -48,22 +59,104 @@ export default tseslint.config(
     },
   },
 
-  /**
-   * The UI layer must not know the domain. It receives finished strings as
-   * props, which is what keeps it reusable by the English staff dashboard and
-   * what matches the Figma component boundary (DESIGN.md section 45).
-   */
+  /* The import direction of ADR-0008, after the decision in issue #106:
+     components/ui, content, lib, styles and assets are shared, the one feature
+     sits above them and app above that. eslint-plugin-boundaries describes
+     folders as elements and single files as file categories, so
+     vite-env.d.ts and the tests are categories. Each layer may import itself.
+     The last policy that matches an import decides. */
   {
-    files: ['src/components/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: { boundaries },
+    settings: {
+      'import/resolver': {
+        typescript: { project: `${import.meta.dirname}/tsconfig.json` },
+      },
+      'boundaries/root-path': import.meta.dirname,
+      'boundaries/elements': [
+        {
+          type: 'components',
+          pattern: 'src/components/ui',
+          partialMatch: false,
+        },
+        { type: 'content', pattern: 'src/content', partialMatch: false },
+        { type: 'lib', pattern: 'src/lib', partialMatch: false },
+        { type: 'styles', pattern: 'src/styles', partialMatch: false },
+        { type: 'assets', pattern: 'src/assets', partialMatch: false },
+        {
+          type: 'feature',
+          pattern: 'src/features/*',
+          capture: ['feature'],
+          partialMatch: false,
+        },
+        { type: 'app', pattern: 'src/app', partialMatch: false },
+        {
+          type: 'test',
+          pattern: ['src/test', 'src/mocks'],
+          partialMatch: false,
+        },
+      ],
+      'boundaries/files': [
+        { category: 'env', pattern: 'src/vite-env.d.ts' },
+        {
+          category: 'test',
+          pattern: [
+            'src/test/**',
+            'src/mocks/**',
+            'src/**/*.test.{ts,tsx}',
+            'src/**/*.stories.tsx',
+          ],
+        },
+      ],
+    },
     rules: {
-      'no-restricted-imports': [
+      'boundaries/no-unknown-files': 'error',
+      'boundaries/no-unknown-dependencies': 'error',
+      'boundaries/dependencies': [
         'error',
         {
-          patterns: [
+          default: 'disallow',
+          checkInternals: true,
+          policies: [
+            allow('components', SHARED),
+            allow('content', ['content', 'lib']),
+            allow('lib', ['lib']),
             {
-              group: ['**/content/*', '**/features/*', '**/features/**'],
+              from: { element: { type: 'feature' } },
+              allow: [
+                {
+                  to: {
+                    element: {
+                      type: 'feature',
+                      captured: {
+                        feature: '{{ from.element.captured.feature }}',
+                      },
+                    },
+                  },
+                },
+                { to: { element: { types: SHARED } } },
+              ],
+            },
+            allow('app', [...SHARED, 'feature', 'app']),
+            {
+              disallow: { to: { file: { categories: 'test' } } },
               message:
-                'A UI component must not import copy or domain code. Pass finished strings in as props.',
+                'Production code does not import test-only code (src/test, src/mocks, tests, stories).',
+            },
+            {
+              from: { file: { categories: 'test' } },
+              allow: { to: { module: { origin: 'local' } } },
+            },
+            /* The one exception: in development, with no VITE_API_BASE_URL,
+               the entry point starts Mock Service Worker so the applicant form
+               runs without a backend. It goes away once the form no longer has
+               to run without a backend in development. */
+            {
+              from: { file: { path: 'src/app/main.tsx' } },
+              allow: {
+                to: { file: { path: 'src/mocks/browser.ts' } },
+                dependency: { nodeKind: 'dynamic-import' },
+              },
             },
           ],
         },
@@ -76,7 +169,6 @@ export default tseslint.config(
     files: ['src/**/*.stories.{ts,tsx}'],
     rules: {
       'no-restricted-exports': 'off',
-      'no-restricted-imports': 'off',
     },
   },
 
