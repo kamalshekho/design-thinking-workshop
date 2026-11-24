@@ -1,0 +1,239 @@
+name: ci
+
+# Runs on every pull request and every push to main, without a path filter in
+# `on:`. A required check from a workflow that a path filter never starts
+# stays at "Expected" and blocks the pull request, so the `changes` job picks
+# the jobs to run instead, and the gate job `ci` is the one required check.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A new push to a pull request cancels the older run of the same pull request.
+# On main every push gets its own group, so nothing there is cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read # the filter lists a pull request's files via the API
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      dashboard: ${{ steps.filter.outputs.dashboard }}
+      config: ${{ steps.filter.outputs.config }}
+
+    steps:
+      # On push the filter reads the git history, so it needs the repository.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+              - 'eslint.base.mjs'
+              - '.prettierrc.json'
+              - 'scripts/**'
+              - '.github/workflows/ci.yml'
+            dashboard:
+              - 'dashboard/**'
+              - 'eslint.base.mjs'
+              - '.prettierrc.json'
+              - 'scripts/**'
+              - '.github/workflows/ci.yml'
+            config:
+              - 'frontend/**'
+              - 'dashboard/**'
+              - 'eslint.base.mjs'
+              - '.prettierrc.json'
+              - 'scripts/**'
+              - '.github/**'
+
+  # One job per app on purpose: every step here takes seconds, and splitting
+  # them would pay for a fresh `npm ci` per job. The steps run from the
+  # cheapest to the most expensive.
+  frontend:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: frontend/.nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # setup-node's cache only holds the downloaded tarballs, so npm ci still
+      # extracts and links every package on every run. Caching node_modules
+      # itself skips that work whenever the lockfile and the Node version are
+      # unchanged.
+      - name: Cache node_modules
+        id: node-modules-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: frontend/node_modules
+          key: frontend-node-modules-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json', 'frontend/.nvmrc') }}
+
+      - name: Install
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Lint styles
+        run: npm run stylelint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Check bundle size
+        run: npm run size
+
+      # Lets a reviewer open the built form without a local toolchain.
+      - name: Upload build
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          retention-days: 7
+
+  dashboard:
+    needs: changes
+    if: needs.changes.outputs.dashboard == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: dashboard/.nvmrc
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Cache node_modules
+        id: node-modules-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: dashboard/node_modules
+          key: dashboard-node-modules-${{ runner.os }}-${{ hashFiles('dashboard/package-lock.json', 'dashboard/.nvmrc') }}
+
+      - name: Install
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Check bundle size
+        run: npm run size
+
+      - name: Upload build
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dashboard-dist
+          path: dashboard/dist
+          retention-days: 7
+
+  # Checks the configuration that spans both apps and the workflows. Plain
+  # Node and two linters, so it needs no npm ci.
+  config:
+    needs: changes
+    if: needs.changes.outputs.config == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The parity script needs the same Node as the apps, not whatever the
+      # runner image ships.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: frontend/.nvmrc
+          package-manager-cache: false
+
+      # Both apps lint and format with the shared config in the repo root, so
+      # their compiler options, shared tool versions and Node version must
+      # match.
+      - name: Check config parity
+        run: node scripts/check-config-parity.mjs
+
+      # The image is pinned by digest; it bundles shellcheck for the run
+      # scripts.
+      - name: Lint workflows
+        run: >-
+          docker run --rm -v "$GITHUB_WORKSPACE:/repo" -w /repo
+          rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+          -color
+
+      # Without advanced-security the findings go to the log and fail the step,
+      # and the job needs no security-events: write. The action resolves its
+      # default zizmor version from a hash-locked file in its own tree, so the
+      # SHA below pins the zizmor version too.
+      - name: Audit workflows
+        uses: zizmorcore/zizmor-action@1b4550e929643b8b26a62303c6bd64814271a4f1 # v0.9.2
+        with:
+          advanced-security: false
+
+  # The one required check. It runs even when a job it needs failed, and fails
+  # when any of them failed or was cancelled. A skipped job counts as passed,
+  # so a pull request that touches no app still turns green.
+  ci:
+    needs: [changes, frontend, dashboard, config]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check the jobs it needs
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          echo "$NEEDS" | jq -e 'all(.[]; .result != "failure" and .result != "cancelled")' > /dev/null
