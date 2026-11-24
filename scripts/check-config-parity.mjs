@@ -47,48 +47,49 @@ function readJson(app, file) {
   return JSON.parse(read(app, file));
 }
 
-/** Pretty value for a report line; a missing value reads as "(missing)". */
-function show(value) {
+function formatValue(value) {
   return value === undefined ? '(missing)' : JSON.stringify(value);
 }
 
 function compilerOptionDifferences() {
-  const [front, dash] = APPS.map((app) => {
+  const [frontend, dashboard] = APPS.map((app) => {
     const { paths: _paths, ...options } =
       readJson(app, 'tsconfig.json').compilerOptions ?? {};
     return options;
   });
-  const keys = new Set([...Object.keys(front), ...Object.keys(dash)]);
+  const keys = new Set([...Object.keys(frontend), ...Object.keys(dashboard)]);
   return [...keys]
     .sort()
-    .filter((key) => !isDeepStrictEqual(front[key], dash[key]))
+    .filter((key) => !isDeepStrictEqual(frontend[key], dashboard[key]))
     .map((key) => ({
       what: `tsconfig.json compilerOptions.${key}`,
-      frontend: front[key],
-      dashboard: dash[key],
+      frontend: frontend[key],
+      dashboard: dashboard[key],
     }));
 }
 
 function toolVersionDifferences() {
-  const [front, dash] = APPS.map((app) => {
+  const [frontend, dashboard] = APPS.map((app) => {
     const pkg = readJson(app, 'package.json');
     return { ...pkg.dependencies, ...pkg.devDependencies };
   });
-  // A tool missing from both files is a difference too.
   return SHARED_TOOLS.filter(
-    (tool) => front[tool] === undefined || front[tool] !== dash[tool],
+    (tool) =>
+      frontend[tool] === undefined ||
+      dashboard[tool] === undefined ||
+      frontend[tool] !== dashboard[tool],
   ).map((tool) => ({
     what: `package.json version of ${tool}`,
-    frontend: front[tool],
-    dashboard: dash[tool],
+    frontend: frontend[tool],
+    dashboard: dashboard[tool],
   }));
 }
 
 function nodeVersionDifferences() {
-  const [front, dash] = APPS.map((app) => read(app, '.nvmrc').trim());
-  return front === dash
+  const [frontend, dashboard] = APPS.map((app) => read(app, '.nvmrc').trim());
+  return frontend === dashboard
     ? []
-    : [{ what: '.nvmrc', frontend: front, dashboard: dash }];
+    : [{ what: '.nvmrc', frontend, dashboard }];
 }
 
 const differences = [
@@ -103,7 +104,7 @@ if (differences.length > 0) {
   );
   for (const { what, frontend, dashboard } of differences) {
     console.error(
-      `- ${what}: frontend ${show(frontend)}, dashboard ${show(dashboard)}`,
+      `- ${what}: frontend ${formatValue(frontend)}, dashboard ${formatValue(dashboard)}`,
     );
   }
   process.exit(1);
