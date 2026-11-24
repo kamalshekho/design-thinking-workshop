@@ -261,14 +261,14 @@ schaltet es ein.
 
 Eine Komponente lädt keine Daten.
 
-Prüfung im Dashboard: die Schichtregeln aus
+Prüfung: die Schichtregeln aus
 [ADR-0008](./adr/0008-import-direction-checked-by-eslint-boundaries.md), siehe
-[Importrichtung](#importrichtung-und-barrel-dateien). Dazu verbietet ein Block
-mit `no-restricted-imports` in `dashboard/eslint.config.js` jeder Datei in
-`src/features/` außer `*Container.tsx`, `use*.ts` und Tests Importe aus
-`@/queries` und `@tanstack/react-query`. Beides ist eingeschaltet im Hook und
-im CI-Job `dashboard`. Im Applicant form noch nicht eingeschaltet, #126
-schaltet die Schichtregeln dort ein.
+[Importrichtung](#importrichtung-und-barrel-dateien), eingeschaltet im Hook und
+in den CI-Jobs `frontend` und `dashboard`. Im Dashboard verbietet dazu ein
+Block mit `no-restricted-imports` in `dashboard/eslint.config.js` jeder Datei
+in `src/features/` außer `*Container.tsx`, `use*.ts` und Tests Importe aus
+`@/queries` und `@tanstack/react-query`, eingeschaltet im Hook und im CI-Job
+`dashboard`.
 
 ### Eine Komponente validiert nicht
 
@@ -294,17 +294,12 @@ ADR beschreibt die Schichten und die erlaubten Importe. Barrel-Dateien gibt es
 in keiner der beiden Anwendungen, importiert wird direkt aus der Datei.
 
 Prüfung der Importrichtung: `eslint-plugin-boundaries` mit den Schichten in
-`dashboard/eslint.config.js`, eingeschaltet im Hook und im CI-Job `dashboard`.
-Im Applicant form noch nicht eingeschaltet, #126 schaltet es ein.
+`frontend/eslint.config.js` und `dashboard/eslint.config.js`, eingeschaltet im
+Hook und in den CI-Jobs `frontend` und `dashboard`.
 
 Prüfung der Barrel-Dateien: `no-restricted-syntax` gegen jedes `export … from`
 in `eslint.base.mjs`, auch `export type … from` und `export * from`,
 eingeschaltet im Hook und in den CI-Jobs `frontend` und `dashboard`.
-
-Heute verbietet im Applicant form ein Block mit `no-restricted-imports` in
-`frontend/eslint.config.js` den Dateien unter `src/components/` Importe aus
-`content/` und `features/`. Er ist eingeschaltet im Hook und im CI-Job
-`frontend`. Nach ADR-0008 darf geteilter UI-Code `content` importieren.
 
 ## Styles
 
