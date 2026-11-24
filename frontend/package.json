@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "size": "size-limit",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
@@ -23,6 +24,20 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
+  "size-limit": [
+    {
+      "name": "JS",
+      "path": "dist/assets/*.js",
+      "gzip": true,
+      "limit": "110 kB"
+    },
+    {
+      "name": "CSS",
+      "path": "dist/assets/*.css",
+      "gzip": true,
+      "limit": "10 kB"
+    }
+  ],
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
     "react": "^19.2.8",
@@ -32,6 +47,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "@size-limit/file": "^14.3.0",
     "@storybook/addon-a11y": "^10.6.0",
     "@storybook/addon-docs": "^10.6.0",
     "@storybook/react-vite": "^10.6.0",
@@ -53,6 +69,7 @@
     "lint-staged": "^17.4.1",
     "msw": "^2.15.0",
     "prettier": "^3.9.6",
+    "size-limit": "^14.3.0",
     "storybook": "^10.6.0",
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",
