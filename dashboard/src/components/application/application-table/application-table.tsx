@@ -349,7 +349,9 @@ export function ApplicationTable({
             <TableHead id="owner" label={de.columns.owner} allowsSorting />
           ) : null}
           {selectionEnabled ? (
-            <TableHead id="actions" aria-label={de.columns.actions} />
+            <TableHead id="actions">
+              <span className="sr-only">{de.columns.actions}</span>
+            </TableHead>
           ) : null}
         </TableHeader>
 

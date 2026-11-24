@@ -110,6 +110,7 @@ describe('ApplicationTable', () => {
         de.columns.status,
         de.columns.submittedAt,
         de.columns.owner,
+        de.columns.actions,
       ]);
       expect(screen.getAllByRole('checkbox').length).toBeGreaterThan(0);
     });
@@ -124,6 +125,7 @@ describe('ApplicationTable', () => {
         de.columns.name,
         de.columns.status,
         de.columns.submittedAt,
+        de.columns.actions,
       ]);
       expect(rowFor('owned')).toHaveTextContent(
         'Social Media · Samuel Adeyemi',

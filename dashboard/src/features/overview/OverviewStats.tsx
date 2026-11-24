@@ -11,7 +11,7 @@ import { Clock, Inbox01, User01 } from '@untitledui/icons';
 import type { FC } from 'react';
 import { useMemo } from 'react';
 
-import { Card, CardDescription, CardTitle } from '@/components/ui/card';
+import { Card, CardDescription } from '@/components/ui/card';
 import type { SparklineType } from '@/components/ui/sparkline';
 import { Sparkline } from '@/components/ui/sparkline';
 import { de } from '@/content/de';
@@ -205,14 +205,14 @@ export function OverviewStats({
             <p className="text-text-tertiary col-span-2 text-xs leading-5">
               {card.hint}
             </p>
-            <CardTitle
+            <p
               className={cx(
-                'tracking-heading text-text-primary mt-3 self-end text-(length:--text-metric) font-semibold tabular-nums',
+                'tracking-heading text-text-primary mt-3 self-end text-(length:--text-metric) leading-none font-semibold tabular-nums',
                 card.alert && 'text-utility-red-700',
               )}
             >
               {card.value}
-            </CardTitle>
+            </p>
             <Sparkline
               id={card.title}
               type={card.chart}
