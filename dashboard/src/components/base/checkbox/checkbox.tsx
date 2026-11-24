@@ -2,9 +2,12 @@
  * Clone path: `components/base/checkbox/checkbox.tsx`. Two changes:
  * - a checked box reads as a white tick on a lilac fill;
  * - the box carries `tap-target` (#116).
+ *
+ * Cut: the `label` and `hint` props and the text beside the box, as both call
+ * sites render a bare selection checkbox.
  */
 
-import type { ReactNode, Ref } from 'react';
+import type { Ref } from 'react';
 import {
   Checkbox as AriaCheckbox,
   type CheckboxProps as AriaCheckboxProps,
@@ -88,30 +91,16 @@ CheckboxBase.displayName = 'CheckboxBase';
 interface CheckboxProps extends AriaCheckboxProps {
   ref?: Ref<HTMLLabelElement>;
   size?: 'sm' | 'md';
-  label?: ReactNode;
-  hint?: ReactNode;
 }
 
 export const Checkbox = ({
-  label,
-  hint,
   size = 'sm',
   className,
   ...ariaCheckboxProps
 }: CheckboxProps) => {
   const sizes = {
-    sm: {
-      root: 'gap-2',
-      textWrapper: '',
-      label: 'text-sm font-medium',
-      hint: 'text-sm',
-    },
-    md: {
-      root: 'gap-3',
-      textWrapper: 'gap-0.5',
-      label: 'text-md font-medium',
-      hint: 'text-md',
-    },
+    sm: { root: 'gap-2' },
+    md: { root: 'gap-3' },
   };
 
   return (
@@ -127,42 +116,13 @@ export const Checkbox = ({
       }
     >
       {({ isSelected, isIndeterminate, isDisabled, isFocusVisible }) => (
-        <>
-          <CheckboxBase
-            size={size}
-            isSelected={isSelected}
-            isIndeterminate={isIndeterminate}
-            isDisabled={isDisabled}
-            isFocusVisible={isFocusVisible}
-            className={label || hint ? 'mt-0.5' : ''}
-          />
-          {(label || hint) && (
-            <div
-              className={cx('inline-flex flex-col', sizes[size].textWrapper)}
-            >
-              {label && (
-                <p
-                  className={cx(
-                    'text-secondary select-none',
-                    sizes[size].label,
-                  )}
-                >
-                  {label}
-                </p>
-              )}
-              {hint && (
-                <span
-                  className={cx('text-tertiary', sizes[size].hint)}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                  }}
-                >
-                  {hint}
-                </span>
-              )}
-            </div>
-          )}
-        </>
+        <CheckboxBase
+          size={size}
+          isSelected={isSelected}
+          isIndeterminate={isIndeterminate}
+          isDisabled={isDisabled}
+          isFocusVisible={isFocusVisible}
+        />
       )}
     </AriaCheckbox>
   );
