@@ -241,7 +241,7 @@ export const Button: {
       styles.sizes[size].root,
       styles.colors[color].root,
       isLinkType && styles.sizes[size].linkRoot,
-      (loading || (href && (disabled || loading))) && 'pointer-events-none',
+      (loading || (href && disabled)) && 'pointer-events-none',
       // If in `loading` state, hide everything except the loading icon (and text if `showTextWhileLoading` is true).
       loading &&
         (showTextWhileLoading

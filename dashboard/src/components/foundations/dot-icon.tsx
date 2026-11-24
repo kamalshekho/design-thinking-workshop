@@ -25,7 +25,7 @@ export const Dot = ({
     <svg
       width={sizes[size].wh}
       height={sizes[size].wh}
-      viewBox={`0 0 ${sizes[size].wh} ${sizes[size].wh}`}
+      viewBox={`0 0 ${String(sizes[size].wh)} ${String(sizes[size].wh)}`}
       fill="none"
       {...props}
     >
