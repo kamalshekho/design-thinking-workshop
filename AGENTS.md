@@ -12,6 +12,7 @@ applicant form.
 - [`frontend/`](./frontend/) — the applicant form: specification, API contract, React project
 - [`frontend/references/`](./frontend/references/) — screenshots of the applicant form, one per UI state
 - [`dashboard/`](./dashboard/) — the staff dashboard: API contract, conventions, React project
+- [`docs/agents/verification.md`](./docs/agents/verification.md) — proving a change: test commands, starting and driving the stack, manual checks
 
 ## Working on the frontend
 
