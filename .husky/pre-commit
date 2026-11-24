@@ -1,0 +1,20 @@
+# Formatting and auto-fixable lint only. Typecheck, stylelint in full and the
+# test suite run in CI: a hook that takes half a minute gets bypassed with
+# --no-verify, and then it protects nothing.
+#
+# Runs lint-staged once in each app that has staged files, from the app's own
+# folder and node_modules, so each app only touches its own files. The
+# explicit --config pins the app's own config: lint-staged otherwise also
+# searches the parent folders and would apply a config it finds there to the
+# files of both apps.
+for app in frontend dashboard; do
+  if git diff --cached --quiet --diff-filter=ACMR -- "$app/"; then
+    continue
+  fi
+  if [ ! -x "$app/node_modules/.bin/lint-staged" ]; then
+    echo "pre-commit: skipped $app, lint-staged is not installed there." >&2
+    echo "pre-commit: run 'npm install' in $app/ so the hook checks its files." >&2
+    continue
+  fi
+  (cd "$app" && ./node_modules/.bin/lint-staged --config .lintstagedrc.json) || exit 1
+done

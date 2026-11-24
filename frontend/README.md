@@ -273,8 +273,17 @@ synchronous, so RTL covers it. Native select behaviour on a real phone
 
 ## Quality gates
 
-The pre-commit hook runs Prettier and `eslint --fix` on staged files only. It
-is deliberately fast — a slow hook gets bypassed with `--no-verify`.
+The pre-commit hook, `.husky/pre-commit` in the repo root, is shared with the
+dashboard. For each app with staged files it runs that app's lint-staged on
+them: Prettier and `eslint --fix`, plus `stylelint --fix` on the form's CSS.
+When an app has no lint-staged installed, for example because its
+`node_modules` is missing, the hook prints a warning, skips that app and lets
+the commit through. Typecheck and tests stay out of the hook on purpose: a
+slow hook gets bypassed with `--no-verify`.
+
+`npm install` in either app points `core.hooksPath` at `.husky/_`. A clone
+made while the hook still lived in `frontend/.husky` needs one `npm install`
+in either app to pick up the new hook.
 
 CI is one workflow, `.github/workflows/ci.yml`, run on every pull request and
 every push to `main`. Its `changes` job decides which of the other jobs run:

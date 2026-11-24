@@ -283,6 +283,10 @@ same-origin for the same reason production is: the Sign-in cookie is
 `nginx.conf` location for location, the live stream included, and `API.md`'s
 "Deployment" section says why.
 
+The pre-commit hook in the repo root, `.husky/pre-commit`, runs Prettier and
+`eslint --fix` on the dashboard's staged files; `npm install` here sets it up.
+The form's README describes it under "Quality gates".
+
 CI is one workflow, `.github/workflows/ci.yml`, shared with the form and run
 on every pull request and every push to `main`. Its `changes` job decides
 which of the other jobs run. The `dashboard` job runs typecheck, ESLint,
