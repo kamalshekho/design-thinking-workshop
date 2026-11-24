@@ -46,6 +46,7 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
     "@eslint/js": "^9.39.5",
     "@size-limit/file": "^14.3.0",
     "@storybook/addon-a11y": "^10.6.0",
@@ -61,10 +62,12 @@
     "eslint": "^9.39.5",
     "eslint-import-resolver-typescript": "^4.4.5",
     "eslint-plugin-boundaries": "^7.4.4",
+    "eslint-plugin-css-modules": "^2.12.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.6",
     "eslint-plugin-simple-import-sort": "^14.0.0",
+    "eslint-plugin-sonarjs": "^4.2.2",
     "globals": "^17.12.0",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
