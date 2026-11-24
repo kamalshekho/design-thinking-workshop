@@ -39,8 +39,3 @@
 .control.invalid {
   border: var(--border-width-focus) solid var(--color-error);
 }
-
-.singleLine {
-  min-height: var(--field-height);
-  padding: 0 var(--control-padding-inline);
-}
