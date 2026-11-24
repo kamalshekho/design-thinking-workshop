@@ -13,8 +13,7 @@ import { de } from '@/content/de';
 import type { ApplicationStatus } from '@/domain/application';
 import { APPLICATION_STATUSES } from '@/domain/application';
 import type { Category } from '@/domain/category';
-
-import type { ApplicationFilters } from './filterApplications';
+import type { ApplicationFilters } from '@/utils/filterApplications';
 
 type FilterPopoverProps = {
   filters: ApplicationFilters;

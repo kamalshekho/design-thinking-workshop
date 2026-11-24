@@ -6,7 +6,6 @@ import { de } from '@/content/de';
 import { NO_SIGN_IN } from '@/domain/signIn';
 import type { StaffMember } from '@/domain/staffMember';
 import { ApplicationsContainer } from '@/features/applications/ApplicationsContainer';
-import { parseFiltersFromHash } from '@/features/applications/filterApplications';
 import { LoginScreen } from '@/features/auth/LoginScreen';
 import { CategoriesContainer } from '@/features/categories/CategoriesContainer';
 import { DiscardedContainer } from '@/features/discarded/DiscardedContainer';
@@ -18,6 +17,7 @@ import {
   useSignInFailure,
   useSignOut,
 } from '@/queries/session';
+import { parseFiltersFromHash } from '@/utils/filterApplications';
 
 import type { Screen } from './AppShell';
 import { AppShell } from './AppShell';

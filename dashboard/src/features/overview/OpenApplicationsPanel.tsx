@@ -16,17 +16,17 @@ import { Archive, Inbox01 } from '@untitledui/icons';
 import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/base/buttons/button';
+import { ApplicationDetail } from '@/components/shared/ApplicationDetail';
+import { ApplicationsList } from '@/components/shared/ApplicationsList';
+import { DiscardSelectedDialog } from '@/components/shared/DiscardSelectedDialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { de } from '@/content/de';
 import type { Application, ApplicationEdit, Owner } from '@/domain/application';
 import type { Category } from '@/domain/category';
-import { ApplicationDetail } from '@/features/applications/ApplicationDetail';
-import { ApplicationsList } from '@/features/applications/ApplicationsList';
-import { DiscardSelectedDialog } from '@/features/applications/DiscardSelectedDialog';
-import { buildApplicationsHref } from '@/features/applications/filterApplications';
-import { useApplicationActions } from '@/features/applications/useApplicationActions';
-import type { NotesField } from '@/features/applications/useNotesDraft';
-import { notesValueFor } from '@/features/applications/useNotesDraft';
+import { useApplicationActions } from '@/hooks/useApplicationActions';
+import type { NotesField } from '@/hooks/useNotesDraft';
+import { notesValueFor } from '@/hooks/useNotesDraft';
+import { buildApplicationsHref } from '@/utils/filterApplications';
 
 import { OpenApplicationsFilterBar } from './OpenApplicationsFilterBar';
 import type { OpenApplicationsFilters } from './selectOpenApplications';

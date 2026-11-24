@@ -14,10 +14,9 @@
 import { useCallback, useMemo } from 'react';
 
 import type { ApplicationEdit } from '@/domain/application';
+import type { NotesField } from '@/hooks/useNotesDraft';
+import { useNotesDraft } from '@/hooks/useNotesDraft';
 import { useEditApplication, useSetDiscarded } from '@/queries/applications';
-
-import type { NotesField } from './useNotesDraft';
-import { useNotesDraft } from './useNotesDraft';
 
 export type ApplicationWrites = {
   onEdit: (id: string, change: ApplicationEdit) => void;

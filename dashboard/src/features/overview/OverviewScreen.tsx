@@ -9,7 +9,7 @@ import { de } from '@/content/de';
 import type { Application, ApplicationEdit, Owner } from '@/domain/application';
 import type { Category } from '@/domain/category';
 import type { StateChange } from '@/domain/stateChange';
-import type { NotesField } from '@/features/applications/useNotesDraft';
+import type { NotesField } from '@/hooks/useNotesDraft';
 
 import { OpenApplicationsPanel } from './OpenApplicationsPanel';
 import { OverviewStats } from './OverviewStats';

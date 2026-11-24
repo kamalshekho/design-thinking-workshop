@@ -10,10 +10,10 @@
 import { useApplications } from '@/queries/applications';
 import { useCategories } from '@/queries/categories';
 import { useOwners } from '@/queries/staffMembers';
+import { useApplicationWrites } from '@/queries/useApplicationWrites';
+import type { ApplicationFilters } from '@/utils/filterApplications';
 
 import { ApplicationsScreen } from './ApplicationsScreen';
-import type { ApplicationFilters } from './filterApplications';
-import { useApplicationWrites } from './useApplicationWrites';
 
 type ApplicationsContainerProps = {
   /** The signed-in Staff member, whom "Übernehmen" on the phone page makes the Owner. */

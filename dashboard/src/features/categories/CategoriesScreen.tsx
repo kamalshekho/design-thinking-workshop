@@ -21,6 +21,7 @@ import { Button } from '@/components/base/buttons/button';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { PageHeader } from '@/components/shared/page-header';
+import { SearchField } from '@/components/shared/SearchField';
 import { TabStrip } from '@/components/shared/tab-strip';
 import { de } from '@/content/de';
 import type { Application } from '@/domain/application';
@@ -31,7 +32,6 @@ import {
   countApplicationsPerCategory,
   moveCategory,
 } from '@/domain/category';
-import { SearchField } from '@/features/applications/SearchField';
 import { useSearchShortcut } from '@/hooks/use-search-shortcut';
 
 import { CategoriesTable } from './CategoriesTable';

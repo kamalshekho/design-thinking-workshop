@@ -7,12 +7,12 @@
 
 import { useRef } from 'react';
 
+import { SearchField } from '@/components/shared/SearchField';
 import type { Category } from '@/domain/category';
 import { useSearchShortcut } from '@/hooks/use-search-shortcut';
+import type { ApplicationFilters } from '@/utils/filterApplications';
 
-import type { ApplicationFilters } from './filterApplications';
 import { FilterPopover } from './FilterPopover';
-import { SearchField } from './SearchField';
 
 type ApplicationsToolbarProps = {
   filters: ApplicationFilters;
