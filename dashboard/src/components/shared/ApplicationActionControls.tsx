@@ -2,7 +2,7 @@
  * The controls Anfragen and Übersicht's "Offene Anfragen" panel both hang off
  * `useApplicationActions`: the bulk discard button on the toolbar, and what
  * opens over the list — the open Application's detail and the question before
- * a bulk discard. Both screens rendered them identically.
+ * a bulk discard.
  */
 
 import { Archive } from '@untitledui/icons';

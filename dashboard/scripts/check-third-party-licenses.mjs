@@ -35,7 +35,6 @@ function escapeRegExp(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/** The label a section's copies open their header with. */
 function labelFor(section) {
   if (section.startsWith('Untitled UI')) return 'Clone path:';
   if (section.startsWith('shadcn/ui')) return 'Registry path:';

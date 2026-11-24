@@ -2,8 +2,8 @@
  * Clone path: `components/base/badges/badges.tsx`, reduced to the two badges
  * this dashboard renders — `Badge` in a table cell and `BadgeWithDot` for an
  * Application's Status. The clone's icon, flag, image, button and icon-only
- * variants are not part of this copy. Both badges build their per-type size
- * table through one `sizesByType` helper instead of repeating it.
+ * variants are not part of this copy. The per-type size tables are shared
+ * through `sizesByType`.
  */
 
 import type { ReactNode } from 'react';
