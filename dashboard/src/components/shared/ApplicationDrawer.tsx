@@ -35,7 +35,7 @@ import { Check, ChevronDown, Copy01, Mail01 } from '@untitledui/icons';
 import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
-import { STATUS_DOT_CLASSNAME } from '@/components/application/application-status/status-styles';
+import { STATUS_DOT_CLASSNAME } from '@/components/application/application-status/statusStyles';
 import { Button } from '@/components/base/buttons/button';
 import { CloseButton } from '@/components/base/buttons/close-button';
 import { Tooltip } from '@/components/base/tooltip/tooltip';

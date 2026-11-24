@@ -21,7 +21,7 @@ import { NavAccountCard } from '@/components/application/app-navigation/base-com
 import { NavItemBase } from '@/components/application/app-navigation/base-components/nav-item';
 import { NavList } from '@/components/application/app-navigation/base-components/nav-list';
 import type { NavItemType } from '@/components/application/app-navigation/config';
-import { AssociationWordmark } from '@/components/foundations/logo/association-wordmark';
+import { AssociationWordmark } from '@/components/foundations/logo/AssociationWordmark';
 import { de } from '@/content/de';
 import type { StaffMember } from '@/domain/staffMember';
 import { useBreakpoint } from '@/hooks/use-breakpoint';

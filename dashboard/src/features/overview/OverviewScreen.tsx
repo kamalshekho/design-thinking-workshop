@@ -4,7 +4,7 @@
  * between screens and each screen owns its own layout.
  */
 
-import { PageHeader } from '@/components/shared/page-header';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { de } from '@/content/de';
 import type { StateChange } from '@/domain/stateChange';
 

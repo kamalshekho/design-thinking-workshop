@@ -18,7 +18,7 @@ import {
   ModalOverlay as AriaModalOverlay,
 } from 'react-aria-components';
 
-import { AssociationWordmark } from '@/components/foundations/logo/association-wordmark';
+import { AssociationWordmark } from '@/components/foundations/logo/AssociationWordmark';
 import { de } from '@/content/de';
 import { cx } from '@/utils/cx';
 

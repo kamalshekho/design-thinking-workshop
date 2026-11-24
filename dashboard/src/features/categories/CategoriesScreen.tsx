@@ -18,9 +18,9 @@ import { Plus, Tag01 } from '@untitledui/icons';
 import { useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/base/buttons/button';
-import { ConfirmDialog } from '@/components/shared/confirm-dialog';
-import { EmptyState } from '@/components/shared/empty-state';
-import { PageHeader } from '@/components/shared/page-header';
+import { ConfirmDialog } from '@/components/shared/ConfirmDialog';
+import { EmptyState } from '@/components/shared/EmptyState';
+import { PageHeader } from '@/components/shared/PageHeader';
 import { SearchField } from '@/components/shared/SearchField';
 import { TabStrip } from '@/components/shared/tab-strip';
 import { de } from '@/content/de';
@@ -32,7 +32,7 @@ import {
   countApplicationsPerCategory,
   moveCategory,
 } from '@/domain/category';
-import { useSearchShortcut } from '@/hooks/use-search-shortcut';
+import { useSearchShortcut } from '@/hooks/useSearchShortcut';
 
 import { CategoriesTable } from './CategoriesTable';
 import { CategoryDialog } from './CategoryDialog';

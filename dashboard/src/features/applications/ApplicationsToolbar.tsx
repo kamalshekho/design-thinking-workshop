@@ -9,7 +9,7 @@ import { useRef } from 'react';
 
 import { SearchField } from '@/components/shared/SearchField';
 import type { Category } from '@/domain/category';
-import { useSearchShortcut } from '@/hooks/use-search-shortcut';
+import { useSearchShortcut } from '@/hooks/useSearchShortcut';
 import type { ApplicationFilters } from '@/utils/filterApplications';
 
 import { FilterPopover } from './FilterPopover';

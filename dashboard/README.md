@@ -127,7 +127,7 @@ accessible name.
 ## Confirmations
 
 Every question the dashboard asks before an action runs goes through one
-component, `components/shared/confirm-dialog.tsx`, and none of them go through
+component, `components/shared/ConfirmDialog.tsx`, and none of them go through
 `window.confirm` any more. The browser dialog was the one surface in the
 application that was not this application: it carried the browser's
 typography and the operating system's button order, it had nowhere to put the
@@ -165,7 +165,7 @@ four screens are walked against it, and each answers emptiness the same way
   under it. Two wordings per screen: nothing at all — the first day, which says
   what will fill the list — and nothing under this view, search or filter,
   which says how to undo the narrowing. Anfragen, Kategorien and Aussortiert
-  each pass both into `components/shared/empty-state.tsx`, and Übersicht's
+  each pass both into `components/shared/EmptyState.tsx`, and Übersicht's
   panel draws the same component above its own list;
 - **no pager under an empty table.** "Zurück | 1 | Weiter" under an empty state
   offers a page that does not exist;
@@ -412,12 +412,12 @@ Inside `src/components/`:
 - `base/`, `application/`, `foundations/`, `ui/` — copies from the clone and
   the shadcn/ui registry, in their upstream file layout;
 - `shared/` — what this application assembles from those primitives because
-  the clone ships no equivalent: `page-header`, `empty-state`, `tab-strip`,
-  `confirm-dialog`, and the Application list, drawer, page and controls that
+  the clone ships no equivalent: `PageHeader`, `EmptyState`, `tab-strip`,
+  `ConfirmDialog`, and the Application list, drawer, page and controls that
   several features show (`ApplicationsList`, `ApplicationDetail`, ...). A
   feature does not import another feature
   ([ADR-0008](../docs/adr/0008-import-direction-checked-by-eslint-boundaries.md));
-- `application/application-status/` — `status-styles.ts`, the one place an
+- `application/application-status/` — `statusStyles.ts`, the one place an
   Application's Status maps to a colour, read by both the table row and the
   drawer so a palette change cannot leave the two disagreeing.
 
