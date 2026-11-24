@@ -1,8 +1,8 @@
+import type { SubmitErrorCode } from '../../lib/errorCodes';
 import { getJson, postJson } from '../../lib/http';
+import type { FixedRoute, WeeklyTime } from '../../lib/routes';
+import { CONSENT_TEXT_VERSION } from '../../lib/routes';
 import { isUuid } from '../../lib/uuid';
-import type { SubmitErrorCode } from './errors';
-import type { FixedRoute, WeeklyTime } from './routes';
-import { CONSENT_TEXT_VERSION } from './routes';
 import type { ApplicationValues } from './schema';
 
 /**

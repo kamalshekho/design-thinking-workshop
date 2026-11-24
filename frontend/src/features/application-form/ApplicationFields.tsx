@@ -9,9 +9,9 @@ import { Select } from '../../components/ui/Select/Select';
 import { Textarea } from '../../components/ui/Textarea/Textarea';
 import { links } from '../../content/links';
 import type { Content } from '../../content/types';
+import { WEEKLY_TIME_OPTIONS } from '../../lib/routes';
 import styles from './ApplicationForm.module.css';
 import { type makeFieldProps, toErrorText } from './fieldProps';
-import { WEEKLY_TIME_OPTIONS } from './routes';
 import type { FormValues } from './schema';
 
 interface ApplicationFieldsProps {

@@ -246,7 +246,7 @@ vorhandenen Effekten.
 `fieldProblemsIn` in `dashboard/src/api/transport.ts` tun dasselbe: das
 `errors`-Array eines `problem+json`-Bodys in Paare aus `field` und `code`
 übersetzen. Die vier `WeeklyTime`-Werte stehen in
-`frontend/src/features/application-form/routes.ts` und in
+`frontend/src/lib/routes.ts` und in
 `dashboard/src/domain/application.ts`, ein drittes Mal als Java-Enum
 `WeeklyTime` im Backend. Die deutschen Bezeichnungen stehen ebenfalls zweimal,
 in `frontend/src/content/de.ts` und `dashboard/src/content/de.ts`.

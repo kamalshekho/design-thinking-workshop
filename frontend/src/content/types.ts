@@ -1,8 +1,5 @@
-import type { ErrorCode } from '../features/application-form/errors';
-import type {
-  FixedRoute,
-  WeeklyTime,
-} from '../features/application-form/routes';
+import type { ErrorCode } from '../lib/errorCodes';
+import type { FixedRoute, WeeklyTime } from '../lib/routes';
 
 export interface Content {
   nav: {

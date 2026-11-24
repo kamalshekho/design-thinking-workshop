@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
+import { isFixedRoute, WEEKLY_TIME_OPTIONS } from '../../lib/routes';
 import { isUuid } from '../../lib/uuid';
-import { isFixedRoute, WEEKLY_TIME_OPTIONS } from './routes';
 
 // Zod otherwise probes `new Function` to decide whether it may compile
 // parsers, and the Content-Security-Policy in nginx forbids eval, so the probe

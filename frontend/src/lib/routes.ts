@@ -1,6 +1,6 @@
 /**
  * The two fixed routes the form offers, alongside the backend-owned
- * Vereinsarbeit categories (see ./api.ts).
+ * Vereinsarbeit categories (see ../features/application-form/api.ts).
  *
  * A route is the applicant's own answer to what they want (see Route in
  * ../../../CONTEXT.md). These two end the form in a panel with an external
