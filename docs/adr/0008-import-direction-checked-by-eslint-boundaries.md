@@ -54,12 +54,14 @@ Den Vergleich enthält die Recherche zu #103 auf dem Branch
   Wiederverwendung nicht. Die Grenze der Figma-Komponenten aus
   `frontend/DESIGN.md` bleibt eine Konvention in der README.
 - Das Bewerbungsformular behält seinen Server-State im Feature
-  (`features/application-form/`) und bekommt kein TanStack Query.
-- Die Kopien aus Untitled UI, auch die unter `hooks/` und `utils/`, sind in
-  der Konfiguration eine Dateikategorie und kein Elementtyp.
+  (`features/application-form/`) und bekommt kein TanStack Query. Die
+  Fehlercodes und die Routen liegen in `lib/errorCodes.ts` und `lib/routes.ts`,
+  weil `content` sie liest und geteilter Code das Feature nicht importiert.
+- Die Kopien aus Untitled UI, auch die unter `hooks/` und `utils/`, sind in der
+  Konfiguration eine Dateikategorie und kein Elementtyp.
   `eslint-plugin-boundaries` beschreibt Ordner als Elemente, und die Kopien
-  liegen zwischen eigenen Dateien. Dasselbe gilt für den Einstiegspunkt
-  `main.tsx` und die Testdateien.
+  liegen zwischen eigenen Dateien. Dasselbe gilt für `main.tsx` im Dashboard,
+  `vite-env.d.ts` im Bewerbungsformular und die Testdateien.
 - `test/`, `mocks/`, Testdateien und Stories sind ein Element nur für Tests.
   Produktionscode importiert es nicht, auch nicht per dynamischem Import. Die
   einzige Ausnahme ist der dynamische Import von `mocks/browser.ts` in
