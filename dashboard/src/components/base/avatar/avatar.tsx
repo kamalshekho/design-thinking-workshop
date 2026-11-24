@@ -2,6 +2,8 @@
  * Clone path: `components/base/avatar/avatar.tsx`. Its base components are
  * imported directly instead of through the clone's `base-components/index.tsx`
  * barrel, and the `AvatarProfilePhoto` variant is not part of this copy.
+ * The `status`, `verified` and `count` props are cut, and with them the
+ * `AvatarOnlineIndicator`, `VerifiedTick` and `AvatarCount` base components.
  *
  * One behaviour was added: `alt=""` hides the initials too, not only the
  * image. Every avatar in this dashboard renders initials — the wire carries no
@@ -16,10 +18,6 @@ import { type FC, type ReactNode, useState } from 'react';
 
 import { cx } from '@/utils/cx';
 
-import { AvatarCount } from './base-components/avatar-count';
-import { AvatarOnlineIndicator } from './base-components/avatar-online-indicator';
-import { VerifiedTick } from './base-components/verified-tick';
-
 export interface AvatarProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   className?: string;
@@ -33,33 +31,12 @@ export interface AvatarProps {
    * Display an inner contrast border around the avatar image.
    */
   contrastBorder?: boolean;
-  /**
-   * Whether the avatar should be rounded.
-   * @default true
-   */
   rounded?: boolean;
-  /**
-   * Display an outer border around the avatar.
-   */
   border?: boolean;
   /**
    * Display a badge (i.e. company logo).
    */
   badge?: ReactNode;
-  /**
-   * Display a status indicator.
-   */
-  status?: 'online' | 'offline';
-  /**
-   * Display a verified tick icon.
-   *
-   * @default false
-   */
-  verified?: boolean;
-  /**
-   * Display a count badge.
-   */
-  count?: number;
   /**
    * The initials of the user to display if no image is available.
    */
@@ -130,9 +107,6 @@ export const Avatar = ({
   placeholderIcon: PlaceholderIcon,
   border,
   badge,
-  status,
-  verified,
-  count,
   focusable = false,
   rounded = true,
   className,
@@ -183,30 +157,6 @@ export const Avatar = ({
     );
   };
 
-  const renderBadgeContent = () => {
-    if (status) {
-      return <AvatarOnlineIndicator status={status} size={size} />;
-    }
-
-    if (verified) {
-      return (
-        <VerifiedTick
-          size={size}
-          className={cx(
-            'absolute right-0 bottom-0',
-            size === 'xs' && '-right-px -bottom-px',
-          )}
-        />
-      );
-    }
-
-    if (count) {
-      return <AvatarCount count={count} />;
-    }
-
-    return badge;
-  };
-
   return (
     <div
       data-avatar
@@ -234,7 +184,7 @@ export const Avatar = ({
       >
         {renderMainContent()}
       </div>
-      {renderBadgeContent()}
+      {badge}
     </div>
   );
 };

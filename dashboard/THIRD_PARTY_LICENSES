@@ -44,15 +44,10 @@ Files copied, clone path -> path here:
        (underline-tab styling kept, made generic over a screen's view set)
   components/base/avatar/avatar.tsx
     -> src/components/base/avatar/avatar.tsx
-       (base components imported directly, no `AvatarProfilePhoto` variant)
+       (no `AvatarProfilePhoto` variant; `status`, `verified` and `count`
+       cut with the base components behind them)
   components/base/avatar/avatar-label-group.tsx
     -> src/components/base/avatar/avatar-label-group.tsx
-  components/base/avatar/base-components/avatar-count.tsx
-    -> src/components/base/avatar/base-components/avatar-count.tsx
-  components/base/avatar/base-components/avatar-online-indicator.tsx
-    -> src/components/base/avatar/base-components/avatar-online-indicator.tsx
-  components/base/avatar/base-components/verified-tick.tsx
-    -> src/components/base/avatar/base-components/verified-tick.tsx
   components/base/badges/badges.tsx
     -> src/components/base/badges/badges.tsx
        (reduced to `Badge` and `BadgeWithDot`)
