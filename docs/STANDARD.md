@@ -5,13 +5,13 @@ Dashboard in `dashboard/`. Er fasst die Entscheidungen aus drei Issues
 zusammen: #111 (Code, Styles und Typen), #107 (Unkraut) und #108 (Zielgeräte
 und Breakpoints). Die Begriffe kommen aus [`CONTEXT.md`](../CONTEXT.md).
 
-Jeder Abschnitt nennt eine Regel und dazu die Prüfung, die sie heute
-durchsetzt, das offene Issue, das die Prüfung einschaltet, oder den Grund,
-warum keine Maschine sie prüft. Wo die Anwendungen sich unterscheiden, steht
-das je Anwendung da. Als eingeschaltet gilt eine Prüfung
-nur, wenn sie in der Konfiguration im Repo steht und einen Verstoß als Fehler
-meldet. `npm run lint` ruft `eslint .` ohne `--max-warnings 0` auf, eine
-Warnung lässt also weder den Hook noch CI scheitern.
+Jeder Abschnitt nennt eine Regel und dazu die Prüfung, die sie heute durchsetzt,
+das offene Issue, das die Prüfung einschaltet, oder den Grund, warum keine
+Maschine sie prüft. Wo die Anwendungen sich unterscheiden, steht das je
+Anwendung da. Als eingeschaltet gilt eine Prüfung nur, wenn sie in der
+Konfiguration im Repo steht und einen Verstoß als Fehler meldet. `npm run lint`
+ruft `eslint .` ohne `--max-warnings 0` auf, eine Warnung lässt also weder den
+Hook noch CI scheitern.
 
 Die READMEs der beiden Anwendungen beschreiben nur, was eine Anwendung allein
 betrifft, und verweisen für alles andere hierher.
