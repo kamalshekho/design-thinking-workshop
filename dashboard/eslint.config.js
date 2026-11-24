@@ -262,7 +262,6 @@ export default tseslint.config(
       'src/components/base/**',
       'src/components/foundations/dot-icon.tsx',
       'src/hooks/use-breakpoint.ts',
-      'src/utils/is-react-component.ts',
     ],
     rules: {
       '@typescript-eslint/no-deprecated': 'off',

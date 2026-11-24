@@ -1,57 +1,18 @@
 /**
- * Clone path: `utils/is-react-component.ts`, unchanged.
+ * Clone path: `utils/is-react-component.ts`. Reduced to `isReactComponent`,
+ * the one export a call site reads: `isFunctionComponent`,
+ * `isClassComponent` and `isForwardRefComponent` are folded into it, and
+ * every `any` is gone with the file-wide eslint-disable that allowed it.
  */
 
-/* We cannot use type `unknown` instead of `any` here because it will break the type assertion `isReactComponent` function is providing. */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type React from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
-type ReactComponent = React.FC<any> | React.ComponentClass<any>;
-
-/**
- * Checks if a given value is a function component.
- */
-export const isFunctionComponent = (
-  component: any,
-): component is React.FC<any> => {
-  return typeof component === 'function';
-};
-
-/**
- * Checks if a given value is a class component.
- */
-export const isClassComponent = (
-  component: any,
-): component is React.ComponentClass<any> => {
-  return (
-    typeof component === 'function' &&
-    component.prototype &&
-    (!!component.prototype.isReactComponent || !!component.prototype.render)
-  );
-};
-
-/**
- * Checks if a given value is a forward ref component.
- */
-export const isForwardRefComponent = (
-  component: any,
-): component is React.ForwardRefExoticComponent<any> => {
-  return (
-    typeof component === 'object' &&
+/** A class component is a function too, so the function test covers it. */
+export const isReactComponent = <P>(
+  component: ComponentType<P> | ReactNode,
+): component is ComponentType<P> =>
+  typeof component === 'function' ||
+  (typeof component === 'object' &&
     component !== null &&
-    component.$$typeof.toString() === 'Symbol(react.forward_ref)'
-  );
-};
-
-/**
- * Checks if a given value is a valid React component.
- */
-export const isReactComponent = (
-  component: any,
-): component is ReactComponent => {
-  return (
-    isFunctionComponent(component) ||
-    isForwardRefComponent(component) ||
-    isClassComponent(component)
-  );
-};
+    '$$typeof' in component &&
+    String(component.$$typeof) === 'Symbol(react.forward_ref)');
