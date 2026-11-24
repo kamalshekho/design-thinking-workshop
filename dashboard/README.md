@@ -269,16 +269,19 @@ npm ci
 npm run dev
 ```
 
-| Command                           | What it does                  |
-| --------------------------------- | ----------------------------- |
-| `npm run dev`                     | Dev server on port 5174       |
-| `npm run build`                   | Production build into `dist/` |
-| `npm run size`                    | Gzip size of `dist/assets`    |
-| `npm run preview`                 | Serve the built output        |
-| `npm run typecheck`               | `tsc --noEmit`                |
-| `npm run lint` / `lint:fix`       | ESLint                        |
-| `npm run format` / `format:check` | Prettier                      |
-| `npm test` / `test:watch`         | Vitest                        |
+| Command                            | What it does                              |
+| ---------------------------------- | ----------------------------------------- |
+| `npm run dev`                      | Dev server on port 5174                   |
+| `npm run build`                    | Production build into `dist/`             |
+| `npm run size`                     | Gzip size of `dist/assets`                |
+| `npm run preview`                  | Serve the built output                    |
+| `npm run typecheck`                | `tsc --noEmit`                            |
+| `npm run lint` / `lint:fix`        | ESLint                                    |
+| `npm run format` / `format:check`  | Prettier                                  |
+| `npm run check:licenses`           | Listed copies exist and name their origin |
+| `npm run knip` / `knip:production` | Dead files, exports and dependencies      |
+| `npm run jscpd`                    | Clones of 50+ tokens in production code   |
+| `npm test` / `test:watch`          | Vitest                                    |
 
 The dev server proxies `/api` to `http://localhost:8080`, so it wants the
 backend running on its default port (`backend/README.md`). Development is
@@ -295,13 +298,13 @@ coding standard under
 
 CI is one workflow, `.github/workflows/ci.yml`, shared with the form and run
 on every pull request and every push to `main`. Its `changes` job decides
-which of the other jobs run. The `dashboard` job runs typecheck, ESLint,
-format check, tests, the build and `npm run size`, then uploads `dist` for 7
-days; it runs when this directory, `eslint.base.mjs`, `.prettierrc.json`,
-`scripts/` or `ci.yml` changes. The `config` job runs
-`scripts/check-config-parity.mjs`, which checks that the dashboard and the
-form share compiler options, tool versions and Node version, and audits the
-workflows with actionlint and zizmor. The gate job `ci` fails when any job
+which of the other jobs run. The `dashboard` job runs typecheck, ESLint, the
+licence check, knip in both modes, jscpd, format check, tests, the build and
+`npm run size`, then uploads `dist` for 7 days; it runs when this directory,
+`eslint.base.mjs`, `.prettierrc.json`, `scripts/` or `ci.yml` changes. The
+`config` job runs `scripts/check-config-parity.mjs`, which checks that the
+dashboard and the form share compiler options, tool versions and Node version,
+and audits the workflows with actionlint and zizmor. The gate job `ci` fails when any job
 failed or was cancelled and counts a skipped job as passed, so it carries the
 result of the whole run.
 
@@ -372,7 +375,8 @@ renders invisible is worth checking against this list first.
 treated after it has been copied into `src/` is in the coding standard under
 [Copies from Untitled UI](../docs/STANDARD.md#kopien-aus-untitled-ui). Every
 copied file opens with a comment naming its path in the clone and what was
-changed here; `THIRD_PARTY_LICENSES` lists them all.
+changed here; `THIRD_PARTY_LICENSES` lists them all, and
+`npm run check:licenses` checks that the two agree.
 
 The sidebar is the clone's `sidebar-simple`, with its three main items —
 Übersicht, Anfragen, Kategorien — Aussortiert in its footer slot, and the
