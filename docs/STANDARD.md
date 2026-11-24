@@ -261,10 +261,14 @@ schaltet es ein.
 
 Eine Komponente lädt keine Daten.
 
-Prüfung: die Schichtregeln aus
-[ADR-0008](./adr/0008-import-direction-checked-by-eslint-boundaries.md), noch
-nicht eingeschaltet. #126 schaltet sie in beiden Anwendungen ein, siehe
-[Importrichtung](#importrichtung-und-barrel-dateien).
+Prüfung im Dashboard: die Schichtregeln aus
+[ADR-0008](./adr/0008-import-direction-checked-by-eslint-boundaries.md), siehe
+[Importrichtung](#importrichtung-und-barrel-dateien). Dazu verbietet ein Block
+mit `no-restricted-imports` in `dashboard/eslint.config.js` jeder Datei in
+`src/features/` außer `*Container.tsx`, `use*.ts` und Tests Importe aus
+`@/queries` und `@tanstack/react-query`. Beides ist eingeschaltet im Hook und
+im CI-Job `dashboard`. Im Applicant form noch nicht eingeschaltet, #126
+schaltet die Schichtregeln dort ein.
 
 ### Eine Komponente validiert nicht
 
@@ -289,8 +293,13 @@ Beide Anwendungen folgen der Importrichtung aus
 ADR beschreibt die Schichten und die erlaubten Importe. Barrel-Dateien gibt es
 in keiner der beiden Anwendungen, importiert wird direkt aus der Datei.
 
-Prüfung: `eslint-plugin-boundaries`, dazu eine Regel gegen Barrel-Dateien,
-beides noch nicht eingeschaltet. #126 schaltet es in beiden Anwendungen ein.
+Prüfung der Importrichtung: `eslint-plugin-boundaries` mit den Schichten in
+`dashboard/eslint.config.js`, eingeschaltet im Hook und im CI-Job `dashboard`.
+Im Applicant form noch nicht eingeschaltet, #126 schaltet es ein.
+
+Prüfung der Barrel-Dateien: `no-restricted-syntax` gegen jedes `export … from`
+in `eslint.base.mjs`, auch `export type … from` und `export * from`,
+eingeschaltet im Hook und in den CI-Jobs `frontend` und `dashboard`.
 
 Heute verbietet im Applicant form ein Block mit `no-restricted-imports` in
 `frontend/eslint.config.js` den Dateien unter `src/components/` Importe aus
