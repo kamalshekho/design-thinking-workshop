@@ -7,7 +7,7 @@ import {
   pickFirstCategoryValue,
   signInAsStaff,
   waitForFormCategories,
-} from './env';
+} from './helpers';
 
 const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -56,7 +56,7 @@ async function auditPage(
     [],
   );
 
-  // docs/STANDARD.md: no horizontal page overflow at any supported width (>= 320 px)
+  // docs/STANDARD.md#breiten-ab-320-px
   const overflow = await page.evaluate(() => ({
     scrollWidth: document.documentElement.scrollWidth,
     clientWidth: document.documentElement.clientWidth,
@@ -88,15 +88,13 @@ test('dashboard screens pass axe accessibility checks', async ({
     'WebKit on Linux does not send Secure cookies over http://localhost',
   );
 
-  // Login screen (unauthenticated)
   await page.goto(DASHBOARD_URL);
   await expect(page.getByRole('heading', { name: 'Anmelden' })).toBeVisible();
-  await auditPage(page, testInfo, 'dashboard-login');
+  await auditPage(page, testInfo, 'dashboard-sign-in');
 
-  // Sign in and audit all four screens. Reload into a fresh document after
-  // signing in so React Aria's live-announcer from the unmounted login button
-  // does not linger in the DOM.
   await signInAsStaff(page);
+  // Reset the document so @react-aria/live-announcer from the unmounted Sign-in
+  // submit button does not linger in the DOM across hash navigations.
   await page.goto('about:blank');
 
   await page.goto(`${DASHBOARD_URL}/#overview`);

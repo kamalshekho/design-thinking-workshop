@@ -27,7 +27,6 @@ export function getStaffPassword(): string {
       }
     }
   } catch {
-    // Fall through to the explicit error below when .env is absent.
   }
 
   throw new Error(

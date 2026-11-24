@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
 import {
   DASHBOARD_URL,
@@ -7,7 +7,16 @@ import {
   signInAsStaff,
   STAFF_NAME,
   waitForFormCategories,
-} from './env';
+} from './helpers';
+
+function waitForApplicationPatch(page: Page) {
+  return page.waitForResponse(
+    (res) =>
+      res.request().method() === 'PATCH' &&
+      res.url().includes('/api/v1/staff/applications/') &&
+      res.ok(),
+  );
+}
 
 test('A29: applicant submits application and staff takes ownership and updates status', async ({
   page,
@@ -16,7 +25,6 @@ test('A29: applicant submits application and staff takes ownership and updates s
   const applicantName = `E2E Applicant ${uniqueId}`;
   const applicantEmail = `e2e-${uniqueId}@example.org`;
 
-  // 1. Applicant submits the form
   await page.goto(FORM_URL);
   const routeSelect = await waitForFormCategories(page);
   const categoryValue = await pickFirstCategoryValue(page);
@@ -43,7 +51,6 @@ test('A29: applicant submits application and staff takes ownership and updates s
     return;
   }
 
-  // 2. Staff member signs in and opens the submitted Application
   await signInAsStaff(page);
   await page.goto(`${DASHBOARD_URL}/#applications`);
   await expect(page.getByRole('heading', { name: 'Anfragen' })).toBeVisible();
@@ -58,16 +65,10 @@ test('A29: applicant submits application and staff takes ownership and updates s
   const isNarrow = testInfo.project.name === 'chromium-320';
 
   if (isNarrow) {
-    // Below 1024 px: ApplicationPage
     const detail = page.getByRole('region', { name: 'Anfrage' });
     await expect(detail).toBeVisible();
 
-    const ownerPatch = page.waitForResponse(
-      (res) =>
-        res.request().method() === 'PATCH' &&
-        res.url().includes('/api/v1/staff/applications/') &&
-        res.ok(),
-    );
+    const ownerPatch = waitForApplicationPatch(page);
     await detail.getByRole('button', { name: 'Übernehmen' }).click();
     await ownerPatch;
     await expect(detail.getByText('Du bist zuständig')).toBeVisible({
@@ -78,19 +79,13 @@ test('A29: applicant submits application and staff takes ownership and updates s
     const inReviewRadio = statusGroup.getByRole('radio', {
       name: 'In Prüfung',
     });
-    const statusPatch = page.waitForResponse(
-      (res) =>
-        res.request().method() === 'PATCH' &&
-        res.url().includes('/api/v1/staff/applications/') &&
-        res.ok(),
-    );
+    const statusPatch = waitForApplicationPatch(page);
     await inReviewRadio.click();
     await statusPatch;
     await expect(inReviewRadio).toHaveAttribute('aria-checked', 'true', {
       timeout: 10_000,
     });
 
-    // Reload and verify persistence
     await page.reload();
     await expect(page.getByRole('heading', { name: 'Anfragen' })).toBeVisible();
     await page.getByRole('searchbox').fill(applicantEmail);
@@ -104,34 +99,22 @@ test('A29: applicant submits application and staff takes ownership and updates s
         .getByRole('radio', { name: 'In Prüfung' }),
     ).toHaveAttribute('aria-checked', 'true');
   } else {
-    // At 1280 px: ApplicationDrawer
     const drawer = page.getByRole('complementary', { name: 'Anfrage' });
     await expect(drawer).toBeVisible();
 
     const ownerTrigger = drawer.getByRole('button', { name: /Zuständig/ });
-    const ownerPatch = page.waitForResponse(
-      (res) =>
-        res.request().method() === 'PATCH' &&
-        res.url().includes('/api/v1/staff/applications/') &&
-        res.ok(),
-    );
+    const ownerPatch = waitForApplicationPatch(page);
     await ownerTrigger.click();
     await page.getByRole('option', { name: STAFF_NAME }).click();
     await ownerPatch;
     await expect(ownerTrigger).toContainText(STAFF_NAME, { timeout: 10_000 });
 
     const statusSelect = drawer.getByLabel('Status');
-    const statusPatch = page.waitForResponse(
-      (res) =>
-        res.request().method() === 'PATCH' &&
-        res.url().includes('/api/v1/staff/applications/') &&
-        res.ok(),
-    );
+    const statusPatch = waitForApplicationPatch(page);
     await statusSelect.selectOption('IN_REVIEW');
     await statusPatch;
     await expect(statusSelect).toHaveValue('IN_REVIEW');
 
-    // Reload and verify persistence
     await page.reload();
     await expect(page.getByRole('heading', { name: 'Anfragen' })).toBeVisible();
     await page.getByRole('searchbox').fill(applicantEmail);
