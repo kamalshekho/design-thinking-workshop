@@ -2,7 +2,8 @@
  * Clone path: `components/base/badges/badges.tsx`, reduced to the two badges
  * this dashboard renders — `Badge` in a table cell and `BadgeWithDot` for an
  * Application's Status. The clone's icon, flag, image, button and icon-only
- * variants are not part of this copy.
+ * variants are not part of this copy. Both badges build their per-type size
+ * table through one `sizesByType` helper instead of repeating it.
  */
 
 import type { ReactNode } from 'react';
@@ -146,6 +147,16 @@ const withBadgeTypes = {
   },
 };
 
+/** Pills take their own sizes; the two rectangular types share one set. */
+const sizesByType = (
+  pill: Record<Sizes, string>,
+  badge: Record<Sizes, string>,
+) => ({
+  [badgeTypes.pillColor]: pill,
+  [badgeTypes.badgeColor]: badge,
+  [badgeTypes.badgeModern]: badge,
+});
+
 export type BadgeColor<T extends BadgeTypes> = BadgeTypeToColorMap<
   typeof withPillTypes
 >[T];
@@ -162,22 +173,18 @@ export const Badge = <T extends BadgeTypes>(props: BadgeProps<T>) => {
   const { type = 'pill-color', size = 'md', color = 'gray', children } = props;
   const colors = withPillTypes[type];
 
-  const pillSizes = {
-    sm: 'py-0.5 px-2 text-xs font-medium',
-    md: 'py-0.5 px-2.5 text-sm font-medium',
-    lg: 'py-1 px-3 text-sm font-medium',
-  };
-  const badgeSizes = {
-    sm: 'py-0.5 px-1.5 text-xs font-medium',
-    md: 'py-0.5 px-2 text-sm font-medium',
-    lg: 'py-1 px-2.5 text-sm font-medium rounded-lg',
-  };
-
-  const sizes = {
-    [badgeTypes.pillColor]: pillSizes,
-    [badgeTypes.badgeColor]: badgeSizes,
-    [badgeTypes.badgeModern]: badgeSizes,
-  };
+  const sizes = sizesByType(
+    {
+      sm: 'py-0.5 px-2 text-xs font-medium',
+      md: 'py-0.5 px-2.5 text-sm font-medium',
+      lg: 'py-1 px-3 text-sm font-medium',
+    },
+    {
+      sm: 'py-0.5 px-1.5 text-xs font-medium',
+      md: 'py-0.5 px-2 text-sm font-medium',
+      lg: 'py-1 px-2.5 text-sm font-medium rounded-lg',
+    },
+  );
 
   return (
     <span
@@ -214,23 +221,18 @@ export const BadgeWithDot = <T extends BadgeTypes>(
 
   const colors = withBadgeTypes[type];
 
-  const pillSizes = {
-    sm: 'gap-1 py-0.5 pl-1.5 pr-2 text-xs font-medium',
-    md: 'gap-1.5 py-0.5 pl-2 pr-2.5 text-sm font-medium',
-    lg: 'gap-1.5 py-1 pl-2.5 pr-3 text-sm font-medium',
-  };
-
-  const badgeSizes = {
-    sm: 'gap-1 py-0.5 px-1.5 text-xs font-medium',
-    md: 'gap-1.5 py-0.5 px-2 text-sm font-medium',
-    lg: 'gap-1.5 py-1 px-2.5 text-sm font-medium rounded-lg',
-  };
-
-  const sizes = {
-    [badgeTypes.pillColor]: pillSizes,
-    [badgeTypes.badgeColor]: badgeSizes,
-    [badgeTypes.badgeModern]: badgeSizes,
-  };
+  const sizes = sizesByType(
+    {
+      sm: 'gap-1 py-0.5 pl-1.5 pr-2 text-xs font-medium',
+      md: 'gap-1.5 py-0.5 pl-2 pr-2.5 text-sm font-medium',
+      lg: 'gap-1.5 py-1 pl-2.5 pr-3 text-sm font-medium',
+    },
+    {
+      sm: 'gap-1 py-0.5 px-1.5 text-xs font-medium',
+      md: 'gap-1.5 py-0.5 px-2 text-sm font-medium',
+      lg: 'gap-1.5 py-1 px-2.5 text-sm font-medium rounded-lg',
+    },
+  );
 
   return (
     <span
