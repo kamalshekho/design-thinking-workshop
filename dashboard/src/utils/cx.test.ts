@@ -28,6 +28,18 @@ describe('cx', () => {
     expect(cx('outline-border-secondary', 'outline-hairline')).toBe(
       'outline-border-secondary outline-hairline',
     );
+    expect(
+      cx(
+        'outline-border-secondary',
+        'outline-hairline',
+        '-outline-offset-hairline',
+      ),
+    ).toBe(
+      'outline-border-secondary outline-hairline -outline-offset-hairline',
+    );
+    expect(cx('before:inset-hairline', 'before:inset-0')).toBe(
+      'before:inset-0',
+    );
     expect(cx('rounded-inner', 'rounded-full')).toBe('rounded-full');
   });
 });
