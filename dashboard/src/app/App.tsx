@@ -12,7 +12,12 @@ import { CategoriesContainer } from '@/features/categories/CategoriesContainer';
 import { DiscardedContainer } from '@/features/discarded/DiscardedContainer';
 import { OverviewContainer } from '@/features/overview/OverviewContainer';
 import { createQueryClient } from '@/queries/queryClient';
-import { useCurrentSignIn, useSignIn, useSignOut } from '@/queries/session';
+import {
+  useCurrentSignIn,
+  useSignIn,
+  useSignInFailure,
+  useSignOut,
+} from '@/queries/session';
 
 import type { Screen } from './AppShell';
 import { AppShell } from './AppShell';
@@ -78,6 +83,14 @@ function Dashboard({ now }: { now?: Date }) {
   const query = useCurrentSignIn();
   const signInRequest = useSignIn();
   const signOutRequest = useSignOut();
+  /*
+   * A failed `GET /me` that was not a `401` is shown on the sign-in screen
+   * too: the Staff member's only move is still to sign in, and hiding the
+   * reason would leave a form that fails for no stated cause. The cover only
+   * words its own request.
+   */
+  const screenFailure = useSignInFailure(signInRequest.error, query.error);
+  const coverFailure = useSignInFailure(signInRequest.error);
 
   if (query.isPending) {
     return (
@@ -95,12 +108,7 @@ function Dashboard({ now }: { now?: Date }) {
     return (
       <LoginScreen
         onSignIn={signInRequest.mutate}
-        /*
-         * A failed `GET /me` that was not a `401` is shown here too: the
-         * Staff member's only move is still to sign in, and hiding the reason
-         * would leave a form that fails for no stated cause.
-         */
-        failure={signInRequest.error ?? query.error}
+        failure={screenFailure}
         isSubmitting={signInRequest.isPending}
       />
     );
@@ -138,7 +146,7 @@ function Dashboard({ now }: { now?: Date }) {
         <SignInCover
           staffMember={staffMember}
           onSignIn={signInRequest.mutate}
-          failure={signInRequest.error}
+          failure={coverFailure}
           isSubmitting={signInRequest.isPending}
         />
       )}

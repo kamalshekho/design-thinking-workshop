@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import { ApiProblem } from '@/api/problem';
 import { de } from '@/content/de';
 import { mockStaffMember } from '@/test/mockApplications';
 
@@ -91,7 +90,7 @@ describe('SignInForm', () => {
     render(
       <SignInForm
         onSignIn={vi.fn()}
-        failure={new ApiProblem({ status: 401, code: 'INVALID_CREDENTIALS' })}
+        failure={{ code: 'INVALID_CREDENTIALS' }}
       />,
     );
 
@@ -111,16 +110,7 @@ describe('SignInForm', () => {
 
   it('words a throttled address above the form too', () => {
     render(
-      <SignInForm
-        onSignIn={vi.fn()}
-        failure={
-          new ApiProblem({
-            status: 429,
-            code: 'RATE_LIMITED',
-            retryAfterSeconds: 300,
-          })
-        }
-      />,
+      <SignInForm onSignIn={vi.fn()} failure={{ code: 'RATE_LIMITED' }} />,
     );
 
     expect(screen.getByRole('alert')).toHaveTextContent(
@@ -134,18 +124,22 @@ describe('SignInForm', () => {
    * genuinely does not know what happened.
    */
   it('words a request that never reached the backend generally', () => {
-    render(
-      <SignInForm onSignIn={vi.fn()} failure={new TypeError('offline')} />,
-    );
+    render(<SignInForm onSignIn={vi.fn()} failure={{ code: undefined }} />);
 
     expect(screen.getByRole('alert')).toHaveTextContent(de.errors.general);
+  });
+
+  it('says nothing above the form while no request has failed', () => {
+    render(<SignInForm onSignIn={vi.fn()} failure={null} />);
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('drops the rejection once a field needs fixing again', async () => {
     render(
       <SignInForm
         onSignIn={vi.fn()}
-        failure={new ApiProblem({ status: 401, code: 'INVALID_CREDENTIALS' })}
+        failure={{ code: 'INVALID_CREDENTIALS' }}
       />,
     );
 

@@ -26,10 +26,9 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-import { isUnauthenticated } from '@/api/problem';
-import type { Credentials } from '@/api/session';
+import { isUnauthenticated, problemCode } from '@/api/problem';
 import { fetchSignedInStaffMember, signIn, signOut } from '@/api/session';
-import type { SignIn } from '@/domain/signIn';
+import type { Credentials, SignIn, SignInFailure } from '@/domain/signIn';
 import { activeSignIn, expireSignIn, NO_SIGN_IN } from '@/domain/signIn';
 
 import { queryKeys } from './keys';
@@ -117,6 +116,17 @@ export function useSignIn() {
       }
     },
   });
+}
+
+/**
+ * What the sign-in form shows above its fields: the first of `errors` that is
+ * set, reduced to its problem code. The form takes the finished value so that
+ * a feature never reads a raw request error (ADR-0008). Pass the sign-in
+ * request's error first; it outranks whatever the Sign-in query failed with.
+ */
+export function useSignInFailure(...errors: unknown[]): SignInFailure | null {
+  const failure = errors.find((error) => error !== null && error !== undefined);
+  return failure === undefined ? null : { code: problemCode(failure) };
 }
 
 /**

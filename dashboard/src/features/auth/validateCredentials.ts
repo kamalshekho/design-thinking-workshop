@@ -13,7 +13,7 @@
  * rather than all of them.
  */
 
-import type { Credentials } from '@/api/session';
+import type { Credentials } from '@/domain/signIn';
 
 export type CredentialIssue =
   'email-required' | 'email-invalid' | 'password-required';

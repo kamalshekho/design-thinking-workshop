@@ -29,6 +29,19 @@ export type SignIn =
 
 export const NO_SIGN_IN: SignIn = { kind: 'none' };
 
+/** What a Staff member types into the sign-in form. */
+export type Credentials = {
+  email: string;
+  password: string;
+};
+
+/**
+ * Why the last sign-in attempt failed, as the form words it. `code` is the
+ * backend's problem code, and `undefined` when there is none: a request the
+ * network never delivered still failed, and the form says so in general terms.
+ */
+export type SignInFailure = { code: string | undefined };
+
 export function activeSignIn(staffMember: StaffMember): SignIn {
   return { kind: 'active', staffMember };
 }
