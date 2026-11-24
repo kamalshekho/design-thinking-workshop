@@ -211,7 +211,3 @@ export const de = {
     backToTopLabel: 'Nach oben',
   },
 } as const satisfies Content;
-
-export function errorText(code: string): string {
-  return code in de.errors ? de.errors[code as ErrorCode] : de.unknownError;
-}

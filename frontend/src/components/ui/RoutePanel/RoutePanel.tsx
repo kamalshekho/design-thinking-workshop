@@ -5,7 +5,7 @@ import iconHeart from '../../../assets/icons/icon_heart.png';
 import { Button } from '../Button/Button';
 import styles from './RoutePanel.module.css';
 
-export type RoutePanelVariant = 'community' | 'supporting-member';
+type RoutePanelVariant = 'community' | 'supporting-member';
 
 interface RoutePanelProps {
   variant: RoutePanelVariant;

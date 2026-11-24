@@ -6,26 +6,21 @@
  * Adding a code here without adding its text there is a type error — which is
  * the point.
  */
-export const FIELD_ERROR_CODES = [
-  'ROUTE_REQUIRED',
-  'CATEGORY_REQUIRED',
-  'CATEGORY_UNKNOWN',
-  'CATEGORY_UNAVAILABLE',
-  'NAME_REQUIRED',
-  'NAME_TOO_LONG',
-  'EMAIL_REQUIRED',
-  'EMAIL_INVALID',
-  'EMAIL_TOO_LONG',
-  'WEEKLY_TIME_REQUIRED',
-  'WEEKLY_TIME_UNKNOWN',
-  'ABOUT_TOO_LONG',
-  'CONSENT_REQUIRED',
-] as const;
+type FieldErrorCode =
+  | 'ROUTE_REQUIRED'
+  | 'CATEGORY_REQUIRED'
+  | 'CATEGORY_UNKNOWN'
+  | 'CATEGORY_UNAVAILABLE'
+  | 'NAME_REQUIRED'
+  | 'NAME_TOO_LONG'
+  | 'EMAIL_REQUIRED'
+  | 'EMAIL_INVALID'
+  | 'EMAIL_TOO_LONG'
+  | 'WEEKLY_TIME_REQUIRED'
+  | 'WEEKLY_TIME_UNKNOWN'
+  | 'ABOUT_TOO_LONG'
+  | 'CONSENT_REQUIRED';
 
-export type FieldErrorCode = (typeof FIELD_ERROR_CODES)[number];
-
-export const SUBMIT_ERROR_CODES = ['RATE_LIMITED', 'INTERNAL_ERROR'] as const;
-
-export type SubmitErrorCode = (typeof SUBMIT_ERROR_CODES)[number];
+export type SubmitErrorCode = 'RATE_LIMITED' | 'INTERNAL_ERROR';
 
 export type ErrorCode = FieldErrorCode | SubmitErrorCode;

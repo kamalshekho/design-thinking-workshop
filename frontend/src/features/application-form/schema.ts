@@ -18,9 +18,9 @@ z.config({ jitless: true });
  * contract with the backend; see API.md.
  */
 
-export const NAME_MAX = 120;
-export const EMAIL_MAX = 254;
-export const ABOUT_MAX = 2000;
+const NAME_MAX = 120;
+const EMAIL_MAX = 254;
+const ABOUT_MAX = 2000;
 
 export const formSchema = z
   .object({

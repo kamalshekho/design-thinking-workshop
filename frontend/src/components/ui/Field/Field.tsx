@@ -7,7 +7,7 @@ import styles from './Field.module.css';
  * to render a control inside a Field — it is what guarantees the label, hint
  * and error are actually announced.
  */
-export interface FieldControlProps {
+interface FieldControlProps {
   id: string;
   'aria-describedby': string | undefined;
   'aria-invalid': boolean | undefined;

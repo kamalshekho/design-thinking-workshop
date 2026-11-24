@@ -5,7 +5,7 @@ import { cx } from '../../../lib/cx';
 import { Button } from '../Button/Button';
 import styles from './Header.module.css';
 
-export interface HeaderNavItem {
+interface HeaderNavItem {
   label: string;
   /** Omitted in the prototype, where the item leads nowhere. */
   href?: string;

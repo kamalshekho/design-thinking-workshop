@@ -1,4 +1,4 @@
-export const DEFAULT_TIMEOUT_MS = 15_000;
+const DEFAULT_TIMEOUT_MS = 15_000;
 
 interface PostJsonOptions {
   timeoutMs?: number;
