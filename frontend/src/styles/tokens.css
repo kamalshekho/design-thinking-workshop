@@ -110,6 +110,8 @@
   --checkbox-size: 22px;
   --checkbox-gap: 12px;
   --route-panel-max-width: 480px;
+  --route-panel-padding: var(--wp--preset--spacing--60);
+  --route-panel-padding-mobile: var(--wp--preset--spacing--50);
   --route-panel-community-gap: 32px;
   --route-panel-supporting-member-gap: 20px;
   --route-panel-content-gap: 12px;

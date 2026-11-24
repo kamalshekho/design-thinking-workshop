@@ -746,7 +746,7 @@ Background       soft blue
 Text             #4f4f4f
 Accent/title     blue
 Radius           8px
-Padding          36px
+Padding          36px, 24px below 640px
 ```
 
 Blue is route-specific only; it is not a new primary brand color.
@@ -935,13 +935,17 @@ Do not show application fields.
 
 **Zum Fördermitgliedsantrag →**
 
+`de.ts` writes the word with soft hyphens (U+00AD) between "Förder",
+"mitglieds" and "antrag". The wording stays the same; below 640px the button
+label breaks there with a hyphen instead of pushing the panel out of the card.
+
 Suggested treatment:
 
 ```text
 Background       very light purple/lila
 Accent           #8437b6
 Radius           8px
-Padding          36px
+Padding          36px, 24px below 640px
 ```
 
 It should clearly belong to the same routing system as the Aktionsgruppe panel.
@@ -1116,6 +1120,7 @@ Card padding    ~36px
 ```text
 Page gutter      20px
 Card padding     24px
+Route panel      24px padding, vertical
 Title            36px
 Controls         full width
 Submit           sticky
@@ -1349,14 +1354,16 @@ type=Fördermitglied
 
 Figma Route Panel component values: `480px` desktop width, `8px` radius and
 `36px` padding. Both variants are horizontal (icon left, content right) and
-collapse to vertical below `640px`, sharing one `80px` icon size — Aktionsgruppe
-uses a `32px` icon-to-content gap, Fördermitglied `20px`. Both use `28px` Arimo
-Bold headings, `20px` body copy, `12px` content gaps, and the existing 56px
-Button — rendered as a pill (`999px` radius, no underline, `16px` label) in
-this component, blue for Aktionsgruppe and purple for Fördermitglied. The
-trailing `→` in the CTA copy renders as a drawn arrow icon, not the literal
-character, so it stays vertically centered against the label regardless of
-font metrics.
+collapse to vertical below `640px`, where the padding drops to `24px` so the
+panel and its CTA fit inside the card at `320px`. They share one `80px` icon
+size — Aktionsgruppe uses a `32px` icon-to-content gap, Fördermitglied `20px`.
+Both use `28px` Arimo Bold headings, `20px` body copy, `12px` content gaps, and
+the existing 56px Button — rendered as a pill (`999px` radius, no underline,
+`16px` label) in this component, blue for Aktionsgruppe and purple for
+Fördermitglied. The trailing `→` in the CTA copy renders as a drawn arrow icon,
+not the literal character, so it stays vertically centered against the label
+regardless of font metrics. A label too long for one line wraps beside the
+arrow; the Fördermitglied CTA breaks at its soft hyphens (section 35).
 
 ---
 

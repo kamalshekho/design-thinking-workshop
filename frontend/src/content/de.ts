@@ -134,7 +134,9 @@ export const de = {
   supportingMemberPanel: {
     title: 'Du unterstützt uns direkt.',
     body: 'Ohne Bewerbung und ohne Wartezeit: Wenn du Fördermitglied werden möchtest, findest du hier alle Informationen und den kurzen Antrag. So hilfst du, digitale Zivilcourage langfristig möglich zu machen.',
-    cta: 'Zum Fördermitgliedsantrag',
+    // Soft hyphens (U+00AD) let the long word break inside the button below
+    // 640px. They stay invisible otherwise, so the wording is unchanged.
+    cta: 'Zum Förder\u00ADmitglieds\u00ADantrag',
   },
 
   /** DESIGN.md section 30 */
