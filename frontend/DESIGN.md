@@ -1070,8 +1070,9 @@ Every interactive control has a hit area of at least this size, at every width.
 Links inside running text, such as "Datenschutzerklärung" in the privacy copy,
 are exempt. A control drawn smaller keeps its visible size and grows its hit
 area with a transparent pseudo-element centred on it: the 22px checkbox
-(section 38). The header's search and menu buttons and its drawer links stay
-44px.
+(section 38), the 20px footer links "Sprich mit uns", "Impressum" and
+"Datenschutz", and the 22px "SPENDE HIER" row. The footer layout does not move.
+The header's search and menu buttons and its drawer links stay 44px.
 
 Preferred form control:
 

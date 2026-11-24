@@ -2,6 +2,8 @@ import iconArrowUp from '../../../assets/icons/icon_arrow_up.svg';
 import iconHeart from '../../../assets/icons/icon_heart_footer.png';
 import iconPig from '../../../assets/icons/icon_pig.png';
 import iconRecurring from '../../../assets/icons/icon_recurring.png';
+import { cx } from '../../../lib/cx';
+import tapTargetStyles from '../tapTarget.module.css';
 import styles from './Footer.module.css';
 
 export interface FooterKontakt {
@@ -48,13 +50,16 @@ export function Footer({ content, onBackToTop }: FooterProps) {
     copyright,
     backToTopLabel,
   } = content;
+  const linkClassName = cx(styles.link, tapTargetStyles.tapTarget);
+  const donateClassName = cx(styles.donateRow, tapTargetStyles.tapTarget);
+
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.topRow}>
           <div className={styles.column}>
             <p className={styles.title}>{kontakt.title}</p>
-            <a className={styles.link} href={kontakt.talkToUsHref}>
+            <a className={linkClassName} href={kontakt.talkToUsHref}>
               {kontakt.talkToUsLabel}
             </a>
             <address className={styles.address}>
@@ -66,16 +71,16 @@ export function Footer({ content, onBackToTop }: FooterProps) {
 
           <div className={styles.column}>
             <p className={styles.title}>{rechtliches.title}</p>
-            <a className={styles.link} href={rechtliches.impressumHref}>
+            <a className={linkClassName} href={rechtliches.impressumHref}>
               {rechtliches.impressumLabel}
             </a>
-            <a className={styles.link} href={rechtliches.datenschutzHref}>
+            <a className={linkClassName} href={rechtliches.datenschutzHref}>
               {rechtliches.datenschutzLabel}
             </a>
           </div>
 
           <div className={styles.aside}>
-            <a className={styles.donateRow} href={donateHref}>
+            <a className={donateClassName} href={donateHref}>
               <span className={styles.donateLabel}>{donateLabel}</span>
               <img alt="" className={styles.donateIcon} src={iconHeart} />
               <img alt="" className={styles.donateIcon} src={iconPig} />
