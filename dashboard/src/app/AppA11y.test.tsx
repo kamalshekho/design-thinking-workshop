@@ -12,9 +12,6 @@ import { setViewportWidth } from '@/test/viewport';
 const PHONE_WIDTH = 375;
 
 /**
- * Automated accessibility checks across every dashboard screen and open overlay
- * in jsdom. `color-contrast` is the only disabled rule (`src/test/a11y.ts`).
- *
  * Every assertion runs against `document.body` so portaled overlays
  * (React Aria modals, drawers, dialogs, popovers) are audited alongside the
  * screen underneath them.
