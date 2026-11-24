@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import boundaries from 'eslint-plugin-boundaries';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
@@ -7,6 +8,67 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 import { sharedConfig } from '../eslint.base.mjs';
+
+/* The files copied in from Untitled UI, one per `-> src/...` line in
+   THIRD_PARTY_LICENSES. */
+const UNTITLED_UI_COPIES = [
+  'src/components/application/app-navigation/config.ts',
+  'src/components/application/app-navigation/base-components/nav-item.tsx',
+  'src/components/application/app-navigation/base-components/nav-list.tsx',
+  'src/components/application/app-navigation/base-components/mobile-header.tsx',
+  'src/components/application/app-navigation/base-components/nav-account-card.tsx',
+  'src/components/application/app-navigation/sidebar-navigation/sidebar-simple.tsx',
+  'src/components/application/pagination/pagination.tsx',
+  'src/components/application/pagination/pagination-base.tsx',
+  'src/components/application/table/table.tsx',
+  'src/components/application/application-table/application-table.tsx',
+  'src/components/shared/tab-strip.tsx',
+  'src/components/base/avatar/avatar.tsx',
+  'src/components/base/avatar/avatar-label-group.tsx',
+  'src/components/base/avatar/base-components/avatar-count.tsx',
+  'src/components/base/avatar/base-components/avatar-online-indicator.tsx',
+  'src/components/base/avatar/base-components/verified-tick.tsx',
+  'src/components/base/badges/badges.tsx',
+  'src/components/base/badges/badge-types.ts',
+  'src/components/base/buttons/button.tsx',
+  'src/components/base/buttons/close-button.tsx',
+  'src/components/base/checkbox/checkbox.tsx',
+  'src/components/base/input/input.tsx',
+  'src/components/base/input/hint-text.tsx',
+  'src/components/base/input/label.tsx',
+  'src/components/base/toggle/toggle.tsx',
+  'src/components/base/tooltip/tooltip.tsx',
+  'src/components/foundations/dot-icon.tsx',
+  'src/hooks/use-breakpoint.ts',
+  'src/utils/cx.ts',
+  'src/utils/is-react-component.ts',
+];
+
+/* What shared UI code may import: the Untitled UI copies, components/shared,
+   components/ui and our own files under components/application. */
+const SHARED_UI = ['components', 'utils', 'hooks', 'content', 'domain'];
+
+/* Every production element. app and the entry point may import all of them. */
+const PRODUCTION = [
+  'domain',
+  'api',
+  'queries',
+  'utils',
+  'hooks',
+  'content',
+  'components',
+  'feature',
+  'app',
+  'images',
+  'styles',
+];
+
+function allow(type, types) {
+  return {
+    from: { element: { type } },
+    allow: { to: { element: { types } } },
+  };
+}
 
 export default tseslint.config(
   ...sharedConfig({
@@ -19,6 +81,174 @@ export default tseslint.config(
     globals,
     tsconfigRootDir: import.meta.dirname,
   }),
+
+  /* The import direction of ADR-0008, after the layer table in issue #106.
+     eslint-plugin-boundaries describes folders as elements and single files as
+     file categories, so the Untitled UI copies, the entry point and the tests
+     are categories. Each layer may import itself. The last policy that
+     matches an import decides. */
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: { boundaries },
+    settings: {
+      'import/resolver': {
+        typescript: { project: `${import.meta.dirname}/tsconfig.json` },
+      },
+      'boundaries/root-path': import.meta.dirname,
+      'boundaries/elements': [
+        { type: 'domain', pattern: 'src/domain', partialMatch: false },
+        { type: 'api', pattern: 'src/api', partialMatch: false },
+        { type: 'queries', pattern: 'src/queries', partialMatch: false },
+        { type: 'utils', pattern: 'src/utils', partialMatch: false },
+        { type: 'hooks', pattern: 'src/hooks', partialMatch: false },
+        { type: 'content', pattern: 'src/content', partialMatch: false },
+        { type: 'components', pattern: 'src/components', partialMatch: false },
+        {
+          type: 'feature',
+          pattern: 'src/features/*',
+          capture: ['feature'],
+          partialMatch: false,
+        },
+        { type: 'app', pattern: 'src/app', partialMatch: false },
+        { type: 'images', pattern: 'src/images', partialMatch: false },
+        { type: 'styles', pattern: 'src/styles', partialMatch: false },
+        {
+          type: 'test',
+          pattern: ['src/test', 'src/mocks'],
+          partialMatch: false,
+        },
+      ],
+      'boundaries/files': [
+        { category: 'untitled-ui', pattern: UNTITLED_UI_COPIES },
+        { category: 'entry', pattern: 'src/main.tsx' },
+        {
+          category: 'test',
+          pattern: [
+            'src/test/**',
+            'src/mocks/**',
+            'src/**/*.test.{ts,tsx}',
+            'src/**/*.stories.tsx',
+          ],
+        },
+      ],
+    },
+    rules: {
+      'boundaries/no-unknown-files': 'error',
+      'boundaries/no-unknown-dependencies': 'error',
+      'boundaries/dependencies': [
+        'error',
+        {
+          default: 'disallow',
+          checkInternals: true,
+          policies: [
+            allow('domain', ['domain']),
+            allow('api', ['api', 'domain']),
+            allow('queries', ['queries', 'api', 'domain', 'hooks']),
+            allow('utils', ['utils', 'domain']),
+            allow('hooks', ['hooks', 'domain', 'utils']),
+            allow('content', ['content', 'domain', 'utils']),
+            allow('components', [...SHARED_UI, 'images', 'styles']),
+            {
+              from: { file: { categories: 'untitled-ui' } },
+              allow: { to: { element: { types: SHARED_UI } } },
+            },
+            {
+              from: { element: { type: 'feature' } },
+              allow: [
+                {
+                  to: {
+                    element: {
+                      type: 'feature',
+                      captured: {
+                        feature: '{{ from.element.captured.feature }}',
+                      },
+                    },
+                  },
+                },
+                {
+                  to: {
+                    element: {
+                      types: [
+                        'components',
+                        'queries',
+                        'domain',
+                        'utils',
+                        'hooks',
+                        'content',
+                      ],
+                    },
+                  },
+                },
+              ],
+            },
+            allow('app', PRODUCTION),
+            {
+              from: { file: { categories: 'entry' } },
+              allow: { to: { element: { types: PRODUCTION } } },
+            },
+            {
+              disallow: { to: { file: { categories: 'test' } } },
+              message:
+                'Production code does not import test-only code (src/test, src/mocks, tests, stories).',
+            },
+            {
+              from: { file: { categories: 'test' } },
+              allow: { to: { module: { origin: 'local' } } },
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  /* api talks to the server and knows no React (layer table in issue #106). */
+  {
+    files: ['src/api/**/*.ts'],
+    ignores: ['src/api/**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: ['react', 'react-dom', '@tanstack/react-query'],
+          patterns: ['react/*', 'react-dom/*'],
+        },
+      ],
+    },
+  },
+
+  /* Inside a feature only the container and its use* hooks read the cache, a
+     screen gets its data as props (ADR-0006, ADR-0008). Which file may import
+     a module is a question of its file name, and @tanstack/react-query is an
+     npm package, which the boundaries policies above do not check. */
+  {
+    files: ['src/features/**/*.{ts,tsx}'],
+    ignores: [
+      'src/features/**/*Container.tsx',
+      'src/features/**/use*.ts',
+      'src/features/**/*.test.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@tanstack/react-query',
+              message:
+                'Only a *Container.tsx or a use*.ts in a feature reads the cache. Pass the data in as props.',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@/queries/*', '**/queries/*'],
+              message:
+                'Only a *Container.tsx or a use*.ts in a feature reads the cache. Pass the data in as props.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 
   /* Third-party component code copied in from Untitled UI (see
      THIRD_PARTY_LICENSES). We keep it close to upstream so it stays easy to
