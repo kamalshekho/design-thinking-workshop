@@ -44,5 +44,27 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     css: true,
     include: ['src/**/*.test.{ts,tsx}'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      reportOnFailure: true,
+      thresholds: {
+        'src/api/**': {
+          lines: 95,
+          branches: 90,
+          functions: 100,
+        },
+        'src/domain/**': {
+          lines: 90,
+          branches: 80,
+          functions: 85,
+        },
+        'src/utils/**': {
+          lines: 65,
+          branches: 60,
+          functions: 100,
+        },
+      },
+    },
   },
 });

@@ -45,6 +45,7 @@ const SHARED_TOOLS = [
   'eslint-plugin-sonarjs',
   '@eslint-community/eslint-plugin-eslint-comments',
   'eslint-plugin-check-file',
+  '@vitest/coverage-v8',
 ];
 
 const APPS = ['frontend', 'dashboard'];

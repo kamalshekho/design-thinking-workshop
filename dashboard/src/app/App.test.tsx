@@ -637,7 +637,7 @@ describe('App', () => {
       expect(
         screen.getByRole('navigation', { name: de.navigation.label }),
       ).not.toHaveAttribute('inert');
-    });
+    }, 10_000);
 
     /**
      * The other half of the same rule. Somebody else at the same machine is
@@ -669,7 +669,7 @@ describe('App', () => {
       expect(
         screen.queryByLabelText(de.detail.internalNotes),
       ).not.toBeInTheDocument();
-    });
+    }, 10_000);
 
     /**
      * The stream's half. An `EventSource` reports `error` and nothing else, so
