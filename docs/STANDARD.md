@@ -209,9 +209,12 @@ Prüfung: `@typescript-eslint/only-throw-error` ist über `strictTypeChecked` in
 `eslint.base.mjs` in beiden Anwendungen eingeschaltet, im Hook und in den
 CI-Jobs `frontend` und `dashboard`. Sie verbietet, etwas anderes als ein
 `Error`-Objekt zu werfen. `no-restricted-syntax` gegen `TryStatement` in
-`features/**` und `components/**` ist noch nicht eingeschaltet, #130 schaltet
-es in beiden Anwendungen ein. Dass nur die Transportschicht wirft, prüft
-keine Maschine.
+`features/**` und `components/**` ist noch nicht eingeschaltet, #130 schaltet es
+in beiden Anwendungen ein. `only-throw-error` prüft, was geworfen wird, nicht
+wo, und lässt jede Unterklasse von `Error` zu. Das Verbot von `TryStatement`
+prüft, wo gefangen wird, nicht wo geworfen wird. Ob außerhalb der
+Transportschicht geworfen wird und ob das Geworfene ein `ApiProblem` ist, prüft
+das Review. Die Entscheidung nennt dafür kein Werkzeug.
 
 ## Benennung
 
@@ -229,8 +232,8 @@ noch nicht eingeschaltet. #131 schaltet es in beiden Anwendungen ein.
 
 Bezeichner sind englisch.
 
-Die Sprache eines Bezeichners prüft keine Maschine. Das bleibt Aufgabe des
-Reviews.
+Die Entscheidung nennt dafür kein Werkzeug. Die Sprache eines Bezeichners prüft
+das Review.
 
 ## Komponenten
 
@@ -277,7 +280,7 @@ Komponente. Im Dashboard liegen die eigenen Komponenten als flache Dateien im
 Ordner ihres Features und in `components/shared/`. Die Kopien behalten die
 Ordner des Klons.
 
-Das prüft keine Maschine.
+Die Entscheidung nennt dafür kein Werkzeug. Die Ordner prüft das Review.
 
 ## Importrichtung und Barrel-Dateien
 
