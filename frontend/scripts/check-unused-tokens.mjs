@@ -39,7 +39,6 @@ function sourceFiles(dir) {
 
 const tokensCss = stripCssComments(readFileSync(TOKENS, 'utf8'));
 
-/** Token name to the tokens its definitions read. */
 const readsByToken = new Map();
 for (const [, name, value] of tokensCss.matchAll(DEFINITION)) {
   const known = readsByToken.get(name) ?? [];
