@@ -1,9 +1,6 @@
 /**
- * Hit area for a control drawn smaller than --tap-target-min (DESIGN.md
- * section 40). A transparent ::before, centred on the control, takes clicks
- * for it; the control keeps its look and its place in the layout. It uses
- * ::before so the control keeps ::after for its own content, such as the
- * checkbox's check mark.
+ * Grows a control's hit area to at least --tap-target-min without changing
+ * its look or layout (DESIGN.md section 40).
  */
 
 .tapTarget {

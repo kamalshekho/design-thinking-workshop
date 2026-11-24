@@ -90,8 +90,6 @@ describe('ApplicationForm', () => {
   it('lets the Fördermitglied link break inside its long word on a narrow screen', async () => {
     await pickRoute('Fördermitglied werden');
 
-    // Soft hyphens are invisible until the line breaks, so the applicant
-    // still reads the specified wording.
     const link = screen.getByRole('link', {
       name: (name) =>
         name.replaceAll('\u00AD', '') === 'Zum Fördermitgliedsantrag',
