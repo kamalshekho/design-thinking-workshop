@@ -28,8 +28,9 @@ an email client and does not touch the historical mixed inbox.
   automatically.
 - Components keep Untitled UI's own stack (Tailwind CSS, React Aria) and its
   own file layout, so one component can span several files in a folder. The
-  rule on barrel files applies here too:
-  [Import direction and barrel files](../docs/STANDARD.md#importrichtung-und-barrel-dateien).
+  coding standard's rule on barrel files, under
+  [Import direction and barrel files](../docs/STANDARD.md#importrichtung-und-barrel-dateien),
+  applies here too.
 - The Applications list is the clone's `application/table` (React Aria Table
   under an Untitled UI card), wrapped by `ApplicationTable` in
   `src/components/application/application-table/`. AG Grid Community was the
@@ -180,8 +181,8 @@ four screens are walked against it, and each answers emptiness the same way
 
 ## Small screens
 
-The supported widths and the breakpoints are the standard's:
-[Widths from 320 px](../docs/STANDARD.md#breiten-ab-320-px) and
+The coding standard sets the supported
+[widths from 320 px](../docs/STANDARD.md#breiten-ab-320-px) and the
 [breakpoints](../docs/STANDARD.md#breakpoints). Only the work on one
 Application has a layout made for a phone: reading it, becoming its Owner and
 changing its Status (`A29`). Issue #109 chose the rest with a prototype, kept
@@ -208,8 +209,8 @@ on the branch `prototype/109-dashboard-kleine-bildschirme`:
 - **view tabs never wrap.** When they do not fit beside the search, the search
   moves to the next line; below that the tabs scroll sideways.
 
-The rule for tap targets is in the standard:
-[Tap targets](../docs/STANDARD.md#tippflächen). A control drawn smaller, such
+The coding standard sets the rule for
+[tap targets](../docs/STANDARD.md#tippflächen). A control drawn smaller, such
 as a row checkbox or the `sm` switch, keeps its look and carries the
 `tap-target` utility from `src/styles/untitledui-theme.css`, an invisible
 pseudo-element that widens the hit area (issue #116).
@@ -229,14 +230,15 @@ domain terms without German translations or bilingual label tables. See
 [ADR-0003](../docs/adr/0003-german-dashboard-english-documentation.md).
 
 That split is also why the backend sends an error `code` and never a German
-sentence ([`API.md`](./API.md), "Errors"). How a code becomes a German text:
-[Errors](../docs/STANDARD.md#fehler). Both code tables are worded in
-`de.errors` — `codes` for a problem's top-level `code`, `fields` for one entry
-of its `errors` array — and `src/content/errorMessage.ts` is what looks a code
-up, falling back to `de.errors.general` for one it does not know. A failure is
-worded once: where the dashboard checks the same thing itself, as Kategorien's
-dialog does for an empty or duplicate name, it reads the same string rather
-than keeping a second one.
+sentence ([`API.md`](./API.md), "Errors"). The coding standard describes how a
+code becomes a German text, under [Errors](../docs/STANDARD.md#fehler). Both
+code tables are worded in `de.errors` — `codes` for a problem's top-level
+`code`, `fields` for one entry of its `errors` array — and
+`src/content/errorMessage.ts` is what looks a code up, falling back to
+`de.errors.general` for one it does not know. A failure is worded once: where
+the dashboard checks the same thing itself, as Kategorien's dialog does for an
+empty or duplicate name, it reads the same string rather than keeping a second
+one.
 
 ## Attribution
 
@@ -288,7 +290,7 @@ same-origin for the same reason production is: the Sign-in cookie is
 
 `npm install` here sets up the pre-commit hook in the repo root. What it runs
 on the dashboard's staged files, and which checks run only in CI, is in the
-standard:
+coding standard under
 [Where the checks run](../docs/STANDARD.md#wo-die-prüfungen-laufen).
 
 CI is one workflow, `.github/workflows/ci.yml`, shared with the form and run
@@ -366,8 +368,8 @@ renders invisible is worth checking against this list first.
 ## The copied components
 
 `src/components/` mirrors the clone's own file layout, and `@/` resolves to
-`src/` so a copied file's imports stay close to the original. How a copy is
-treated once it lands:
+`src/` so a copied file's imports stay close to the original. How a file is
+treated after it has been copied into `src/` is in the coding standard under
 [Copies from Untitled UI](../docs/STANDARD.md#kopien-aus-untitled-ui). Every
 copied file opens with a comment naming its path in the clone and what was
 changed here; `THIRD_PARTY_LICENSES` lists them all.

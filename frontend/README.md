@@ -149,10 +149,11 @@ Other rules:
 
 ## Design tokens
 
-Where a literal value may stand, and what checks it:
+The coding standard says where a literal value may stand and what checks it,
+under
 [Literal values only in the token source](../docs/STANDARD.md#literale-werte-nur-in-der-quelle-der-tokens).
 
-`token.json` is what Figma reads. How it relates to `tokens.css`:
+`token.json` is what Figma reads. How it relates to `tokens.css` is under
 [`tokens.css` is the source for `token.json`](../docs/STANDARD.md#tokenscss-ist-die-quelle-für-tokenjson).
 
 If a design needs a value that no token expresses, add a semantic token rather
@@ -204,8 +205,8 @@ documentation use English; see
 
 ## Errors
 
-How an error from the schema or from the backend becomes visible text:
-[Errors](../docs/STANDARD.md#fehler).
+The coding standard describes how an error from the schema or from the
+backend becomes visible text, under [Errors](../docs/STANDARD.md#fehler).
 
 Codes are machine-readable (`EMAIL_INVALID`, `CONSENT_REQUIRED`) and listed in
 `features/application-form/errors.ts`. The backend sends the same codes and no
@@ -263,8 +264,8 @@ synchronous, so RTL covers it. Native select behaviour on a real phone
 
 ## Quality gates
 
-What the shared pre-commit hook runs on the form's staged files, and which
-checks run only in CI, is in the standard:
+The coding standard lists what the shared pre-commit hook runs on the form's
+staged files, and which checks run only in CI, under
 [Where the checks run](../docs/STANDARD.md#wo-die-prüfungen-laufen).
 
 `npm install` in either app points `core.hooksPath` at `.husky/_`. A clone
@@ -303,8 +304,8 @@ that cannot fail is worse than none, because it reports success.
 - the focus ring is actually visible on creme _and_ on white surfaces;
 - each error text explains what to do, not just that something is wrong — a red
   border alone fails section 32;
-- tap targets on a real phone, until the E2E check exists:
-  [Tap targets](../docs/STANDARD.md#tippflächen);
+- [tap targets](../docs/STANDARD.md#tippflächen) on a real phone, until the
+  E2E check exists;
 - the native select opens the OS picker on iOS and Android;
 - the sticky mobile submit does not cover the privacy copy;
 - the form is completable with the keyboard alone, in a sensible order.
