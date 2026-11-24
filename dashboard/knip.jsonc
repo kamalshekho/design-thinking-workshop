@@ -3,7 +3,7 @@
   // knip --production leaves out the licence script, tests and src/test, so it
   // reports an export that only they read.
   "project": [
-    "**/*.{js,mjs,ts,tsx}!",
+    "**/*.{js,mjs,ts,tsx,css}!",
     "!scripts/**!",
     "!src/test/**!",
     "!src/**/*.test.{ts,tsx}!",
