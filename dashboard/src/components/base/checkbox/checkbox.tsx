@@ -1,7 +1,7 @@
 /**
- * Clone path: `components/base/checkbox/checkbox.tsx`. One change: the box
- * carries `tap-target`, so the 16 px row checkbox takes a press anywhere in
- * 24 × 24 px without being drawn any larger (#116).
+ * Clone path: `components/base/checkbox/checkbox.tsx`. Two changes:
+ * - a checked box reads as a white tick on a lilac fill;
+ * - the box carries `tap-target` (#116).
  */
 
 import type { ReactNode, Ref } from 'react';
