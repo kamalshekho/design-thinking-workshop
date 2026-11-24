@@ -20,7 +20,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepare": "cd .. && husky frontend/.husky || true",
+    "prepare": "cd .. && husky .husky || true",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

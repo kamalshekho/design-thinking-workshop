@@ -36,6 +36,8 @@ const SHARED_TOOLS = [
   'globals',
   'size-limit',
   '@size-limit/file',
+  'husky',
+  'lint-staged',
 ];
 
 const APPS = ['frontend', 'dashboard'];

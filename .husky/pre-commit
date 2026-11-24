@@ -1,0 +1,11 @@
+for app in frontend dashboard; do
+  if git diff --cached --quiet --diff-filter=ACMR -- "$app/"; then
+    continue
+  fi
+  if [ ! -x "$app/node_modules/.bin/lint-staged" ]; then
+    echo "pre-commit: skipped $app, lint-staged is not installed there." >&2
+    echo "pre-commit: run 'npm install' in $app/ so the hook checks its files." >&2
+    continue
+  fi
+  (cd "$app" && ./node_modules/.bin/lint-staged --config .lintstagedrc.json) || exit 1
+done
