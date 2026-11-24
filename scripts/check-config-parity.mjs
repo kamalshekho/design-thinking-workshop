@@ -34,6 +34,8 @@ const SHARED_TOOLS = [
   'eslint-plugin-react-refresh',
   'eslint-plugin-simple-import-sort',
   'globals',
+  'size-limit',
+  '@size-limit/file',
 ];
 
 const APPS = ['frontend', 'dashboard'];
