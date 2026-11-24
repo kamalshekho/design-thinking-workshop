@@ -36,7 +36,7 @@ import {
   selectOpenApplications,
 } from './selectOpenApplications';
 
-type OpenApplicationsPanelProps = {
+export type OpenApplicationsPanelProps = {
   /** The signed-in Staff member, whom "Übernehmen" on the phone page makes the Owner. */
   staffMemberId: string;
   applications: readonly Application[];
