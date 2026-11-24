@@ -25,12 +25,13 @@ Den Vergleich enthält die Recherche zu #103 auf dem Branch
 
 ## Folgen
 
-- Features importieren einander nicht. Zwölf Module, die `overview`,
-  `discarded` und `categories` aus `applications` holten, sind in geteilte
-  Schichten umgezogen. `ApplicationDrawer`, `ApplicationsList`,
-  `DiscardSelectedDialog`, `SearchField`, `OwnerSelect`, `controlStyles`,
-  `ApplicationDetail`, `ApplicationDetailSections` und `ApplicationPage` liegen
-  in `components/shared`, `filterApplications` in `utils/`, `useNotesDraft` und
+- Features importieren einander nicht. Dreizehn Module aus `applications` sind
+  in geteilte Schichten umgezogen. `overview`, `discarded` und `categories`
+  importieren sie direkt oder über ein anderes umgezogenes Modul.
+  `ApplicationDrawer`, `ApplicationsList`, `DiscardSelectedDialog`,
+  `SearchField`, `OwnerSelect`, `controlStyles`, `ApplicationDetail`,
+  `ApplicationDetailSections` und `ApplicationPage` liegen in
+  `components/shared`, `filterApplications` in `utils/`, `useNotesDraft` und
   `useApplicationActions` in `hooks/` und `useApplicationWrites` in `queries/`.
   `ApplicationPage` zieht mit, weil `ApplicationDetail` es rendert. Bliebe es im
   Feature, würde `components/shared` aus einem Feature importieren.
@@ -41,8 +42,8 @@ Den Vergleich enthält die Recherche zu #103 auf dem Branch
   `no-restricted-imports` in `dashboard/eslint.config.js` verbietet dort
   `react`, `react-dom` und `@tanstack/react-query`. Features erreichen den
   Server nur über `queries`. Innerhalb eines Features importieren nur
-  `*Container.tsx` und `use*.ts` den Cache, ein Screen nie. Die Anmeldung
-  bekommt deshalb ihren Fehler als fertigen Wert: `useSignInFailure` in
+  `*Container.tsx` und `use*.ts` den Cache, ein Screen nie. Das Sign-in-Formular
+  bekommt deshalb seinen Fehler als fertigen Wert: `useSignInFailure` in
   `queries/session.ts` liest den Code aus dem Fehler der Anfrage, und
   `Credentials` liegt in `domain/signIn.ts`.
 - Geteilter UI-Code darf `content` und `domain` importieren, aber nie
