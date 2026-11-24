@@ -84,7 +84,7 @@ jobs:
 
       - name: Install
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
-        run: npm ci --no-audit --no-fund
+        run: npm ci --no-audit --no-fund --ignore-scripts
 
       - name: Typecheck
         run: npm run typecheck
@@ -142,7 +142,7 @@ jobs:
 
       - name: Install
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
-        run: npm ci --no-audit --no-fund
+        run: npm ci --no-audit --no-fund --ignore-scripts
 
       - name: Typecheck
         run: npm run typecheck
