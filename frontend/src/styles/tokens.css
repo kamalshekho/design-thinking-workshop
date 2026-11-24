@@ -34,15 +34,6 @@
   --wp--preset--spacing--70: 3.38rem;
   --wp--preset--spacing--80: 5.06rem;
 
-  /* WordPress shadow presets. The form uses --shadow-form-card instead; these
-     are kept so a component that has to match the surrounding site can. */
-  --wp--preset--shadow--natural: 6px 6px 9px rgb(0 0 0 / 20%);
-  --wp--preset--shadow--deep: 12px 12px 50px rgb(0 0 0 / 40%);
-  --wp--preset--shadow--sharp: 6px 6px 0 rgb(0 0 0 / 20%);
-  --wp--preset--shadow--outlined:
-    6px 6px 0 -3px rgb(255 255 255), 6px 6px rgb(0 0 0);
-  --wp--preset--shadow--crisp: 6px 6px 0 rgb(0 0 0);
-
   /* Semantic aliases. Components use these, not the primitives above. */
 
   /* Nunito is the self-hosted stand-in used when the hotlinked brand face
@@ -55,13 +46,11 @@
   --color-text-inverse: #fff;
   --color-primary: var(--color-fuut-red);
   --color-secondary: var(--color-fuut-purple);
-  --color-accent-soft: var(--color-fuut-lila);
   --color-border: #b9b9b9;
   --color-border-hover: #8e8e8e;
   --color-divider: #e5e5e5;
   --color-text-disabled: #8b8b8b;
   --color-focus: var(--color-fuut-purple);
-  --color-focus-ring: rgb(132 55 182 / 14%);
   --color-error: var(--color-fuut-red);
   --color-action-primary-hover: #c00e15;
   --color-action-secondary-hover: #702e9c;
@@ -96,7 +85,6 @@
      1280px guess before. */
   --container-max: 1240px;
   --form-max: 960px;
-  --form-content-max: 760px;
 
   --page-gutter: 48px;
   --field-height: 56px;
@@ -186,7 +174,6 @@
   --transition-menu: 260ms cubic-bezier(0.16, 1, 0.3, 1);
   --transition-menu-duration: 260ms;
   --transition-spinner: 700ms linear infinite;
-  --transition-reveal: 180ms ease-out;
 }
 
 /* Tablet — DESIGN.md section 42 */
