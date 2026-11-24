@@ -1,9 +1,11 @@
+import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import js from '@eslint/js';
 import boundaries from 'eslint-plugin-boundaries';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import sonarjs from 'eslint-plugin-sonarjs';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -79,6 +81,8 @@ export default tseslint.config(
     reactHooks,
     reactRefresh,
     simpleImportSort,
+    sonarjs,
+    eslintComments,
     globals,
     tsconfigRootDir: import.meta.dirname,
   }),
