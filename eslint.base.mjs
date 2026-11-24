@@ -25,7 +25,6 @@ export function sharedConfig({
   tsconfigRootDir,
   extraIgnores = [],
   extraTestFiles = [],
-  extraRestrictedSyntax = [],
   tryStatementIgnores = [],
   styleBanIgnores = [],
   filenameNamingIgnores = [],
@@ -78,12 +77,7 @@ export function sharedConfig({
           { restrictDefaultExports: { direct: true } },
         ],
 
-        'no-restricted-syntax': [
-          'error',
-          ...reExportBan,
-          styleBan,
-          ...extraRestrictedSyntax,
-        ],
+        'no-restricted-syntax': ['error', ...reExportBan, styleBan],
       },
     },
 
@@ -97,7 +91,6 @@ export function sharedConfig({
           ...reExportBan,
           styleBan,
           tryStatementBan,
-          ...extraRestrictedSyntax,
         ],
       },
     },
@@ -109,11 +102,7 @@ export function sharedConfig({
           {
             files: styleBanIgnores,
             rules: {
-              'no-restricted-syntax': [
-                'error',
-                ...reExportBan,
-                ...extraRestrictedSyntax,
-              ],
+              'no-restricted-syntax': ['error', ...reExportBan],
             },
           },
         ]
@@ -128,7 +117,6 @@ export function sharedConfig({
                 'error',
                 ...reExportBan,
                 tryStatementBan,
-                ...extraRestrictedSyntax,
               ],
             },
           },
@@ -145,7 +133,7 @@ export function sharedConfig({
         'src/**/*.d.ts',
         'src/**/main.tsx',
         'src/test/*.tsx',
-        'src/hooks/use*.test.tsx',
+        'src/**/use*.test.tsx',
         ...filenameNamingIgnores,
       ],
       plugins: { 'check-file': checkFile },
@@ -161,7 +149,7 @@ export function sharedConfig({
       },
     },
     {
-      files: ['src/**/main.tsx', 'src/test/*.tsx', 'src/hooks/use*.test.tsx'],
+      files: ['src/**/main.tsx', 'src/test/*.tsx', 'src/**/use*.test.tsx'],
       ignores: [...filenameNamingIgnores],
       plugins: { 'check-file': checkFile },
       rules: {
