@@ -30,21 +30,15 @@ const styles = sortCx({
   },
   sizes: {
     sm: {
-      root: [
-        'gap-1 rounded-lg px-3 py-2 text-sm font-medium before:rounded-[7px] data-icon-only:p-2',
-        'in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5',
-      ].join(' '),
+      root: 'gap-1 rounded-lg px-3 py-2 text-sm font-medium before:rounded-inner data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5',
       linkRoot: 'gap-1 *:data-text:underline-offset-3',
     },
     md: {
-      root: [
-        'gap-2 h-10 rounded-lg px-3 py-2 text-sm font-medium before:rounded-[7px] data-icon-only:p-2.5',
-        'in-data-input-wrapper:gap-1.5 in-data-input-wrapper:px-4 in-data-input-wrapper:text-md in-data-input-wrapper:data-icon-only:p-3',
-      ].join(' '),
+      root: 'gap-2 h-10 rounded-lg px-3 py-2 text-sm font-medium before:rounded-inner data-icon-only:p-2.5 in-data-input-wrapper:gap-1.5 in-data-input-wrapper:px-4 in-data-input-wrapper:text-md in-data-input-wrapper:data-icon-only:p-3',
       linkRoot: 'gap-1 *:data-text:underline-offset-4',
     },
     lg: {
-      root: 'gap-1.5 rounded-lg px-4 py-2.5 text-md font-medium before:rounded-[7px] data-icon-only:p-3',
+      root: 'gap-1.5 rounded-lg px-4 py-2.5 text-md font-medium before:rounded-inner data-icon-only:p-3',
       linkRoot: 'gap-1.5 *:data-text:underline-offset-4',
     },
   },

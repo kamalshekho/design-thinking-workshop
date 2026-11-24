@@ -80,7 +80,7 @@ export function FilterPopover({
         <FilterLines className="text-secondary h-4 w-4" aria-hidden="true" />
         {de.filters.filter}
         {activeCount > 0 ? (
-          <span className="bg-utility-brand-50 text-fuut-purple flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-medium">
+          <span className="bg-utility-brand-50 text-fuut-purple text-caption flex h-5 w-5 items-center justify-center rounded-full font-medium">
             {activeCount}
           </span>
         ) : null}
@@ -91,7 +91,7 @@ export function FilterPopover({
         <div
           role="dialog"
           aria-label={de.filters.filter}
-          className="popover-entering border-secondary bg-primary absolute top-[calc(100%+8px)] left-0 z-10 w-[320px] max-w-[calc(100vw-60px)] rounded-xl border p-4 shadow-lg sm:right-0 sm:left-auto"
+          className="popover-entering border-secondary bg-primary top-popover-offset w-popover max-w-popover-max absolute left-0 z-10 rounded-xl border p-4 shadow-lg sm:right-0 sm:left-auto"
         >
           <p className="text-primary text-sm font-semibold">
             {de.filters.filter}

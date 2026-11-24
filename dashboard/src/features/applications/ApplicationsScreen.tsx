@@ -164,7 +164,7 @@ export function ApplicationsScreen({
         }
         toolbar={
           <>
-            <div className="flex max-w-full flex-[1_0_auto] gap-3">
+            <div className="flex-grow-only flex max-w-full gap-3">
               <TabStrip
                 ariaLabel={de.applications.title}
                 views={APPLICATION_VIEWS}

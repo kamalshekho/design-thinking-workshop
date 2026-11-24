@@ -64,7 +64,7 @@ export function OpenApplicationsFilterBar({
 
   return (
     <div className="flex flex-col gap-3 sm:contents">
-      <span className="relative block sm:max-w-[320px] sm:min-w-[280px] sm:flex-1">
+      <span className="sm:max-w-popover sm:min-w-search relative block sm:flex-1">
         <SearchLg
           className="text-text-quaternary pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
           aria-hidden="true"
@@ -77,7 +77,7 @@ export function OpenApplicationsFilterBar({
           onChange={(event) => {
             onChange({ ...filters, search: event.target.value });
           }}
-          className="border-border-primary bg-bg-primary text-text-primary placeholder:text-tertiary focus:border-fuut-purple focus:ring-fuut-purple/10 h-control w-full rounded-lg border pr-3 pl-9 text-sm transition-shadow focus:ring-[3px] focus:outline-none"
+          className="border-border-primary bg-bg-primary text-text-primary placeholder:text-tertiary focus:border-fuut-purple focus:ring-fuut-purple/10 h-control w-full rounded-lg border pr-3 pl-9 text-sm transition-shadow focus:ring-3 focus:outline-none"
         />
       </span>
 
@@ -92,7 +92,7 @@ export function OpenApplicationsFilterBar({
       >
         <SelectTrigger
           aria-label={de.filters.category}
-          className="h-control sm:w-[200px]"
+          className="h-control sm:w-filter-select"
         >
           <SelectValue />
         </SelectTrigger>
@@ -116,7 +116,7 @@ export function OpenApplicationsFilterBar({
       >
         <SelectTrigger
           aria-label={de.overview.openApplications.ownerLabel}
-          className="h-control sm:w-[200px]"
+          className="h-control sm:w-filter-select"
         >
           <SelectValue />
         </SelectTrigger>

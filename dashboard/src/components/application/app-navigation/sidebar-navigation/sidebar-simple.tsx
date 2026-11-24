@@ -84,7 +84,7 @@ export const SidebarNavigationSimple = ({
     >
       <div
         className={cx(
-          'border-secondary relative flex min-h-[52px] items-center overflow-hidden border-b pr-4 pb-4 pl-3 lg:pb-5',
+          'border-secondary min-h-sidebar-header relative flex items-center overflow-hidden border-b pr-4 pb-4 pl-3 lg:pb-5',
         )}
       >
         <AriaButton
@@ -95,7 +95,7 @@ export const SidebarNavigationSimple = ({
             setChosen(!isCollapsed);
           }}
           className={cx(
-            'peer/toggle group text-fg-quaternary outline-focus-ring hover:bg-primary_hover absolute top-4 left-[calc(100%-30px)] z-10 hidden size-9 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md transition-[left,transform] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100 lg:flex',
+            'peer/toggle group text-fg-quaternary outline-focus-ring hover:bg-primary_hover left-sidebar-toggle absolute top-4 z-10 hidden size-9 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md transition-[left,transform] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100 lg:flex',
             isCollapsed && 'lg:left-1/2',
           )}
         >

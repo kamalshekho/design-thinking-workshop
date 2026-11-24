@@ -86,7 +86,7 @@ const InputBase = ({
         hasLeadingIcon && 'pl-9',
         hasTrailingIcon && 'pr-9',
       ),
-      iconLeading: 'left-3 size-4 stroke-[2.25px]',
+      iconLeading: 'left-3 size-4 stroke-icon-medium',
       iconTrailing: 'right-3',
       shortcut: 'pr-1.5',
     },
@@ -176,7 +176,7 @@ const InputBase = ({
               tooltipClassName,
             )}
           >
-            <HelpCircle className="size-4 stroke-[2.25px]" />
+            <HelpCircle className="stroke-icon-medium size-4" />
           </TooltipTrigger>
         </Tooltip>
       )}
@@ -185,7 +185,7 @@ const InputBase = ({
       {type !== 'password' && (
         <InfoCircle
           className={cx(
-            'text-fg-error-secondary pointer-events-none absolute hidden size-4 stroke-[2.25px] group-invalid/input:block',
+            'text-fg-error-secondary stroke-icon-medium pointer-events-none absolute hidden size-4 group-invalid/input:block',
             sizes[inputSize].iconTrailing,
             context?.tooltipClassName,
             tooltipClassName,
@@ -207,9 +207,9 @@ const InputBase = ({
           )}
         >
           {isPasswordVisible ? (
-            <EyeOff className="size-4 stroke-[2.25px]" />
+            <EyeOff className="stroke-icon-medium size-4" />
           ) : (
-            <Eye className="size-4 stroke-[2.25px]" />
+            <Eye className="stroke-icon-medium size-4" />
           )}
         </AriaButton>
       )}

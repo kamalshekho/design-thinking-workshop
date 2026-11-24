@@ -425,7 +425,7 @@ export function ApplicationTable({
                     {/* Capped with an ellipsis, so a long name cannot push the
                         other columns out of the card: half the screen on a
                         phone, 11rem up to 1279 px, 13rem from there. */}
-                    <div className="max-w-[50vw] min-w-0 sm:max-w-44 xl:max-w-52">
+                    <div className="max-w-half-viewport min-w-0 sm:max-w-44 xl:max-w-52">
                       <p
                         title={application.name}
                         className={cx(

@@ -70,9 +70,11 @@ type SparklineProps = {
   chartClassName?: string;
   /** Area stroke thickness in px. Defaults to `2`; bump alongside a bigger chart so the line doesn't read as thin. */
   strokeWidth?: number;
-  /** Tailwind text-size class for the weekday labels row. Defaults to `text-[10px]`. */
+  /** Tailwind text-size class for the weekday labels row. Defaults to `text-2xs`. */
   labelClassName?: string;
 };
+
+const DEFAULT_LABEL_CLASSNAME = 'text-2xs';
 
 export function Sparkline({
   id,
@@ -83,7 +85,7 @@ export function Sparkline({
   className,
   chartClassName = 'h-16',
   strokeWidth = 2,
-  labelClassName = 'text-[10px]',
+  labelClassName = DEFAULT_LABEL_CLASSNAME,
 }: SparklineProps) {
   const points: SparklinePoint[] = data.map((value, index) => ({
     index,

@@ -30,7 +30,7 @@ export function SectionLabel({
   htmlFor?: string;
 }) {
   const className =
-    'text-text-tertiary flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.06em] uppercase';
+    'text-text-tertiary flex items-center gap-1.5 text-caption tracking-eyebrow font-semibold uppercase';
   const content = (
     <>
       {Icon ? <Icon className="size-3.5" aria-hidden="true" /> : null}
@@ -60,7 +60,7 @@ export function MessageSection({
       <SectionLabel>{de.detail.about}</SectionLabel>
       {/* Content, not a field: a reading surface, and the drawer — not an
           inner box — is what scrolls when the message runs long. */}
-      <div className="border-secondary bg-secondary text-primary mt-2.5 rounded-[10px] border px-4 py-3.5 text-sm leading-relaxed break-words whitespace-pre-line">
+      <div className="border-secondary bg-secondary text-primary rounded-surface mt-2.5 border px-4 py-3.5 text-sm leading-relaxed break-words whitespace-pre-line">
         {application.about}
       </div>
     </section>
@@ -129,7 +129,7 @@ export function ConsentSection({
   return (
     <section className={cx('border-secondary border-t pt-5', className)}>
       <SectionLabel icon={ShieldTick}>{de.detail.consent}</SectionLabel>
-      <dl className="mt-2.5 flex flex-col gap-1.5 text-[13px]">
+      <dl className="text-body-sm mt-2.5 flex flex-col gap-1.5">
         <div className="flex items-baseline justify-between gap-4">
           <dt className="text-tertiary">{de.detail.consentAt}</dt>
           <dd className="text-secondary tabular-nums">

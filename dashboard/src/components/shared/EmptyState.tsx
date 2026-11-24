@@ -32,7 +32,7 @@ export function EmptyState({
         <Icon className="text-fg-quaternary size-5" />
       </span>
       <p className="text-text-primary text-sm font-medium">{title}</p>
-      <p className="text-text-tertiary max-w-[42ch] text-sm leading-relaxed">
+      <p className="text-text-tertiary max-w-empty-copy text-sm leading-relaxed">
         {hint}
       </p>
       {action === undefined ? null : <span className="mt-3">{action}</span>}

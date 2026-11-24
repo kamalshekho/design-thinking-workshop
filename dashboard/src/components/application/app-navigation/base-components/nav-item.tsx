@@ -84,7 +84,7 @@ export const NavItemBase = ({
 
   const isExternal = href?.startsWith('http') ?? false;
   const externalIcon = isExternal && (
-    <Share04 className="text-fg-quaternary size-4 stroke-[2.5px]" />
+    <Share04 className="text-fg-quaternary stroke-icon-bold size-4" />
   );
 
   if (type === 'collapsible') {
@@ -99,7 +99,7 @@ export const NavItemBase = ({
 
         <ChevronDown
           aria-hidden="true"
-          className="text-fg-quaternary ml-3 size-4 shrink-0 stroke-[2.5px] in-open:-scale-y-100"
+          className="text-fg-quaternary stroke-icon-bold ml-3 size-4 shrink-0 in-open:-scale-y-100"
         />
       </summary>
     );

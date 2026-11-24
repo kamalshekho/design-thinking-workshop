@@ -190,7 +190,7 @@ function CategoriesGrid({
                     >
                       {category.name}
                     </span>
-                    <span className="text-tertiary mt-0.5 block max-w-[46ch] text-xs leading-relaxed">
+                    <span className="text-tertiary max-w-category-copy mt-0.5 block text-xs leading-relaxed">
                       {category.description === ''
                         ? de.categories.noDescription
                         : category.description}

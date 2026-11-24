@@ -1,5 +1,7 @@
 /**
- * Clone path: `utils/cx.ts`, unchanged.
+ * Clone path: `utils/cx.ts`. Extended with the dashboard's custom `@theme`
+ * font-size tokens and hairline ring/outline/stroke utilities (#133) so
+ * `tailwind-merge` does not mistake them for colours.
  */
 
 import { extendTailwindMerge } from 'tailwind-merge';
@@ -14,7 +16,16 @@ const twMerge = extendTailwindMerge({
         'display-lg',
         'display-xl',
         'display-2xl',
+        '2xs',
+        'caption',
+        'body-sm',
       ],
+      radius: ['inner', 'surface'],
+    },
+    classGroups: {
+      'ring-w': [{ ring: ['hairline'] }],
+      'outline-w': [{ outline: ['hairline'] }],
+      'stroke-w': [{ stroke: ['icon-thin', 'icon-medium', 'icon-bold'] }],
     },
   },
 });

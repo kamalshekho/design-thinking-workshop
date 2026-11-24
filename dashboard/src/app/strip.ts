@@ -15,9 +15,9 @@
  * which is what issue #64 asks for: a border that stops short reads as broken
  * off, while one that continues reads as continuing.
  *
- * The widths mirror `ApplicationDrawer`'s own `sm:w-[460px] lg:w-[480px]` and
+ * The widths mirror `ApplicationDrawer`'s own `sm:w-drawer lg:w-drawer-lg` and
  * have to be changed with them. Below `sm` the drawer is `w-full` and no
  * reserve would help, which issue #64 records as a known hole: at that width
  * the drawer is a modal in all but the attribute.
  */
-export const DRAWER_RESERVE = 'sm:pr-[460px] lg:pr-[480px]';
+export const DRAWER_RESERVE = 'sm:pr-drawer lg:pr-drawer-lg';

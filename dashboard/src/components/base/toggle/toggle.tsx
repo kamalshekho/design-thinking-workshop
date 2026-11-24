@@ -57,7 +57,7 @@ const ToggleBase = ({
   return (
     <div
       className={cx(
-        'bg-tertiary ring-secondary outline-focus-ring tap-target relative shrink-0 cursor-pointer rounded-full ring-[0.5px] transition duration-150 ease-linear ring-inset',
+        'bg-tertiary ring-secondary outline-focus-ring tap-target ring-hairline relative shrink-0 cursor-pointer rounded-full transition duration-150 ease-linear ring-inset',
         isSelected && 'bg-brand-solid',
         isSelected && isHovered && 'bg-brand-solid_hover',
         isDisabled && 'cursor-not-allowed opacity-50',

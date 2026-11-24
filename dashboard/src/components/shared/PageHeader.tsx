@@ -29,13 +29,13 @@ export function PageHeader({
 }: PageHeaderProps) {
   const heading = (
     <>
-      <p className="text-text-tertiary text-[11px] font-semibold tracking-[0.06em] uppercase">
+      <p className="text-text-tertiary text-caption tracking-eyebrow font-semibold uppercase">
         {eyebrow}
       </p>
       <h1 className="text-text-primary text-page-title tracking-heading mt-2 font-semibold">
         {title}
       </h1>
-      <p className="text-text-tertiary mt-2 max-w-[700px] text-sm leading-relaxed sm:text-base">
+      <p className="text-text-tertiary max-w-header-copy mt-2 text-sm leading-relaxed sm:text-base">
         {subtitle}
       </p>
     </>

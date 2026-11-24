@@ -183,7 +183,7 @@ export function ApplicationPage({
         <ConsentSection application={application} />
       </article>
 
-      <footer className="border-secondary bg-primary fixed inset-x-0 bottom-0 flex border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+      <footer className="border-secondary bg-primary pb-safe-bottom fixed inset-x-0 bottom-0 flex border-t px-4 pt-3">
         <Button
           size="lg"
           color="secondary"
