@@ -1,6 +1,7 @@
 /**
- * The underline tab strip over a list, each tab carrying the number of rows
- * behind it. Adapted from the clone's `application/tabs/tabs.tsx`.
+ * Clone path: `components/application/tabs/tabs.tsx`, adapted into the
+ * underline tab strip over a list, each tab carrying the number of rows behind
+ * it.
  *
  * Generic over the set of views, because Anfragen's named views
  * (`ApplicationView`) and Kategorien's (`CategoryView`) are different sets

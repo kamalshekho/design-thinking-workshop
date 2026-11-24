@@ -1,3 +1,11 @@
+/**
+ * Clone path:
+ * `components/application/app-navigation/base-components/nav-list.tsx`,
+ * unchanged apart from the import paths.
+ *
+ * Prop comments that only restate the prop name are dropped.
+ */
+
 import type {
   NavItemDividerType,
   NavItemType,
@@ -6,20 +14,11 @@ import { cx } from '@/utils/cx';
 
 import { NavItemBase } from './nav-item';
 
-/**
- * Copied from the Untitled UI clone
- * (`components/application/app-navigation/base-components/nav-list.tsx`),
- * unchanged apart from the import paths.
- */
-
 interface NavListProps {
-  /** URL of the currently active item. */
   activeUrl?: string;
-  /** Additional CSS classes to apply to the list. */
   className?: string;
   /** Whether the desktop sidebar shows icons without visible labels. */
   isCollapsed?: boolean;
-  /** List of items to display. */
   items: (NavItemType | NavItemDividerType)[];
 }
 

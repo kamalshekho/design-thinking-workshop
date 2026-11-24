@@ -2,8 +2,8 @@
  * Small trend chart behind Übersicht's metric cards, so the three keep one
  * Recharts wiring instead of each repeating the area/bar switch.
  *
- * The themed container is shadcn/ui's `chart` primitive (registry
- * `new-york-v4`), reduced to the one wrapper this file needs — no legend, no
+ * The themed container is shadcn/ui's `chart` primitive (registry path
+ * `registry/new-york-v4/ui/chart.tsx`), reduced to the one wrapper this file needs — no legend, no
  * multi-theme support, since the dashboard is light-theme only, and no
  * `ChartTooltipContent`, which expects a multi-series `ChartConfig` where a
  * single-series trend point only needs its day label and its value.

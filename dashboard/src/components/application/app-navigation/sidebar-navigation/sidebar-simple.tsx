@@ -1,3 +1,17 @@
+/**
+ * Clone path:
+ * `components/application/app-navigation/sidebar-navigation/sidebar-simple.tsx`.
+ *
+ * Three changes. The association wordmark stands in for `UntitledLogo`. The
+ * clone's two search inputs are gone: the Anfragen screen has its own filter
+ * bar, and a second search box that searches nothing is dead UI. And the
+ * sidebar starts as the 72 px rail between 1024 and 1279 px, where 280 px of
+ * labels would leave the tables too little room (issue #109). The button
+ * still opens or closes it; that choice holds until the next reload.
+ *
+ * Prop comments that only restate the prop name are dropped.
+ */
+
 import { Menu01 } from '@untitledui/icons';
 import { type CSSProperties, useState } from 'react';
 import { Button as AriaButton } from 'react-aria-components';
@@ -13,32 +27,15 @@ import type { StaffMember } from '@/domain/staffMember';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cx } from '@/utils/cx';
 
-/**
- * Copied from the Untitled UI clone
- * (`components/application/app-navigation/sidebar-navigation/sidebar-simple.tsx`).
- *
- * Three changes. The association wordmark stands in for `UntitledLogo`. The
- * clone's two search inputs are gone: the Anfragen screen has its own filter
- * bar, and a second search box that searches nothing is dead UI. And the
- * sidebar starts as the 72 px rail between 1024 and 1279 px, where 280 px of
- * labels would leave the tables too little room (issue #109). The button
- * still opens or closes it; that choice holds until the next reload.
- */
-
 interface SidebarNavigationProps {
-  /** URL of the currently active item. */
   activeUrl?: string;
-  /** List of items to display. */
   items: NavItemType[];
-  /** List of footer items to display. */
   footerItems?: NavItemType[];
   /** The signed-in Staff member shown in the account card. */
   account?: StaffMember;
   /** Passed to the account card's Abmelden item. */
   onSignOut?: () => void;
-  /** Whether to hide the right side border. */
   hideBorder?: boolean;
-  /** Additional CSS classes to apply to the sidebar. */
   className?: string;
 }
 
