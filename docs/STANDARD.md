@@ -25,11 +25,12 @@ Prüfung über das ganze Projekt macht den Hook langsam.
 
 Der Hook `.husky/pre-commit` ist für beide Anwendungen derselbe. Hat eine
 Anwendung gestagte Dateien, ruft er ihr lint-staged mit `.lintstagedrc.json`
-auf. Im Applicant form laufen Prettier und `eslint --fix` über `*.ts` und
-`*.tsx`, Prettier und `stylelint --fix` über `*.css`. Im Dashboard laufen
-Prettier und `eslint --fix` über `*.ts` und `*.tsx`. Ein Stylelint hat das
-Dashboard nicht. Ist lint-staged in einer Anwendung nicht installiert,
-überspringt der Hook sie mit einer Warnung.
+auf. Im Applicant form laufen Prettier und `eslint --fix` über `*.{ts,tsx}`,
+Prettier und `stylelint --fix` über `*.css` und Prettier allein über
+`*.{md,json,html}`. Im Dashboard laufen Prettier und `eslint --fix` über
+`*.{ts,tsx}` und Prettier allein über `*.{css,js,mjs,md,json,html}`. Ein
+Stylelint hat das Dashboard nicht. Ist lint-staged in einer Anwendung nicht
+installiert, überspringt der Hook sie mit einer Warnung.
 
 CI ist der Workflow `.github/workflows/ci.yml`. Der Job `frontend` ruft
 `npm run typecheck`, `npm run lint` und `npm run stylelint` auf, der Job
