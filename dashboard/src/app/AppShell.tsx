@@ -105,6 +105,7 @@ export function AppShell({
         (issue #109).
       */}
       <main
+        // eslint-disable-next-line no-restricted-syntax -- exposes SIDEBAR_GUTTER as a CSS custom property for responsive padding
         style={mainStyle}
         className="bg-bg-canvas flex min-w-0 flex-1 flex-col gap-3 px-4 py-6 sm:px-(--gutter)"
       >
