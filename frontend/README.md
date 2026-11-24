@@ -79,29 +79,33 @@ is not expected to be a second — the staff dashboard is a separate surface.
 Prettier and ESLint decide formatting and most style questions; run them rather
 than arguing. The settings the form shares with the staff dashboard live in the
 repo root: the Prettier options in `../.prettierrc.json`, the common ESLint
-blocks in `../eslint.base.mjs`. What they cannot check:
+blocks in `../eslint.base.mjs`.
 
-- **Named exports only.** `export function Button()`, never
-  `export default`. A default export can be imported under any name, which
-  makes a component hard to find. Enforced by ESLint.
-- **No barrel files.** No `index.ts` that re-exports a folder. Import the file
-  you mean, so a reader can see where a symbol comes from.
-- **One component per folder**, `Button/Button.tsx` next to
-  `Button/Button.module.css`. The stylesheet sits beside the only component
-  allowed to use it.
+The rules the form shares with the dashboard, and the check behind each, are
+in the [coding standard](../docs/STANDARD.md). Among them:
+
+- [named exports only](../docs/STANDARD.md#nur-benannte-exporte);
+- [no barrel files](../docs/STANDARD.md#importrichtung-und-barrel-dateien);
+- [one folder per component](../docs/STANDARD.md#ordner-der-komponenten),
+  `Button/Button.tsx` next to `Button/Button.module.css`;
+- [English identifiers](../docs/STANDARD.md#bezeichner-auf-englisch);
+- [the compiler options](../docs/STANDARD.md#compiler-optionen), `strict` and
+  `noUncheckedIndexedAccess` among them.
+
+Two more conventions:
+
 - **Type inference where it reads well, annotations at boundaries.** Exported
   functions and props get explicit types; local variables usually do not.
-- **No `any`, no non-null assertion in `src` outside tests.** `strict` plus
-  `noUncheckedIndexedAccess` is on; if a type is hard to express, that is
-  usually a sign the data shape is wrong.
-- **English identifiers, localized strings.** A variable is never named
-  `bewerbung`; the copy it renders comes from the active locale.
+- **No `any`, no non-null assertion in `src` outside tests.** ESLint rejects
+  both through `strictTypeChecked` in `../eslint.base.mjs`. If a type is hard
+  to express, that is usually a sign the data shape is wrong.
 
 ## Component rules
 
 **A component in `components/ui/` does not know the domain.** It receives
 finished strings as props. It may not import from `content/` or `features/` —
 ESLint rejects that import.
+See also [the import rules](../docs/STANDARD.md#importrichtung-und-barrel-dateien).
 
 Two reasons, and the second is the one that matters:
 
@@ -135,32 +139,22 @@ Other rules:
   pass that id through `aria-describedby`, set `aria-invalid`, and render the
   error with `role="alert"`.
 - **A component does not validate.** Rules live in
-  `features/application-form/schema.ts`, once. A component that re-checks a
-  length will disagree with the schema eventually.
+  `features/application-form/schema.ts`; see
+  [the coding standard](../docs/STANDARD.md#eine-komponente-validiert-nicht).
 - **A component does not fetch.** Requests live in
-  `features/application-form/api.ts`.
+  `features/application-form/api.ts`; see
+  [the coding standard](../docs/STANDARD.md#eine-komponente-lädt-keine-daten).
 - **State stays local.** One page, one form — `react-hook-form` holds the
   values and there is no store. Do not add one.
 
 ## Design tokens
 
-`src/styles/tokens.css` is the only file allowed to hold a literal colour, size
-or shadow. Everything else references a variable:
+The coding standard says where a literal value may stand and what checks it,
+under
+[Literal values only in the token source](../docs/STANDARD.md#literale-werte-nur-in-der-quelle-der-tokens).
 
-```css
-/* Good */
-color: var(--color-primary);
-
-/* Rejected by Stylelint */
-color: #e31119;
-```
-
-Stylelint enforces this, and ESLint rejects the `style` prop for the same
-reason — an inline style cannot be checked for literal values.
-
-Primitives in `tokens.css` come from the live site and are mirrored in
-`token.json`, which is what Figma reads. **Change one and change the other in
-the same commit**, or the design and the code stop describing the same product.
+`token.json` is what Figma reads. How it relates to `tokens.css` is under
+[`tokens.css` is the source for `token.json`](../docs/STANDARD.md#tokenscss-ist-die-quelle-für-tokenjson).
 
 If a design needs a value that no token expresses, add a semantic token rather
 than a literal, and say so in the pull request — a new token is a design
@@ -189,8 +183,9 @@ face actually rendered before chasing a spacing bug.
 
 ## Copy
 
-All fixed applicant-facing copy lives in `src/content/de.ts`, except the dynamic category labels returned by the backend
-as specified in `API.md`. No localized string appears in a component.
+All fixed applicant-facing copy lives in `src/content/de.ts`, except the
+dynamic category labels returned by the backend as specified in `API.md`. No
+localized string appears in a component.
 
 The point is reviewability: the fixed copy of the form can be read against
 `DESIGN.md` in one file. `DESIGN.md` section 49 forbids rewriting the
@@ -210,18 +205,12 @@ documentation use English; see
 
 ## Errors
 
-One path for every error, whether it came from the schema or from the backend:
-
-```
-zod / server  →  error code  →  German content  →  visible text
-```
+The coding standard describes how an error from the schema or from the
+backend becomes visible text, under [Errors](../docs/STANDARD.md#fehler).
 
 Codes are machine-readable (`EMAIL_INVALID`, `CONSENT_REQUIRED`) and listed in
 `features/application-form/errors.ts`. The backend sends the same codes and no
-localized error text — see `API.md`.
-
-Adding a code without adding its German text is a type error, which
-is intentional.
+localized error text; see `API.md`.
 
 ## Changing a screen
 
@@ -242,7 +231,9 @@ a new one is added:
 4. **Compose the screen in `features/application-form/`**, taking values from
    the schema and text from `de.ts`.
 5. **Use tokens for every value.** Where the design shows `36px`, use
-   `var(--wp--preset--spacing--60)`. Stylelint will stop you otherwise.
+   `var(--wp--preset--spacing--60)`. Which literals Stylelint already rejects
+   is in the
+   [coding standard](../docs/STANDARD.md#literale-werte-nur-in-der-quelle-der-tokens).
 6. **Add or update a behavioural test** for the state — what the applicant
    sees, not how the component is built. `ApplicationForm.test.tsx` shows the
    shape.
@@ -273,13 +264,9 @@ synchronous, so RTL covers it. Native select behaviour on a real phone
 
 ## Quality gates
 
-The pre-commit hook, `.husky/pre-commit` in the repo root, is shared with the
-dashboard. For each app with staged files it runs that app's lint-staged on
-them: Prettier and `eslint --fix`, plus `stylelint --fix` on the form's CSS.
-When an app has no lint-staged installed, for example because its
-`node_modules` is missing, the hook prints a warning, skips that app and lets
-the commit through. Typecheck and tests stay out of the hook on purpose: a
-slow hook gets bypassed with `--no-verify`.
+The coding standard lists what the shared pre-commit hook runs on the form's
+staged files, and which checks run only in CI, under
+[Where the checks run](../docs/STANDARD.md#wo-die-prüfungen-laufen).
 
 `npm install` in either app points `core.hooksPath` at `.husky/_`. A clone
 made while the hook still lived in `frontend/.husky` needs one `npm install`
@@ -317,8 +304,8 @@ that cannot fail is worse than none, because it reports success.
 - the focus ring is actually visible on creme _and_ on white surfaces;
 - each error text explains what to do, not just that something is wrong — a red
   border alone fails section 32;
-- every control except a link in running text has a tap target of at least
-  24 × 24px on a real phone (`DESIGN.md` section 40);
+- [tap targets](../docs/STANDARD.md#tippflächen) on a real phone, until the
+  E2E check exists;
 - the native select opens the OS picker on iOS and Android;
 - the sticky mobile submit does not cover the privacy copy;
 - the form is completable with the keyboard alone, in a sensible order.
