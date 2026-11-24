@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { de } from '@/content/de';
 import type { Application } from '@/domain/application';
 import { setDiscarded } from '@/domain/application';
-import type { NotesDraft } from '@/hooks/useNotesDraft';
+import type { NotesField } from '@/hooks/useNotesDraft';
 import {
   createMockApplications,
   mockCategories,
@@ -29,7 +29,7 @@ function Host({ initial }: { initial?: Application[] } = {}) {
   const [applications, setApplications] = useState<Application[]>(
     () => initial ?? createMockApplications(NOW),
   );
-  const [draft, setDraft] = useState<NotesDraft | null>(null);
+  const [draft, setDraft] = useState<NotesField['draft']>(null);
 
   return (
     <ApplicationsScreen

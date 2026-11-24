@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { isApiProblem, isUnauthenticated } from './problem';
+import { ApiProblem, isUnauthenticated } from './problem';
 import { request, requestNoContent } from './transport';
 
 function respond(body: unknown, init: ResponseInit = {}): Response {
@@ -98,8 +98,8 @@ describe('request', () => {
       (thrown: unknown) => thrown,
     );
 
-    expect(isApiProblem(failure)).toBe(true);
-    if (!isApiProblem(failure)) {
+    expect(failure).toBeInstanceOf(ApiProblem);
+    if (!(failure instanceof ApiProblem)) {
       return;
     }
 
@@ -145,8 +145,8 @@ describe('request', () => {
       (thrown: unknown) => thrown,
     );
 
-    expect(isApiProblem(failure)).toBe(true);
-    if (isApiProblem(failure)) {
+    expect(failure).toBeInstanceOf(ApiProblem);
+    if (failure instanceof ApiProblem) {
       expect(failure.status).toBe(502);
       expect(failure.code).toBeUndefined();
       expect(failure.errors).toEqual([]);

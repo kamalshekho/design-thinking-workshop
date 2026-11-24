@@ -26,7 +26,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { Application } from '@/domain/application';
 import { NOTES_DEBOUNCE_MS } from '@/domain/application';
 
-export type NotesDraft = {
+type NotesDraft = {
   applicationId: string;
   text: string;
 };
