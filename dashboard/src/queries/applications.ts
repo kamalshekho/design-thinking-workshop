@@ -38,6 +38,7 @@ import {
   patchApplication,
 } from '@/api/applications';
 import type { Application, ApplicationEdit } from '@/domain/application';
+import { setDiscarded } from '@/domain/application';
 import type { StateChange } from '@/domain/stateChange';
 
 import { upsertApplication } from './applicationEvents';
@@ -145,13 +146,7 @@ export function useSetDiscarded() {
       ),
 
     onMutate: ({ ids, discardedAt }) =>
-      list.apply((current) =>
-        current.map((application) =>
-          ids.has(application.id)
-            ? { ...application, discardedAt }
-            : application,
-        ),
-      ),
+      list.apply((current) => setDiscarded(current, ids, discardedAt)),
 
     onSuccess: (applications) => {
       list.write((current) =>
