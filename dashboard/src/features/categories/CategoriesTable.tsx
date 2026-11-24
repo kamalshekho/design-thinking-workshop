@@ -22,9 +22,12 @@ import { Table, TableCard } from '@/components/application/table/table';
 import { Toggle } from '@/components/base/toggle/toggle';
 import { de } from '@/content/de';
 import type { Category } from '@/domain/category';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cx } from '@/utils/cx';
 
-type CategoriesTableProps = {
+import { CategoryCards } from './CategoryCards';
+
+export type CategoriesTableProps = {
   /** The Categories to render, already filtered by the screen. */
   categories: readonly Category[];
   /** Applications per Category id for the usage column, discarded ones excluded. */
@@ -60,7 +63,17 @@ function maxUsage(usage: ReadonlyMap<string, number>): number {
   return Math.max(1, ...usage.values());
 }
 
-export function CategoriesTable({
+/**
+ * Below 768 px the table becomes `CategoryCards`: at 360 px the switch, the
+ * usage and both actions sat past the card's edge (issue #109).
+ */
+export function CategoriesTable(props: CategoriesTableProps) {
+  const md = useBreakpoint('md');
+
+  return md ? <CategoriesGrid {...props} /> : <CategoryCards {...props} />;
+}
+
+function CategoriesGrid({
   categories,
   usage,
   namedBy,
@@ -89,7 +102,7 @@ export function CategoriesTable({
             id="name"
             label={de.categories.columns.name}
             isRowHeader
-            className="w-full max-w-full md:min-w-64"
+            className="w-full max-w-full lg:min-w-64"
           />
           <Table.Head id="status" label={de.categories.columns.status} />
           <Table.Head id="usage" label={de.categories.columns.usage} />
