@@ -318,14 +318,20 @@ ein.
 
 ### Breakpoints
 
-Beide Anwendungen nutzen einen gemeinsamen Satz Breakpoints: die Standardwerte
-von Tailwind, 640, 768, 1024 und 1280 px. Das Applicant form nutzt davon 640 und
-1024 px. Der Header bleibt bei 900 px. Das ist die einzige Ausnahme, beschrieben
-in [`frontend/DESIGN.md`](../frontend/DESIGN.md).
+Beide Anwendungen nutzen einen gemeinsamen Satz Breakpoints: die Werte von
+Tailwind bis `xl`, also 640, 768, 1024 und 1280 px. Das Applicant form nutzt
+davon 640 und 1024 px. Der Header bleibt bei 900 px. Das ist die einzige
+Ausnahme, beschrieben in [`frontend/DESIGN.md`](../frontend/DESIGN.md).
+
+Das Dashboard nutzt heute zusätzlich 1536 px, den Wert `2xl` von Tailwind. Ab
+dieser Breite zeigt die Tabelle der Applications die Spalte Kategorie, über
+`useBreakpoint('2xl')` in `application-table.tsx` unter
+`dashboard/src/components/application/`. Der Satz enthält 1536 px nicht. Das
+braucht eine neue Entscheidung, ein Issue dafür gibt es noch nicht.
 
 Prüfung im Applicant form: Stylelint mit
-`media-feature-name-value-allowed-list`, das für `width` nur 640, 900 und 1024
-px erlaubt, noch nicht eingeschaltet. #132 schaltet es ein. Prüfung im
+`media-feature-name-value-allowed-list`, das für `width` nur 640, 900 und
+1024 px erlaubt, noch nicht eingeschaltet. #132 schaltet es ein. Prüfung im
 Dashboard: `no-restricted-classes` aus dem Abschnitt
 [Literale Werte](#literale-werte-nur-in-der-quelle-der-tokens) trifft auch
 Varianten wie `min-[400px]:`, noch nicht eingeschaltet. #133 schaltet es ein.
