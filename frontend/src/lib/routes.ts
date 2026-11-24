@@ -12,7 +12,7 @@ const FIXED_ROUTES = ['COMMUNITY', 'SUPPORTING_MEMBER'] as const;
 export type FixedRoute = (typeof FIXED_ROUTES)[number];
 
 export function isFixedRoute(value: string): value is FixedRoute {
-  return (FIXED_ROUTES as readonly string[]).includes(value);
+  return FIXED_ROUTES.some((route) => route === value);
 }
 
 export const WEEKLY_TIME_OPTIONS = [
