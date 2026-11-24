@@ -37,11 +37,14 @@ Den Vergleich enthält die Recherche zu #103 auf dem Branch
 - Die Schichten des Dashboards setzen
   [ADR-0006](./0006-one-cache-and-prop-driven-screens.md) fort. `domain`
   importiert nur sich selbst, `api` nur `domain`, `queries` nur `api`, `domain`
-  und `hooks`. Features erreichen den Server nur über `queries`. Innerhalb
-  eines Features importieren nur `*Container.tsx` und `use*.ts` den Cache, ein
-  Screen nie. Die Anmeldung bekommt deshalb ihren Fehler als fertigen Wert:
-  `useSignInFailure` in `queries/session.ts` liest den Code aus dem Fehler der
-  Anfrage, und `Credentials` liegt in `domain/signIn.ts`.
+  und `hooks`. `api` importiert auch kein React: Ein Block mit
+  `no-restricted-imports` in `dashboard/eslint.config.js` verbietet dort
+  `react`, `react-dom` und `@tanstack/react-query`. Features erreichen den
+  Server nur über `queries`. Innerhalb eines Features importieren nur
+  `*Container.tsx` und `use*.ts` den Cache, ein Screen nie. Die Anmeldung
+  bekommt deshalb ihren Fehler als fertigen Wert: `useSignInFailure` in
+  `queries/session.ts` liest den Code aus dem Fehler der Anfrage, und
+  `Credentials` liegt in `domain/signIn.ts`.
 - Geteilter UI-Code darf `content` und `domain` importieren, aber nie
   `features`, `api`, `queries` oder `app`. Das gilt für die Kopien aus Untitled
   UI, für `components/shared` im Dashboard und für `components/ui` im
