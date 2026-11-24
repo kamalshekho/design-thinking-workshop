@@ -59,7 +59,7 @@ function compilerOptionDifferences() {
   });
   const keys = new Set([...Object.keys(frontend), ...Object.keys(dashboard)]);
   return [...keys]
-    .sort()
+    .sort((a, b) => a.localeCompare(b))
     .filter((key) => !isDeepStrictEqual(frontend[key], dashboard[key]))
     .map((key) => ({
       what: `tsconfig.json compilerOptions.${key}`,
