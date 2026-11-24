@@ -12,9 +12,9 @@ import type {
   ApplicationView,
 } from '@/domain/application';
 import {
-  APPLICATION_STATUSES,
-  APPLICATION_VIEWS,
   COMPLETED_APPLICATION_STATUSES,
+  isApplicationStatus,
+  isApplicationView,
   isDiscarded,
   STALE_AFTER_DAYS,
 } from '@/domain/application';
@@ -117,13 +117,13 @@ export function parseFiltersFromHash(
   const filters: Partial<ApplicationFilters> = {};
 
   const view = params.get('view');
-  if (view && (APPLICATION_VIEWS as readonly string[]).includes(view)) {
-    filters.view = view as ApplicationView;
+  if (isApplicationView(view)) {
+    filters.view = view;
   }
 
   const status = params.get('status');
-  if (status && (APPLICATION_STATUSES as readonly string[]).includes(status)) {
-    filters.status = status as ApplicationStatus;
+  if (isApplicationStatus(status)) {
+    filters.status = status;
   }
 
   const search = params.get('search');

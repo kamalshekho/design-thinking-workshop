@@ -215,6 +215,11 @@ interface TriggerRenderProps {
   onClick: () => void;
 }
 
+type TriggerChildProps = HTMLAttributes<HTMLElement> & {
+  disabled?: boolean;
+  isDisabled?: boolean;
+};
+
 interface TriggerProps {
   /** The children of the trigger. Can be a render prop or a valid element. */
   children: ReactNode | ((props: TriggerRenderProps) => ReactNode);
@@ -268,24 +273,21 @@ const Trigger: FC<TriggerProps> = ({
   }
 
   // If the children is a valid element, we need to clone it and pass the isDisabled and onClick to the cloned element.
-  if (asChild && isValidElement(children)) {
+  if (asChild && isValidElement<TriggerChildProps>(children)) {
     return cloneElement(children, {
       onClick: handleClick,
       disabled: isDisabled,
       isDisabled,
       'aria-label': ariaLabel || defaultAriaLabel,
       style: {
-        ...(children.props as HTMLAttributes<HTMLElement>).style,
+        ...children.props.style,
         ...style,
       },
       className:
-        [
-          computedClassName,
-          (children.props as HTMLAttributes<HTMLElement>).className,
-        ]
+        [computedClassName, children.props.className]
           .filter(Boolean)
           .join(' ') || undefined,
-    } as HTMLAttributes<HTMLElement>);
+    });
   }
 
   return (

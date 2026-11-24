@@ -10,8 +10,10 @@ import { ChevronDown, FilterLines } from '@untitledui/icons';
 import { useEffect, useRef, useState } from 'react';
 
 import { de } from '@/content/de';
-import type { ApplicationStatus } from '@/domain/application';
-import { APPLICATION_STATUSES } from '@/domain/application';
+import {
+  APPLICATION_STATUSES,
+  isApplicationStatus,
+} from '@/domain/application';
 import type { Category } from '@/domain/category';
 import type { ApplicationFilters } from '@/utils/filterApplications';
 
@@ -126,13 +128,12 @@ export function FilterPopover({
             <select
               value={filters.status ?? ''}
               onChange={(event) => {
-                onChange({
-                  ...filters,
-                  status:
-                    event.target.value === ''
-                      ? null
-                      : (event.target.value as ApplicationStatus),
-                });
+                const { value } = event.target;
+                if (value === '') {
+                  onChange({ ...filters, status: null });
+                } else if (isApplicationStatus(value)) {
+                  onChange({ ...filters, status: value });
+                }
               }}
               className={selectClass}
             >

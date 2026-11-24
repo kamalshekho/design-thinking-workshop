@@ -9,11 +9,16 @@
  * rather than a working screen.
  */
 
+import type { TopLevelErrorCode } from '@/domain/apiError';
+import { isTopLevelErrorCode } from '@/domain/apiError';
+
 import { de } from './de';
 
-const codes: Record<string, string> = de.errors.codes;
+const codes: Record<TopLevelErrorCode, string> = de.errors.codes;
 
 /** The wording for a problem's top-level `code`. */
 export function errorMessage(code: string | undefined): string {
-  return (code === undefined ? undefined : codes[code]) ?? de.errors.general;
+  return code !== undefined && isTopLevelErrorCode(code)
+    ? codes[code]
+    : de.errors.general;
 }

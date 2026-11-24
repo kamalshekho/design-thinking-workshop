@@ -18,15 +18,22 @@
  * than among the field codes: nothing in the request is wrong, the Application
  * is simply not on the fourth screen yet (`API.md`).
  */
-export type TopLevelErrorCode =
-  | 'VALIDATION_FAILED'
-  | 'NOT_DISCARDED'
-  | 'INVALID_CREDENTIALS'
-  | 'UNAUTHENTICATED'
-  | 'NOT_FOUND'
-  | 'CATEGORY_IN_USE'
-  | 'RATE_LIMITED'
-  | 'INTERNAL_ERROR';
+const TOP_LEVEL_ERROR_CODES = [
+  'VALIDATION_FAILED',
+  'NOT_DISCARDED',
+  'INVALID_CREDENTIALS',
+  'UNAUTHENTICATED',
+  'NOT_FOUND',
+  'CATEGORY_IN_USE',
+  'RATE_LIMITED',
+  'INTERNAL_ERROR',
+] as const;
+
+export type TopLevelErrorCode = (typeof TOP_LEVEL_ERROR_CODES)[number];
+
+export function isTopLevelErrorCode(value: string): value is TopLevelErrorCode {
+  return TOP_LEVEL_ERROR_CODES.some((code) => code === value);
+}
 
 /** Codes that name one field, carried in the problem's `errors` array. */
 export type FieldErrorCode =

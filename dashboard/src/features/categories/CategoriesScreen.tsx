@@ -127,20 +127,18 @@ export function CategoriesScreen({
     [categories, view, search],
   );
 
-  const counts = useMemo(
-    () =>
-      Object.fromEntries(
-        CATEGORY_VIEWS.map((candidate) => [
-          candidate,
-          categories.filter(
-            (category) =>
-              matchesView(category, candidate) &&
-              matchesSearch(category, search),
-          ).length,
-        ]),
-      ) as Record<CategoryView, number>,
-    [categories, search],
-  );
+  const counts = useMemo((): Record<CategoryView, number> => {
+    const countView = (candidate: CategoryView) =>
+      categories.filter(
+        (category) =>
+          matchesView(category, candidate) && matchesSearch(category, search),
+      ).length;
+    return {
+      all: countView('all'),
+      active: countView('active'),
+      inactive: countView('inactive'),
+    };
+  }, [categories, search]);
 
   const activeCount = categories.filter((category) => category.active).length;
   /** "Bisher nie ausgewählt" — a discarded Application was still a choice. */

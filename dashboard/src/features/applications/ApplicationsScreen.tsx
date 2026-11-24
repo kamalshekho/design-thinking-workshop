@@ -92,16 +92,15 @@ export function ApplicationsScreen({
     [applications, filters, now],
   );
 
-  const counts = useMemo(
-    () =>
-      Object.fromEntries(
-        APPLICATION_VIEWS.map((view) => [
-          view,
-          filterApplications(applications, { ...filters, view }, now).length,
-        ]),
-      ) as Record<ApplicationView, number>,
-    [applications, filters, now],
-  );
+  const counts = useMemo((): Record<ApplicationView, number> => {
+    const countView = (view: ApplicationView) =>
+      filterApplications(applications, { ...filters, view }, now).length;
+    return {
+      all: countView('all'),
+      unassigned: countView('unassigned'),
+      stale: countView('stale'),
+    };
+  }, [applications, filters, now]);
 
   /**
    * The "of" figure counts the working list only: a discarded Application is

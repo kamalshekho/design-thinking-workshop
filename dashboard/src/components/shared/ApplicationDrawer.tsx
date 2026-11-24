@@ -41,13 +41,11 @@ import { CloseButton } from '@/components/base/buttons/close-button';
 import { Tooltip } from '@/components/base/tooltip/tooltip';
 import { Dot } from '@/components/foundations/dot-icon';
 import { de } from '@/content/de';
-import type {
-  Application,
-  ApplicationEdit,
-  ApplicationStatus,
-  Owner,
+import type { Application, ApplicationEdit, Owner } from '@/domain/application';
+import {
+  APPLICATION_STATUSES,
+  isApplicationStatus,
 } from '@/domain/application';
-import { APPLICATION_STATUSES } from '@/domain/application';
 import type { Category } from '@/domain/category';
 import { useCloseOnEscape } from '@/hooks/useCloseOnEscape';
 import { cx } from '@/utils/cx';
@@ -246,9 +244,9 @@ export function ApplicationDrawer({
                 <select
                   value={application.status}
                   onChange={(event) => {
-                    onChange({
-                      status: event.target.value as ApplicationStatus,
-                    });
+                    if (isApplicationStatus(event.target.value)) {
+                      onChange({ status: event.target.value });
+                    }
                   }}
                   className={SELECT_CLASSNAME}
                 >

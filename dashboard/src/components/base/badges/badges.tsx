@@ -97,12 +97,25 @@ const filledColors: Record<
   },
 };
 
-const addonOnlyColors = Object.fromEntries(
-  Object.entries(filledColors).map(([key, value]) => [
-    key,
-    { root: '', addon: value.addon },
-  ]),
-) as Record<BadgeColors, { root: string; addon: string }>;
+const addonOnly = (color: BadgeColors) => ({
+  root: '',
+  addon: filledColors[color].addon,
+});
+
+const addonOnlyColors: Record<BadgeColors, { root: string; addon: string }> = {
+  gray: addonOnly('gray'),
+  brand: addonOnly('brand'),
+  error: addonOnly('error'),
+  warning: addonOnly('warning'),
+  success: addonOnly('success'),
+  slate: addonOnly('slate'),
+  sky: addonOnly('sky'),
+  blue: addonOnly('blue'),
+  indigo: addonOnly('indigo'),
+  purple: addonOnly('purple'),
+  pink: addonOnly('pink'),
+  orange: addonOnly('orange'),
+};
 
 const withPillTypes = {
   [badgeTypes.pillColor]: {
