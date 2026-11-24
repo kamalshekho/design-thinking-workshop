@@ -268,6 +268,7 @@ npm run dev
 | --------------------------------- | ----------------------------- |
 | `npm run dev`                     | Dev server on port 5174       |
 | `npm run build`                   | Production build into `dist/` |
+| `npm run size`                    | Gzip size of `dist/assets`    |
 | `npm run preview`                 | Serve the built output        |
 | `npm run typecheck`               | `tsc --noEmit`                |
 | `npm run lint` / `lint:fix`       | ESLint                        |
@@ -282,11 +283,17 @@ same-origin for the same reason production is: the Sign-in cookie is
 `nginx.conf` location for location, the live stream included, and `API.md`'s
 "Deployment" section says why.
 
-CI (`.github/workflows/dashboard.yml`, mirroring `frontend.yml`) runs
-typecheck, ESLint, format check, tests and the build on every pull request
-touching this directory, `eslint.base.mjs`, `.prettierrc.json` or `scripts/`,
-after `scripts/check-config-parity.mjs` has checked that the dashboard and the
-form share compiler options, tool versions and Node version.
+CI is one workflow, `.github/workflows/ci.yml`, shared with the form and run
+on every pull request and every push to `main`. Its `changes` job decides
+which of the other jobs run. The `dashboard` job runs typecheck, ESLint,
+format check, tests, the build and `npm run size`, then uploads `dist` for 7
+days; it runs when this directory, `eslint.base.mjs`, `.prettierrc.json`,
+`scripts/` or `ci.yml` changes. The `config` job runs
+`scripts/check-config-parity.mjs`, which checks that the dashboard and the
+form share compiler options, tool versions and Node version, and audits the
+workflows with actionlint and zizmor. The gate job `ci` fails when any job
+failed or was cancelled and counts a skipped job as passed, so it carries the
+result of the whole run.
 
 ## What does not exist yet
 

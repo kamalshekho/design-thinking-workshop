@@ -33,6 +33,7 @@ form is fully usable before the Java service exists.
 | ------------------------------------- | --------------------------------------- |
 | `npm run dev`                         | Dev server on port 5173, mocked backend |
 | `npm run build`                       | Production build into `dist/`           |
+| `npm run size`                        | Gzip size of `dist/assets` vs. budget   |
 | `npm run preview`                     | Serve the built output                  |
 | `npm run typecheck`                   | `tsc --noEmit`                          |
 | `npm run lint` / `lint:fix`           | ESLint                                  |
@@ -275,11 +276,20 @@ synchronous, so RTL covers it. Native select behaviour on a real phone
 The pre-commit hook runs Prettier and `eslint --fix` on staged files only. It
 is deliberately fast — a slow hook gets bypassed with `--no-verify`.
 
-CI (`.github/workflows/frontend.yml`) runs typecheck, ESLint, Stylelint,
-format check, tests and the build on every pull request touching `frontend/`,
-`eslint.base.mjs`, `.prettierrc.json` or `scripts/`, after
-`scripts/check-config-parity.mjs` has checked that the form and the dashboard
-share compiler options, tool versions and Node version.
+CI is one workflow, `.github/workflows/ci.yml`, run on every pull request and
+every push to `main`. Its `changes` job decides which of the other jobs run:
+
+- `frontend` runs typecheck, ESLint, Stylelint, format check, tests, the build
+  and `npm run size`, then uploads `dist` for 7 days. It runs when
+  `frontend/`, `eslint.base.mjs`, `.prettierrc.json`, `scripts/` or `ci.yml`
+  changes.
+- `config` runs `scripts/check-config-parity.mjs`, which checks that the form
+  and the dashboard share compiler options, tool versions and Node version,
+  and audits the workflows with actionlint and zizmor.
+- `ci`, the gate, fails when any of these jobs, or the dashboard's, failed or
+  was cancelled. A skipped job counts as passed, so this one job carries the
+  result of the whole run.
+
 All of it is required; none of it is advisory.
 
 ## Accessibility
