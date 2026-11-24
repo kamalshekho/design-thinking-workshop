@@ -1,12 +1,3 @@
-# Formatting and auto-fixable lint only. Typecheck, stylelint in full and the
-# test suite run in CI: a hook that takes half a minute gets bypassed with
-# --no-verify, and then it protects nothing.
-#
-# Runs lint-staged once in each app that has staged files, from the app's own
-# folder and node_modules, so each app only touches its own files. The
-# explicit --config pins the app's own config: lint-staged otherwise also
-# searches the parent folders and would apply a config it finds there to the
-# files of both apps.
 for app in frontend dashboard; do
   if git diff --cached --quiet --diff-filter=ACMR -- "$app/"; then
     continue
