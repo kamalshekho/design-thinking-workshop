@@ -76,7 +76,9 @@ is not expected to be a second — the staff dashboard is a separate surface.
 ## Code style
 
 Prettier and ESLint decide formatting and most style questions; run them rather
-than arguing. What they cannot check:
+than arguing. The settings the form shares with the staff dashboard live in the
+repo root: the Prettier options in `../.prettierrc.json`, the common ESLint
+blocks in `../eslint.base.mjs`. What they cannot check:
 
 - **Named exports only.** `export function Button()`, never
   `export default`. A default export can be imported under any name, which
@@ -274,7 +276,10 @@ The pre-commit hook runs Prettier and `eslint --fix` on staged files only. It
 is deliberately fast — a slow hook gets bypassed with `--no-verify`.
 
 CI (`.github/workflows/frontend.yml`) runs typecheck, ESLint, Stylelint,
-format check, tests and the build on every pull request touching `frontend/`.
+format check, tests and the build on every pull request touching `frontend/`,
+`eslint.base.mjs`, `.prettierrc.json` or `scripts/`, after
+`scripts/check-config-parity.mjs` has checked that the form and the dashboard
+share compiler options, tool versions and Node version.
 All of it is required; none of it is advisory.
 
 ## Accessibility

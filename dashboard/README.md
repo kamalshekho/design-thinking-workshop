@@ -282,9 +282,11 @@ same-origin for the same reason production is: the Sign-in cookie is
 `nginx.conf` location for location, the live stream included, and `API.md`'s
 "Deployment" section says why.
 
-CI (`.github/workflows/dashboard.yml`, mirroring `frontend.yml`, scoped to
-`dashboard/`) runs typecheck, ESLint, format check, tests and the build on
-every pull request touching this directory.
+CI (`.github/workflows/dashboard.yml`, mirroring `frontend.yml`) runs
+typecheck, ESLint, format check, tests and the build on every pull request
+touching this directory, `eslint.base.mjs`, `.prettierrc.json` or `scripts/`,
+after `scripts/check-config-parity.mjs` has checked that the dashboard and the
+form share compiler options, tool versions and Node version.
 
 ## What does not exist yet
 
