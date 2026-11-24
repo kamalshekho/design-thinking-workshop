@@ -19,6 +19,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "prepare": "cd .. && husky .husky || true",
+    "check:licenses": "node scripts/check-third-party-licenses.mjs",
     "knip": "knip",
     "knip:production": "knip --production",
     "jscpd": "jscpd"
