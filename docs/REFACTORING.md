@@ -234,7 +234,7 @@ seitenübergreifende Auswahl liegen alle in der Funktion `ApplicationTable`
 
 ### C4: `ApplicationDrawer.tsx`
 
-Pfad: `dashboard/src/features/applications/ApplicationDrawer.tsx`, 416 Zeilen.
+Pfad: `dashboard/src/components/shared/ApplicationDrawer.tsx`, 416 Zeilen.
 Von den 3 `useEffect` gehören 2 zur Barrierefreiheit (Schließen mit Escape,
 Fokus ins Panel) und 1 zum Kopieren der E-Mail-Adresse (Rückmeldung nach 1800
 ms zurücksetzen). Die beiden vorgeschlagenen Hooks passen also zu den
