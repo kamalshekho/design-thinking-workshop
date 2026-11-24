@@ -6,7 +6,7 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-import { sharedConfig } from '../eslint.base.mjs';
+import { reExportBan, sharedConfig } from '../eslint.base.mjs';
 
 export default tseslint.config(
   ...sharedConfig({
@@ -25,10 +25,13 @@ export default tseslint.config(
   {
     files: ['**/*.{ts,tsx}'],
     rules: {
-      // Design tokens live in CSS. An inline style bypasses the token layer
-      // and cannot be linted for literal values (see README.md).
+      // This entry replaces the one in eslint.base.mjs, so it lists the
+      // shared re-export ban again. Design tokens live in CSS. An inline style
+      // bypasses the token layer and cannot be linted for literal values (see
+      // README.md).
       'no-restricted-syntax': [
         'error',
+        ...reExportBan,
         {
           selector: "JSXAttribute[name.name='style']",
           message:
