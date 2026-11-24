@@ -1,5 +1,6 @@
 /**
- * Clone path: `components/foundations/dot-icon.tsx`, unchanged.
+ * Clone path: `components/foundations/dot-icon.tsx`. Wraps `wh` in
+ * `String(...)` inside the `viewBox` template literal.
  */
 
 import type { HTMLAttributes } from 'react';

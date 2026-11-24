@@ -1,7 +1,11 @@
 /**
- * Clone path: `components/application/table/table.tsx`. Kept as-is apart from
- * dropping `TableRowActionsDropdown`, which pulled in the clone's
- * `base/dropdown` for a row menu this dashboard does not show.
+ * Clone path: `components/application/table/table.tsx`. Changes from the clone:
+ * - drops `TableRowActionsDropdown`, which pulled in `base/dropdown` for a row
+ *   menu this dashboard does not show;
+ * - exports individual named components (including a `TableBody` wrapper)
+ *   instead of compound `Table` and `TableCard` objects;
+ * - defaults `TableContext` to `undefined` so `Table` honours its `size` prop
+ *   when rendered outside `TableCardRoot`.
  *
  * Prop comments that only restate the prop name are dropped.
  */

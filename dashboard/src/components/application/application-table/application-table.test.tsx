@@ -177,17 +177,22 @@ describe('ApplicationTable', () => {
       />,
     );
 
-    const checkboxes = screen.getAllByRole('checkbox');
-    // checkboxes[0] is select-all in TableHeader, checkboxes[1] is row a1, checkboxes[2] is row a2
-    const [, firstRowCheckbox, secondRowCheckbox] = checkboxes;
-    expect(checkboxes).toHaveLength(3);
-    expect(firstRowCheckbox).toBeDefined();
-    expect(secondRowCheckbox).toBeDefined();
+    const rowFor = (id: string) =>
+      screen
+        .getAllByRole('row')
+        .find((row) => row.getAttribute('data-key') === id);
+    const firstRow = rowFor('a1');
+    const secondRow = rowFor('a2');
+    expect(firstRow).toBeDefined();
+    expect(secondRow).toBeDefined();
 
-    await user.click(firstRowCheckbox as HTMLElement);
+    await user.click(within(firstRow as HTMLElement).getByRole('checkbox'));
     expect(onSelectedIdsChange).toHaveBeenNthCalledWith(1, new Set(['a1']));
 
-    (secondRowCheckbox as HTMLElement).focus();
+    const secondCheckbox = within(secondRow as HTMLElement).getByRole(
+      'checkbox',
+    );
+    secondCheckbox.focus();
     await user.keyboard(' ');
     expect(onSelectedIdsChange).toHaveBeenNthCalledWith(2, new Set(['a2']));
   });

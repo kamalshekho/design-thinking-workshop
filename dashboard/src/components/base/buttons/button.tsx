@@ -1,7 +1,8 @@
 /**
  * Clone path: `components/base/buttons/button.tsx`. The `xs` and `xl` sizes
- * and the unread `Props` union are cut, as no call site uses them. Comments
- * that only restate a prop or type name are dropped.
+ * and the unread `Props` union are cut, as no call site uses them, and the
+ * redundant `loading` branch in the `pointer-events-none` condition is
+ * simplified. Comments that only restate a prop or type name are dropped.
  */
 
 import type { FC, ReactElement, ReactNode } from 'react';

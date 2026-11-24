@@ -8,7 +8,8 @@
  *
  * The clone's labels are English literals in the component; this copy reads
  * them from `content/de.ts` instead, since a Staff member sees them and the
- * dashboard UI is German (`A6`).
+ * dashboard UI is German (`A6`). Page buttons and ellipses sit inside `<ul>` /
+ * `<li>` elements, importing individual components from `pagination-base.tsx`.
  *
  * Prop comments that only restate the prop name are dropped.
  */

@@ -1,5 +1,6 @@
 /**
- * Clone path: `components/base/tooltip/tooltip.tsx`.
+ * Clone path: `components/base/tooltip/tooltip.tsx`. `TooltipTriggerProps` is
+ * a type alias instead of an empty extending interface.
  *
  * Prop comments that only restate the prop name are dropped.
  */

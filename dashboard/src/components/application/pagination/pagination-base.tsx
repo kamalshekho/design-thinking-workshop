@@ -1,12 +1,19 @@
 /**
- * Clone path: `components/application/pagination/pagination-base.tsx`. One
- * change: a page button's accessible name comes from `content/de.ts` rather
- * than the clone's English `Page n` literal. The pager variants built on this
- * live in `pagination.tsx`.
+ * Clone path: `components/application/pagination/pagination-base.tsx`. Changes
+ * from the clone:
+ * - a page button's accessible name comes from `content/de.ts` rather than the
+ *   clone's English `Page n` literal;
+ * - derives `pages` with `useMemo` instead of `useState` + `useEffect`;
+ * - renders `<button type="button">` without `role="listitem"` (list items are
+ *   wrapped in `<li>` by `pagination.tsx`);
+ * - exports individual named components instead of a compound `Pagination`
+ *   object.
  *
- * Cut: the render-prop and `asChild` branches of `Pagination.Item`, as the
- * one pager here renders a plain page button. Prop comments that only restate
- * the prop name are dropped too.
+ * The pager variants built on this live in `pagination.tsx`.
+ *
+ * Cut: the render-prop and `asChild` branches of `PaginationItem`, as the one
+ * pager here renders a plain page button. Prop comments that only restate the
+ * prop name are dropped too.
  */
 
 import type { CSSProperties, FC, HTMLAttributes, ReactNode } from 'react';

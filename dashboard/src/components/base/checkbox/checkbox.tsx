@@ -1,7 +1,9 @@
 /**
- * Clone path: `components/base/checkbox/checkbox.tsx`. Two changes:
+ * Clone path: `components/base/checkbox/checkbox.tsx`. Changes from the clone:
  * - a checked box reads as a white tick on a lilac fill;
- * - the box carries `tap-target` (#116).
+ * - the box carries `tap-target` (#116);
+ * - uses `CheckboxField` + `CheckboxButton` in place of the deprecated
+ *   `Checkbox` primitive.
  *
  * Cut: the `label` and `hint` props and the text beside the box, as both call
  * sites render a bare selection checkbox.

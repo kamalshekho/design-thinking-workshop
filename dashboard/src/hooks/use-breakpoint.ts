@@ -1,5 +1,6 @@
 /**
- * Clone path: `hooks/use-breakpoint.ts`, unchanged.
+ * Clone path: `hooks/use-breakpoint.ts`. Replaced `useState` + `useEffect`
+ * with `useSyncExternalStore` subscribing to `window.matchMedia`.
  */
 
 import { useCallback, useSyncExternalStore } from 'react';

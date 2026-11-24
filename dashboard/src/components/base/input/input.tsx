@@ -1,6 +1,8 @@
 /**
- * Clone path: `components/base/input/input.tsx`. One change: the password
- * visibility button carries `tap-target` (#116).
+ * Clone path: `components/base/input/input.tsx`. Changes from the clone:
+ * - the password visibility button carries `tap-target` (#116);
+ * - `TextFieldContextProps` is a type alias and `context` properties are read
+ *   without redundant optional chaining.
  *
  * Prop comments that only restate the prop name are dropped.
  */

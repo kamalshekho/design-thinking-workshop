@@ -1,7 +1,9 @@
 /**
- * Clone path: `components/base/toggle/toggle.tsx`. Two changes, both #116:
- * - the track does not shrink (`shrink-0`);
- * - the track carries `tap-target`.
+ * Clone path: `components/base/toggle/toggle.tsx`. Changes from the clone:
+ * - the track does not shrink (`shrink-0`) and carries `tap-target` (#116);
+ * - uses `SwitchField` + `SwitchButton` + `Text slot="description"` in place
+ *   of the deprecated `Switch` primitive, placing `hint` outside the `<label>`
+ *   so clicking it does not toggle the switch without an `onClick` handler.
  */
 
 import type { ReactNode } from 'react';
