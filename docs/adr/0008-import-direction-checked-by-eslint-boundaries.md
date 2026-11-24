@@ -25,32 +25,48 @@ Den Vergleich enthält die Recherche zu #103 auf dem Branch
 
 ## Folgen
 
-- Features importieren einander nicht. Neun Module, die `overview`,
-  `discarded` und `categories` heute aus `applications` holen, ziehen in
-  geteilte Schichten um. `ApplicationDrawer`, `ApplicationsList`,
-  `DiscardSelectedDialog`, `SearchField`, `OwnerSelect` und `controlStyles`
-  kommen nach `components/shared`, `filterApplications` nach `utils/`,
-  `useNotesDraft` und `useApplicationActions` nach `hooks/` und
-  `useApplicationWrites` nach `queries/`.
+- Features importieren einander nicht. Zwölf Module, die `overview`,
+  `discarded` und `categories` aus `applications` holten, sind in geteilte
+  Schichten umgezogen. `ApplicationDrawer`, `ApplicationsList`,
+  `DiscardSelectedDialog`, `SearchField`, `OwnerSelect`, `controlStyles`,
+  `ApplicationDetail`, `ApplicationDetailSections` und `ApplicationPage` liegen
+  in `components/shared`, `filterApplications` in `utils/`, `useNotesDraft` und
+  `useApplicationActions` in `hooks/` und `useApplicationWrites` in `queries/`.
+  `ApplicationPage` zieht mit, weil `ApplicationDetail` es rendert. Bliebe es im
+  Feature, würde `components/shared` aus einem Feature importieren.
 - Die Schichten des Dashboards setzen
   [ADR-0006](./0006-one-cache-and-prop-driven-screens.md) fort. `domain`
   importiert nur sich selbst, `api` nur `domain`, `queries` nur `api`, `domain`
   und `hooks`. Features erreichen den Server nur über `queries`. Innerhalb
   eines Features importieren nur `*Container.tsx` und `use*.ts` den Cache, ein
-  Screen nie.
+  Screen nie. Die Anmeldung bekommt deshalb ihren Fehler als fertigen Wert:
+  `useSignInFailure` in `queries/session.ts` liest den Code aus dem Fehler der
+  Anfrage, und `Credentials` liegt in `domain/signIn.ts`.
 - Geteilter UI-Code darf `content` und `domain` importieren, aber nie
   `features`, `api`, `queries` oder `app`. Das gilt für die Kopien aus Untitled
-  UI als eigenen Elementtyp, für `components/shared` im Dashboard und für
-  `components/ui` im Bewerbungsformular. Damit entfällt die Regel des
-  Bewerbungsformulars, nach der eine UI-Komponente keine Texte importiert. Sie
-  sollte die Komponenten im Dashboard wiederverwendbar halten, und ohne
-  gemeinsames Paket gibt es diese Wiederverwendung nicht. Die Grenze der
-  Figma-Komponenten aus `frontend/DESIGN.md` bleibt eine Konvention in der
-  README.
+  UI, für `components/shared` im Dashboard und für `components/ui` im
+  Bewerbungsformular. Damit entfällt die Regel des Bewerbungsformulars, nach der
+  eine UI-Komponente keine Texte importiert. Sie sollte die Komponenten im
+  Dashboard wiederverwendbar halten, und ohne gemeinsames Paket gibt es diese
+  Wiederverwendung nicht. Die Grenze der Figma-Komponenten aus
+  `frontend/DESIGN.md` bleibt eine Konvention in der README.
 - Das Bewerbungsformular behält seinen Server-State im Feature
   (`features/application-form/`) und bekommt kein TanStack Query.
-- `test/`, `mocks/` und Stories sind ein Element nur für Tests. Produktionscode
-  importiert es nicht.
+- Die Kopien aus Untitled UI, auch die unter `hooks/` und `utils/`, sind in
+  der Konfiguration eine Dateikategorie und kein Elementtyp.
+  `eslint-plugin-boundaries` beschreibt Ordner als Elemente, und die Kopien
+  liegen zwischen eigenen Dateien. Dasselbe gilt für den Einstiegspunkt
+  `main.tsx` und die Testdateien.
+- `test/`, `mocks/`, Testdateien und Stories sind ein Element nur für Tests.
+  Produktionscode importiert es nicht, auch nicht per dynamischem Import. Die
+  einzige Ausnahme ist der dynamische Import von `mocks/browser.ts` in
+  `frontend/src/app/main.tsx`. Er startet in der Entwicklung Mock Service
+  Worker, damit das Bewerbungsformular ohne Backend läuft. Die Ausnahme
+  entfällt, wenn das Bewerbungsformular in der Entwicklung nicht mehr ohne
+  Backend laufen muss.
+- Re-Exporte sind in beiden Anwendungen verboten, auch `export type … from` und
+  `export * from`. Der Re-Export von `Category` aus `domain/application.ts` ist
+  entfallen, `Category` kommt aus `domain/category.ts`.
 - `boundaries/no-unknown-files` ist eingeschaltet. Eine Datei außerhalb der
   beschriebenen Schichten lässt `npm run lint` scheitern.
 - Die Ordnernamen bleiben je Anwendung, wie sie sind (`lib/` und `utils/`,
