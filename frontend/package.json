@@ -22,7 +22,8 @@
     "test:watch": "vitest",
     "prepare": "cd .. && husky .husky || true",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "check:tokens": "node scripts/check-unused-tokens.mjs"
   },
   "size-limit": [
     {
