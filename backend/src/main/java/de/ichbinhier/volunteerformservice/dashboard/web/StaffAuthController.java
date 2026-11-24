@@ -1,5 +1,11 @@
 package de.ichbinhier.volunteerformservice.dashboard.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
@@ -32,6 +38,7 @@ import de.ichbinhier.volunteerformservice.web.config.SignInAttempts;
 import de.ichbinhier.volunteerformservice.web.config.SignInCookie;
 import de.ichbinhier.volunteerformservice.web.config.SignIns;
 
+@Tag(name = "Dashboard: Anmeldung")
 @RestController
 @RequestMapping("/api/v1/staff")
 public class StaffAuthController {
@@ -63,6 +70,11 @@ public class StaffAuthController {
         this.unknownEmailHash = passwordEncoder.encode(UUID.randomUUID().toString());
     }
 
+    @Operation(summary = "Anmelden und Sitzungs-Cookie erhalten")
+    @ApiResponse(responseCode = "200", description = "Angemeldet; das Cookie wird gesetzt")
+    @ApiResponse(responseCode = "400", description = "Eingaben ungültig", content = @Content)
+    @ApiResponse(responseCode = "401", description = "Anmeldung fehlgeschlagen", content = @Content)
+    @ApiResponse(responseCode = "429", description = "Zu viele Anmeldeversuche", content = @Content)
     @PostMapping("/session")
     ResponseEntity<StaffResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest http) {
         if (request.getPassword().getBytes(StandardCharsets.UTF_8).length > BCRYPT_MAX_BYTES) {
@@ -94,6 +106,8 @@ public class StaffAuthController {
             .body(new StaffResponse(staff.getId(), staff.getName(), staff.getEmail()));
     }
 
+    @Operation(summary = "Abmelden")
+    @ApiResponse(responseCode = "204", description = "Sitzung beendet", content = @Content)
     @DeleteMapping("/session")
     ResponseEntity<Void> logout(HttpServletRequest request) {
         SignInCookie.tokenIn(request).ifPresent(signIns::close);
@@ -103,6 +117,7 @@ public class StaffAuthController {
             .build();
     }
 
+    @Operation(summary = "Angemeldetes Teammitglied abrufen", security = @SecurityRequirement(name = "staffSession"))
     @GetMapping("/me")
     ResponseEntity<StaffResponse> me(Authentication auth) {
         if (auth == null || !auth.isAuthenticated()) {
@@ -113,6 +128,7 @@ public class StaffAuthController {
         return ResponseEntity.ok(new StaffResponse(staff.getId(), staff.getName(), staff.getEmail()));
     }
 
+    @Operation(summary = "Teammitglieder auflisten", security = @SecurityRequirement(name = "staffSession"))
     @GetMapping("/members")
     ResponseEntity<StaffMembersResponse> members() {
         List<StaffMemberResponse> members = staffRepo.findAll().stream()

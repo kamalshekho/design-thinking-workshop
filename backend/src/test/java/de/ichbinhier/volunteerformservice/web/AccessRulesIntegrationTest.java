@@ -94,4 +94,10 @@ class AccessRulesIntegrationTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    void hidesApiDocumentationWithoutDocsProfile() throws Exception {
+        mvc.perform(get("/v3/api-docs")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/swagger-ui/index.html")).andExpect(status().isUnauthorized());
+    }
+
 }

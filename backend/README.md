@@ -42,6 +42,33 @@ Run `./mvnw test` with Java 25. A `*Test` checks an isolated part, while an
 `ApplicationEndToEndTest` starts the backend on a local port and follows a
 submission through staff sign-in and review over HTTP. It does not run a browser.
 
+## API documentation
+
+Swagger UI describes the implemented HTTP endpoints and their request and
+response types. It is disabled by default. To enable it on the presenting
+machine, start the stack with the `docs` profile and the local-only port:
+
+```bash
+SPRING_PROFILES_ACTIVE=docs docker compose -f docker-compose.yml -f docker-compose.docs.yml up -d --build
+```
+
+Open <http://localhost:8080/swagger-ui.html>. The OpenAPI document is available
+at <http://localhost:8080/v3/api-docs>. To include demo data on a suitable empty
+database, use `SPRING_PROFILES_ACTIVE=docs,demo` instead. For a backend started
+directly with Maven, set `SPRING_PROFILES_ACTIVE=docs` alongside the database
+and staff variables described above.
+
+Use `POST /api/v1/staff/session` in Swagger UI to sign in before calling staff
+endpoints. The browser keeps the HTTP-only session cookie; there is no token to
+paste into Swagger's Authorize dialog. Open the UI on `localhost`, as the cookie
+is marked Secure. The API's existing access checks still apply.
+
+Swagger's **Try it out** sends real requests: changes affect the connected
+database and a form submission may send a confirmation email. Use synthetic data
+and a demo database. See [`../frontend/API.md`](../frontend/API.md) and
+[`../dashboard/API.md`](../dashboard/API.md) for the detailed contracts and
+error codes; the form contract notes where agreement is still pending.
+
 ## Staff accounts
 
 The dashboard has no self-registration and no user administration, so

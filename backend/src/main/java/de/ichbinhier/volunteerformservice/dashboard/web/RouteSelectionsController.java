@@ -1,5 +1,9 @@
 package de.ichbinhier.volunteerformservice.dashboard.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -13,11 +17,13 @@ import de.ichbinhier.volunteerformservice.dashboard.dto.RouteSelectionsResponse;
 
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Dashboard: Auswahlwege")
 @RestController
 @RequestMapping("/api/v1/staff")
 @RequiredArgsConstructor
 public class RouteSelectionsController {
 
+    @Operation(summary = "Auswahlwege abrufen", security = @SecurityRequirement(name = "staffSession"))
     @GetMapping("/route-selections")
     ResponseEntity<RouteSelectionsResponse> list() {
         List<RouteSelection> fixedRoutes = List.of(

@@ -1,5 +1,9 @@
 package de.ichbinhier.volunteerformservice.dashboard.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +15,7 @@ import de.ichbinhier.volunteerformservice.dashboard.service.ApplicationEventStre
 
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Dashboard: Live-Aktualisierung")
 @RestController
 @RequestMapping("/api/v1/staff")
 @RequiredArgsConstructor
@@ -25,6 +30,7 @@ public class EventStreamController {
      * demo is built around — then does not happen. Saying it here means the
      * behaviour survives a proxy configuration nobody remembered to change.
      */
+    @Operation(summary = "Live-Änderungen abonnieren", security = @SecurityRequirement(name = "staffSession"))
     @GetMapping(path = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     ResponseEntity<SseEmitter> events() {
         return ResponseEntity.ok()

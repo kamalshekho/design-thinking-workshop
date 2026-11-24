@@ -4,6 +4,8 @@ import jakarta.servlet.DispatcherType;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,6 +33,7 @@ public class SecurityConfig {
             StaffRepository staffRepo,
             SignIns signIns,
             SignInCookie signInCookie,
+            Environment environment,
             ProblemAuthenticationEntryPoint unauthenticated,
             ProblemAccessDeniedHandler forbidden) throws Exception {
 
@@ -41,6 +44,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // The container's own error dispatch, never a request a client sends.
                 .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                .requestMatchers(HttpMethod.GET, "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml")
+                    .access((authentication, context) -> new org.springframework.security.authorization.AuthorizationDecision(
+                            environment.acceptsProfiles(Profiles.of("docs"))))
                 .requestMatchers(HttpMethod.POST, "/api/v1/applications").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/staff/session").permitAll()
