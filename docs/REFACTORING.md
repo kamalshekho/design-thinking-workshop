@@ -234,7 +234,7 @@ seitenübergreifende Auswahl liegen alle in der Funktion `ApplicationTable`
 
 ### C4: `ApplicationDrawer.tsx`
 
-Pfad: `dashboard/src/features/applications/ApplicationDrawer.tsx`, 416 Zeilen.
+Pfad: `dashboard/src/components/shared/ApplicationDrawer.tsx`, 416 Zeilen.
 Von den 3 `useEffect` gehören 2 zur Barrierefreiheit (Schließen mit Escape,
 Fokus ins Panel) und 1 zum Kopieren der E-Mail-Adresse (Rückmeldung nach 1800
 ms zurücksetzen). Die beiden vorgeschlagenen Hooks passen also zu den
@@ -246,7 +246,7 @@ vorhandenen Effekten.
 `fieldProblemsIn` in `dashboard/src/api/transport.ts` tun dasselbe: das
 `errors`-Array eines `problem+json`-Bodys in Paare aus `field` und `code`
 übersetzen. Die vier `WeeklyTime`-Werte stehen in
-`frontend/src/features/application-form/routes.ts` und in
+`frontend/src/lib/routes.ts` und in
 `dashboard/src/domain/application.ts`, ein drittes Mal als Java-Enum
 `WeeklyTime` im Backend. Die deutschen Bezeichnungen stehen ebenfalls zweimal,
 in `frontend/src/content/de.ts` und `dashboard/src/content/de.ts`.

@@ -16,7 +16,8 @@ import { useMemo } from 'react';
 
 import { ApplicationTable } from '@/components/application/application-table/application-table';
 import { de } from '@/content/de';
-import type { Application, Category, Owner } from '@/domain/application';
+import type { Application, Owner } from '@/domain/application';
+import type { Category } from '@/domain/category';
 
 type ApplicationsListProps = {
   applications: readonly Application[];

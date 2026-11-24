@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+import { isFixedRoute } from '../../lib/routes';
 import { reportRouteSelection } from './api';
-import { isFixedRoute } from './routes';
 
 /** Reports each distinct route or category the applicant picks, once per selection. */
 export function useRouteAnalytics(route: string) {

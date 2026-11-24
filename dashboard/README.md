@@ -409,7 +409,10 @@ Inside `src/components/`:
   the shadcn/ui registry, in their upstream file layout;
 - `shared/` — what this application assembles from those primitives because
   the clone ships no equivalent: `page-header`, `empty-state`, `tab-strip`,
-  `confirm-dialog`;
+  `confirm-dialog`, and the Application list, drawer, page and controls that
+  several features show (`ApplicationsList`, `ApplicationDetail`, ...). A
+  feature does not import another feature
+  ([ADR-0008](../docs/adr/0008-import-direction-checked-by-eslint-boundaries.md));
 - `application/application-status/` — `status-styles.ts`, the one place an
   Application's Status maps to a colour, read by both the table row and the
   drawer so a palette change cannot leave the two disagreeing.

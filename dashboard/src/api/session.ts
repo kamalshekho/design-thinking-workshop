@@ -14,14 +14,10 @@
  * faithful to the response.
  */
 
+import type { Credentials } from '@/domain/signIn';
 import type { StaffMember } from '@/domain/staffMember';
 
 import { request, requestNoContent } from './transport';
-
-export type Credentials = {
-  email: string;
-  password: string;
-};
 
 /**
  * `GET /me`'s body, which `POST /session` answers with too. No `avatar`: the

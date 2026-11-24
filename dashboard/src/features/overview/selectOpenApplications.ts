@@ -20,11 +20,8 @@ import {
   COMPLETED_APPLICATION_STATUSES,
   isDiscarded,
 } from '@/domain/application';
-import type { OwnerFilter } from '@/features/applications/filterApplications';
-import {
-  matchesOwner,
-  matchesSearch,
-} from '@/features/applications/filterApplications';
+import type { OwnerFilter } from '@/utils/filterApplications';
+import { matchesOwner, matchesSearch } from '@/utils/filterApplications';
 
 export type OpenApplicationsFilters = {
   search: string;

@@ -15,6 +15,9 @@ import { Archive, Inbox01 } from '@untitledui/icons';
 import { useMemo, useState } from 'react';
 
 import { Button } from '@/components/base/buttons/button';
+import { ApplicationDetail } from '@/components/shared/ApplicationDetail';
+import { ApplicationsList } from '@/components/shared/ApplicationsList';
+import { DiscardSelectedDialog } from '@/components/shared/DiscardSelectedDialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { PageHeader } from '@/components/shared/page-header';
 import { TabStrip } from '@/components/shared/tab-strip';
@@ -23,21 +26,18 @@ import type {
   Application,
   ApplicationEdit,
   ApplicationView,
-  Category,
   Owner,
 } from '@/domain/application';
 import { APPLICATION_VIEWS, isDiscarded } from '@/domain/application';
+import type { Category } from '@/domain/category';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { useApplicationActions } from '@/hooks/useApplicationActions';
+import type { NotesField } from '@/hooks/useNotesDraft';
+import { notesValueFor } from '@/hooks/useNotesDraft';
+import type { ApplicationFilters } from '@/utils/filterApplications';
+import { EMPTY_FILTERS, filterApplications } from '@/utils/filterApplications';
 
-import { ApplicationDetail } from './ApplicationDetail';
-import { ApplicationsList } from './ApplicationsList';
 import { ApplicationsToolbar } from './ApplicationsToolbar';
-import { DiscardSelectedDialog } from './DiscardSelectedDialog';
-import type { ApplicationFilters } from './filterApplications';
-import { EMPTY_FILTERS, filterApplications } from './filterApplications';
-import { useApplicationActions } from './useApplicationActions';
-import type { NotesField } from './useNotesDraft';
-import { notesValueFor } from './useNotesDraft';
 
 type ApplicationsScreenProps = {
   /** The signed-in Staff member, whom "Übernehmen" on the phone page makes the Owner. */

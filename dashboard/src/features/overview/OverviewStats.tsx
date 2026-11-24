@@ -18,13 +18,10 @@ import { de } from '@/content/de';
 import type { Application } from '@/domain/application';
 import { STALE_AFTER_DAYS } from '@/domain/application';
 import type { StateChange } from '@/domain/stateChange';
-import type { ApplicationFilters } from '@/features/applications/filterApplications';
-import {
-  EMPTY_FILTERS,
-  filterApplications,
-} from '@/features/applications/filterApplications';
 import { cx } from '@/utils/cx';
 import { MILLISECONDS_PER_DAY } from '@/utils/dates';
+import type { ApplicationFilters } from '@/utils/filterApplications';
+import { EMPTY_FILTERS, filterApplications } from '@/utils/filterApplications';
 
 import { applicationsAsOf } from './applicationsAsOf';
 

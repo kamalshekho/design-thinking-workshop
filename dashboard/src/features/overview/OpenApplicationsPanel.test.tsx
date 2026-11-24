@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { de } from '@/content/de';
 import type { Application } from '@/domain/application';
 import { setDiscarded } from '@/domain/application';
-import type { NotesDraft } from '@/features/applications/useNotesDraft';
+import type { NotesDraft } from '@/hooks/useNotesDraft';
 import {
   mockCategories,
   mockOwners,

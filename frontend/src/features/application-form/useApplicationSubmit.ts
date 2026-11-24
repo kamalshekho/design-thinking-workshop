@@ -2,8 +2,8 @@ import { useRef, useState } from 'react';
 import type { UseFormSetError, UseFormSetValue } from 'react-hook-form';
 
 import { type Category, submitApplication } from './api';
-import { formFieldFor } from './errors';
 import { asApplicationValues, type FormValues } from './schema';
+import { formFieldFor } from './serverFields';
 
 /**
  * Submits the application: calls the API, maps server field errors back onto

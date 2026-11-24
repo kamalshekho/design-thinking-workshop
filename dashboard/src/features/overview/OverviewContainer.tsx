@@ -4,10 +4,10 @@
  * changes the three cards' sparklines are replayed from.
  */
 
-import { useApplicationWrites } from '@/features/applications/useApplicationWrites';
 import { useApplications, useStateChanges } from '@/queries/applications';
 import { useCategories } from '@/queries/categories';
 import { useOwners } from '@/queries/staffMembers';
+import { useApplicationWrites } from '@/queries/useApplicationWrites';
 
 import { OverviewScreen } from './OverviewScreen';
 

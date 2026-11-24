@@ -42,14 +42,6 @@ export const COMPLETED_APPLICATION_STATUSES: readonly ApplicationStatus[] = [
 ];
 
 /**
- * A Category always names Vereinsarbeit. The backend owns the list (`A12`);
- * the mock stands in for it until the contract in issue #16 exists. The type
- * and the rules over it live in `domain/category.ts` — re-exported here
- * because every Application-facing component already reads it from this file.
- */
-export type { Category } from './category';
-
-/**
  * The Staff member who owns an Application. An Application may have none.
  *
  * A name and an id, which is all `GET /api/v1/staff/members` sends: no

@@ -62,9 +62,10 @@ frontend/
 └── src/
     ├── app/                      entry point and page shell
     ├── features/
-    │   └── application-form/     the form: schema, transport, routes
+    │   └── application-form/     the form: schema, transport, field mapping
     ├── components/ui/            presentational components, domain-free
     ├── content/                  German copy and external links
+    ├── lib/                      error codes, routes, small helpers
     ├── styles/                   tokens.css and base.css
     ├── mocks/                    MSW handlers — API.md, executable
     └── test/                     test setup
@@ -103,8 +104,9 @@ Two more conventions:
 ## Component rules
 
 **A component in `components/ui/` does not know the domain.** It receives
-finished strings as props. It may not import from `content/` or `features/` —
-ESLint rejects that import.
+finished strings as props. That part is a convention the review checks.
+ESLint rejects an import from `features/` or `app/`, but since ADR-0008 not
+one from `content/`.
 See also [the import rules](../docs/STANDARD.md#importrichtung-und-barrel-dateien).
 
 Two reasons, and the second is the one that matters:
@@ -209,7 +211,7 @@ The coding standard describes how an error from the schema or from the
 backend becomes visible text, under [Errors](../docs/STANDARD.md#fehler).
 
 Codes are machine-readable (`EMAIL_INVALID`, `CONSENT_REQUIRED`) and listed in
-`features/application-form/errors.ts`. The backend sends the same codes and no
+`lib/errorCodes.ts`. The backend sends the same codes and no
 localized error text; see `API.md`.
 
 ## Changing a screen

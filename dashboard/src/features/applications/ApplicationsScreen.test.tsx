@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { de } from '@/content/de';
 import type { Application } from '@/domain/application';
 import { setDiscarded } from '@/domain/application';
+import type { NotesDraft } from '@/hooks/useNotesDraft';
 import {
   createMockApplications,
   mockCategories,
@@ -15,7 +16,6 @@ import {
 import { setViewportWidth } from '@/test/viewport';
 
 import { ApplicationsScreen } from './ApplicationsScreen';
-import type { NotesDraft } from './useNotesDraft';
 
 const NOW = new Date('2026-09-05T12:00:00.000Z');
 

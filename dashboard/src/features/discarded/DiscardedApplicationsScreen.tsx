@@ -38,12 +38,13 @@ import { Button } from '@/components/base/buttons/button';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { PageHeader } from '@/components/shared/page-header';
+import { SearchField } from '@/components/shared/SearchField';
 import { de } from '@/content/de';
-import type { Application, Category, Owner } from '@/domain/application';
-import { matchesSearch } from '@/features/applications/filterApplications';
-import { SearchField } from '@/features/applications/SearchField';
+import type { Application, Owner } from '@/domain/application';
+import type { Category } from '@/domain/category';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useSearchShortcut } from '@/hooks/use-search-shortcut';
+import { matchesSearch } from '@/utils/filterApplications';
 
 type DiscardedApplicationsScreenProps = {
   /**

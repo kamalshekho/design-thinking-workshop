@@ -32,8 +32,6 @@
 import { Mail01 } from '@untitledui/icons';
 import { useRef, useState } from 'react';
 
-import { problemCode } from '@/api/problem';
-import type { Credentials } from '@/api/session';
 import { Button } from '@/components/base/buttons/button';
 import { Input } from '@/components/base/input/input';
 import {
@@ -45,6 +43,7 @@ import {
 } from '@/components/ui/card';
 import { de } from '@/content/de';
 import { errorMessage } from '@/content/errorMessage';
+import type { Credentials, SignInFailure } from '@/domain/signIn';
 
 import type { CredentialIssue } from './validateCredentials';
 import { validateCredentials } from './validateCredentials';
@@ -69,12 +68,12 @@ const fieldErrors: Record<CredentialIssue, FieldError> = {
 export type SignInFormProps = {
   onSignIn: (credentials: Credentials) => void;
   /**
-   * Whatever the last submit raised, or `null` when it raised nothing. Not a
-   * code, because a request the network never delivered has none — and the
-   * form has to say something in that case too, which `errorMessage` words
-   * as the general failure.
+   * Why the last submit failed, or `null` when it did not. Its `code` is
+   * `undefined` for a request the network never delivered — the form has to
+   * say something in that case too, which `errorMessage` words as the general
+   * failure. `useSignInFailure` builds it from the request's error.
    */
-  failure?: unknown;
+  failure?: SignInFailure | null;
   /** While the request is in flight, so the button cannot be pressed twice. */
   isSubmitting?: boolean;
   /** The heading above the fields; the cover states its own reason instead. */
@@ -115,9 +114,7 @@ export function SignInForm({
    * showing both would put two answers on one screen.
    */
   const submissionFailure =
-    error === null && failure !== null && failure !== undefined
-      ? errorMessage(problemCode(failure))
-      : null;
+    error === null && failure !== null ? errorMessage(failure.code) : null;
 
   function submit(): void {
     const check = validateCredentials(email, password);

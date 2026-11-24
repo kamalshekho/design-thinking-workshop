@@ -11,7 +11,8 @@
  * (`C2`) are the Backlog, which the dashboard does not touch.
  */
 
-import type { Application, Category, Owner } from '@/domain/application';
+import type { Application, Owner } from '@/domain/application';
+import type { Category } from '@/domain/category';
 import type { StaffMember } from '@/domain/staffMember';
 import { MILLISECONDS_PER_DAY } from '@/utils/dates';
 

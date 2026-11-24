@@ -10,10 +10,10 @@ import { ChevronDown, FilterLines } from '@untitledui/icons';
 import { useEffect, useRef, useState } from 'react';
 
 import { de } from '@/content/de';
-import type { ApplicationStatus, Category } from '@/domain/application';
+import type { ApplicationStatus } from '@/domain/application';
 import { APPLICATION_STATUSES } from '@/domain/application';
-
-import type { ApplicationFilters } from './filterApplications';
+import type { Category } from '@/domain/category';
+import type { ApplicationFilters } from '@/utils/filterApplications';
 
 type FilterPopoverProps = {
   filters: ApplicationFilters;
