@@ -29,7 +29,7 @@ an email client and does not touch the historical mixed inbox.
 - Components keep Untitled UI's own stack (Tailwind CSS, React Aria) and its
   own file layout, so one component can span several files in a folder. The
   rule on barrel files applies here too:
-  [Importrichtung und Barrel-Dateien](../docs/STANDARD.md#importrichtung-und-barrel-dateien).
+  [Import direction and barrel files](../docs/STANDARD.md#importrichtung-und-barrel-dateien).
 - The Applications list is the clone's `application/table` (React Aria Table
   under an Untitled UI card), wrapped by `ApplicationTable` in
   `src/components/application/application-table/`. AG Grid Community was the
@@ -181,8 +181,8 @@ four screens are walked against it, and each answers emptiness the same way
 ## Small screens
 
 The supported widths and the breakpoints are the standard's:
-[Breiten ab 320 px](../docs/STANDARD.md#breiten-ab-320-px) and
-[Breakpoints](../docs/STANDARD.md#breakpoints). Only the work on one
+[Widths from 320 px](../docs/STANDARD.md#breiten-ab-320-px) and
+[breakpoints](../docs/STANDARD.md#breakpoints). Only the work on one
 Application has a layout made for a phone: reading it, becoming its Owner and
 changing its Status (`A29`). Issue #109 chose the rest with a prototype, kept
 on the branch `prototype/109-dashboard-kleine-bildschirme`:
@@ -209,7 +209,7 @@ on the branch `prototype/109-dashboard-kleine-bildschirme`:
   moves to the next line; below that the tabs scroll sideways.
 
 The rule for tap targets is in the standard:
-[Tippflächen](../docs/STANDARD.md#tippflächen). A control drawn smaller, such
+[Tap targets](../docs/STANDARD.md#tippflächen). A control drawn smaller, such
 as a row checkbox or the `sm` switch, keeps its look and carries the
 `tap-target` utility from `src/styles/untitledui-theme.css`, an invisible
 pseudo-element that widens the hit area (issue #116).
@@ -230,7 +230,7 @@ domain terms without German translations or bilingual label tables. See
 
 That split is also why the backend sends an error `code` and never a German
 sentence ([`API.md`](./API.md), "Errors"). How a code becomes a German text:
-[Fehler](../docs/STANDARD.md#fehler). Both code tables are worded in
+[Errors](../docs/STANDARD.md#fehler). Both code tables are worded in
 `de.errors` — `codes` for a problem's top-level `code`, `fields` for one entry
 of its `errors` array — and `src/content/errorMessage.ts` is what looks a code
 up, falling back to `de.errors.general` for one it does not know. A failure is
@@ -289,7 +289,7 @@ same-origin for the same reason production is: the Sign-in cookie is
 `npm install` here sets up the pre-commit hook in the repo root. What it runs
 on the dashboard's staged files, and which checks run only in CI, is in the
 standard:
-[Wo die Prüfungen laufen](../docs/STANDARD.md#wo-die-prüfungen-laufen).
+[Where the checks run](../docs/STANDARD.md#wo-die-prüfungen-laufen).
 
 CI is one workflow, `.github/workflows/ci.yml`, shared with the form and run
 on every pull request and every push to `main`. Its `changes` job decides
@@ -368,7 +368,7 @@ renders invisible is worth checking against this list first.
 `src/components/` mirrors the clone's own file layout, and `@/` resolves to
 `src/` so a copied file's imports stay close to the original. How a copy is
 treated once it lands:
-[Kopien aus Untitled UI](../docs/STANDARD.md#kopien-aus-untitled-ui). Every
+[Copies from Untitled UI](../docs/STANDARD.md#kopien-aus-untitled-ui). Every
 copied file opens with a comment naming its path in the clone and what was
 changed here; `THIRD_PARTY_LICENSES` lists them all.
 

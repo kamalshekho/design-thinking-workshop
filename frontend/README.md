@@ -84,13 +84,13 @@ blocks in `../eslint.base.mjs`.
 The rules the form shares with the dashboard, and the check behind each, are
 in the [coding standard](../docs/STANDARD.md). Among them:
 
-- Named exports only: [Nur benannte Exporte](../docs/STANDARD.md#nur-benannte-exporte).
-- No barrel files: [Importrichtung und Barrel-Dateien](../docs/STANDARD.md#importrichtung-und-barrel-dateien).
-- One folder per component, `Button/Button.tsx` next to
-  `Button/Button.module.css`:
-  [Ordner der Komponenten](../docs/STANDARD.md#ordner-der-komponenten).
-- English identifiers: [Bezeichner auf Englisch](../docs/STANDARD.md#bezeichner-auf-englisch).
-- `strict`, `noUncheckedIndexedAccess` and the other compiler options: [Compiler-Optionen](../docs/STANDARD.md#compiler-optionen).
+- [named exports only](../docs/STANDARD.md#nur-benannte-exporte);
+- [no barrel files](../docs/STANDARD.md#importrichtung-und-barrel-dateien);
+- [one folder per component](../docs/STANDARD.md#ordner-der-komponenten),
+  `Button/Button.tsx` next to `Button/Button.module.css`;
+- [English identifiers](../docs/STANDARD.md#bezeichner-auf-englisch);
+- [the compiler options](../docs/STANDARD.md#compiler-optionen), `strict` and
+  `noUncheckedIndexedAccess` among them.
 
 Two more conventions:
 
@@ -105,7 +105,7 @@ Two more conventions:
 **A component in `components/ui/` does not know the domain.** It receives
 finished strings as props. It may not import from `content/` or `features/` —
 ESLint rejects that import.
-See also [Importrichtung und Barrel-Dateien](../docs/STANDARD.md#importrichtung-und-barrel-dateien).
+See also [the import rules](../docs/STANDARD.md#importrichtung-und-barrel-dateien).
 
 Two reasons, and the second is the one that matters:
 
@@ -140,20 +140,20 @@ Other rules:
   error with `role="alert"`.
 - **A component does not validate.** Rules live in
   `features/application-form/schema.ts`; see
-  [Eine Komponente validiert nicht](../docs/STANDARD.md#eine-komponente-validiert-nicht).
+  [the coding standard](../docs/STANDARD.md#eine-komponente-validiert-nicht).
 - **A component does not fetch.** Requests live in
   `features/application-form/api.ts`; see
-  [Eine Komponente lädt keine Daten](../docs/STANDARD.md#eine-komponente-lädt-keine-daten).
+  [the coding standard](../docs/STANDARD.md#eine-komponente-lädt-keine-daten).
 - **State stays local.** One page, one form — `react-hook-form` holds the
   values and there is no store. Do not add one.
 
 ## Design tokens
 
 Where a literal value may stand, and what checks it:
-[Literale Werte nur in der Quelle der Tokens](../docs/STANDARD.md#literale-werte-nur-in-der-quelle-der-tokens).
+[Literal values only in the token source](../docs/STANDARD.md#literale-werte-nur-in-der-quelle-der-tokens).
 
 `token.json` is what Figma reads. How it relates to `tokens.css`:
-[`tokens.css` ist die Quelle für `token.json`](../docs/STANDARD.md#tokenscss-ist-die-quelle-für-tokenjson).
+[`tokens.css` is the source for `token.json`](../docs/STANDARD.md#tokenscss-ist-die-quelle-für-tokenjson).
 
 If a design needs a value that no token expresses, add a semantic token rather
 than a literal, and say so in the pull request — a new token is a design
@@ -205,7 +205,7 @@ documentation use English; see
 ## Errors
 
 How an error from the schema or from the backend becomes visible text:
-[Fehler](../docs/STANDARD.md#fehler).
+[Errors](../docs/STANDARD.md#fehler).
 
 Codes are machine-readable (`EMAIL_INVALID`, `CONSENT_REQUIRED`) and listed in
 `features/application-form/errors.ts`. The backend sends the same codes and no
@@ -232,7 +232,7 @@ a new one is added:
 5. **Use tokens for every value.** Where the design shows `36px`, use
    `var(--wp--preset--spacing--60)`. Which literals Stylelint already rejects
    is in the
-   [standard](../docs/STANDARD.md#literale-werte-nur-in-der-quelle-der-tokens).
+   [coding standard](../docs/STANDARD.md#literale-werte-nur-in-der-quelle-der-tokens).
 6. **Add or update a behavioural test** for the state — what the applicant
    sees, not how the component is built. `ApplicationForm.test.tsx` shows the
    shape.
@@ -265,7 +265,7 @@ synchronous, so RTL covers it. Native select behaviour on a real phone
 
 What the shared pre-commit hook runs on the form's staged files, and which
 checks run only in CI, is in the standard:
-[Wo die Prüfungen laufen](../docs/STANDARD.md#wo-die-prüfungen-laufen).
+[Where the checks run](../docs/STANDARD.md#wo-die-prüfungen-laufen).
 
 `npm install` in either app points `core.hooksPath` at `.husky/_`. A clone
 made while the hook still lived in `frontend/.husky` needs one `npm install`
@@ -304,7 +304,7 @@ that cannot fail is worse than none, because it reports success.
 - each error text explains what to do, not just that something is wrong — a red
   border alone fails section 32;
 - tap targets on a real phone, until the E2E check exists:
-  [Tippflächen](../docs/STANDARD.md#tippflächen);
+  [Tap targets](../docs/STANDARD.md#tippflächen);
 - the native select opens the OS picker on iOS and Android;
 - the sticky mobile submit does not cover the privacy copy;
 - the form is completable with the keyboard alone, in a sensible order.
