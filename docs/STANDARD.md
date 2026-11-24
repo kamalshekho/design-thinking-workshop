@@ -19,9 +19,11 @@ betrifft, und verweisen für alles andere hierher.
 ## Wo die Prüfungen laufen
 
 ESLint- und Stylelint-Regeln, die jede Datei für sich prüfen, laufen im
-pre-commit-Hook und in CI. `tsc`, `knip`, `jscpd` und die Skripte laufen nur
-in CI. Der Grund: lint-staged sieht nur die gestagten Dateien, und eine
-Prüfung über das ganze Projekt macht den Hook langsam.
+pre-commit-Hook und in CI. `tsc` und `scripts/check-config-parity.mjs` laufen
+nur in CI. `knip`, `jscpd` und die Skripte für Tokens und `THIRD_PARTY_LICENSES`
+gibt es noch nicht. Sobald #127, #128 und #132 sie einschalten, laufen sie
+ebenfalls nur in CI. Der Grund: lint-staged sieht nur die gestagten Dateien, und
+eine Prüfung über das ganze Projekt macht den Hook langsam.
 
 Der Hook `.husky/pre-commit` ist für beide Anwendungen derselbe. Hat eine
 Anwendung gestagte Dateien, ruft er ihr lint-staged mit `.lintstagedrc.json`
@@ -114,9 +116,9 @@ den nur die eigene Datei nutzt, entfällt. Ein Export, den nur Tests nutzen,
 ist ebenfalls Unkraut, denn der Test prüft das öffentliche Verhalten. Nur
 `test/` und `mocks/` exportieren für Tests.
 
-Prüfung: `knip` und `knip --production` in CI, noch nicht eingeschaltet. Die
-Konfiguration ignoriert `public/mockServiceWorker.js`. #127 schaltet sie im
-Applicant form ein, #128 im Dashboard.
+Prüfung: `knip` und `knip --production` in CI, noch nicht eingeschaltet. #127
+schaltet sie im Applicant form ein, #128 im Dashboard. Die Konfiguration von
+`knip` wird dann `public/mockServiceWorker.js` ignorieren.
 
 ### CSS
 
