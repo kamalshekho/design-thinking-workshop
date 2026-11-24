@@ -137,11 +137,9 @@ export function sharedConfig({
 /**
  * Bans every re-export, `export type … from` and `export * from` included:
  * a module is imported from the file that defines it, and neither app has
- * barrel files (ADR-0008). Exported because a later block that sets
- * no-restricted-syntax replaces these options, so an app adding its own
- * selectors has to list these with them.
+ * barrel files (ADR-0008).
  */
-export const reExportBan = [
+const reExportBan = [
   {
     selector: 'ExportNamedDeclaration[source]',
     message: 'Import from the defining file instead of re-exporting it.',
