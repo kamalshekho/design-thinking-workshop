@@ -144,7 +144,7 @@ export function OpenApplicationsPanel({
                   onClick={() => {
                     setFilters(EMPTY_OPEN_APPLICATIONS_FILTERS);
                   }}
-                  className="text-fuut-purple text-sm font-medium hover:underline"
+                  className="text-fuut-purple tap-target relative text-sm font-medium hover:underline"
                 >
                   {de.filters.reset}
                 </button>
@@ -201,7 +201,7 @@ export function OpenApplicationsPanel({
           <div className="flex justify-end">
             <a
               href={viewAllHref}
-              className="text-fuut-purple text-sm font-medium hover:underline"
+              className="text-fuut-purple tap-target relative text-sm font-medium hover:underline"
             >
               {de.overview.openApplications.viewAll}
             </a>

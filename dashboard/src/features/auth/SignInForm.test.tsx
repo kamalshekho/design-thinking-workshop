@@ -177,6 +177,20 @@ describe('SignInForm', () => {
     ).toBeInTheDocument();
   });
 
+  it('shows the password while the visibility toggle is on, and hides it again', async () => {
+    const user = userEvent.setup();
+    render(<SignInForm onSignIn={vi.fn()} />);
+    const toggle = screen.getByRole('button', {
+      name: de.fields.togglePassword,
+    });
+
+    await user.click(toggle);
+    expect(field(de.auth.passwordLabel)).toHaveAttribute('type', 'text');
+
+    await user.click(toggle);
+    expect(field(de.auth.passwordLabel)).toHaveAttribute('type', 'password');
+  });
+
   /**
    * The cover fills the address in, because the Staff member whose Sign-in ran
    * out is signing in again rather than choosing an account (issue #40).

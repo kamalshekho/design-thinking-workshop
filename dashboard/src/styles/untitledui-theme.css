@@ -215,6 +215,29 @@
 }
 
 /*
+ * WCAG 2.2 (2.5.8) asks for a pointer target of at least 24 × 24 px. A control
+ * drawn smaller than that keeps its look and gets an invisible `::after`
+ * centred on it; hit testing counts a pseudo-element as part of its element,
+ * so a press there lands on the control. `::after` because `Button` draws its
+ * inner border with `::before`. The element must be positioned (`relative` or
+ * `absolute`) so the area centres on it. `z-index: 1` lifts the area over a
+ * later positioned sibling, such as the table cell beside a row's checkbox,
+ * which would otherwise take the press; every overlay sits higher still.
+ */
+@utility tap-target {
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 24px);
+    height: max(100%, 24px);
+    transform: translate(-50%, -50%);
+  }
+}
+
+/*
  * The detail panel slides in from the right edge it is docked to, so the
  * motion says where the panel came from and where dismissing sends it back.
  * `100%` is the panel's own width, so the same rule covers the full-width

@@ -1,7 +1,9 @@
 /**
- * Clone path: `components/base/toggle/toggle.tsx`. One change: the track does
- * not shrink (`shrink-0`), so beside a long label it keeps its width and the
- * knob stays inside it instead of covering the label's first letters (#116).
+ * Clone path: `components/base/toggle/toggle.tsx`. Two changes, both #116:
+ * - the track does not shrink (`shrink-0`), so beside a long label it keeps
+ *   its width and the knob stays inside it instead of covering the label;
+ * - the track carries `tap-target`, so the 20 px `sm` switch takes a press
+ *   anywhere in 24 px of height without being drawn any larger.
  */
 
 import type { ReactNode } from 'react';
@@ -57,7 +59,7 @@ export const ToggleBase = ({
   return (
     <div
       className={cx(
-        'bg-tertiary ring-secondary outline-focus-ring shrink-0 cursor-pointer rounded-full ring-[0.5px] transition duration-150 ease-linear ring-inset',
+        'bg-tertiary ring-secondary outline-focus-ring tap-target relative shrink-0 cursor-pointer rounded-full ring-[0.5px] transition duration-150 ease-linear ring-inset',
         isSelected && 'bg-brand-solid',
         isSelected && isHovered && 'bg-brand-solid_hover',
         isDisabled && 'cursor-not-allowed opacity-50',
