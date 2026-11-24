@@ -21,10 +21,10 @@ betrifft, und verweisen für alles andere hierher.
 ESLint- und Stylelint-Regeln, die jede Datei für sich prüfen, laufen im
 pre-commit-Hook und in CI. `tsc` und `scripts/check-config-parity.mjs` laufen
 nur in CI. Ebenfalls nur in CI laufen in beiden Anwendungen `knip` und `jscpd`,
-im Applicant form dazu das Skript für ungenutzte Tokens und im Dashboard das
-Skript für `THIRD_PARTY_LICENSES`. Der Grund: lint-staged sieht nur die
-gestagten Dateien, und eine Prüfung über das ganze Projekt macht den Hook
-langsam.
+im Applicant form dazu die Skripte für ungenutzte Tokens und den Abgleich von
+`token.json` mit `tokens.css` und im Dashboard das Skript für
+`THIRD_PARTY_LICENSES`. Der Grund: lint-staged sieht nur die gestagten Dateien,
+und eine Prüfung über das ganze Projekt macht den Hook langsam.
 
 Der Hook `.husky/pre-commit` ist für beide Anwendungen derselbe. Hat eine
 Anwendung gestagte Dateien, ruft er ihr lint-staged mit `.lintstagedrc.json`
@@ -37,10 +37,11 @@ installiert, überspringt der Hook sie mit einer Warnung.
 
 CI ist der Workflow `.github/workflows/ci.yml`. Der Job `frontend` ruft
 `npm run typecheck`, `npm run lint`, `npm run stylelint`,
-`npm run check:tokens`, `npm run knip`, `npm run knip:production` und
-`npm run jscpd` auf, der Job `dashboard` `npm run typecheck`, `npm run lint`,
-`npm run check:licenses`, `npm run knip`, `npm run knip:production` und
-`npm run jscpd`. Der Job `config` ruft `scripts/check-config-parity.mjs` auf.
+`npm run check:tokens`, `npm run check:token-json`, `npm run knip`,
+`npm run knip:production` und `npm run jscpd` auf, der Job `dashboard`
+`npm run typecheck`, `npm run lint`, `npm run check:licenses`, `npm run knip`,
+`npm run knip:production` und `npm run jscpd`. Der Job `config` ruft
+`scripts/check-config-parity.mjs` auf.
 
 ## Unkraut
 
@@ -337,14 +338,13 @@ Applicant form, Tailwind im Dashboard.
 Ein literaler Wert steht nur in der Quelle der Tokens: `src/styles/tokens.css`
 im Applicant form, `@theme` in `dashboard/src/styles/` im Dashboard.
 
-Prüfung im Applicant form: Stylelint mit `color-no-hex` und
+Prüfung im Applicant form: Stylelint mit `color-no-hex`,
 `declaration-property-value-disallowed-list` gegen `rgb`, `rgba` und `hsl` in
-`color`, `background*` und `border*`, in `frontend/.stylelintrc.json`.
-Abgeschaltet sind beide für `src/styles/tokens.css`. Sie laufen im Hook und im
-CI-Job `frontend`. Für Größen ist `unit-disallowed-list` gegen `px`, `em` und
-`rem` außerhalb von `tokens.css` noch nicht eingeschaltet, #132 schaltet sie
-ein. Ein `style`-Attribut umgeht die Tokens, siehe
-[Kein `style`-Attribut](#kein-style-attribut).
+`color`, `background*` und `border*` sowie `unit-disallowed-list` gegen `px`,
+`em` und `rem` (mit Ausnahme von `px` für `width` in `@media`-Bedingungen), in
+`frontend/.stylelintrc.json`. Alle drei Regeln sind für `src/styles/tokens.css`
+abgeschaltet. Sie laufen im Hook und im CI-Job `frontend`. Ein `style`-Attribut
+umgeht die Tokens, siehe [Kein `style`-Attribut](#kein-style-attribut).
 
 Prüfung im Dashboard: `eslint-plugin-better-tailwindcss` mit
 `no-restricted-classes`, noch nicht eingeschaltet. Die Regel verbietet jeden
@@ -369,10 +369,11 @@ braucht eine neue Entscheidung, ein Issue dafür gibt es noch nicht.
 
 Prüfung im Applicant form: Stylelint mit
 `media-feature-name-value-allowed-list`, das für `width` nur 640, 900 und
-1024 px erlaubt, noch nicht eingeschaltet. #132 schaltet es ein. Prüfung im
-Dashboard: `no-restricted-classes` aus dem Abschnitt
-[Literale Werte](#literale-werte-nur-in-der-quelle-der-tokens) trifft auch
-Varianten wie `min-[400px]:`, noch nicht eingeschaltet. #133 schaltet es ein.
+1024 px erlaubt, eingeschaltet in `frontend/.stylelintrc.json`, im Hook und im
+CI-Job `frontend`. Prüfung im Dashboard: `no-restricted-classes` aus dem
+Abschnitt [Literale Werte](#literale-werte-nur-in-der-quelle-der-tokens) trifft
+auch Varianten wie `min-[400px]:`, noch nicht eingeschaltet. #133 schaltet es
+ein.
 
 ### `tokens.css` ist die Quelle für `token.json`
 
@@ -380,9 +381,10 @@ Varianten wie `min-[400px]:`, noch nicht eingeschaltet. #133 schaltet es ein.
 stammen. Weicht ein Primitiv in `token.json` ab, wird `token.json`
 korrigiert.
 
-Prüfung: ein Skript in CI vergleicht die Primitive beider Dateien und
-scheitert bei einer Abweichung, noch nicht eingeschaltet. #132 schaltet es
-ein.
+Prüfung: `npm run check:token-json` (`frontend/scripts/check-token-json.mjs`),
+eingeschaltet im CI-Job `frontend`. Das Skript vergleicht die bestätigten
+Primitive beider Dateien und scheitert bei einer Abweichung oder einem
+unbekannten `confirmed`-Eintrag.
 
 ## Ausnahmen der Kopien
 
