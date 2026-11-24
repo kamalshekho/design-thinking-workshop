@@ -39,6 +39,9 @@ form is fully usable before the Java service exists.
 | `npm run lint` / `lint:fix`           | ESLint                                  |
 | `npm run stylelint` / `stylelint:fix` | Stylelint over CSS modules              |
 | `npm run format` / `format:check`     | Prettier                                |
+| `npm run check:tokens`                | Tokens in `tokens.css` nothing reads    |
+| `npm run knip` / `knip:production`    | Dead files, exports and dependencies    |
+| `npm run jscpd`                       | Clones of 50+ tokens in production code |
 | `npm test` / `test:watch`             | Vitest                                  |
 | `npm run storybook`                   | Component workbench on port 6006        |
 | `npm run build-storybook`             | Static Storybook build                  |
@@ -279,8 +282,9 @@ in either app to pick up the new hook.
 CI is one workflow, `.github/workflows/ci.yml`, run on every pull request and
 every push to `main`. Its `changes` job decides which of the other jobs run:
 
-- `frontend` runs typecheck, ESLint, Stylelint, format check, tests, the build
-  and `npm run size`, then uploads `dist` for 7 days. It runs when
+- `frontend` runs typecheck, ESLint, Stylelint, the token check, knip in both
+  modes, jscpd, format check, tests, the build and `npm run size`, then uploads
+  `dist` for 7 days. It runs when
   `frontend/`, `eslint.base.mjs`, `.prettierrc.json`, `scripts/` or `ci.yml`
   changes.
 - `config` runs `scripts/check-config-parity.mjs`, which checks that the form
