@@ -105,6 +105,7 @@ Two more conventions:
 **A component in `components/ui/` does not know the domain.** It receives
 finished strings as props. It may not import from `content/` or `features/` —
 ESLint rejects that import.
+See also [Importrichtung und Barrel-Dateien](../docs/STANDARD.md#importrichtung-und-barrel-dateien).
 
 Two reasons, and the second is the one that matters:
 
