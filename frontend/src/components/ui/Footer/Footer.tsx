@@ -6,14 +6,14 @@ import { cx } from '../../../lib/cx';
 import tapTargetStyles from '../tapTarget.module.css';
 import styles from './Footer.module.css';
 
-export interface FooterKontakt {
+interface FooterKontakt {
   title: string;
   talkToUsLabel: string;
   talkToUsHref?: string;
   address: string[];
 }
 
-export interface FooterRechtliches {
+interface FooterRechtliches {
   title: string;
   impressumLabel: string;
   impressumHref?: string;
@@ -21,7 +21,7 @@ export interface FooterRechtliches {
   datenschutzHref?: string;
 }
 
-export interface FooterContent {
+interface FooterContent {
   kontakt: FooterKontakt;
   rechtliches: FooterRechtliches;
   donateLabel: string;

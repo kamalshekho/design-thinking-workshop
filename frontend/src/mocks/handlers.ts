@@ -1,7 +1,5 @@
 import { http, HttpResponse } from 'msw';
 
-import type { ApplicationRequest } from '../features/application-form/api';
-
 /**
  * The backend as described in ../../API.md, standing in until the real one
  * exists. These handlers are the executable version of that contract: if the
@@ -33,7 +31,10 @@ export const handlers = [
   ),
 
   http.post('*/api/v1/applications', async ({ request }) => {
-    const body = (await request.json()) as ApplicationRequest;
+    const body = (await request.json()) as {
+      submissionId: string;
+      website: string;
+    };
 
     // Honeypot filled means a bot: answer 201 and store nothing, so the bot
     // learns nothing from the response.

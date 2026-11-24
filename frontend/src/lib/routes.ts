@@ -7,7 +7,7 @@
  * link and never reach the applications endpoint; every other selection is a
  * category, loaded from the backend.
  */
-export const FIXED_ROUTES = ['COMMUNITY', 'SUPPORTING_MEMBER'] as const;
+const FIXED_ROUTES = ['COMMUNITY', 'SUPPORTING_MEMBER'] as const;
 
 export type FixedRoute = (typeof FIXED_ROUTES)[number];
 

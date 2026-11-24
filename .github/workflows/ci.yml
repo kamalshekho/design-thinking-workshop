@@ -95,6 +95,18 @@ jobs:
       - name: Lint styles
         run: npm run stylelint
 
+      - name: Check unused tokens
+        run: npm run check:tokens
+
+      - name: Check dead code
+        run: npm run knip
+
+      - name: Check exports only tests use
+        run: npm run knip:production
+
+      - name: Check duplicates
+        run: npm run jscpd
+
       - name: Check formatting
         run: npm run format:check
 

@@ -3,11 +3,12 @@ import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../../lib/cx';
 import styles from './Button.module.css';
 
-export type ButtonVariant =
-  'primary' | 'secondary' | 'route-blue' | 'route-purple';
-export type ButtonWidth = 'auto' | 'full';
+type ButtonVariant = 'primary' | 'secondary' | 'route-blue' | 'route-purple';
+type ButtonWidth = 'auto' | 'full';
 
-const ROUTE_VARIANT_CLASS: Partial<Record<ButtonVariant, string>> = {
+const VARIANT_CLASS: Record<ButtonVariant, string | undefined> = {
+  primary: styles.primary,
+  secondary: styles.secondary,
   'route-blue': styles.routeBlue,
   'route-purple': styles.routePurple,
 };
@@ -46,10 +47,9 @@ export function Button({
   width = 'auto',
   ...buttonProps
 }: ButtonProps) {
-  const variantClass = ROUTE_VARIANT_CLASS[variant] ?? styles[variant];
   const classNames = cx(
     styles.button,
-    variantClass,
+    VARIANT_CLASS[variant],
     width === 'full' ? styles.fullWidth : null,
     className,
   );

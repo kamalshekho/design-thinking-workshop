@@ -20,10 +20,11 @@ betrifft, und verweisen für alles andere hierher.
 
 ESLint- und Stylelint-Regeln, die jede Datei für sich prüfen, laufen im
 pre-commit-Hook und in CI. `tsc` und `scripts/check-config-parity.mjs` laufen
-nur in CI. `knip`, `jscpd` und die Skripte für Tokens und `THIRD_PARTY_LICENSES`
-gibt es noch nicht. Sobald #127, #128 und #132 sie einschalten, laufen sie
-ebenfalls nur in CI. Der Grund: lint-staged sieht nur die gestagten Dateien, und
-eine Prüfung über das ganze Projekt macht den Hook langsam.
+nur in CI. Ebenfalls nur in CI laufen im Applicant form `knip`, `jscpd` und das
+Skript für ungenutzte Tokens. Im Dashboard schalten #128 und #132 `knip`,
+`jscpd` und das Skript für `THIRD_PARTY_LICENSES` ein, auch sie laufen dann nur
+in CI. Der Grund: lint-staged sieht nur die gestagten Dateien, und eine Prüfung
+über das ganze Projekt macht den Hook langsam.
 
 Der Hook `.husky/pre-commit` ist für beide Anwendungen derselbe. Hat eine
 Anwendung gestagte Dateien, ruft er ihr lint-staged mit `.lintstagedrc.json`
@@ -35,9 +36,10 @@ Stylelint hat das Dashboard nicht. Ist lint-staged in einer Anwendung nicht
 installiert, überspringt der Hook sie mit einer Warnung.
 
 CI ist der Workflow `.github/workflows/ci.yml`. Der Job `frontend` ruft
-`npm run typecheck`, `npm run lint` und `npm run stylelint` auf, der Job
-`dashboard` `npm run typecheck` und `npm run lint`. Der Job `config` ruft
-`scripts/check-config-parity.mjs` auf.
+`npm run typecheck`, `npm run lint`, `npm run stylelint`,
+`npm run check:tokens`, `npm run knip`, `npm run knip:production` und
+`npm run jscpd` auf, der Job `dashboard` `npm run typecheck` und
+`npm run lint`. Der Job `config` ruft `scripts/check-config-parity.mjs` auf.
 
 ## Unkraut
 
@@ -47,8 +49,8 @@ Unkraut ist Code und Text, den niemand benutzt oder der eine andere Quelle
 wiederholt: überflüssige Kommentare, toter Code, ungenutzte Teile der Kopien,
 Duplikate und Verweise auf etwas, das es nicht gibt. Die Regeln gelten auch für
 den Bestand. Je Anwendung entfernt ein Issue das gefundene Unkraut und schaltet
-die Prüfungen im selben Pull Request ein, sonst sind sie ab dem ersten Lauf rot:
-#127 im Applicant form, #128 im Dashboard.
+die Prüfungen im selben Pull Request ein, sonst sind sie ab dem ersten Lauf rot.
+Im Applicant form hat #127 das erledigt, im Dashboard folgt #128.
 
 Stilfragen sind kein Unkraut. Größen außerhalb von `tokens.css`, `as`,
 Tailwind-Klassen mit beliebigem Wert, deutsche Bezeichner und Abweichungen
@@ -77,15 +79,15 @@ Das bleibt Aufgabe des Reviews.
 Offene Arbeit steht in einem Issue, nicht im Code. TODO, FIXME und HACK sind
 verboten.
 
-Prüfung: `no-warning-comments`, noch nicht eingeschaltet. #127 schaltet sie im
-Applicant form ein, #128 im Dashboard.
+Prüfung: `no-warning-comments` mit den Wörtern todo, fixme und hack, im
+Applicant form eingeschaltet. #128 schaltet sie im Dashboard ein.
 
 ### Auskommentierter Code
 
 Auskommentierter Code wird gelöscht.
 
-Prüfung: `sonarjs/no-commented-code`, noch nicht eingeschaltet. #127 schaltet
-sie im Applicant form ein, #128 im Dashboard.
+Prüfung: `sonarjs/no-commented-code`, im Applicant form eingeschaltet. #128
+schaltet sie im Dashboard ein.
 
 ### `eslint-disable`
 
@@ -94,9 +96,9 @@ Verstoß mehr abschaltet, wird gelöscht. Eine Ausnahme von einer Regel dieses
 Standards ist nur ein `eslint-disable` mit Begründung.
 
 Prüfung: `@eslint-community/eslint-comments/require-description` und
-`linterOptions.reportUnusedDisableDirectives: 'error'`, beide noch nicht
-eingeschaltet. #127 schaltet sie im Applicant form ein, #128 im Dashboard. Heute
-meldet ESLint ein überflüssiges `eslint-disable` nur als Warnung.
+`linterOptions.reportUnusedDisableDirectives: 'error'`, beide im Applicant form
+eingeschaltet. #128 schaltet sie im Dashboard ein. Bis dahin meldet ESLint dort
+ein überflüssiges `eslint-disable` nur als Warnung.
 
 ### Kopien aus Untitled UI
 
@@ -116,9 +118,11 @@ den nur die eigene Datei nutzt, entfällt. Ein Export, den nur Tests nutzen,
 ist ebenfalls Unkraut, denn der Test prüft das öffentliche Verhalten. Nur
 `test/` und `mocks/` exportieren für Tests.
 
-Prüfung: `knip` und `knip --production` in CI, noch nicht eingeschaltet. #127
-schaltet sie im Applicant form ein, #128 im Dashboard. Die Konfiguration von
-`knip` wird dann `public/mockServiceWorker.js` ignorieren.
+Prüfung: `npm run knip` und `npm run knip:production` in CI, im Applicant form
+eingeschaltet. #128 schaltet sie im Dashboard ein. Die Konfiguration steht in
+`frontend/knip.jsonc` und ignoriert `public/mockServiceWorker.js`. Im
+Produktionsmodus zählen Tests, Stories, `src/test` und `src/mocks` nicht mit,
+deshalb meldet `knip --production` einen Export, den nur sie nutzen.
 
 ### CSS
 
@@ -126,8 +130,14 @@ Ein ungenutzter Token und eine ungenutzte Klasse eines CSS-Moduls sind
 Unkraut.
 
 Prüfung: `eslint-plugin-css-modules` mit `no-unused-class` und `no-undef-class`,
-dazu ein Skript in CI für ungenutzte Tokens. Beides ist noch nicht
-eingeschaltet, #127 schaltet es im Applicant form ein.
+dazu `npm run check:tokens` in CI für ungenutzte Tokens. Beides ist im
+Applicant form eingeschaltet. Das Skript zählt einen Token, den nur die
+Definition eines anderen Tokens liest, nur dann als genutzt, wenn dieser
+andere Token genutzt wird.
+
+Das Plugin kann Media Queries in Bereichsschreibweise wie `(width <= 640px)`
+nicht lesen und überspringt ein solches Modul ohne Meldung. Die Module von
+Footer, Header, RoutePanel und ApplicationForm prüft deshalb nur das Review.
 
 ### Duplikate
 
@@ -135,9 +145,9 @@ Produktionscode enthält keine Klone, die Kopien eingeschlossen. Tests sind
 ausgenommen, weil ein wiederholter Arrange-Block im Test besser lesbar ist als
 eine Hilfsfunktion.
 
-Prüfung: `jscpd` in CI mit der Schwelle von 50 Tokens. Jeder Klon lässt den Lauf
-scheitern. Noch nicht eingeschaltet, #127 schaltet es im Applicant form ein,
-#128 im Dashboard.
+Prüfung: `npm run jscpd` in CI mit der Schwelle von 50 Tokens. Jeder Klon lässt
+den Lauf scheitern. Im Applicant form eingeschaltet, die Konfiguration steht in
+`frontend/.jscpd.json`. #128 schaltet es im Dashboard ein.
 
 ### Verweise auf Nichtvorhandenes
 

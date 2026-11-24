@@ -1,0 +1,9 @@
+/**
+ * Height and inline padding of the one-line controls, input and select. The
+ * textarea sets its own in Textarea.module.css.
+ */
+
+.singleLine {
+  min-height: var(--field-height);
+  padding: 0 var(--control-padding-inline);
+}

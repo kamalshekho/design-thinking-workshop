@@ -1,9 +1,12 @@
+import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import js from '@eslint/js';
 import boundaries from 'eslint-plugin-boundaries';
+import cssModules from 'eslint-plugin-css-modules';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import sonarjs from 'eslint-plugin-sonarjs';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -161,6 +164,41 @@ export default tseslint.config(
           ],
         },
       ],
+    },
+  },
+
+  /* Weeds from issue #107: code kept in a comment, open work parked in a
+     comment, and an eslint-disable nobody can explain or that no longer
+     disables anything. Git keeps old code and the issue tracker keeps open
+     work. Issue #128 moves this block to eslint.base.mjs. */
+  {
+    linterOptions: { reportUnusedDisableDirectives: 'error' },
+    plugins: {
+      sonarjs,
+      '@eslint-community/eslint-comments': eslintComments,
+    },
+    rules: {
+      'sonarjs/no-commented-code': 'error',
+      'no-warning-comments': [
+        'error',
+        { terms: ['todo', 'fixme', 'hack'], location: 'anywhere' },
+      ],
+      '@eslint-community/eslint-comments/require-description': 'error',
+    },
+  },
+
+  /* A CSS module class that no component reads is dead, and a class a
+     component reads but the module lacks renders as undefined. Neither shows
+     up in the type check, because Vite types a CSS module as a plain record.
+     The plugin's CSS parser fails on range media queries such as
+     `(width <= 640px)` and then skips the module without a report. That
+     leaves Footer, Header, RoutePanel and ApplicationForm unchecked. */
+  {
+    files: ['src/**/*.tsx'],
+    plugins: { 'css-modules': cssModules },
+    rules: {
+      'css-modules/no-unused-class': 'error',
+      'css-modules/no-undef-class': 'error',
     },
   },
 

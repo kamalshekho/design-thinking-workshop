@@ -28,7 +28,7 @@ export interface Category {
   label: string;
 }
 
-export interface ApplicationRequest {
+interface ApplicationRequest {
   submissionId: string;
   categoryId: string;
   name: string;
@@ -40,7 +40,7 @@ export interface ApplicationRequest {
   website: string;
 }
 
-export interface ServerFieldError {
+interface ServerFieldError {
   field: string;
   code: string;
 }
@@ -50,7 +50,7 @@ export type SubmitResult =
   | { status: 'field-errors'; errors: ServerFieldError[] }
   | { status: 'failed'; code: SubmitErrorCode };
 
-export function buildApplicationRequest(
+function buildApplicationRequest(
   values: ApplicationValues,
   submissionId: string,
 ): ApplicationRequest {

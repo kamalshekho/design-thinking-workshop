@@ -7,7 +7,7 @@ import styles from './Field.module.css';
  * to render a control inside a Field — it is what guarantees the label, hint
  * and error are actually announced.
  */
-export interface FieldControlProps {
+interface FieldControlProps {
   id: string;
   'aria-describedby': string | undefined;
   'aria-invalid': boolean | undefined;
@@ -27,9 +27,8 @@ interface FieldProps {
 /**
  * Label, control, hint and inline error as one block.
  *
- * This component knows nothing about the domain: it receives finished strings.
- * That is what lets the same field be reused by the English staff dashboard
- * later (see README.md, "Component rules").
+ * This component knows nothing about the domain: it receives finished strings
+ * (see README.md, "Component rules").
  */
 export function Field({
   label,

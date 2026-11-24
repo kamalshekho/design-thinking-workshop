@@ -39,6 +39,9 @@ form is fully usable before the Java service exists.
 | `npm run lint` / `lint:fix`           | ESLint                                  |
 | `npm run stylelint` / `stylelint:fix` | Stylelint over CSS modules              |
 | `npm run format` / `format:check`     | Prettier                                |
+| `npm run check:tokens`                | Tokens in `tokens.css` nothing reads    |
+| `npm run knip` / `knip:production`    | Dead files, exports and dependencies    |
+| `npm run jscpd`                       | Clones of 50+ tokens in production code |
 | `npm test` / `test:watch`             | Vitest                                  |
 | `npm run storybook`                   | Component workbench on port 6006        |
 | `npm run build-storybook`             | Static Storybook build                  |
@@ -195,9 +198,11 @@ specified wording.
 Category labels are backend-owned data because staff members can maintain them
 (`A12`).
 
-Some strings — most error messages — were written for this implementation and
-are **not yet in `DESIGN.md`**. They are marked in `de.ts` and still need a copy
-review.
+Some strings, most error messages among them, were written for this
+implementation and are **not yet in `DESIGN.md`**. Their comment in `de.ts`
+starts with "Not yet in DESIGN.md, see issue #148". The copy review itself is
+tracked in [#148](https://github.com/kamalshekho/design-thinking-workshop/issues/148),
+so the code carries no review notes of its own.
 
 The applicant form is German only; the English version and its language switch
 were removed (`A22`). Backend-managed category labels are shown as the API
@@ -277,8 +282,9 @@ in either app to pick up the new hook.
 CI is one workflow, `.github/workflows/ci.yml`, run on every pull request and
 every push to `main`. Its `changes` job decides which of the other jobs run:
 
-- `frontend` runs typecheck, ESLint, Stylelint, format check, tests, the build
-  and `npm run size`, then uploads `dist` for 7 days. It runs when
+- `frontend` runs typecheck, ESLint, Stylelint, the token check, knip in both
+  modes, jscpd, format check, tests, the build and `npm run size`, then uploads
+  `dist` for 7 days. It runs when
   `frontend/`, `eslint.base.mjs`, `.prettierrc.json`, `scripts/` or `ci.yml`
   changes.
 - `config` runs `scripts/check-config-parity.mjs`, which checks that the form

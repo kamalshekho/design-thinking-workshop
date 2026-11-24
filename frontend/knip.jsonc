@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  // Copied in by `msw init` and served from public/ in development only.
+  "ignore": ["public/mockServiceWorker.js"],
+  // knip --production leaves out the token script, tests, stories, src/test
+  // and src/mocks, so it reports an export that only they read.
+  "project": [
+    "**/*.{js,mjs,ts,tsx,mdx}!",
+    "!scripts/**!",
+    "!src/test/**!",
+    "!src/mocks/**!",
+    "!src/**/*.test.{ts,tsx}!",
+    "!src/**/*.stories.tsx!",
+  ],
+  // The root .husky/pre-commit runs lint-staged, outside knip's view.
+  "ignoreDependencies": ["lint-staged"],
+}
