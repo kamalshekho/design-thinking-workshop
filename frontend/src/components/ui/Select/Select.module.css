@@ -4,7 +4,13 @@
 
 .select {
   display: block;
-  padding-right: calc(var(--control-padding-inline) * 2);
+  padding-right: calc(
+    var(--select-arrow-inset) + var(--select-arrow-size) +
+      var(--select-arrow-gap)
+  );
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-family: var(--font-input);
   font-size: var(--wp--preset--font-size--medium);
   line-height: normal;

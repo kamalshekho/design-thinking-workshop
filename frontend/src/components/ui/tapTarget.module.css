@@ -1,0 +1,18 @@
+/**
+ * Grows a control's hit area to at least --tap-target-min without changing
+ * its look or layout (DESIGN.md section 40).
+ */
+
+.tapTarget {
+  position: relative;
+}
+
+.tapTarget::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, var(--tap-target-min));
+  height: max(100%, var(--tap-target-min));
+  transform: translate(-50%, -50%);
+}

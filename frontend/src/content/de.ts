@@ -134,7 +134,7 @@ export const de = {
   supportingMemberPanel: {
     title: 'Du unterstützt uns direkt.',
     body: 'Ohne Bewerbung und ohne Wartezeit: Wenn du Fördermitglied werden möchtest, findest du hier alle Informationen und den kurzen Antrag. So hilfst du, digitale Zivilcourage langfristig möglich zu machen.',
-    cta: 'Zum Fördermitgliedsantrag',
+    cta: 'Zum Förder\u00ADmitglieds\u00ADantrag',
   },
 
   /** DESIGN.md section 30 */
