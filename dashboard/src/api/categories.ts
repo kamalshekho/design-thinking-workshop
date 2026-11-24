@@ -12,33 +12,31 @@
  * (ADR-0006).
  */
 
+import * as z from 'zod/v4-mini';
+
 import type { Category, CategoryDraft } from '@/domain/category';
 
 import { request, requestNoContent } from './transport';
 
-type CategoryWire = {
-  id: string;
-  name: string;
-  description: string;
-  active: boolean;
-};
+const categoryWireSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  active: z.boolean(),
+});
 
-function toCategory(wire: CategoryWire): Category {
-  return {
-    id: wire.id,
-    name: wire.name,
-    description: wire.description,
-    active: wire.active,
-  };
-}
+const categoriesResponseSchema = z.object({
+  categories: z.array(categoryWireSchema),
+});
 
 export async function fetchCategories(): Promise<Category[]> {
-  const { categories } = await request<{ categories: CategoryWire[] }>(
+  const { categories } = await request(
     'GET',
     '/categories',
+    categoriesResponseSchema,
   );
 
-  return categories.map(toCategory);
+  return categories;
 }
 
 /**
@@ -52,7 +50,7 @@ export async function fetchCategories(): Promise<Category[]> {
  * against rows the dashboard may not have refetched yet.
  */
 export async function createCategory(draft: CategoryDraft): Promise<Category> {
-  return toCategory(await request<CategoryWire>('POST', '/categories', draft));
+  return request('POST', '/categories', categoryWireSchema, draft);
 }
 
 /**
@@ -65,12 +63,11 @@ export async function patchCategory(
   id: string,
   change: Partial<CategoryDraft>,
 ): Promise<Category> {
-  return toCategory(
-    await request<CategoryWire>(
-      'PATCH',
-      `/categories/${encodeURIComponent(id)}`,
-      change,
-    ),
+  return request(
+    'PATCH',
+    `/categories/${encodeURIComponent(id)}`,
+    categoryWireSchema,
+    change,
   );
 }
 
@@ -94,11 +91,12 @@ export async function deleteCategory(id: string): Promise<void> {
 export async function putCategoryOrder(
   ids: readonly string[],
 ): Promise<Category[]> {
-  const { categories } = await request<{ categories: CategoryWire[] }>(
+  const { categories } = await request(
     'PUT',
     '/categories/order',
+    categoriesResponseSchema,
     { ids },
   );
 
-  return categories.map(toCategory);
+  return categories;
 }

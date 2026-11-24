@@ -14,6 +14,8 @@
  * faithful to the response.
  */
 
+import * as z from 'zod/v4-mini';
+
 import type { Credentials } from '@/domain/signIn';
 import type { StaffMember } from '@/domain/staffMember';
 
@@ -24,18 +26,14 @@ import { request, requestNoContent } from './transport';
  * dashboard renders initials and photo upload is not a feature of any screen
  * (`API.md`).
  */
-type StaffMemberWire = {
-  id: string;
-  name: string;
-  email: string;
-};
-
-function toStaffMember(wire: StaffMemberWire): StaffMember {
-  return { id: wire.id, name: wire.name, email: wire.email };
-}
+const staffMemberWireSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+});
 
 export async function fetchSignedInStaffMember(): Promise<StaffMember> {
-  return toStaffMember(await request<StaffMemberWire>('GET', '/me'));
+  return request('GET', '/me', staffMemberWireSchema);
 }
 
 /**
@@ -45,9 +43,7 @@ export async function fetchSignedInStaffMember(): Promise<StaffMember> {
  * whichever arrives; it may not answer "is this address registered?".
  */
 export async function signIn(credentials: Credentials): Promise<StaffMember> {
-  return toStaffMember(
-    await request<StaffMemberWire>('POST', '/session', credentials),
-  );
+  return request('POST', '/session', staffMemberWireSchema, credentials);
 }
 
 /** `204`, and `204` again when there was no Sign-in to end. */

@@ -46,6 +46,15 @@ describe('parseApplicationEvent', () => {
   it('drops a body that is not the JSON it claimed to be', () => {
     expect(parseApplicationEvent('application.updated', 'not json')).toBeNull();
   });
+
+  it('drops valid JSON that does not match the Application shape', () => {
+    expect(
+      parseApplicationEvent(
+        'application.updated',
+        JSON.stringify({ id: 'application-1', status: 'UNKNOWN_STATUS' }),
+      ),
+    ).toBeNull();
+  });
 });
 
 describe('applyApplicationEvent', () => {

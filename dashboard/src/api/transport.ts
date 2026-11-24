@@ -21,8 +21,15 @@
  * absolute and same-origin in development and in production alike (issue #29).
  */
 
+import * as z from 'zod/v4-mini';
+
 import type { ApiFieldProblem } from './problem';
 import { ApiProblem } from './problem';
+
+// Zod otherwise probes `new Function` to decide whether it may compile
+// parsers, and the Content-Security-Policy in nginx forbids eval, so the probe
+// shows up as a violation in the console.
+z.config({ jitless: true });
 
 /** Every path in this contract sits under it (`API.md`, "Scope"). */
 export const STAFF_API = '/api/v1/staff';
@@ -32,25 +39,26 @@ export const STAFF_API = '/api/v1/staff';
  * and `detail` are deliberately ignored — they are English, and the dashboard
  * words the `code` itself (ADR-0003).
  */
-type ProblemBody = {
-  code?: unknown;
-  errors?: unknown;
-};
+const fieldProblemSchema = z.object({
+  field: z.string(),
+  code: z.string(),
+});
 
-function fieldProblemsIn(body: ProblemBody): ApiFieldProblem[] {
-  if (!Array.isArray(body.errors)) {
+const problemBodySchema = z.object({
+  code: z.optional(z.unknown()),
+  errors: z.optional(z.array(z.unknown())),
+});
+
+function fieldProblemsIn(
+  errors: readonly unknown[] | undefined,
+): ApiFieldProblem[] {
+  if (errors === undefined) {
     return [];
   }
 
-  return body.errors.flatMap((entry: unknown) => {
-    if (typeof entry !== 'object' || entry === null) {
-      return [];
-    }
-
-    const { field, code } = entry as { field?: unknown; code?: unknown };
-    return typeof field === 'string' && typeof code === 'string'
-      ? [{ field, code }]
-      : [];
+  return errors.flatMap((entry) => {
+    const parsed = fieldProblemSchema.safeParse(entry);
+    return parsed.success ? [parsed.data] : [];
   });
 }
 
@@ -61,36 +69,33 @@ function fieldProblemsIn(body: ProblemBody): ApiFieldProblem[] {
  * error where a Staff member needs to know the request failed.
  */
 async function problemFrom(response: Response): Promise<ApiProblem> {
-  let body: ProblemBody = {};
+  let raw: unknown;
 
   try {
-    body = (await response.json()) as ProblemBody;
+    raw = await response.json();
   } catch {
-    body = {};
+    raw = undefined;
   }
 
+  const parsed = problemBodySchema.safeParse(raw);
+  const body = parsed.success ? parsed.data : {};
   const retryAfter = Number(response.headers.get('Retry-After'));
 
   return new ApiProblem({
     status: response.status,
     code: typeof body.code === 'string' ? body.code : undefined,
-    errors: fieldProblemsIn(body),
+    errors: fieldProblemsIn(body.errors),
     retryAfterSeconds: Number.isFinite(retryAfter) ? retryAfter : undefined,
   });
 }
 
 type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
 
-/**
- * Sends one request and returns its decoded body. `T` is what the endpoint
- * answers; an endpoint that answers `204 No Content` is `requestNoContent`
- * below rather than this.
- */
-export async function request<T>(
+async function send(
   method: Method,
   path: string,
   body?: unknown,
-): Promise<T> {
+): Promise<Response> {
   const response = await fetch(`${STAFF_API}${path}`, {
     method,
     credentials: 'same-origin',
@@ -106,11 +111,39 @@ export async function request<T>(
     throw await problemFrom(response);
   }
 
-  if (response.status === 204) {
-    return null as T;
+  return response;
+}
+
+/**
+ * Sends one request and validates its decoded body against `schema`. A body
+ * that is not JSON or does not match `schema` becomes an `ApiProblem` without
+ * a `code`, so a `ZodError` never reaches a caller and the screen falls back
+ * to the general error wording. An endpoint that answers `204 No Content` is
+ * `requestNoContent` below rather than this.
+ */
+export async function request<Schema extends z.ZodMiniType>(
+  method: Method,
+  path: string,
+  schema: Schema,
+  body?: unknown,
+): Promise<z.output<Schema>> {
+  const response = await send(method, path, body);
+
+  let raw: unknown;
+
+  try {
+    raw = await response.json();
+  } catch {
+    throw new ApiProblem({ status: response.status });
   }
 
-  return (await response.json()) as T;
+  const parsed = schema.safeParse(raw);
+
+  if (!parsed.success) {
+    throw new ApiProblem({ status: response.status });
+  }
+
+  return parsed.data;
 }
 
 /**
@@ -122,5 +155,5 @@ export async function requestNoContent(
   path: string,
   body?: unknown,
 ): Promise<void> {
-  await request<null>(method, path, body);
+  await send(method, path, body);
 }
