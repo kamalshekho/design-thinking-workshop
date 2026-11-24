@@ -11,24 +11,6 @@
  * tsconfigRootDir is the app's own folder. import.meta.dirname here would be
  * the repo root, where no tsconfig.json lives.
  */
-/**
- * Bans every re-export, `export type … from` and `export * from` included:
- * a module is imported from the file that defines it, and neither app has
- * barrel files (ADR-0008). Exported because a later block that sets
- * no-restricted-syntax replaces these options, so an app adding its own
- * selectors has to list these with them.
- */
-export const reExportBan = [
-  {
-    selector: 'ExportNamedDeclaration[source]',
-    message: 'Import from the defining file instead of re-exporting it.',
-  },
-  {
-    selector: 'ExportAllDeclaration',
-    message: 'Import from the defining file instead of re-exporting it.',
-  },
-];
-
 export function sharedConfig({
   js,
   tseslint,
@@ -103,3 +85,21 @@ export function sharedConfig({
     },
   );
 }
+
+/**
+ * Bans every re-export, `export type … from` and `export * from` included:
+ * a module is imported from the file that defines it, and neither app has
+ * barrel files (ADR-0008). Exported because a later block that sets
+ * no-restricted-syntax replaces these options, so an app adding its own
+ * selectors has to list these with them.
+ */
+export const reExportBan = [
+  {
+    selector: 'ExportNamedDeclaration[source]',
+    message: 'Import from the defining file instead of re-exporting it.',
+  },
+  {
+    selector: 'ExportAllDeclaration',
+    message: 'Import from the defining file instead of re-exporting it.',
+  },
+];

@@ -44,8 +44,9 @@ const UNTITLED_UI_COPIES = [
   'src/utils/is-react-component.ts',
 ];
 
-/* What shared UI code may import: the Untitled UI copies, components/shared,
-   components/ui and our own files under components/application. */
+/* The layers shared UI code may import. Used by the components element
+   (everything under components/) and by the Untitled UI copies, some of which
+   sit in hooks/ and utils/. */
 const SHARED_UI = ['components', 'utils', 'hooks', 'content', 'domain'];
 
 /* Every production element. app and the entry point may import all of them. */
