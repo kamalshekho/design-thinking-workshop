@@ -304,9 +304,9 @@ licence check, knip in both modes, jscpd, format check, tests, the build and
 `eslint.base.mjs`, `.prettierrc.json`, `scripts/` or `ci.yml` changes. The
 `config` job runs `scripts/check-config-parity.mjs`, which checks that the
 dashboard and the form share compiler options, tool versions and Node version,
-and audits the workflows with actionlint and zizmor. The gate job `ci` fails when any job
-failed or was cancelled and counts a skipped job as passed, so it carries the
-result of the whole run.
+and audits the workflows with actionlint and zizmor. The gate job `ci` fails
+when any job failed or was cancelled and counts a skipped job as passed, so it
+carries the result of the whole run.
 
 ## What does not exist yet
 
