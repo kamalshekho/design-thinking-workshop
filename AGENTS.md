@@ -16,10 +16,9 @@ applicant form.
 
 ## Working on the frontend
 
-[`frontend/README.md`](./frontend/README.md) holds the code conventions,
-component rules and the porting workflow, and it takes precedence over this
-file for anything inside `frontend/`. Three rules are worth naming here because
-they are easy to break from the outside:
+[`frontend/README.md`](./frontend/README.md) holds the porting workflow and
+what concerns the form alone. Three rules are worth naming here because they
+are easy to break from the outside:
 
 - applicant-facing German lives only in `frontend/src/content/de.ts`;
 - literal colours and sizes live only in `frontend/src/styles/tokens.css`;
