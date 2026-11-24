@@ -117,7 +117,9 @@ function CategoriesGrid({
           />
           <TableHead id="status" label={de.categories.columns.status} />
           <TableHead id="usage" label={de.categories.columns.usage} />
-          <TableHead id="actions" aria-label={de.categories.columns.actions} />
+          <TableHead id="actions">
+            <span className="sr-only">{de.categories.columns.actions}</span>
+          </TableHead>
         </TableHeader>
 
         {/*
