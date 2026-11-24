@@ -98,6 +98,9 @@ jobs:
       - name: Check unused tokens
         run: npm run check:tokens
 
+      - name: Check token.json primitives
+        run: npm run check:token-json
+
       - name: Check dead code
         run: npm run knip
 
