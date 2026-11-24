@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { isApiProblem } from './problem';
+import { problemCode } from './problem';
 import { fetchSignedInStaffMember, signIn, signOut } from './session';
 
 function stub(response: Response) {
@@ -49,7 +49,7 @@ describe('the Sign-in', () => {
       (thrown: unknown) => thrown,
     );
 
-    expect(isApiProblem(failure) && failure.code).toBe('UNAUTHENTICATED');
+    expect(problemCode(failure)).toBe('UNAUTHENTICATED');
   });
 
   it('posts the credentials and takes the Staff member from the response', async () => {

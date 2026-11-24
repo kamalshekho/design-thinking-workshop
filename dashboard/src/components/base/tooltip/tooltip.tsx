@@ -1,5 +1,7 @@
 /**
- * Clone path: `components/base/tooltip/tooltip.tsx`, unchanged.
+ * Clone path: `components/base/tooltip/tooltip.tsx`.
+ *
+ * Prop comments that only restate the prop name are dropped.
  */
 
 import type { ReactNode } from 'react';
@@ -19,13 +21,7 @@ import { cx } from '@/utils/cx';
 
 interface TooltipProps
   extends AriaTooltipTriggerComponentProps, Omit<AriaTooltipProps, 'children'> {
-  /**
-   * The title of the tooltip.
-   */
   title: ReactNode;
-  /**
-   * The description of the tooltip.
-   */
   description?: ReactNode;
   /**
    * Whether to show the arrow on the tooltip.

@@ -1,20 +1,7 @@
 /**
- * What a Staff member reads when a request failed. One notice for the whole
- * dashboard, above the screens, for the reason `API.md` gives about bulk
- * actions: a partial failure says so *once*, not once per request.
- *
- * **Two kinds of failure, one slot** (issue #58). A write that was refused has
- * already been rolled back underneath the Staff member; a refetch that was
- * refused has left the list they are looking at standing but stale. Both are
- * things that happened to work that is still on screen, so neither may replace
- * it the way `DashboardGate`'s panel replaces a dashboard that has nothing to
- * show yet.
- *
- * The wordings stay two, because what can be done about them differs. A write
- * has nothing to ask again — the change is gone and the list behind it has
- * already been refetched — so the notice only says what went wrong. A stale
- * list has nothing else worth offering, so it carries the retry the panel has,
- * over exactly the queries that failed.
+ * What a Staff member reads when a request failed: one notice above the
+ * screens for a refused write and a stale list alike, worded two ways.
+ * `README.md`, "How the dashboard talks to the backend", gives the reasons.
  *
  * It is the sign-in screen's rejection block, in the shell: the same border,
  * the same tint and the same `role="alert"`, because it is the same kind of
@@ -22,10 +9,7 @@
  *
  * Dismissable rather than self-clearing on a timer: the wording for
  * `CATEGORY_IN_USE` tells the Staff member what to do instead, and a sentence
- * that removes itself while it is being read is worse than one that waits. If
- * the backend really is gone, `StreamMarker` is saying so all the while —
- * which is the division that keeps the marker out of this: the marker is a
- * state, and a failed request is an event.
+ * that removes itself while it is being read is worse than one that waits.
  *
  * One code never reaches it: a request refused because the Sign-in expired is
  * already answered by the cover coming up over the whole dashboard

@@ -1,8 +1,12 @@
 /**
- * Clone path: `components/application/pagination/pagination-base.tsx`. Only
+ * Clone path: `components/application/pagination/pagination-base.tsx`. One
  * change: a page button's accessible name comes from `content/de.ts` rather
  * than the clone's English `Page n` literal. The pager variants built on this
  * live in `pagination.tsx`.
+ *
+ * Cut: the render-prop and `asChild` branches of `Pagination.Item`, as the
+ * one pager here renders a plain page button. Prop comments that only restate
+ * the prop name are dropped too.
  */
 
 import type { CSSProperties, FC, HTMLAttributes, ReactNode } from 'react';
@@ -19,11 +23,8 @@ import {
 import { de } from '@/content/de';
 
 type PaginationPage = {
-  /** The type of the pagination item. */
   type: 'page';
-  /** The value of the pagination item. */
   value: number;
-  /** Whether the pagination item is the current page. */
   isCurrent: boolean;
 };
 
@@ -35,13 +36,9 @@ type PaginationEllipsisType = {
 type PaginationItemType = PaginationPage | PaginationEllipsisType;
 
 interface PaginationContextType {
-  /** The pages of the pagination. */
   pages: PaginationItemType[];
-  /** The current page of the pagination. */
   currentPage: number;
-  /** The total number of pages. */
   total: number;
-  /** The function to call when the page changes. */
   onPageChange: (page: number) => void;
 }
 
@@ -52,16 +49,11 @@ const PaginationContext = createContext<PaginationContextType | undefined>(
 export interface PaginationRootProps {
   /** Number of sibling pages to show on each side of the current page */
   siblingCount?: number;
-  /** Current active page number */
   page: number;
-  /** Total number of pages */
   total: number;
   children: ReactNode;
-  /** The style of the pagination root. */
   style?: CSSProperties;
-  /** The class name of the pagination root. */
   className?: string;
-  /** Callback function that's called when the page changes with the new page number. */
   onPageChange?: (page: number) => void;
 }
 
@@ -317,29 +309,16 @@ const PaginationNextTrigger: FC<Omit<TriggerProps, 'direction'>> = (props) => (
   <Trigger {...props} direction="next" />
 );
 
-interface PaginationItemRenderProps {
-  isSelected: boolean;
-  onClick: () => void;
+interface PaginationItemProps {
   value: number;
-  'aria-current'?: 'page';
-  'aria-label'?: string;
-}
-
-export interface PaginationItemProps {
-  /** The value of the pagination item. */
-  value: number;
-  /** Whether the pagination item is the current page. */
   isCurrent: boolean;
-  /** The children of the pagination item. Can be a render prop or a valid element. */
-  children?: ReactNode | ((props: PaginationItemRenderProps) => ReactNode);
+  children?: ReactNode;
   /** The style object of the pagination item. */
   style?: CSSProperties;
   /** The class name of the pagination item. */
   className?: string | ((args: { isSelected: boolean }) => string);
   /** The aria label of the pagination item. */
   ariaLabel?: string;
-  /** If true, the child element will be cloned and passed down the prop of the item. */
-  asChild?: boolean;
 }
 
 const PaginationItem = ({
@@ -349,7 +328,6 @@ const PaginationItem = ({
   style,
   className,
   ariaLabel,
-  asChild = false,
 }: PaginationItemProps) => {
   const context = useContext(PaginationContext);
   if (!context) {
@@ -368,41 +346,6 @@ const PaginationItem = ({
 
   const computedClassName =
     typeof className === 'function' ? className({ isSelected }) : className;
-
-  // If the children is a render prop, we need to pass the necessary props to the render prop.
-  if (typeof children === 'function') {
-    return (
-      <>
-        {children({
-          isSelected,
-          onClick: handleClick,
-          value,
-          'aria-current': isCurrent ? 'page' : undefined,
-          'aria-label': ariaLabel || de.pagination.page(value),
-        })}
-      </>
-    );
-  }
-
-  // If the children is a valid element, we need to clone it and pass the necessary props to the cloned element.
-  if (asChild && isValidElement(children)) {
-    return cloneElement(children, {
-      onClick: handleClick,
-      'aria-current': isCurrent ? 'page' : undefined,
-      'aria-label': ariaLabel || de.pagination.page(value),
-      style: {
-        ...(children.props as HTMLAttributes<HTMLElement>).style,
-        ...style,
-      },
-      className:
-        [
-          computedClassName,
-          (children.props as HTMLAttributes<HTMLElement>).className,
-        ]
-          .filter(Boolean)
-          .join(' ') || undefined,
-    } as HTMLAttributes<HTMLElement>);
-  }
 
   return (
     <button

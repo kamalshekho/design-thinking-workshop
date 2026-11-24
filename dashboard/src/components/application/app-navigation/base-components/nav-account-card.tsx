@@ -1,3 +1,19 @@
+/**
+ * Clone path:
+ * `components/application/app-navigation/base-components/nav-account-card.tsx`,
+ * with the account switcher removed: the clone's card lets a person hold
+ * several accounts and add another, and this dashboard has one Staff member
+ * signed in at a time.
+ *
+ * The menu is a React Aria `MenuTrigger` rather than the clone's `Dialog` plus
+ * a hand-written arrow-key handler — it is the same library, and it carries
+ * the keyboard behaviour the hand-written version reimplements.
+ *
+ * Its `Abmelden` item calls `onSignOut`, which ends the session and returns
+ * the application to `LoginScreen` (`A16`). Profil ansehen and Einstellungen
+ * have no screen behind them yet and still do nothing.
+ */
+
 import {
   ChevronSelectorVertical,
   LogOut01,
@@ -20,22 +36,6 @@ import type { StaffMember } from '@/domain/staffMember';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cx } from '@/utils/cx';
 import { initialsOf } from '@/utils/initials';
-
-/**
- * Copied from the Untitled UI clone
- * (`components/application/app-navigation/base-components/nav-account-card.tsx`),
- * with the account switcher removed: the clone's card lets a person hold
- * several accounts and add another, and this dashboard has one Staff member
- * signed in at a time.
- *
- * The menu is a React Aria `MenuTrigger` rather than the clone's `Dialog` plus
- * a hand-written arrow-key handler — it is the same library, and it carries
- * the keyboard behaviour the hand-written version reimplements.
- *
- * Its `Abmelden` item calls `onSignOut`, which ends the session and returns
- * the application to `LoginScreen` (`A16`). Profil ansehen and Einstellungen
- * have no screen behind them yet and still do nothing.
- */
 
 const menuItems: {
   id: string;

@@ -6,42 +6,23 @@
 
 import { PageHeader } from '@/components/shared/page-header';
 import { de } from '@/content/de';
-import type { Application, ApplicationEdit, Owner } from '@/domain/application';
-import type { Category } from '@/domain/category';
 import type { StateChange } from '@/domain/stateChange';
-import type { NotesField } from '@/hooks/useNotesDraft';
 
+import type { OpenApplicationsPanelProps } from './OpenApplicationsPanel';
 import { OpenApplicationsPanel } from './OpenApplicationsPanel';
 import { OverviewStats } from './OverviewStats';
 
-type OverviewScreenProps = {
+type OverviewScreenProps = OpenApplicationsPanelProps & {
   /** The signed-in Staff member's name, for the welcome headline. */
   staffName: string;
-  /** The signed-in Staff member, whom "Übernehmen" on the phone page makes the Owner. */
-  staffMemberId: string;
-  applications: readonly Application[];
   /** The state history behind the three cards' sparklines; only they read it. */
   stateChanges: readonly StateChange[];
-  onEdit: (id: string, change: ApplicationEdit) => void;
-  onDiscard: (ids: ReadonlySet<string>) => void;
-  categories: readonly Category[];
-  owners: readonly Owner[];
-  now: Date;
-  /** The internal-notes draft, for the drawer the panel below opens. */
-  notes: NotesField;
 };
 
 export function OverviewScreen({
   staffName,
-  staffMemberId,
-  applications,
   stateChanges,
-  onEdit,
-  onDiscard,
-  categories,
-  owners,
-  now,
-  notes,
+  ...panel
 }: OverviewScreenProps) {
   return (
     <div className="flex w-full flex-col gap-8">
@@ -52,22 +33,13 @@ export function OverviewScreen({
           subtitle={de.overview.subtitle}
         />
         <OverviewStats
-          applications={applications}
+          applications={panel.applications}
           stateChanges={stateChanges}
-          now={now}
+          now={panel.now}
         />
       </div>
 
-      <OpenApplicationsPanel
-        staffMemberId={staffMemberId}
-        applications={applications}
-        onEdit={onEdit}
-        onDiscard={onDiscard}
-        categories={categories}
-        owners={owners}
-        now={now}
-        notes={notes}
-      />
+      <OpenApplicationsPanel {...panel} />
     </div>
   );
 }

@@ -33,7 +33,7 @@ import { activeSignIn, expireSignIn, NO_SIGN_IN } from '@/domain/signIn';
 
 import { queryKeys } from './keys';
 
-export const signInQuery = queryOptions({
+const signInQuery = queryOptions({
   queryKey: queryKeys.signIn,
   queryFn: async (): Promise<SignIn> => {
     try {

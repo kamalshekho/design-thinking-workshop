@@ -1,17 +1,19 @@
+/**
+ * Clone path:
+ * `components/application/app-navigation/base-components/nav-item.tsx`.
+ *
+ * One change: a string or number `badge` renders as a small pill here instead
+ * of the clone's `Badge` component, which is 417 lines of colour and shape
+ * variants that no screen in this application needs yet.
+ *
+ * Prop comments that only restate the prop name are dropped.
+ */
+
 import { ChevronDown, Share04 } from '@untitledui/icons';
 import type { FC, HTMLAttributes, MouseEventHandler, ReactNode } from 'react';
 import { Link as AriaLink } from 'react-aria-components';
 
 import { cx, sortCx } from '@/utils/cx';
-
-/**
- * Copied from the Untitled UI clone
- * (`components/application/app-navigation/base-components/nav-item.tsx`).
- *
- * One change: a string or number `badge` renders as a small pill here instead
- * of the clone's `Badge` component, which is 417 lines of colour and shape
- * variants that no screen in this application needs yet.
- */
 
 const styles = sortCx({
   root: 'group relative flex h-10 w-full cursor-pointer items-center rounded-md bg-primary outline-focus-ring transition duration-100 ease-linear select-none hover:bg-primary_hover focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2',
@@ -19,23 +21,15 @@ const styles = sortCx({
 });
 
 interface NavItemBaseProps {
-  /** URL to navigate to when the nav item is clicked. */
   href?: string;
-  /** Type of the nav item. */
   type: 'link' | 'collapsible' | 'collapsible-child';
-  /** Icon component to display. */
   icon?: FC<HTMLAttributes<HTMLOrSVGElement>>;
-  /** Badge to display. */
   badge?: ReactNode;
-  /** Whether the nav item is currently active. */
   current?: boolean;
-  /** Whether to truncate the label text. */
   truncate?: boolean;
-  /** Handler for click events. */
   onClick?: MouseEventHandler;
   /** Whether the desktop sidebar shows icons without visible labels. */
   isCollapsed?: boolean;
-  /** Content to display. */
   children?: ReactNode;
 }
 

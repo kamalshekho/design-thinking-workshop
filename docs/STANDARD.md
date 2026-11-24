@@ -20,11 +20,11 @@ betrifft, und verweisen für alles andere hierher.
 
 ESLint- und Stylelint-Regeln, die jede Datei für sich prüfen, laufen im
 pre-commit-Hook und in CI. `tsc` und `scripts/check-config-parity.mjs` laufen
-nur in CI. Ebenfalls nur in CI laufen im Applicant form `knip`, `jscpd` und das
-Skript für ungenutzte Tokens. Im Dashboard schalten #128 und #132 `knip`,
-`jscpd` und das Skript für `THIRD_PARTY_LICENSES` ein, auch sie laufen dann nur
-in CI. Der Grund: lint-staged sieht nur die gestagten Dateien, und eine Prüfung
-über das ganze Projekt macht den Hook langsam.
+nur in CI. Ebenfalls nur in CI laufen in beiden Anwendungen `knip` und `jscpd`,
+im Applicant form dazu das Skript für ungenutzte Tokens und im Dashboard das
+Skript für `THIRD_PARTY_LICENSES`. Der Grund: lint-staged sieht nur die
+gestagten Dateien, und eine Prüfung über das ganze Projekt macht den Hook
+langsam.
 
 Der Hook `.husky/pre-commit` ist für beide Anwendungen derselbe. Hat eine
 Anwendung gestagte Dateien, ruft er ihr lint-staged mit `.lintstagedrc.json`
@@ -38,8 +38,9 @@ installiert, überspringt der Hook sie mit einer Warnung.
 CI ist der Workflow `.github/workflows/ci.yml`. Der Job `frontend` ruft
 `npm run typecheck`, `npm run lint`, `npm run stylelint`,
 `npm run check:tokens`, `npm run knip`, `npm run knip:production` und
-`npm run jscpd` auf, der Job `dashboard` `npm run typecheck` und
-`npm run lint`. Der Job `config` ruft `scripts/check-config-parity.mjs` auf.
+`npm run jscpd` auf, der Job `dashboard` `npm run typecheck`, `npm run lint`,
+`npm run check:licenses`, `npm run knip`, `npm run knip:production` und
+`npm run jscpd`. Der Job `config` ruft `scripts/check-config-parity.mjs` auf.
 
 ## Unkraut
 
@@ -50,7 +51,7 @@ wiederholt: überflüssige Kommentare, toter Code, ungenutzte Teile der Kopien,
 Duplikate und Verweise auf etwas, das es nicht gibt. Die Regeln gelten auch für
 den Bestand. Je Anwendung entfernt ein Issue das gefundene Unkraut und schaltet
 die Prüfungen im selben Pull Request ein, sonst sind sie ab dem ersten Lauf rot.
-Im Applicant form hat #127 das erledigt, im Dashboard folgt #128.
+Im Applicant form hat #127 das erledigt, im Dashboard #128.
 
 Stilfragen sind kein Unkraut. Größen außerhalb von `tokens.css`, `as`,
 Tailwind-Klassen mit beliebigem Wert, deutsche Bezeichner und Abweichungen
@@ -79,15 +80,15 @@ Das bleibt Aufgabe des Reviews.
 Offene Arbeit steht in einem Issue, nicht im Code. TODO, FIXME und HACK sind
 verboten.
 
-Prüfung: `no-warning-comments` mit den Wörtern todo, fixme und hack, im
-Applicant form eingeschaltet. #128 schaltet sie im Dashboard ein.
+Prüfung: `no-warning-comments` mit den Wörtern todo, fixme und hack, in beiden
+Anwendungen eingeschaltet. Die Regel steht in `eslint.base.mjs`.
 
 ### Auskommentierter Code
 
 Auskommentierter Code wird gelöscht.
 
-Prüfung: `sonarjs/no-commented-code`, im Applicant form eingeschaltet. #128
-schaltet sie im Dashboard ein.
+Prüfung: `sonarjs/no-commented-code`, in beiden Anwendungen eingeschaltet. Die
+Regel steht in `eslint.base.mjs`.
 
 ### `eslint-disable`
 
@@ -96,9 +97,9 @@ Verstoß mehr abschaltet, wird gelöscht. Eine Ausnahme von einer Regel dieses
 Standards ist nur ein `eslint-disable` mit Begründung.
 
 Prüfung: `@eslint-community/eslint-comments/require-description` und
-`linterOptions.reportUnusedDisableDirectives: 'error'`, beide im Applicant form
-eingeschaltet. #128 schaltet sie im Dashboard ein. Bis dahin meldet ESLint dort
-ein überflüssiges `eslint-disable` nur als Warnung.
+`linterOptions.reportUnusedDisableDirectives: 'error'`, beide in beiden
+Anwendungen eingeschaltet. Sie stehen in `eslint.base.mjs` und gelten auch für
+die Kopien aus Untitled UI.
 
 ### Kopien aus Untitled UI
 
@@ -118,11 +119,12 @@ den nur die eigene Datei nutzt, entfällt. Ein Export, den nur Tests nutzen,
 ist ebenfalls Unkraut, denn der Test prüft das öffentliche Verhalten. Nur
 `test/` und `mocks/` exportieren für Tests.
 
-Prüfung: `npm run knip` und `npm run knip:production` in CI, im Applicant form
-eingeschaltet. #128 schaltet sie im Dashboard ein. Die Konfiguration steht in
-`frontend/knip.jsonc` und ignoriert `public/mockServiceWorker.js`. Im
-Produktionsmodus zählen Tests, Stories, `src/test` und `src/mocks` nicht mit,
-deshalb meldet `knip --production` einen Export, den nur sie nutzen.
+Prüfung: `npm run knip` und `npm run knip:production` in CI, in beiden
+Anwendungen eingeschaltet. Die Konfiguration steht in `frontend/knip.jsonc`,
+die `public/mockServiceWorker.js` ignoriert, und in `dashboard/knip.jsonc`, die
+auch die Importe in CSS-Dateien verfolgt. Im Produktionsmodus zählen Tests,
+Stories, Skripte, `src/test` und `src/mocks` nicht mit, deshalb meldet
+`knip --production` einen Export, den nur sie nutzen.
 
 ### CSS
 
@@ -146,15 +148,17 @@ ausgenommen, weil ein wiederholter Arrange-Block im Test besser lesbar ist als
 eine Hilfsfunktion.
 
 Prüfung: `npm run jscpd` in CI mit der Schwelle von 50 Tokens. Jeder Klon lässt
-den Lauf scheitern. Im Applicant form eingeschaltet, die Konfiguration steht in
-`frontend/.jscpd.json`. #128 schaltet es im Dashboard ein.
+den Lauf scheitern. In beiden Anwendungen eingeschaltet, die Konfiguration
+steht in `frontend/.jscpd.json` und `dashboard/.jscpd.json`.
 
 ### Verweise auf Nichtvorhandenes
 
 Jeder Pfad in `dashboard/THIRD_PARTY_LICENSES` existiert, und jede gelistete
-Kopie beginnt mit ihrem Herkunftskopf.
+Kopie beginnt mit ihrem Herkunftskopf: einem Kommentar, der mit `Clone path:`
+oder `Registry path:` und dem Pfad im Klon beginnt.
 
-Prüfung: ein Skript in CI, noch nicht eingeschaltet. #128 schaltet es ein.
+Prüfung: `npm run check:licenses` in CI, im Dashboard eingeschaltet. Das Skript
+steht in `dashboard/scripts/check-third-party-licenses.mjs`.
 
 ## TypeScript
 

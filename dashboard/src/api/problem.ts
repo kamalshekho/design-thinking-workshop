@@ -51,7 +51,7 @@ export class ApiProblem extends Error {
   }
 }
 
-export function isApiProblem(failure: unknown): failure is ApiProblem {
+function isApiProblem(failure: unknown): failure is ApiProblem {
   return failure instanceof ApiProblem;
 }
 

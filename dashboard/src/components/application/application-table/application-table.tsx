@@ -1,17 +1,16 @@
 /**
- * The Applications list.
- *
- * Clone path: `components/application/table/table-example.tsx`. The example's
- * markup — card, sortable headings, avatar cell, dot badge — is kept; its
- * hard-coded rows are replaced by the `Application` set the screen hands in,
- * and the columns are the ones `de.columns` names. The example's selection
- * checkbox column, per-row actions and card pagination are all kept, so Staff
- * can act on one or several Applications and page through the queue. All three
- * are opt-in, which is what lets every screen share this one component rather
- * than each growing its own table: Anfragen and Übersicht both take the
- * selection column and a discard action, Aussortiert takes the same column
- * with restore and permanent delete instead, and only the pager stays off in
- * Übersicht, whose list is already cut to five rows.
+ * Clone path: `components/application/table/table-example.tsx`, rewritten as
+ * the Applications list. The example's markup — card, sortable headings, avatar
+ * cell, dot badge — is kept; its hard-coded rows are replaced by the
+ * `Application` set the screen hands in, and the columns are the ones
+ * `de.columns` names. The example's selection checkbox column, per-row actions
+ * and card pagination are all kept, so Staff can act on one or several
+ * Applications and page through the queue. All three are opt-in, which is what
+ * lets every screen share this one component rather than each growing its own
+ * table: Anfragen and Übersicht both take the selection column and a discard
+ * action, Aussortiert takes the same column with restore and permanent delete
+ * instead, and only the pager stays off in Übersicht, whose list is already cut
+ * to five rows.
  *
  * The trailing actions are `rowActions` — a list of descriptors rather than
  * one `onDelete` callback, because the three screens do not agree on what a
@@ -74,7 +73,7 @@ import { initialsOf } from '@/utils/initials';
  * action. Three parts rather than one string, because the dialog has room for
  * the consequence under the question and for a button that names the action.
  */
-export type ApplicationRowConfirmation = {
+type ApplicationRowConfirmation = {
   /** The question. Becomes the dialog's accessible name. */
   title: string;
   /** The consequence, under the question. */

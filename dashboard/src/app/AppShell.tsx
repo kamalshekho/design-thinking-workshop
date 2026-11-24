@@ -1,35 +1,15 @@
 /**
- * The visual shell: the Untitled UI sidebar and the screen it frames.
+ * The visual shell: the Untitled UI sidebar, the strip with the stream marker
+ * and the last failed request, and the screen it frames. What the sidebar
+ * holds and why the strip sits above the screens: `README.md`, "The copied
+ * components", "Aussortiert" and "How the dashboard talks to the backend".
  *
- * The sidebar is copied from the clone (`README.md` records which files, and
- * `THIRD_PARTY_LICENSES` the licence). Its three main items are the screens
- * issue #10 named, and all three have a screen behind them. The links carry
- * fragments and the caller says which one is current.
- *
- * Aussortiert — the fourth screen, the discarded Applications (`A16`) — sits
- * in the sidebar's footer slot rather than among the three: it is where a
- * Staff member goes to undo something, not one of the places the work
- * happens, and keeping it out of the main list also keeps the one screen that
- * can erase an Application away from the three that cannot.
- *
- * It is also where the two things the whole dashboard says about itself sit:
- * whether the live stream is connected, and the last request that failed —
- * a write that was refused, or a refetch that left the list stale. Both are
- * above the screen rather than inside it, because neither belongs to any one
- * of the four, and the second must not replace them (issue #58).
- *
- * The shell is also where the live stream is opened, and the one place it can
- * be: it is mounted for as long as a Staff member is signed in, so switching
- * screens does not drop and reopen the connection, and it is not mounted at
- * all while the sign-in screen is up, when there is no Sign-in to
- * authenticate the stream with (ADR-0006).
- *
- * An expired Sign-in is the same case reached from the other side. The shell
- * stays mounted — that is what keeps the work alive under the cover
- * (`SignInCover`) — so `signInExpired` is what stands in for unmounting: the
- * stream is closed, because there is no Sign-in to authenticate it with, and
- * the shell is `inert`, because a dashboard that looks covered but still
- * answers a click would send writes that can only be refused.
+ * The shell opens the live stream because it stays mounted while a Staff
+ * member is signed in: switching screens keeps the connection, and the
+ * sign-in screen, with no Sign-in to authenticate the stream, opens none
+ * (ADR-0006). While the cover is up, `signInExpired` stands in for unmounting:
+ * it closes the stream and makes the shell `inert`, so a click under the
+ * cover cannot send a write that would only be refused.
  */
 
 import { Archive, BarChartSquare02, Inbox01, Tag01 } from '@untitledui/icons';

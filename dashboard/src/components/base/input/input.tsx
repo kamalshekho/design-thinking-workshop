@@ -1,6 +1,8 @@
 /**
  * Clone path: `components/base/input/input.tsx`. One change: the password
  * visibility button carries `tap-target` (#116).
+ *
+ * Prop comments that only restate the prop name are dropped.
  */
 
 import { Eye, EyeOff, HelpCircle, InfoCircle } from '@untitledui/icons';
@@ -30,31 +32,17 @@ import { Tooltip, TooltipTrigger } from '@/components/base/tooltip/tooltip';
 import { de } from '@/content/de';
 import { cx, sortCx } from '@/utils/cx';
 
-export interface InputBaseProps extends Omit<AriaInputProps, 'size'> {
-  /** Tooltip message on hover. */
+interface InputBaseProps extends Omit<AriaInputProps, 'size'> {
   tooltip?: string;
-  /** Whether the input is invalid. */
   isInvalid?: boolean;
-  /** Whether the input is disabled. */
   isDisabled?: boolean;
-  /** Whether the input is required. */
   isRequired?: boolean;
-  /**
-   * Input size.
-   * @default "sm"
-   */
   size?: 'sm' | 'md' | 'lg';
-  /** Placeholder text. */
   placeholder?: string;
-  /** Class name for the icon. */
   iconClassName?: string;
-  /** Class name for the input. */
   inputClassName?: string;
-  /** Class name for the input wrapper. */
   wrapperClassName?: string;
-  /** Class name for the tooltip. */
   tooltipClassName?: string;
-  /** Keyboard shortcut to display. */
   shortcut?: string | boolean;
   ref?: Ref<HTMLInputElement>;
   groupRef?: Ref<HTMLDivElement>;
@@ -62,7 +50,7 @@ export interface InputBaseProps extends Omit<AriaInputProps, 'size'> {
   icon?: ComponentType<HTMLAttributes<HTMLOrSVGElement>>;
 }
 
-export const InputBase = ({
+const InputBase = ({
   ref,
   tooltip,
   shortcut,
@@ -151,7 +139,6 @@ export const InputBase = ({
         )
       }
     >
-      {/* Leading icon and Payment icon */}
       {Icon && (
         <Icon
           className={cx(
@@ -262,10 +249,9 @@ interface TextFieldContextProps extends Partial<
 
 const TextFieldContext = createContext<TextFieldContextProps>({});
 
-export interface TextFieldProps
-  extends AriaTextFieldProps, TextFieldContextProps {}
+interface TextFieldProps extends AriaTextFieldProps, TextFieldContextProps {}
 
-export const TextField = ({
+const TextField = ({
   className,
   size = 'md',
   inputClassName,

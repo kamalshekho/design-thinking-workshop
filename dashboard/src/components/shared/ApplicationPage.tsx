@@ -21,6 +21,7 @@ import { Button } from '@/components/base/buttons/button';
 import { Dot } from '@/components/foundations/dot-icon';
 import { de } from '@/content/de';
 import { APPLICATION_STATUSES } from '@/domain/application';
+import { useCloseOnEscape } from '@/hooks/useCloseOnEscape';
 import { cx } from '@/utils/cx';
 import { initialsOf } from '@/utils/initials';
 
@@ -57,18 +58,7 @@ export function ApplicationPage({
         application.ownerId);
   const ownedByMe = application.ownerId === staffMemberId;
 
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === 'Escape' && !event.defaultPrevented) {
-        onClose();
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onClose]);
+  useCloseOnEscape(onClose);
 
   /** Another Application opens at its top, with the reading position on it. */
   useEffect(() => {

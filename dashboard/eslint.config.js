@@ -1,9 +1,11 @@
+import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import js from '@eslint/js';
 import boundaries from 'eslint-plugin-boundaries';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import sonarjs from 'eslint-plugin-sonarjs';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -25,9 +27,6 @@ const UNTITLED_UI_COPIES = [
   'src/components/shared/tab-strip.tsx',
   'src/components/base/avatar/avatar.tsx',
   'src/components/base/avatar/avatar-label-group.tsx',
-  'src/components/base/avatar/base-components/avatar-count.tsx',
-  'src/components/base/avatar/base-components/avatar-online-indicator.tsx',
-  'src/components/base/avatar/base-components/verified-tick.tsx',
   'src/components/base/badges/badges.tsx',
   'src/components/base/badges/badge-types.ts',
   'src/components/base/buttons/button.tsx',
@@ -79,6 +78,8 @@ export default tseslint.config(
     reactHooks,
     reactRefresh,
     simpleImportSort,
+    sonarjs,
+    eslintComments,
     globals,
     tsconfigRootDir: import.meta.dirname,
   }),
@@ -262,7 +263,6 @@ export default tseslint.config(
       'src/components/base/**',
       'src/components/foundations/dot-icon.tsx',
       'src/hooks/use-breakpoint.ts',
-      'src/utils/is-react-component.ts',
     ],
     rules: {
       '@typescript-eslint/no-deprecated': 'off',

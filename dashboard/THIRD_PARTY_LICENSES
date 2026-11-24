@@ -44,15 +44,10 @@ Files copied, clone path -> path here:
        (underline-tab styling kept, made generic over a screen's view set)
   components/base/avatar/avatar.tsx
     -> src/components/base/avatar/avatar.tsx
-       (base components imported directly, no `AvatarProfilePhoto` variant)
+       (no `AvatarProfilePhoto` variant; `status`, `verified` and `count`
+       cut with the base components behind them)
   components/base/avatar/avatar-label-group.tsx
     -> src/components/base/avatar/avatar-label-group.tsx
-  components/base/avatar/base-components/avatar-count.tsx
-    -> src/components/base/avatar/base-components/avatar-count.tsx
-  components/base/avatar/base-components/avatar-online-indicator.tsx
-    -> src/components/base/avatar/base-components/avatar-online-indicator.tsx
-  components/base/avatar/base-components/verified-tick.tsx
-    -> src/components/base/avatar/base-components/verified-tick.tsx
   components/base/badges/badges.tsx
     -> src/components/base/badges/badges.tsx
        (reduced to `Badge` and `BadgeWithDot`)
@@ -87,9 +82,11 @@ Copies that keep the clone's house style are exempted from this application's
 stricter ESLint rules by a scoped override in `eslint.config.js`, so they stay
 easy to compare against the clone.
 
-Each file carries a comment naming its clone path and what was changed.
-`src/styles/untitledui-theme.css` is not a copy: it is the subset of the
-clone's semantic token names, given this application's palette.
+Each file begins with a comment that opens with `Clone path:` and names the
+path on the left above, followed by what was changed or cut. `npm run
+check:licenses` checks both. `src/styles/untitledui-theme.css` is not a copy:
+it is the subset of the clone's semantic token names, given this application's
+palette.
 
 MIT License
 
@@ -137,10 +134,12 @@ Files copied, registry path -> path here:
     -> folded into src/components/ui/sparkline.tsx
        (only the themed container, single-series and light-theme only)
 
-Each file carries a comment naming its registry path and what was changed.
-`src/styles/shadcn-ui-theme.css` is not a copy: it defines the `sd-*` tokens
-these components use, namespaced to avoid colliding with Untitled UI's own
-semantic names, light theme only.
+Each copied file begins with a comment that opens with `Registry path:` and
+names the path on the left above. A file the registry code was folded into
+names that path in its first comment instead. `npm run check:licenses` checks
+both. `src/styles/shadcn-ui-theme.css` is not a copy: it defines the `sd-*`
+tokens these components use, namespaced to avoid colliding with Untitled UI's
+own semantic names, light theme only.
 
 MIT License
 
@@ -163,17 +162,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-
-================================================================================
-Untitled UI avatar photo — placeholder asset, licence not asserted
-================================================================================
-
-  https://www.untitledui.com/images/avatars/ashton-blackwell
-    -> src/images/ashton-blackwell.webp (resized to 256x256, re-encoded WebP)
-
-Mock data only: the avatar of the signed-in Staff member in
-`src/data/currentStaffMember.ts`, standing in until issue #16 supplies a real
-one. This is a placeholder photo served from Untitled UI's site, not part of
-the MIT-licensed component source above, and Untitled UI states no licence for
-it. Replace it before this dashboard ships to anyone outside the team.

@@ -40,6 +40,10 @@ const SHARED_TOOLS = [
   '@size-limit/file',
   'husky',
   'lint-staged',
+  'knip',
+  'jscpd',
+  'eslint-plugin-sonarjs',
+  '@eslint-community/eslint-plugin-eslint-comments',
 ];
 
 const APPS = ['frontend', 'dashboard'];

@@ -99,15 +99,21 @@ export function useApplicationActions({
 
   return {
     selected,
-    selectedId,
+    /** What `ApplicationsList` needs to tick, mark and discard its rows. */
+    listProps: {
+      selectedIds,
+      onSelectedIdsChange: setSelectedIds,
+      activeId: selectedId,
+      onDiscard: (application: Application) => {
+        discard(new Set([application.id]));
+      },
+    },
     selectedIds,
-    setSelectedIds,
     open: setSelectedId,
     toggle,
     close,
     /** The drawer's edits, straight through — this hook has nothing to add. */
     update: onEdit,
-    discard,
     /** Opens the question; `confirmDiscardSelected` is what discards. */
     discardSelected,
     /** True while the dialog the screen renders is up. */
@@ -116,3 +122,5 @@ export function useApplicationActions({
     cancelDiscardSelected,
   };
 }
+
+export type ApplicationActions = ReturnType<typeof useApplicationActions>;

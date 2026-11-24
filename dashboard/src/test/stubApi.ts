@@ -34,7 +34,7 @@ import {
   mockStaffMember,
 } from '@/test/mockApplications';
 
-export class StubEventSource {
+class StubEventSource {
   static latest: StubEventSource | null = null;
 
   /** The browser's own constants, which the hook reads off the global. */

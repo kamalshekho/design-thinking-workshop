@@ -1,0 +1,8 @@
+{
+  "path": ["src"],
+  "minTokens": 50,
+  "threshold": 0,
+  "ignore": ["**/*.test.*", "**/*.stories.*", "src/test/**", "src/mocks/**"],
+  "reporters": ["console"],
+  "gitignore": true
+}

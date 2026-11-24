@@ -30,6 +30,8 @@ export default tseslint.config(
     reactHooks,
     reactRefresh,
     simpleImportSort,
+    sonarjs,
+    eslintComments,
     globals,
     tsconfigRootDir: import.meta.dirname,
     extraIgnores: ['storybook-static/**', 'public/mockServiceWorker.js'],
@@ -164,26 +166,6 @@ export default tseslint.config(
           ],
         },
       ],
-    },
-  },
-
-  /* Weeds from issue #107: code kept in a comment, open work parked in a
-     comment, and an eslint-disable nobody can explain or that no longer
-     disables anything. Git keeps old code and the issue tracker keeps open
-     work. Issue #128 moves this block to eslint.base.mjs. */
-  {
-    linterOptions: { reportUnusedDisableDirectives: 'error' },
-    plugins: {
-      sonarjs,
-      '@eslint-community/eslint-comments': eslintComments,
-    },
-    rules: {
-      'sonarjs/no-commented-code': 'error',
-      'no-warning-comments': [
-        'error',
-        { terms: ['todo', 'fixme', 'hack'], location: 'anywhere' },
-      ],
-      '@eslint-community/eslint-comments/require-description': 'error',
     },
   },
 

@@ -11,13 +11,14 @@
  * changes.
  */
 
-import { Archive, Inbox01 } from '@untitledui/icons';
+import { Inbox01 } from '@untitledui/icons';
 import { useMemo, useState } from 'react';
 
-import { Button } from '@/components/base/buttons/button';
-import { ApplicationDetail } from '@/components/shared/ApplicationDetail';
+import {
+  ApplicationActionOverlays,
+  DiscardSelectedButton,
+} from '@/components/shared/ApplicationActionControls';
 import { ApplicationsList } from '@/components/shared/ApplicationsList';
-import { DiscardSelectedDialog } from '@/components/shared/DiscardSelectedDialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { PageHeader } from '@/components/shared/page-header';
 import { TabStrip } from '@/components/shared/tab-strip';
@@ -33,7 +34,6 @@ import type { Category } from '@/domain/category';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useApplicationActions } from '@/hooks/useApplicationActions';
 import type { NotesField } from '@/hooks/useNotesDraft';
-import { notesValueFor } from '@/hooks/useNotesDraft';
 import type { ApplicationFilters } from '@/utils/filterApplications';
 import { EMPTY_FILTERS, filterApplications } from '@/utils/filterApplications';
 
@@ -113,8 +113,6 @@ export function ApplicationsScreen({
     [applications],
   );
 
-  const { selected } = actions;
-
   /** Below 640 px the rows have no checkbox, so a bulk button could never be pressed. */
   const canSelectRows = useBreakpoint('sm');
 
@@ -151,12 +149,7 @@ export function ApplicationsScreen({
         onSelect={(application) => {
           actions.toggle(application.id);
         }}
-        selectedIds={actions.selectedIds}
-        onSelectedIdsChange={actions.setSelectedIds}
-        activeId={actions.selectedId}
-        onDiscard={(application) => {
-          actions.discard(new Set([application.id]));
-        }}
+        {...actions.listProps}
         emptyState={
           <EmptyState
             icon={Inbox01}
@@ -191,52 +184,18 @@ export function ApplicationsScreen({
               onChange={setFilters}
             />
 
-            {/*
-             * Always on the bar, disabled while nothing is checked, so the
-             * bulk action stays discoverable instead of appearing out of
-             * nowhere and shifting the toolbar the moment a row is ticked.
-             * It discards rather than deletes (`A16`) — hence the label and
-             * the archive icon, not a trash can.
-             */}
-            {canSelectRows ? (
-              <Button
-                size="md"
-                color="secondary"
-                iconLeading={Archive}
-                isDisabled={actions.selectedIds.size === 0}
-                onClick={actions.discardSelected}
-              >
-                {de.applications.discardSelected(actions.selectedIds.size)}
-              </Button>
-            ) : null}
+            {canSelectRows ? <DiscardSelectedButton actions={actions} /> : null}
           </>
         }
       />
 
-      {selected ? (
-        <ApplicationDetail
-          staffMemberId={staffMemberId}
-          application={selected}
-          categories={categories}
-          owners={owners}
-          onClose={actions.close}
-          onChange={(change) => {
-            actions.update(selected.id, change);
-          }}
-          notesValue={notesValueFor(notes, selected)}
-          onNotesChange={(text) => {
-            notes.onChange(selected.id, text);
-          }}
-        />
-      ) : null}
-
-      {actions.discardConfirmOpen ? (
-        <DiscardSelectedDialog
-          count={actions.selectedIds.size}
-          onConfirm={actions.confirmDiscardSelected}
-          onCancel={actions.cancelDiscardSelected}
-        />
-      ) : null}
+      <ApplicationActionOverlays
+        actions={actions}
+        staffMemberId={staffMemberId}
+        categories={categories}
+        owners={owners}
+        notes={notes}
+      />
     </div>
   );
 }

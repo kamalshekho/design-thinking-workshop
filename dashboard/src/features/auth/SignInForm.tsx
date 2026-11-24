@@ -172,7 +172,7 @@ export function SignInForm({
               fields is read out by its `role="alert"` whichever field has
               focus.
             */
-            // eslint-disable-next-line jsx-a11y/no-autofocus
+            // eslint-disable-next-line jsx-a11y/no-autofocus -- nothing precedes the form, see above
             autoFocus
             isRequired
             hideRequiredIndicator

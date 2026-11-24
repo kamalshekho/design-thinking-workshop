@@ -1,5 +1,7 @@
 /**
- * Clone path: `components/base/buttons/button.tsx`, unchanged.
+ * Clone path: `components/base/buttons/button.tsx`. The `xs` and `xl` sizes
+ * and the unread `Props` union are cut, as no call site uses them. Comments
+ * that only restate a prop or type name are dropped.
  */
 
 import type { FC, ReactElement, ReactNode } from 'react';
@@ -13,7 +15,7 @@ import { Button as AriaButton, Link as AriaLink } from 'react-aria-components';
 import { cx, sortCx } from '@/utils/cx';
 import { isReactComponent } from '@/utils/is-react-component';
 
-export const styles = sortCx({
+const styles = sortCx({
   common: {
     root: [
       'group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-focus-ring transition-colors duration-150 ease-out before:absolute focus-visible:outline-2 focus-visible:outline-offset-2',
@@ -27,14 +29,6 @@ export const styles = sortCx({
     icon: 'pointer-events-none size-4 shrink-0 transition-inherit-all',
   },
   sizes: {
-    xs: {
-      root: [
-        'gap-1 rounded-lg px-2.5 py-1.5 text-sm font-medium before:rounded-[7px] data-icon-only:p-2',
-        'in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5',
-        '*:data-icon:size-4 *:data-icon:stroke-[2.25px]',
-      ].join(' '),
-      linkRoot: 'gap-1 *:data-text:underline-offset-3',
-    },
     sm: {
       root: [
         'gap-1 rounded-lg px-3 py-2 text-sm font-medium before:rounded-[7px] data-icon-only:p-2',
@@ -51,10 +45,6 @@ export const styles = sortCx({
     },
     lg: {
       root: 'gap-1.5 rounded-lg px-4 py-2.5 text-md font-medium before:rounded-[7px] data-icon-only:p-3',
-      linkRoot: 'gap-1.5 *:data-text:underline-offset-4',
-    },
-    xl: {
-      root: 'gap-1.5 rounded-lg px-4.5 py-3 text-md font-medium before:rounded-[7px] data-icon-only:p-3.5',
       linkRoot: 'gap-1.5 *:data-text:underline-offset-4',
     },
   },
@@ -136,17 +126,12 @@ export const styles = sortCx({
   },
 });
 
-/**
- * Common props shared between button and anchor variants
- */
-export interface CommonProps {
+interface CommonProps {
   /** Disables the button and shows a disabled state */
   isDisabled?: boolean;
   /** Shows a loading spinner and disables the button */
   isLoading?: boolean;
-  /** The size variant of the button */
   size?: keyof typeof styles.sizes;
-  /** The color variant of the button */
   color?: keyof typeof styles.colors;
   /** Icon component or element to show before the text */
   iconLeading?: FC<{ className?: string }> | ReactNode;
@@ -161,21 +146,12 @@ export interface CommonProps {
   className?: string;
 }
 
-/**
- * Props for the button variant (non-link)
- */
 export interface ButtonProps
   extends CommonProps, Omit<AriaButtonProps, 'children' | 'className'> {}
-/**
- * Props for the link variant (anchor tag)
- */
 interface LinkProps
   extends CommonProps, Omit<AriaLinkProps, 'children' | 'className'> {
   href: NonNullable<AriaLinkProps['href']>;
 }
-
-/** Union type of button and link props */
-export type Props = ButtonProps | LinkProps;
 
 export const Button: {
   (props: LinkProps): ReactElement<LinkProps>;

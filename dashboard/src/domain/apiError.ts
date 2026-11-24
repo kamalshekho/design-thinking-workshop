@@ -4,7 +4,7 @@
  * German, so the code is what the dashboard words — once, in
  * `src/content/de.ts`, looked up through `src/content/errorMessage.ts`.
  *
- * The two lists exist so that a code added to the contract without a wording
+ * The two unions exist so that a code added to the contract without a wording
  * fails `npm run typecheck` rather than reaching a Staff member as the general
  * fallback. They are not exhaustive of what can arrive: a status the contract
  * does not name carries the status's own name as its `code`
@@ -18,30 +18,24 @@
  * than among the field codes: nothing in the request is wrong, the Application
  * is simply not on the fourth screen yet (`API.md`).
  */
-export const TOP_LEVEL_ERROR_CODES = [
-  'VALIDATION_FAILED',
-  'NOT_DISCARDED',
-  'INVALID_CREDENTIALS',
-  'UNAUTHENTICATED',
-  'NOT_FOUND',
-  'CATEGORY_IN_USE',
-  'RATE_LIMITED',
-  'INTERNAL_ERROR',
-] as const;
-
-export type TopLevelErrorCode = (typeof TOP_LEVEL_ERROR_CODES)[number];
+export type TopLevelErrorCode =
+  | 'VALIDATION_FAILED'
+  | 'NOT_DISCARDED'
+  | 'INVALID_CREDENTIALS'
+  | 'UNAUTHENTICATED'
+  | 'NOT_FOUND'
+  | 'CATEGORY_IN_USE'
+  | 'RATE_LIMITED'
+  | 'INTERNAL_ERROR';
 
 /** Codes that name one field, carried in the problem's `errors` array. */
-export const FIELD_ERROR_CODES = [
-  'STATUS_UNKNOWN',
-  'OWNER_UNKNOWN',
-  'NOTES_TOO_LONG',
-  'CATEGORY_NAME_REQUIRED',
-  'CATEGORY_NAME_TOO_LONG',
-  'CATEGORY_NAME_TAKEN',
-  'CATEGORY_DESCRIPTION_TOO_LONG',
-  'ORDER_INCOMPLETE',
-  'IMMUTABLE_FIELD',
-] as const;
-
-export type FieldErrorCode = (typeof FIELD_ERROR_CODES)[number];
+export type FieldErrorCode =
+  | 'STATUS_UNKNOWN'
+  | 'OWNER_UNKNOWN'
+  | 'NOTES_TOO_LONG'
+  | 'CATEGORY_NAME_REQUIRED'
+  | 'CATEGORY_NAME_TOO_LONG'
+  | 'CATEGORY_NAME_TAKEN'
+  | 'CATEGORY_DESCRIPTION_TOO_LONG'
+  | 'ORDER_INCOMPLETE'
+  | 'IMMUTABLE_FIELD';

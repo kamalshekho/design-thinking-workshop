@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { de } from '@/content/de';
 import type { Application } from '@/domain/application';
 import { setDiscarded } from '@/domain/application';
-import type { NotesDraft } from '@/hooks/useNotesDraft';
+import type { NotesField } from '@/hooks/useNotesDraft';
 import {
   mockCategories,
   mockOwners,
@@ -45,7 +45,7 @@ function application(overrides: Partial<Application> = {}): Application {
 /** Mirrors what the two containers hand down to the screens they wrap. */
 function Host({ initial }: { initial: Application[] }) {
   const [applications, setApplications] = useState(initial);
-  const [draft, setDraft] = useState<NotesDraft | null>(null);
+  const [draft, setDraft] = useState<NotesField['draft']>(null);
   return (
     <OpenApplicationsPanel
       staffMemberId={mockStaffMember.id}

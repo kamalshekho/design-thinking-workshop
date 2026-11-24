@@ -12,20 +12,20 @@
  * copy.
  */
 
-import { Archive, Inbox01 } from '@untitledui/icons';
+import { Inbox01 } from '@untitledui/icons';
 import { useMemo, useState } from 'react';
 
-import { Button } from '@/components/base/buttons/button';
-import { ApplicationDetail } from '@/components/shared/ApplicationDetail';
+import {
+  ApplicationActionOverlays,
+  DiscardSelectedButton,
+} from '@/components/shared/ApplicationActionControls';
 import { ApplicationsList } from '@/components/shared/ApplicationsList';
-import { DiscardSelectedDialog } from '@/components/shared/DiscardSelectedDialog';
 import { EmptyState } from '@/components/shared/empty-state';
 import { de } from '@/content/de';
 import type { Application, ApplicationEdit, Owner } from '@/domain/application';
 import type { Category } from '@/domain/category';
 import { useApplicationActions } from '@/hooks/useApplicationActions';
 import type { NotesField } from '@/hooks/useNotesDraft';
-import { notesValueFor } from '@/hooks/useNotesDraft';
 import { buildApplicationsHref } from '@/utils/filterApplications';
 
 import { OpenApplicationsFilterBar } from './OpenApplicationsFilterBar';
@@ -36,7 +36,7 @@ import {
   selectOpenApplications,
 } from './selectOpenApplications';
 
-type OpenApplicationsPanelProps = {
+export type OpenApplicationsPanelProps = {
   /** The signed-in Staff member, whom "Übernehmen" on the phone page makes the Owner. */
   staffMemberId: string;
   applications: readonly Application[];
@@ -93,8 +93,6 @@ export function OpenApplicationsPanel({
   );
   const visible = matching.slice(0, OPEN_APPLICATIONS_LIMIT);
 
-  const { selected } = actions;
-
   const viewAllHref = buildApplicationsHref({
     excludeCompleted: true,
     search: filters.search,
@@ -146,19 +144,7 @@ export function OpenApplicationsPanel({
                 </button>
               )}
 
-              {/*
-               * Same rule as on Anfragen: always on the bar, disabled while
-               * nothing is checked, so ticking a row never shifts the toolbar.
-               */}
-              <Button
-                size="md"
-                color="secondary"
-                iconLeading={Archive}
-                isDisabled={actions.selectedIds.size === 0}
-                onClick={actions.discardSelected}
-              >
-                {de.applications.discardSelected(actions.selectedIds.size)}
-              </Button>
+              <DiscardSelectedButton actions={actions} />
             </div>
           </div>
         ) : null}
@@ -187,12 +173,7 @@ export function OpenApplicationsPanel({
             onSelect={(application) => {
               actions.open(application.id);
             }}
-            selectedIds={actions.selectedIds}
-            onSelectedIdsChange={actions.setSelectedIds}
-            activeId={actions.selectedId}
-            onDiscard={(application) => {
-              actions.discard(new Set([application.id]));
-            }}
+            {...actions.listProps}
           />
           <div className="flex justify-end">
             <a
@@ -205,30 +186,13 @@ export function OpenApplicationsPanel({
         </>
       )}
 
-      {selected ? (
-        <ApplicationDetail
-          staffMemberId={staffMemberId}
-          application={selected}
-          categories={categories}
-          owners={owners}
-          onClose={actions.close}
-          onChange={(change) => {
-            actions.update(selected.id, change);
-          }}
-          notesValue={notesValueFor(notes, selected)}
-          onNotesChange={(text) => {
-            notes.onChange(selected.id, text);
-          }}
-        />
-      ) : null}
-
-      {actions.discardConfirmOpen ? (
-        <DiscardSelectedDialog
-          count={actions.selectedIds.size}
-          onConfirm={actions.confirmDiscardSelected}
-          onCancel={actions.cancelDiscardSelected}
-        />
-      ) : null}
+      <ApplicationActionOverlays
+        actions={actions}
+        staffMemberId={staffMemberId}
+        categories={categories}
+        owners={owners}
+        notes={notes}
+      />
     </section>
   );
 }

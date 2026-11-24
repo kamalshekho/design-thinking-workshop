@@ -15,8 +15,8 @@
  *   a fourth, invisible click target under them would be a guess.
  */
 
-import { ArrowDown, ArrowUp, Edit01, Trash01 } from '@untitledui/icons';
-import type { ComponentType, ReactNode } from 'react';
+import { ArrowDown, ArrowUp } from '@untitledui/icons';
+import type { ReactNode } from 'react';
 
 import { Table, TableCard } from '@/components/application/table/table';
 import { Toggle } from '@/components/base/toggle/toggle';
@@ -26,6 +26,8 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cx } from '@/utils/cx';
 
 import { CategoryCards } from './CategoryCards';
+import type { CategoryActionButtonProps } from './CategoryEditDelete';
+import { CategoryEditDelete, CategoryIconButton } from './CategoryEditDelete';
 
 export type CategoriesTableProps = {
   /** The Categories to render, already filtered by the screen. */
@@ -243,27 +245,12 @@ function CategoriesGrid({
 
                 <Table.Cell>
                   <div className="flex items-center justify-end gap-1">
-                    <RowActionButton
-                      icon={Edit01}
-                      label={de.categories.editOne(category.name)}
-                      title={de.categories.edit}
-                      onClick={() => {
-                        onEdit(category);
-                      }}
-                    />
-                    <RowActionButton
-                      icon={Trash01}
-                      label={de.categories.deleteOne(category.name)}
-                      title={
-                        blocking > 0
-                          ? de.categories.deleteBlocked(blocking)
-                          : de.categories.delete
-                      }
-                      isDisabled={blocking > 0}
-                      destructive
-                      onClick={() => {
-                        onDelete(category);
-                      }}
+                    <CategoryEditDelete
+                      category={category}
+                      blocking={blocking}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                      button={RowActionButton}
                     />
                   </div>
                 </Table.Cell>
@@ -276,63 +263,31 @@ function CategoriesGrid({
   );
 }
 
-type IconButtonProps = {
-  icon: ComponentType<{ className?: string }>;
-  /** The accessible name; the visible `title` is the short version of it. */
-  label: string;
-  title: string;
-  isDisabled?: boolean;
-  onClick: () => void;
-};
-
 /**
  * The reorder arrows. Padded to a 32px box and kept in the DOM when disabled,
  * so the column never changes width as a row moves to an end of the list.
  */
-function MoveButton({
-  icon: Icon,
-  label,
-  title,
-  isDisabled,
-  onClick,
-}: IconButtonProps) {
+function MoveButton(props: Omit<CategoryActionButtonProps, 'destructive'>) {
   return (
-    <button
-      type="button"
-      aria-label={label}
-      title={title}
-      disabled={isDisabled}
-      onClick={onClick}
+    <CategoryIconButton
+      {...props}
       className="text-fg-quaternary outline-focus-ring hover:bg-primary_hover hover:text-fg-secondary flex size-8 cursor-pointer items-center justify-center rounded-md transition duration-100 ease-linear focus-visible:outline-2 focus-visible:-outline-offset-2 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
-    >
-      <Icon className="size-3.5" />
-    </button>
+      iconClassName="size-3.5"
+    />
   );
 }
 
-function RowActionButton({
-  icon: Icon,
-  label,
-  title,
-  isDisabled,
-  destructive,
-  onClick,
-}: IconButtonProps & { destructive?: boolean }) {
+function RowActionButton({ destructive, ...props }: CategoryActionButtonProps) {
   return (
-    <button
-      type="button"
-      aria-label={label}
-      title={title}
-      disabled={isDisabled}
-      onClick={onClick}
+    <CategoryIconButton
+      {...props}
       className={cx(
         'text-fg-quaternary outline-focus-ring hover:bg-primary_hover flex size-8 cursor-pointer items-center justify-center rounded-md transition duration-100 ease-linear focus-visible:outline-2 focus-visible:-outline-offset-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent',
         destructive
           ? 'hover:text-fg-error-primary'
           : 'hover:text-fg-secondary_hover',
       )}
-    >
-      <Icon className="size-4" />
-    </button>
+      iconClassName="size-4"
+    />
   );
 }
