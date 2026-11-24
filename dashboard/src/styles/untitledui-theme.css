@@ -220,8 +220,8 @@
  * least 24 × 24 px centred on it. The host must be positioned (`relative` or
  * `absolute`).
  */
-@utility tap-target {
-  &::after {
+@layer utilities {
+  .tap-target::after {
     content: '';
     position: absolute;
     z-index: 1;
