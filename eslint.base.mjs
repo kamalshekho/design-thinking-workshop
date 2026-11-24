@@ -1,0 +1,85 @@
+/**
+ * The ESLint blocks the applicant form (frontend/) and the staff dashboard
+ * (dashboard/) share. Each app's eslint.config.js calls this function and adds
+ * the blocks that concern it alone.
+ *
+ * The plugins come in as parameters because the repo root has no
+ * node_modules: a file here cannot import packages, so each app passes in its
+ * own installed copies. scripts/check-config-parity.mjs keeps their versions
+ * equal.
+ *
+ * tsconfigRootDir is the app's own folder. import.meta.dirname here would be
+ * the repo root, where no tsconfig.json lives.
+ */
+export function sharedConfig({
+  js,
+  tseslint,
+  jsxA11y,
+  reactHooks,
+  reactRefresh,
+  simpleImportSort,
+  globals,
+  tsconfigRootDir,
+  extraIgnores = [],
+  extraTestFiles = [],
+}) {
+  return tseslint.config(
+    {
+      ignores: ['dist/**', 'coverage/**', ...extraIgnores],
+    },
+
+    js.configs.recommended,
+    tseslint.configs.strictTypeChecked,
+    jsxA11y.flatConfigs.recommended,
+
+    {
+      files: ['**/*.{ts,tsx}'],
+      languageOptions: {
+        parserOptions: {
+          projectService: true,
+          tsconfigRootDir,
+        },
+        globals: globals.browser,
+      },
+      plugins: {
+        'react-hooks': reactHooks,
+        'react-refresh': reactRefresh,
+        'simple-import-sort': simpleImportSort,
+      },
+      rules: {
+        ...reactHooks.configs['recommended-latest'].rules,
+        ...reactRefresh.configs.vite.rules,
+
+        'simple-import-sort/imports': 'error',
+        'simple-import-sort/exports': 'error',
+      },
+    },
+
+    /** Tests may assert on internals and use non-null assertions. */
+    {
+      files: ['src/**/*.test.{ts,tsx}', 'src/test/**', ...extraTestFiles],
+      rules: {
+        '@typescript-eslint/no-non-null-assertion': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+      },
+    },
+
+    /* The Vite config runs in Node, not in the browser. */
+    {
+      files: ['vite.config.ts'],
+      languageOptions: {
+        globals: globals.node,
+      },
+    },
+
+    /* Typed linting needs a TypeScript program, which plain JS config files are
+       not part of. */
+    {
+      files: ['**/*.{js,mjs}'],
+      extends: [tseslint.configs.disableTypeChecked],
+      languageOptions: {
+        globals: globals.node,
+      },
+    },
+  );
+}

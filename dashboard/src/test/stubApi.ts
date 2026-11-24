@@ -42,6 +42,7 @@ export class StubEventSource {
   static readonly OPEN = 1;
   static readonly CLOSED = 2;
 
+  readonly url: string;
   onopen: ((event: Event) => void) | null = null;
   onerror: ((event: Event) => void) | null = null;
   closed = false;
@@ -55,7 +56,8 @@ export class StubEventSource {
 
   private readonly listeners = new Map<string, Set<EventListener>>();
 
-  constructor(readonly url: string) {
+  constructor(url: string) {
+    this.url = url;
     StubEventSource.latest = this;
   }
 
