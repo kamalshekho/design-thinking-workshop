@@ -24,6 +24,8 @@ export function sharedConfig({
   tsconfigRootDir,
   extraIgnores = [],
   extraTestFiles = [],
+  extraRestrictedSyntax = [],
+  tryStatementIgnores = [],
 }) {
   return tseslint.config(
     {
@@ -55,7 +57,30 @@ export function sharedConfig({
         'simple-import-sort/imports': 'error',
         'simple-import-sort/exports': 'error',
 
-        'no-restricted-syntax': ['error', ...reExportBan],
+        '@typescript-eslint/consistent-type-assertions': [
+          'error',
+          { assertionStyle: 'never' },
+        ],
+
+        'no-restricted-syntax': [
+          'error',
+          ...reExportBan,
+          ...extraRestrictedSyntax,
+        ],
+      },
+    },
+
+    /* Only the transport layer throws and catches (docs/STANDARD.md). */
+    {
+      files: ['src/features/**/*.{ts,tsx}', 'src/components/**/*.{ts,tsx}'],
+      ignores: [...tryStatementIgnores],
+      rules: {
+        'no-restricted-syntax': [
+          'error',
+          ...reExportBan,
+          ...extraRestrictedSyntax,
+          tryStatementBan,
+        ],
       },
     },
 
@@ -79,10 +104,11 @@ export function sharedConfig({
       },
     },
 
-    /** Tests may assert on internals and use non-null assertions. */
+    /** Tests may assert on internals, use non-null assertions and type assertions. */
     {
       files: ['src/**/*.test.{ts,tsx}', 'src/test/**', ...extraTestFiles],
       rules: {
+        '@typescript-eslint/consistent-type-assertions': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-unsafe-assignment': 'off',
       },
@@ -125,3 +151,9 @@ export const reExportBan = [
     message: 'Import from the defining file instead of re-exporting it.',
   },
 ];
+
+const tryStatementBan = {
+  selector: 'TryStatement',
+  message:
+    'Only the transport layer throws and catches. Do not use try/catch in features or components.',
+};

@@ -10,7 +10,7 @@ import sonarjs from 'eslint-plugin-sonarjs';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-import { reExportBan, sharedConfig } from '../eslint.base.mjs';
+import { sharedConfig } from '../eslint.base.mjs';
 
 /* The layers below the feature: what any production code may import. */
 const SHARED = ['components', 'content', 'lib', 'styles', 'assets'];
@@ -36,25 +36,22 @@ export default tseslint.config(
     tsconfigRootDir: import.meta.dirname,
     extraIgnores: ['storybook-static/**', 'public/mockServiceWorker.js'],
     extraTestFiles: ['src/mocks/**'],
+    // Design tokens live in CSS. An inline style bypasses the token layer and
+    // cannot be linted for literal values (see README.md).
+    extraRestrictedSyntax: [
+      {
+        selector: "JSXAttribute[name.name='style']",
+        message:
+          'Use a CSS module and design tokens instead of an inline style.',
+      },
+    ],
+    // The form's transport layer still sits under features/ until it moves out.
+    tryStatementIgnores: ['src/features/application-form/api.ts'],
   }),
 
   {
     files: ['**/*.{ts,tsx}'],
     rules: {
-      // This entry replaces the one in eslint.base.mjs, so it lists the
-      // shared re-export ban again. Design tokens live in CSS. An inline style
-      // bypasses the token layer and cannot be linted for literal values (see
-      // README.md).
-      'no-restricted-syntax': [
-        'error',
-        ...reExportBan,
-        {
-          selector: "JSXAttribute[name.name='style']",
-          message:
-            'Use a CSS module and design tokens instead of an inline style.',
-        },
-      ],
-
       // A default export makes a component harder to find by name and lets the
       // same component be imported under different names.
       'no-restricted-exports': [
