@@ -104,7 +104,7 @@ export const PaginationCardDefault = ({
       className="border-secondary flex w-full items-center justify-between gap-3 border-t px-4 py-3 md:px-6 md:pt-3 md:pb-4"
     >
       <div className="flex flex-1 justify-start">
-        <PaginationPrevTrigger asChild>
+        <PaginationPrevTrigger asChild ariaLabel={de.pagination.previous}>
           <Button iconLeading={ArrowLeft} color="secondary" size="sm">
             {isDesktop ? de.pagination.previous : undefined}
           </Button>
@@ -136,7 +136,7 @@ export const PaginationCardDefault = ({
       </PaginationContextComponent>
 
       <div className="flex flex-1 justify-end">
-        <PaginationNextTrigger asChild>
+        <PaginationNextTrigger asChild ariaLabel={de.pagination.next}>
           <Button iconTrailing={ArrowRight} color="secondary" size="sm">
             {isDesktop ? de.pagination.next : undefined}
           </Button>

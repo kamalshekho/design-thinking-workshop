@@ -128,6 +128,7 @@ export function Sparkline({
           <ResponsiveContainer>
             {type === 'area' ? (
               <AreaChart
+                accessibilityLayer={false}
                 data={points}
                 margin={{ top: 4, right: 2, bottom: 0, left: 2 }}
               >
@@ -153,6 +154,7 @@ export function Sparkline({
               </AreaChart>
             ) : (
               <BarChart
+                accessibilityLayer={false}
                 data={points}
                 margin={{ top: 4, right: 0, bottom: 0, left: 0 }}
               >

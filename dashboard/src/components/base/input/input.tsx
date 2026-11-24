@@ -204,8 +204,7 @@ const InputBase = ({
             setIsPasswordVisible(!isPasswordVisible);
           }}
           className={cx(
-            'text-fg-quaternary hover:text-fg-quaternary_hover focus:text-fg-quaternary_hover tap-target absolute flex cursor-pointer items-center justify-center transition duration-100 ease-linear focus:outline-hidden',
-            sizes[inputSize].iconTrailing,
+            'text-fg-quaternary hover:text-fg-quaternary_hover focus:text-fg-quaternary_hover tap-target absolute right-2 flex size-6 cursor-pointer items-center justify-center transition duration-100 ease-linear focus:outline-hidden',
           )}
         >
           {isPasswordVisible ? (
