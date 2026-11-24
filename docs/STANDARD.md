@@ -1,9 +1,9 @@
 # Coding-Standard
 
-Dieser Standard gilt für das Bewerbungsformular in `frontend/` und das
-Dashboard in `dashboard/`. Er fasst die Entscheidungen aus drei Issues
-zusammen: #111 (Code, Styles und Typen), #107 (Unkraut) und #108 (Zielgeräte
-und Breakpoints). Die Begriffe kommen aus [`CONTEXT.md`](../CONTEXT.md).
+Dieser Standard gilt für das Applicant form in `frontend/` und das Dashboard in
+`dashboard/`. Er fasst die Entscheidungen aus drei Issues zusammen: #111 (Code,
+Styles und Typen), #107 (Unkraut) und #108 (Zielgeräte und Breakpoints). Die
+Begriffe kommen aus [`CONTEXT.md`](../CONTEXT.md).
 
 Jeder Abschnitt nennt eine Regel und dazu die Prüfung, die sie heute durchsetzt,
 das offene Issue, das die Prüfung einschaltet, oder den Grund, warum keine
@@ -25,7 +25,7 @@ Prüfung über das ganze Projekt macht den Hook langsam.
 
 Der Hook `.husky/pre-commit` ist für beide Anwendungen derselbe. Hat eine
 Anwendung gestagte Dateien, ruft er ihr lint-staged mit `.lintstagedrc.json`
-auf. Im Bewerbungsformular laufen Prettier und `eslint --fix` über `*.ts` und
+auf. Im Applicant form laufen Prettier und `eslint --fix` über `*.ts` und
 `*.tsx`, Prettier und `stylelint --fix` über `*.css`. Im Dashboard laufen
 Prettier und `eslint --fix` über `*.ts` und `*.tsx`. Ein Stylelint hat das
 Dashboard nicht. Ist lint-staged in einer Anwendung nicht installiert,
@@ -42,10 +42,10 @@ CI ist der Workflow `.github/workflows/ci.yml`. Der Job `frontend` ruft
 
 Unkraut ist Code und Text, den niemand benutzt oder der eine andere Quelle
 wiederholt: überflüssige Kommentare, toter Code, ungenutzte Teile der Kopien,
-Duplikate und Verweise auf etwas, das es nicht gibt. Die Regeln gelten auch
-für den Bestand. Je Anwendung entfernt ein Issue das gefundene Unkraut und
-schaltet die Prüfungen im selben Pull Request ein, sonst sind sie ab dem
-ersten Lauf rot: #127 im Bewerbungsformular, #128 im Dashboard.
+Duplikate und Verweise auf etwas, das es nicht gibt. Die Regeln gelten auch für
+den Bestand. Je Anwendung entfernt ein Issue das gefundene Unkraut und schaltet
+die Prüfungen im selben Pull Request ein, sonst sind sie ab dem ersten Lauf rot:
+#127 im Applicant form, #128 im Dashboard.
 
 Stilfragen sind kein Unkraut. Größen außerhalb von `tokens.css`, `as`,
 Tailwind-Klassen mit beliebigem Wert, deutsche Bezeichner und Abweichungen
@@ -75,14 +75,14 @@ Offene Arbeit steht in einem Issue, nicht im Code. TODO, FIXME und HACK sind
 verboten.
 
 Prüfung: `no-warning-comments`, noch nicht eingeschaltet. #127 schaltet sie im
-Bewerbungsformular ein, #128 im Dashboard.
+Applicant form ein, #128 im Dashboard.
 
 ### Auskommentierter Code
 
 Auskommentierter Code wird gelöscht.
 
 Prüfung: `sonarjs/no-commented-code`, noch nicht eingeschaltet. #127 schaltet
-sie im Bewerbungsformular ein, #128 im Dashboard.
+sie im Applicant form ein, #128 im Dashboard.
 
 ### `eslint-disable`
 
@@ -92,8 +92,8 @@ Standards ist nur ein `eslint-disable` mit Begründung.
 
 Prüfung: `@eslint-community/eslint-comments/require-description` und
 `linterOptions.reportUnusedDisableDirectives: 'error'`, beide noch nicht
-eingeschaltet. #127 schaltet sie im Bewerbungsformular ein, #128 im Dashboard.
-Heute meldet ESLint ein überflüssiges `eslint-disable` nur als Warnung.
+eingeschaltet. #127 schaltet sie im Applicant form ein, #128 im Dashboard. Heute
+meldet ESLint ein überflüssiges `eslint-disable` nur als Warnung.
 
 ### Kopien aus Untitled UI
 
@@ -115,16 +115,16 @@ ist ebenfalls Unkraut, denn der Test prüft das öffentliche Verhalten. Nur
 
 Prüfung: `knip` und `knip --production` in CI, noch nicht eingeschaltet. Die
 Konfiguration ignoriert `public/mockServiceWorker.js`. #127 schaltet sie im
-Bewerbungsformular ein, #128 im Dashboard.
+Applicant form ein, #128 im Dashboard.
 
 ### CSS
 
 Ein ungenutzter Token und eine ungenutzte Klasse eines CSS-Moduls sind
 Unkraut.
 
-Prüfung: `eslint-plugin-css-modules` mit `no-unused-class` und
-`no-undef-class`, dazu ein Skript in CI für ungenutzte Tokens. Beides ist noch
-nicht eingeschaltet, #127 schaltet es im Bewerbungsformular ein.
+Prüfung: `eslint-plugin-css-modules` mit `no-unused-class` und `no-undef-class`,
+dazu ein Skript in CI für ungenutzte Tokens. Beides ist noch nicht
+eingeschaltet, #127 schaltet es im Applicant form ein.
 
 ### Duplikate
 
@@ -132,9 +132,9 @@ Produktionscode enthält keine Klone, die Kopien eingeschlossen. Tests sind
 ausgenommen, weil ein wiederholter Arrange-Block im Test besser lesbar ist als
 eine Hilfsfunktion.
 
-Prüfung: `jscpd` in CI mit der Schwelle von 50 Tokens. Jeder Klon lässt den
-Lauf scheitern. Noch nicht eingeschaltet, #127 schaltet es im
-Bewerbungsformular ein, #128 im Dashboard.
+Prüfung: `jscpd` in CI mit der Schwelle von 50 Tokens. Jeder Klon lässt den Lauf
+scheitern. Noch nicht eingeschaltet, #127 schaltet es im Applicant form ein,
+#128 im Dashboard.
 
 ### Verweise auf Nichtvorhandenes
 
@@ -176,9 +176,9 @@ beiden Anwendungen ein.
 ### Antworten des Servers
 
 Ein Zod-Schema prüft jede Antwort des Servers dort, wo sie ankommt: in
-`features/application-form/api.ts` im Bewerbungsformular und in `src/api/` im
-Dashboard. Heute prüft das Bewerbungsformular die Antworten in `api.ts` von
-Hand, und das Dashboard reicht sie in `src/api/transport.ts` mit
+`features/application-form/api.ts` im Applicant form und in `src/api/` im
+Dashboard. Heute prüft das Applicant form die Antworten in `api.ts` von Hand,
+und das Dashboard reicht sie in `src/api/transport.ts` mit
 `response.json() as T` ungeprüft durch.
 
 Prüfung: noch keine. #130 bringt Zod ins Dashboard und zeigt mit einem Test,
@@ -192,10 +192,10 @@ Ein Fehler wird zu einem Code, der Code zu einem deutschen Text aus `content`,
 und dieser Text wird angezeigt. Die Zuordnung vom Code zum Text ist ein
 `Record<ErrorCode, string>`, ein fehlender Text ist also ein Fehler von `tsc`.
 
-Prüfung im Bewerbungsformular: `tsc` im CI-Job `frontend`, über den Typ
-`errors: Record<ErrorCode, string>` in `src/content/types.ts`. Im Dashboard
-noch nicht eingeschaltet, dort liest `src/content/errorMessage.ts` die Texte
-über `Record<string, string>`. #130 stellt das Dashboard um.
+Prüfung im Applicant form: `tsc` im CI-Job `frontend`, über den Typ
+`errors: Record<ErrorCode, string>` in `src/content/types.ts`. Im Dashboard noch
+nicht eingeschaltet, dort liest `src/content/errorMessage.ts` die Texte über
+`Record<string, string>`. #130 stellt das Dashboard um.
 
 ### Nur die Transportschicht wirft
 
@@ -235,21 +235,21 @@ Reviews.
 
 Beide Anwendungen exportieren nur benannt, nie mit `export default`.
 
-Prüfung im Bewerbungsformular: `no-restricted-exports` mit
+Prüfung im Applicant form: `no-restricted-exports` mit
 `restrictDefaultExports: { direct: true }` in `frontend/eslint.config.js`,
 eingeschaltet im Hook und im CI-Job `frontend`. Abgeschaltet ist sie für
-Stories, `vite.config.ts` und `.storybook/`, die einen Default-Export
-brauchen. Im Dashboard noch nicht eingeschaltet, #131 schaltet sie ein.
+Stories, `vite.config.ts` und `.storybook/`, die einen Default-Export brauchen.
+Im Dashboard noch nicht eingeschaltet, #131 schaltet sie ein.
 
 ### Kein `style`-Attribut
 
 Eine Komponente setzt kein `style`-Attribut. In den Kopien bleibt `style` für
 CSS-Variablen erlaubt.
 
-Prüfung im Bewerbungsformular: `no-restricted-syntax` mit dem Selektor
-`JSXAttribute[name.name='style']` in `frontend/eslint.config.js`,
-eingeschaltet im Hook und im CI-Job `frontend`. Im Dashboard noch nicht
-eingeschaltet, #131 schaltet es ein.
+Prüfung im Applicant form: `no-restricted-syntax` mit dem Selektor
+`JSXAttribute[name.name='style']` in `frontend/eslint.config.js`, eingeschaltet
+im Hook und im CI-Job `frontend`. Im Dashboard noch nicht eingeschaltet, #131
+schaltet es ein.
 
 ### Eine Komponente lädt keine Daten
 
@@ -270,7 +270,7 @@ Logik zu unterscheiden ist.
 ### Ordner der Komponenten
 
 Die Ordner bleiben je Anwendung, wie sie sind: ein Ordner je Komponente im
-Bewerbungsformular, flache Dateien im Dashboard.
+Applicant form, flache Dateien im Dashboard.
 
 Das prüft keine Maschine.
 
@@ -284,22 +284,22 @@ in keiner der beiden Anwendungen, importiert wird direkt aus der Datei.
 Prüfung: `eslint-plugin-boundaries`, dazu eine Regel gegen Barrel-Dateien,
 beides noch nicht eingeschaltet. #126 schaltet es in beiden Anwendungen ein.
 
-Heute verbietet im Bewerbungsformular ein Block mit `no-restricted-imports` in
+Heute verbietet im Applicant form ein Block mit `no-restricted-imports` in
 `frontend/eslint.config.js` den Dateien unter `src/components/` Importe aus
 `content/` und `features/`. Er ist eingeschaltet im Hook und im CI-Job
 `frontend`. Nach ADR-0008 darf geteilter UI-Code `content` importieren.
 
 ## Styles
 
-Es bleiben zwei Systeme mit gemeinsamen Regeln: CSS Modules mit `tokens.css`
-im Bewerbungsformular, Tailwind im Dashboard.
+Es bleiben zwei Systeme mit gemeinsamen Regeln: CSS Modules mit `tokens.css` im
+Applicant form, Tailwind im Dashboard.
 
 ### Literale Werte nur in der Quelle der Tokens
 
 Ein literaler Wert steht nur in der Quelle der Tokens: `src/styles/tokens.css`
-im Bewerbungsformular, `@theme` in `dashboard/src/styles/` im Dashboard.
+im Applicant form, `@theme` in `dashboard/src/styles/` im Dashboard.
 
-Prüfung im Bewerbungsformular: Stylelint mit `color-no-hex` und
+Prüfung im Applicant form: Stylelint mit `color-no-hex` und
 `declaration-property-value-disallowed-list` gegen `rgb`, `rgba` und `hsl` in
 `color`, `background*` und `border*`, in `frontend/.stylelintrc.json`.
 Abgeschaltet sind beide für `src/styles/tokens.css`. Sie laufen im Hook und im
@@ -318,15 +318,14 @@ ein.
 
 ### Breakpoints
 
-Beide Anwendungen nutzen einen gemeinsamen Satz Breakpoints: die
-Standardwerte von Tailwind, 640, 768, 1024 und 1280 px. Das
-Bewerbungsformular nutzt davon 640 und 1024 px. Der Header bleibt bei 900 px.
-Das ist die einzige Ausnahme, beschrieben in
-[`frontend/DESIGN.md`](../frontend/DESIGN.md).
+Beide Anwendungen nutzen einen gemeinsamen Satz Breakpoints: die Standardwerte
+von Tailwind, 640, 768, 1024 und 1280 px. Das Applicant form nutzt davon 640 und
+1024 px. Der Header bleibt bei 900 px. Das ist die einzige Ausnahme, beschrieben
+in [`frontend/DESIGN.md`](../frontend/DESIGN.md).
 
-Prüfung im Bewerbungsformular: Stylelint mit
-`media-feature-name-value-allowed-list`, das für `width` nur 640, 900 und
-1024 px erlaubt, noch nicht eingeschaltet. #132 schaltet es ein. Prüfung im
+Prüfung im Applicant form: Stylelint mit
+`media-feature-name-value-allowed-list`, das für `width` nur 640, 900 und 1024
+px erlaubt, noch nicht eingeschaltet. #132 schaltet es ein. Prüfung im
 Dashboard: `no-restricted-classes` aus dem Abschnitt
 [Literale Werte](#literale-werte-nur-in-der-quelle-der-tokens) trifft auch
 Varianten wie `min-[400px]:`, noch nicht eingeschaltet. #133 schaltet es ein.
@@ -358,8 +357,8 @@ Noch nicht eingeschaltet, #134 baut den Block ab.
 
 ## Bildschirmbreiten und Bedienung
 
-Applicants öffnen das Bewerbungsformular meist auf dem Smartphone (`A28`).
-Staff members arbeiten am Laptop oder Desktop und auf dem Telefon nur an einer
+Applicants öffnen das Applicant form meist auf dem Smartphone (`A28`). Staff
+members arbeiten am Laptop oder Desktop und auf dem Telefon nur an einer
 Application (`A29`). Beide Annahmen stehen in
 [`docs/ASSUMPTIONS.md`](./ASSUMPTIONS.md).
 
