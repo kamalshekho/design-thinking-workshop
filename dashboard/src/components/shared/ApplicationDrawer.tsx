@@ -49,6 +49,7 @@ import type {
 } from '@/domain/application';
 import { APPLICATION_STATUSES } from '@/domain/application';
 import type { Category } from '@/domain/category';
+import { useCloseOnEscape } from '@/hooks/useCloseOnEscape';
 import { cx } from '@/utils/cx';
 
 import {
@@ -132,23 +133,7 @@ export function ApplicationDrawer({
   );
   const notesId = `application-notes-${application.id}`;
 
-  /**
-   * A drawer that opens over the list closes on Escape wherever focus sits —
-   * unless something inside it has already answered that Escape. `OwnerSelect`
-   * closes its own popover with it, and one key press should dismiss one layer.
-   */
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === 'Escape' && !event.defaultPrevented) {
-        onClose();
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onClose]);
+  useCloseOnEscape(onClose);
 
   /** Moves the reading position into the panel when another row is opened. */
   useEffect(() => {
