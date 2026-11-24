@@ -9,8 +9,8 @@ import type { Content } from './types';
  *
  * Wording marked "DESIGN.md" is specified and must not be edited without
  * editing DESIGN.md in the same commit (section 49). Wording marked "not yet
- * in DESIGN.md" was written for this implementation and still needs a copy
- * review.
+ * in DESIGN.md" was written for this implementation. Issue #148 collects its
+ * copy review, so each mark points there and nowhere else.
  */
 export const de = {
   /** DESIGN.md section 12 */
@@ -30,9 +30,9 @@ export const de = {
   },
 
   /**
-   * Not yet in DESIGN.md — the brand-strip tagline from the Figma Hero
-   * Section (section 13), distinct from the page.title heading below it.
-   * Needs a copy review.
+   * Not yet in DESIGN.md, see issue #148. The brand-strip tagline from the
+   * Figma Hero Section (section 13), distinct from the page.title heading
+   * below it.
    */
   hero: {
     tagline: 'ichbinhier, damit Liebe lauter ist',
@@ -63,8 +63,10 @@ export const de = {
     SUPPORTING_MEMBER: 'Fördermitglied werden',
   } satisfies Record<FixedRoute, string>,
 
-  /** Not yet in DESIGN.md — loading/error/empty states for field 1's
-   *  backend-owned categories. Needs a copy review. */
+  /**
+   * Not yet in DESIGN.md, see issue #148. Loading, error and empty states for
+   * field 1's backend-owned categories.
+   */
   categoriesField: {
     loadingOption: 'Lädt …',
     errorOption: 'Nicht verfügbar',
@@ -145,9 +147,9 @@ export const de = {
 
   /**
    * Field errors. Only EMAIL_REQUIRED and EMAIL_INVALID are specified
-   * (DESIGN.md section 20); the rest are not yet in DESIGN.md and need a copy
-   * review. Each one names what to do, never just that something is wrong
-   * (section 32 forbids relying on colour alone).
+   * (DESIGN.md section 20). The rest are not yet in DESIGN.md, see issue #148.
+   * Each one names what to do, never just that something is wrong (section 32
+   * forbids relying on colour alone).
    */
   errors: {
     ROUTE_REQUIRED: 'Bitte wähle aus, wie du uns helfen möchtest',
@@ -188,10 +190,10 @@ export const de = {
   },
 
   /**
-   * Not yet in DESIGN.md — section 11 only names the footer as "existing site
-   * continuation" without wording. Ported from the live site's footer, needs
-   * a copy review. The contact block and the copyright line hold placeholders
-   * rather than the association's details.
+   * Not yet in DESIGN.md, see issue #148. Section 11 only names the footer as
+   * "existing site continuation" without wording, so this is ported from the
+   * live site's footer. The contact block and the copyright line hold
+   * placeholders rather than the association's details.
    */
   footer: {
     kontakt: {

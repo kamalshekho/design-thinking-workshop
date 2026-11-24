@@ -195,9 +195,11 @@ specified wording.
 Category labels are backend-owned data because staff members can maintain them
 (`A12`).
 
-Some strings — most error messages — were written for this implementation and
-are **not yet in `DESIGN.md`**. They are marked in `de.ts` and still need a copy
-review.
+Some strings, most error messages among them, were written for this
+implementation and are **not yet in `DESIGN.md`**. Their comment in `de.ts`
+starts with "Not yet in DESIGN.md, see issue #148". The copy review itself is
+tracked in [#148](https://github.com/kamalshekho/design-thinking-workshop/issues/148),
+so the code carries no review notes of its own.
 
 The applicant form is German only; the English version and its language switch
 were removed (`A22`). Backend-managed category labels are shown as the API

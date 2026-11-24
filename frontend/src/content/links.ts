@@ -7,7 +7,9 @@
  * link.
  */
 export const links = {
-  /** DESIGN.md section 23 — needs the real privacy policy URL */
+  /**
+   * DESIGN.md section 23. Not yet the real privacy policy URL, see issue #148.
+   */
   privacyPolicy: 'https://www.ichbinhier.eu/datenschutz/',
   /** DESIGN.md section 28 — where a community member actually joins */
   communityGroup: 'https://www.ichbinhier.eu/engagement/',
