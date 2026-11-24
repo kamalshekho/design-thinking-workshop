@@ -474,6 +474,11 @@ backend returns. This document no longer specifies their wording or count —
 only that they sit between the two fixed options, in the order the backend
 sends them.
 
+A selected label too long for the field ends with an ellipsis (`…`) about 7px
+before the dropdown indicator, so no text touches the arrow. At 320px this
+applies to "Bei #ichbinhier mitmachen (Aktionsgruppe)". A label that fits looks
+the same as before. The field stays a native `<select>`.
+
 This field is the central decision point of the experience.
 
 Give it stronger visual prominence than a routine select.
@@ -1282,6 +1287,9 @@ Figma Select component values: `56px` height, `16px` horizontal padding, and
 a `16px` dropdown indicator. Default placeholder text is `#777`; the focus,
 error, and disabled borders use the same `2px #8437b6`, `2px #e31119`, and
 `0.5px #b9b9b9` treatment as Input.
+
+The selected value stops `0.44rem` (about 7px) before the indicator. A value
+that does not fit ends with `…` there (section 17).
 
 ---
 

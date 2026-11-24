@@ -107,6 +107,7 @@
   --control-padding-inline: var(--wp--preset--spacing--40);
   --select-arrow-size: var(--wp--preset--spacing--40);
   --select-arrow-inset: var(--control-padding-inline);
+  --select-arrow-gap: var(--wp--preset--spacing--20);
   --checkbox-size: 22px;
   --checkbox-gap: 12px;
   --route-panel-max-width: 480px;
