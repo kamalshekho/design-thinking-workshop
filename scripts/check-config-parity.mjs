@@ -33,6 +33,8 @@ const SHARED_TOOLS = [
   'eslint-plugin-react-hooks',
   'eslint-plugin-react-refresh',
   'eslint-plugin-simple-import-sort',
+  'eslint-plugin-boundaries',
+  'eslint-import-resolver-typescript',
   'globals',
   'size-limit',
   '@size-limit/file',
