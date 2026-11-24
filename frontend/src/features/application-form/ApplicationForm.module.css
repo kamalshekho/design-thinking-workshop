@@ -48,12 +48,14 @@
 }
 
 /*
- * A bot fills every field it finds; a person never sees this one. It stays
- * perceivable to assistive tech (not display:none) because a screen reader's
- * virtual cursor walks the DOM regardless of tab order, so the label is what
- * tells that reader to leave it empty.
+ * A bot fills every field it finds; a person never sees this one. Both
+ * .honeypot and .visuallyHidden stay perceivable to assistive tech (not
+ * display:none) because a screen reader's virtual cursor walks the DOM
+ * regardless of tab order, so the label is what tells that reader to leave it
+ * empty.
  */
-.honeypot {
+.honeypot,
+.visuallyHidden {
   position: absolute;
   width: var(--visually-hidden-size);
   height: var(--visually-hidden-size);
@@ -93,16 +95,6 @@
   line-height: 1.35;
   color: var(--color-text-muted);
   text-align: center;
-}
-
-/* Perceivable to assistive tech only — see .honeypot above for why not display:none. */
-.visuallyHidden {
-  position: absolute;
-  width: var(--visually-hidden-size);
-  height: var(--visually-hidden-size);
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
 }
 
 @media (width <= 640px) {
