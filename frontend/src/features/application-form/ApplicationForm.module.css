@@ -48,10 +48,10 @@
 }
 
 /*
- * A bot fills every field it finds; a person never sees this one. Both
- * .honeypot and .visuallyHidden stay perceivable to assistive tech (not
- * display:none) because a screen reader's virtual cursor walks the DOM
- * regardless of tab order, so the label is what tells that reader to leave it
+ * Both .honeypot and .visuallyHidden stay perceivable to assistive tech (not
+ * display:none). For .honeypot specifically, a bot fills every field it finds
+ * while a person never sees it; because a screen reader's virtual cursor walks
+ * the DOM regardless of tab order, its label tells that reader to leave it
  * empty.
  */
 .honeypot,

@@ -58,7 +58,9 @@ function readCssTokens(tokensCssPath) {
   const css = stripCssComments(readFileSync(tokensCssPath, 'utf8'));
   const tokens = new Map();
   for (const [, name, rawValue] of css.matchAll(DEFINITION)) {
-    tokens.set(name, rawValue.trim());
+    if (!tokens.has(name)) {
+      tokens.set(name, rawValue.trim());
+    }
   }
   return tokens;
 }
