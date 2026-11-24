@@ -266,9 +266,8 @@ experiences:
   (`expectNoA11yViolations` from `src/test/a11y.ts`).
 
 Assert on **error codes and visible localized text**, never on class names or
-component internals. There is no Playwright: all the logic is client-side and
-synchronous, so RTL covers it. Native select behaviour on a real phone
-(`DESIGN.md` section 34) is a manual check either way.
+component internals. Native select behaviour on a real phone (`DESIGN.md`
+section 34) is a manual check either way.
 
 ## Quality gates
 
@@ -308,13 +307,11 @@ that cannot fail is worse than none, because it reports success.
 
 **What automation cannot check, and you have to check by hand:**
 
-- **colour contrast** — jsdom computes no colour, so axe's `color-contrast`
-  rule is switched off and nothing automated checks it;
 - the focus ring is actually visible on creme _and_ on white surfaces;
 - each error text explains what to do, not just that something is wrong — a red
   border alone fails section 32;
-- [tap targets](../docs/STANDARD.md#tippflächen) on a real phone, until the
-  E2E check exists;
+- [tap targets](../docs/STANDARD.md#tippflächen) on a real phone beyond what
+  axe's `target-size` rule measures in E2E;
 - the native select opens the OS picker on iOS and Android;
 - the sticky mobile submit does not cover the privacy copy;
 - the form is completable with the keyboard alone, in a sensible order.
