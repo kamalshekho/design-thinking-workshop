@@ -130,21 +130,21 @@ export function OpenApplicationsPanel({
             open Application, even if a filter then hides it, so filtering
             down to nothing cannot take away the control that undoes it. */}
         {anyOpen ? (
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 sm:justify-start">
             <OpenApplicationsFilterBar
               filters={filters}
               categories={categories}
               owners={owners}
               onChange={setFilters}
             />
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3 sm:ml-auto">
               {hasActiveFilters(filters) && (
                 <button
                   type="button"
                   onClick={() => {
                     setFilters(EMPTY_OPEN_APPLICATIONS_FILTERS);
                   }}
-                  className="text-fuut-purple text-sm font-medium hover:underline"
+                  className="text-fuut-purple tap-target relative text-sm font-medium hover:underline"
                 >
                   {de.filters.reset}
                 </button>
@@ -201,7 +201,7 @@ export function OpenApplicationsPanel({
           <div className="flex justify-end">
             <a
               href={viewAllHref}
-              className="text-fuut-purple text-sm font-medium hover:underline"
+              className="text-fuut-purple tap-target relative text-sm font-medium hover:underline"
             >
               {de.overview.openApplications.viewAll}
             </a>

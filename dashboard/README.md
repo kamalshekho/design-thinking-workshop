@@ -206,6 +206,12 @@ the rest with a prototype, kept on the branch
 - **view tabs never wrap.** When they do not fit beside the search, the search
   moves to the next line; below that the tabs scroll sideways.
 
+Every control takes a press in at least 24 × 24 px (WCAG 2.2, 2.5.8; issue
+#116). One drawn smaller, such as a row checkbox or the `sm` switch, keeps its
+look and carries the `tap-target` utility from
+`src/styles/untitledui-theme.css`, an invisible pseudo-element that widens the
+hit area. Links in running text are exempt.
+
 In tests, `src/test/setup.ts` answers `min-width` media queries against
 `window.innerWidth`, which starts at 1600 px. A test of a phone layout calls
 `setViewportWidth` from `src/test/viewport.ts` before it renders.

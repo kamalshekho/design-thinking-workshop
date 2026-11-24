@@ -215,6 +215,25 @@
 }
 
 /*
+ * WCAG 2.2 (2.5.8) asks for a pointer target of at least 24 × 24 px. A control
+ * drawn smaller keeps its drawn size and gets an invisible `::after` of at
+ * least 24 × 24 px centred on it. The host must be positioned (`relative` or
+ * `absolute`).
+ */
+@layer utilities {
+  .tap-target::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 24px);
+    height: max(100%, 24px);
+    transform: translate(-50%, -50%);
+  }
+}
+
+/*
  * The detail panel slides in from the right edge it is docked to, so the
  * motion says where the panel came from and where dismissing sends it back.
  * `100%` is the panel's own width, so the same rule covers the full-width

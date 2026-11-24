@@ -1,5 +1,7 @@
 /**
- * Clone path: `components/base/checkbox/checkbox.tsx`, unchanged.
+ * Clone path: `components/base/checkbox/checkbox.tsx`. Two changes:
+ * - a checked box reads as a white tick on a lilac fill;
+ * - the box carries `tap-target` (#116).
  */
 
 import type { ReactNode, Ref } from 'react';
@@ -30,7 +32,7 @@ export const CheckboxBase = ({
   return (
     <div
       className={cx(
-        'bg-primary ring-primary relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded ring-1 ring-inset',
+        'bg-primary ring-primary tap-target relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded ring-1 ring-inset',
         size === 'md' && 'size-5 rounded-md',
         // Checked reads as a white tick on a lilac fill. The ring goes
         // transparent rather than away so the box keeps its size.

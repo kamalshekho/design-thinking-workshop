@@ -1,5 +1,6 @@
 /**
- * Clone path: `components/base/input/input.tsx`, unchanged.
+ * Clone path: `components/base/input/input.tsx`. One change: the password
+ * visibility button carries `tap-target` (#116).
  */
 
 import { Eye, EyeOff, HelpCircle, InfoCircle } from '@untitledui/icons';
@@ -214,7 +215,7 @@ export const InputBase = ({
             setIsPasswordVisible(!isPasswordVisible);
           }}
           className={cx(
-            'text-fg-quaternary hover:text-fg-quaternary_hover focus:text-fg-quaternary_hover absolute flex cursor-pointer items-center justify-center transition duration-100 ease-linear focus:outline-hidden',
+            'text-fg-quaternary hover:text-fg-quaternary_hover focus:text-fg-quaternary_hover tap-target absolute flex cursor-pointer items-center justify-center transition duration-100 ease-linear focus:outline-hidden',
             sizes[inputSize].iconTrailing,
           )}
         >

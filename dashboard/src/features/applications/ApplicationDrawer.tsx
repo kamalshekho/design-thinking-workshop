@@ -191,7 +191,7 @@ export function ApplicationDrawer({
               type="button"
               title={de.detail.copyMail}
               onClick={copyEmail}
-              className="text-tertiary hover:text-secondary outline-focus-ring mt-0.5 flex max-w-full cursor-pointer items-center gap-1.5 rounded text-[13px] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
+              className="text-tertiary hover:text-secondary outline-focus-ring tap-target relative mt-0.5 flex max-w-full cursor-pointer items-center gap-1.5 rounded text-[13px] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <span className="truncate">{application.email}</span>
               {/* Same state the footer button reads, so a click here confirms
