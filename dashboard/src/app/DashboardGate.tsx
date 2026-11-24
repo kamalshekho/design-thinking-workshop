@@ -1,35 +1,23 @@
 /**
- * Whether there is anything to show yet, answered once for the whole dashboard
- * (`README.md`, "Loading and failure").
+ * Whether there is anything to show yet, answered once for the whole
+ * dashboard. Where it sits, what it spares the screens, and why it asks
+ * whether there is data rather than whether a fetch failed: `README.md`, "How
+ * the dashboard talks to the backend".
  *
- * The gate sits between `AppShell` and the screen and subscribes to the same
- * four cache entries every screen below it reads. Its real payoff is
- * underneath: no container and no screen handles `Application[] | undefined`,
- * and no screen test writes the case where the data has not arrived.
- *
- * All four are waited on together rather than screen by screen. A row shows a
- * Category's name and an Owner's initials, so a list that arrives before
- * either would render Applications whose Category reads as missing and whose
- * Zuständigkeit column is empty — three staggered half-screens instead of one
- * wait.
- *
- * **The question is whether there is data, not whether this fetch failed**
- * (issue #58). `data === undefined` is what makes a panel here honest: there
- * is nothing on screen, so nothing is taken away by replacing it. A refetch
- * that failed over a list already in the cache is the other state — the work,
- * the filters and the open drawer are still there, and unmounting them to say
- * so would destroy more than the failure did. That one is
- * `RequestFailureNotice`, above the screens rather than in place of them.
+ * The four cache entries every screen reads are waited on together rather
+ * than screen by screen. A row shows a Category's name and an Owner's
+ * initials, so a list that arrives before either would render Applications
+ * whose Category reads as missing and whose Zuständigkeit column is empty —
+ * three staggered half-screens instead of one wait.
  *
  * A failure here offers a retry rather than only naming itself: the likely
  * cause is a backend that is not up yet or a request that was dropped, and
  * both are fixed by asking again.
  *
- * **An expired Sign-in is not one of them.** It is answered by the cover over
- * the whole dashboard (`SignInCover`), and this gate has to stay out of the
- * way while that happens, so a `401` is skipped here. It reaches this gate at
- * all because a write refused by the expired Sign-in invalidates the list on
- * its way out (`queries/optimistic.ts`), and the refetch is refused too.
+ * A `401` is skipped: the cover over the whole dashboard (`SignInCover`)
+ * answers it, and this gate stays out of its way. It reaches the gate at all
+ * because a write refused by the expired Sign-in invalidates the list on its
+ * way out (`queries/optimistic.ts`), and the refetch is refused too.
  */
 
 import { useQueries } from '@tanstack/react-query';
