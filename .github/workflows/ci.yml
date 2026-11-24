@@ -162,6 +162,18 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Check third-party licences
+        run: npm run check:licenses
+
+      - name: Check dead code
+        run: npm run knip
+
+      - name: Check exports only tests use
+        run: npm run knip:production
+
+      - name: Check duplicates
+        run: npm run jscpd
+
       - name: Check formatting
         run: npm run format:check
 
