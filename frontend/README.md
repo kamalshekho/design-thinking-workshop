@@ -90,14 +90,15 @@ in the [coding standard](../docs/STANDARD.md). Among them:
   `Button/Button.module.css`:
   [Ordner der Komponenten](../docs/STANDARD.md#ordner-der-komponenten).
 - English identifiers: [Bezeichner auf Englisch](../docs/STANDARD.md#bezeichner-auf-englisch).
+- `strict`, `noUncheckedIndexedAccess` and the other compiler options: [Compiler-Optionen](../docs/STANDARD.md#compiler-optionen).
 
-Two conventions of this app that the standard does not cover:
+Two more conventions:
 
 - **Type inference where it reads well, annotations at boundaries.** Exported
   functions and props get explicit types; local variables usually do not.
-- **No `any`, no non-null assertion in `src` outside tests.** `strict` plus
-  `noUncheckedIndexedAccess` is on; if a type is hard to express, that is
-  usually a sign the data shape is wrong.
+- **No `any`, no non-null assertion in `src` outside tests.** ESLint rejects
+  both through `strictTypeChecked` in `../eslint.base.mjs`. If a type is hard
+  to express, that is usually a sign the data shape is wrong.
 
 ## Component rules
 
