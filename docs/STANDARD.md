@@ -260,7 +260,7 @@ Eine Komponente lädt keine Daten.
 
 Prüfung: die Schichtregeln aus
 [ADR-0008](./adr/0008-import-direction-checked-by-eslint-boundaries.md), noch
-nicht eingeschaltet, siehe
+nicht eingeschaltet. #126 schaltet sie in beiden Anwendungen ein, siehe
 [Importrichtung](#importrichtung-und-barrel-dateien).
 
 ### Eine Komponente validiert nicht
