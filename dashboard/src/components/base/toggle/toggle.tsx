@@ -1,9 +1,7 @@
 /**
  * Clone path: `components/base/toggle/toggle.tsx`. Two changes, both #116:
- * - the track does not shrink (`shrink-0`), so beside a long label it keeps
- *   its width and the knob stays inside it instead of covering the label;
- * - the track carries `tap-target`, so the 20 px `sm` switch takes a press
- *   anywhere in 24 px of height without being drawn any larger.
+ * - the track does not shrink (`shrink-0`);
+ * - the track carries `tap-target`.
  */
 
 import type { ReactNode } from 'react';

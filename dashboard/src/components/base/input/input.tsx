@@ -1,7 +1,6 @@
 /**
  * Clone path: `components/base/input/input.tsx`. One change: the password
- * visibility button carries `tap-target`, so its 16 px eye takes a press
- * anywhere in 24 × 24 px without being drawn any larger (#116).
+ * visibility button carries `tap-target` (#116).
  */
 
 import { Eye, EyeOff, HelpCircle, InfoCircle } from '@untitledui/icons';
