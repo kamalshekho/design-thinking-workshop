@@ -7,7 +7,7 @@
 
 import { useRef } from 'react';
 
-import type { Category } from '@/domain/application';
+import type { Category } from '@/domain/category';
 import { useSearchShortcut } from '@/hooks/use-search-shortcut';
 
 import type { ApplicationFilters } from './filterApplications';

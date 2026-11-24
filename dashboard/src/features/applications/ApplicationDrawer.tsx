@@ -45,10 +45,10 @@ import type {
   Application,
   ApplicationEdit,
   ApplicationStatus,
-  Category,
   Owner,
 } from '@/domain/application';
 import { APPLICATION_STATUSES } from '@/domain/application';
+import type { Category } from '@/domain/category';
 import { cx } from '@/utils/cx';
 
 import {

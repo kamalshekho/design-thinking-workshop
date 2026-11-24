@@ -23,10 +23,10 @@ import type {
   Application,
   ApplicationEdit,
   ApplicationView,
-  Category,
   Owner,
 } from '@/domain/application';
 import { APPLICATION_VIEWS, isDiscarded } from '@/domain/application';
+import type { Category } from '@/domain/category';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 import { ApplicationDetail } from './ApplicationDetail';

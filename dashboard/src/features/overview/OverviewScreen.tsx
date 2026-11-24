@@ -6,12 +6,8 @@
 
 import { PageHeader } from '@/components/shared/page-header';
 import { de } from '@/content/de';
-import type {
-  Application,
-  ApplicationEdit,
-  Category,
-  Owner,
-} from '@/domain/application';
+import type { Application, ApplicationEdit, Owner } from '@/domain/application';
+import type { Category } from '@/domain/category';
 import type { StateChange } from '@/domain/stateChange';
 import type { NotesField } from '@/features/applications/useNotesDraft';
 

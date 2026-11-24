@@ -18,12 +18,8 @@ import { useMemo, useState } from 'react';
 import { Button } from '@/components/base/buttons/button';
 import { EmptyState } from '@/components/shared/empty-state';
 import { de } from '@/content/de';
-import type {
-  Application,
-  ApplicationEdit,
-  Category,
-  Owner,
-} from '@/domain/application';
+import type { Application, ApplicationEdit, Owner } from '@/domain/application';
+import type { Category } from '@/domain/category';
 import { ApplicationDetail } from '@/features/applications/ApplicationDetail';
 import { ApplicationsList } from '@/features/applications/ApplicationsList';
 import { DiscardSelectedDialog } from '@/features/applications/DiscardSelectedDialog';

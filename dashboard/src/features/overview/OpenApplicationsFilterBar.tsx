@@ -25,7 +25,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { de } from '@/content/de';
-import type { Category, Owner } from '@/domain/application';
+import type { Owner } from '@/domain/application';
+import type { Category } from '@/domain/category';
 
 import type { OpenApplicationsFilters } from './selectOpenApplications';
 
