@@ -6,41 +6,25 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
-  {
-    ignores: [
-      'dist/**',
-      'coverage/**',
-      'storybook-static/**',
-      'public/mockServiceWorker.js',
-    ],
-  },
+import { sharedConfig } from '../eslint.base.mjs';
 
-  js.configs.recommended,
-  tseslint.configs.strictTypeChecked,
-  jsxA11y.flatConfigs.recommended,
+export default tseslint.config(
+  ...sharedConfig({
+    js,
+    tseslint,
+    jsxA11y,
+    reactHooks,
+    reactRefresh,
+    simpleImportSort,
+    globals,
+    tsconfigRootDir: import.meta.dirname,
+    extraIgnores: ['storybook-static/**', 'public/mockServiceWorker.js'],
+    extraTestFiles: ['src/mocks/**'],
+  }),
 
   {
     files: ['**/*.{ts,tsx}'],
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
-      globals: globals.browser,
-    },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-      'simple-import-sort': simpleImportSort,
-    },
     rules: {
-      ...reactHooks.configs['recommended-latest'].rules,
-      ...reactRefresh.configs.vite.rules,
-
-      'simple-import-sort/imports': 'error',
-      'simple-import-sort/exports': 'error',
-
       // Design tokens live in CSS. An inline style bypasses the token layer
       // and cannot be linted for literal values (see README.md).
       'no-restricted-syntax': [
@@ -84,15 +68,6 @@ export default tseslint.config(
     },
   },
 
-  /** Tests may assert on internals and use non-null assertions. */
-  {
-    files: ['src/**/*.test.{ts,tsx}', 'src/test/**', 'src/mocks/**'],
-    rules: {
-      '@typescript-eslint/no-non-null-assertion': 'off',
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-    },
-  },
-
   /* Storybook metadata is the documented exception to named exports. */
   {
     files: ['src/**/*.stories.{ts,tsx}'],
@@ -105,9 +80,6 @@ export default tseslint.config(
   /* Vite and Vitest resolve their config from a default export. */
   {
     files: ['vite.config.ts'],
-    languageOptions: {
-      globals: globals.node,
-    },
     rules: {
       'no-restricted-exports': 'off',
     },
@@ -122,16 +94,6 @@ export default tseslint.config(
     },
     rules: {
       'no-restricted-exports': 'off',
-    },
-  },
-
-  /* Typed linting needs a TypeScript program, which plain JS config files are
-     not part of. */
-  {
-    files: ['**/*.{js,mjs}'],
-    extends: [tseslint.configs.disableTypeChecked],
-    languageOptions: {
-      globals: globals.node,
     },
   },
 );
