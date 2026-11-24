@@ -1,0 +1,15 @@
+{
+  "name": "ichbinhier-e2e",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.3"
+  }
+}
