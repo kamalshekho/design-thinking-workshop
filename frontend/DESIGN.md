@@ -1006,7 +1006,7 @@ Keep its width aligned to other controls.
 Recommended:
 
 ```text
-22 × 22px
+22 × 22px visible, 24 × 24px hit area (section 40)
 Accent #8437b6
 ```
 
@@ -1063,8 +1063,15 @@ outline-offset: 3px;
 Minimum tap target:
 
 ```text
-44px
+24 × 24px (WCAG 2.2, 2.5.8)
 ```
+
+Every interactive control has a hit area of at least this size, at every width.
+Links inside running text, such as "Datenschutzerklärung" in the privacy copy,
+are exempt. A control drawn smaller keeps its visible size and grows its hit
+area with a transparent pseudo-element centred on it: the 22px checkbox
+(section 38). The header's search and menu buttons and its drawer links stay
+44px.
 
 Preferred form control:
 
@@ -1325,7 +1332,8 @@ disabled
 Figma Checkbox component values: `22px` square box, `12px` gap to the copy,
 and a `4px` radius. Checked is `#8437b6` with a white `✓`; focus has a `2px`
 purple border, error a `1px #e31119` border, and disabled content has 50%
-opacity.
+opacity. The box takes clicks across a `24px` square centred on it, `1px`
+beyond each visible edge.
 
 ---
 

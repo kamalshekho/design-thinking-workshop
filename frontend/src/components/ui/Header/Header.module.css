@@ -100,8 +100,8 @@
   flex: none;
   align-items: center;
   justify-content: center;
-  width: var(--touch-target-min);
-  height: var(--touch-target-min);
+  width: var(--header-control-size);
+  height: var(--header-control-size);
   padding: 0;
   border: none;
   background: none;
@@ -215,7 +215,7 @@
   .navLink {
     display: flex;
     align-items: center;
-    min-height: var(--touch-target-min);
+    min-height: var(--header-control-size);
     padding-inline: 0;
   }
 

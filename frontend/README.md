@@ -293,7 +293,8 @@ that cannot fail is worse than none, because it reports success.
 - the focus ring is actually visible on creme _and_ on white surfaces;
 - each error text explains what to do, not just that something is wrong — a red
   border alone fails section 32;
-- tap targets are at least 44px on a real phone;
+- every control except a link in running text has a tap target of at least
+  24 × 24px on a real phone (`DESIGN.md` section 40);
 - the native select opens the OS picker on iOS and Android;
 - the sticky mobile submit does not cover the privacy copy;
 - the form is completable with the keyboard alone, in a sensible order.

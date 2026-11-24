@@ -109,6 +109,10 @@
   --select-arrow-inset: var(--control-padding-inline);
   --select-arrow-gap: var(--wp--preset--spacing--20);
   --checkbox-size: 22px;
+
+  /* Minimum hit area of an interactive control, WCAG 2.2 2.5.8
+     (DESIGN.md section 40). */
+  --tap-target-min: 24px;
   --checkbox-gap: 12px;
   --route-panel-max-width: 480px;
   --route-panel-padding: var(--wp--preset--spacing--60);
@@ -147,7 +151,10 @@
   --z-index-header: 99;
   --icon-size-sm: 18px;
   --form-icon-size: 100px;
-  --touch-target-min: 44px;
+
+  /* Header search and menu buttons, and drawer link height. Larger than the
+     tap-target minimum below, which every other control has to reach. */
+  --header-control-size: 44px;
 
   /* Header donate CTA — sized to match the live site's compact nav button
      (ichbinhier.eu) rather than the larger 56px/20px Button component

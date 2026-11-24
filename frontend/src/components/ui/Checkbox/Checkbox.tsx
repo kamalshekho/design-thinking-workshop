@@ -1,6 +1,7 @@
 import { type InputHTMLAttributes, type ReactNode, useId } from 'react';
 
 import { cx } from '../../../lib/cx';
+import tapTargetStyles from '../tapTarget.module.css';
 import styles from './Checkbox.module.css';
 
 interface CheckboxProps extends Omit<
@@ -27,7 +28,7 @@ export function Checkbox({
   const labelId = useId();
   const inputId = id ?? generatedId;
   const labelledBy = cx(ariaLabelledBy, labelId);
-  const classNames = cx(styles.checkbox, className);
+  const classNames = cx(styles.checkbox, tapTargetStyles.tapTarget, className);
 
   return (
     <div className={styles.container}>
