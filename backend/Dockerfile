@@ -12,6 +12,9 @@ WORKDIR /app
 
 COPY --from=build /build/target/volunteer-form-service-*.jar app.jar
 
+# The base image lags behind Alpine's security fixes; the release scan fails
+# on any high or critical one that already has a fix.
+RUN apk upgrade --no-cache
 RUN addgroup -S app && adduser -S app -G app
 USER app
 
