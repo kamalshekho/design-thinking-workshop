@@ -2,6 +2,13 @@ package de.ichbinhier.volunteerformservice.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import de.ichbinhier.volunteerformservice.application.domain.Application;
 import de.ichbinhier.volunteerformservice.application.domain.StateChange;
@@ -32,6 +40,7 @@ import de.ichbinhier.volunteerformservice.application.repository.ApplicationRepo
 import de.ichbinhier.volunteerformservice.application.repository.StateChangeRepository;
 import de.ichbinhier.volunteerformservice.category.domain.Category;
 import de.ichbinhier.volunteerformservice.category.repository.CategoryRepository;
+import de.ichbinhier.volunteerformservice.email.EmailSender;
 import de.ichbinhier.volunteerformservice.staff.domain.Staff;
 import de.ichbinhier.volunteerformservice.staff.repository.StaffRepository;
 import de.ichbinhier.volunteerformservice.web.config.SignIns;
@@ -54,6 +63,8 @@ class DashboardWritePathIntegrationTest {
     @Autowired private PasswordEncoder passwordEncoder;
 
     @Autowired private SignIns signIns;
+
+    @MockitoBean private EmailSender emailSender;
 
     private Category socialMedia;
 
@@ -81,6 +92,45 @@ class DashboardWritePathIntegrationTest {
     void clear() {
         changes.deleteAll();
         applications.deleteAll();
+    }
+
+    @Test
+    void sendsOneEmailOnlyWhenStatusChanges() throws Exception {
+        Application onFile = applications.save(application(socialMedia));
+
+        patchApplication(onFile, "{\"status\":\"IN_REVIEW\"}")
+                .andExpect(status().isOk());
+        patchApplication(onFile, "{\"status\":\"IN_REVIEW\"}")
+                .andExpect(status().isOk());
+        patchApplication(onFile, "{\"internalNotes\":\"Notiz\"}")
+                .andExpect(status().isOk());
+
+        verify(emailSender, times(1)).send(eq("anna@example.de"), anyString(), contains("In Prüfung"));
+    }
+
+    @Test
+    void doesNotSendOrSaveStatusWhenUpdateFails() throws Exception {
+        Application onFile = applications.save(application(socialMedia));
+
+        patchApplication(onFile, "{\"status\":\"IN_REVIEW\",\"ownerId\":\""
+                + UUID.randomUUID() + "\"}").andExpect(status().isBadRequest());
+
+        verifyNoInteractions(emailSender);
+        assertThat(applications.findById(onFile.getId()).orElseThrow().getStatus().name())
+                .isEqualTo("NEW");
+        assertThat(recordedValues(StateChangeField.STATUS)).isEmpty();
+    }
+
+    @Test
+    void keepsTheStatusWhenEmailSendingFails() throws Exception {
+        Application onFile = applications.save(application(socialMedia));
+        doThrow(new IllegalStateException("Mail service unavailable"))
+                .when(emailSender).send(anyString(), anyString(), anyString());
+
+        patchApplication(onFile, "{\"status\":\"IN_REVIEW\"}").andExpect(status().isOk());
+
+        assertThat(applications.findById(onFile.getId()).orElseThrow().getStatus().name())
+                .isEqualTo("IN_REVIEW");
     }
 
     @Test

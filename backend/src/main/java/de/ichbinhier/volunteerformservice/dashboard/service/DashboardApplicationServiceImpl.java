@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import de.ichbinhier.volunteerformservice.dashboard.dto.ApplicationsResponse;
 import de.ichbinhier.volunteerformservice.dashboard.dto.ChangesResponse;
 import de.ichbinhier.volunteerformservice.dashboard.dto.StateChangeDto;
 import de.ichbinhier.volunteerformservice.dashboard.dto.UpdateApplicationRequest;
+import de.ichbinhier.volunteerformservice.email.ApplicationStatusChanged;
 import de.ichbinhier.volunteerformservice.staff.domain.Staff;
 import de.ichbinhier.volunteerformservice.staff.repository.StaffRepository;
 import de.ichbinhier.volunteerformservice.web.ApiException;
@@ -37,6 +39,7 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
     private final StaffRepository staffRepo;
     private final StateChangeRepository changeRepo;
     private final ApplicationEventStream stream;
+    private final ApplicationEventPublisher events;
 
     public ApplicationsResponse list() {
         List<ApplicationDto> apps = appRepo.findAllByOrderBySubmittedAtDesc().stream()
@@ -59,6 +62,7 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
         return response;
     }
 
+    @Transactional
     public ApplicationDto update(
         UUID id,
         UpdateApplicationRequest req) {
@@ -71,42 +75,58 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
         var app = appRepo.findById(id)
             .orElseThrow(ApiException::notFound);
 
-        if (req.getStatus() != null) {
-            ApplicationStatus status = statusOf(req.getStatus());
-            String oldStatus = app.getStatus().name();
-            app.setStatus(status);
-            if (!oldStatus.equals(req.getStatus())) {
-                recordChange(app, StateChangeField.STATUS, req.getStatus());
-            }
-        }
-
-        if (req.isOwnerIdSent()) {
-            Staff owner = req.getOwnerId() == null
-                ? null
-                : staffRepo.findById(req.getOwnerId())
-                    .orElseThrow(() -> new FieldValidationException("ownerId", "OWNER_UNKNOWN"));
-            String oldOwner = app.getOwner() != null ? app.getOwner().getId().toString() : null;
-            String newOwner = owner != null ? owner.getId().toString() : null;
-            app.setOwner(owner);
-            if (!Objects.equals(oldOwner, newOwner)) {
-                recordChange(app, StateChangeField.OWNER, newOwner);
-            }
-        }
-
+        boolean statusChanged = updateStatus(app, req.getStatus());
+        updateOwner(app, req);
         if (req.getInternalNotes() != null) {
             app.setInternalNotes(req.getInternalNotes());
         }
-
-        if (req.getDiscarded() != null && req.getDiscarded() != (app.getDiscardedAt() != null)) {
-            app.setDiscardedAt(req.getDiscarded() ? StoredInstant.now() : null);
-            recordChange(app, StateChangeField.DISCARDED, req.getDiscarded().toString());
-        }
+        updateDiscarded(app, req.getDiscarded());
 
         appRepo.save(app);
 
         ApplicationDto updated = ApplicationDto.of(app);
         stream.updated(updated);
+        if (statusChanged) {
+            events.publishEvent(new ApplicationStatusChanged(
+                app.getId(), app.getEmail(), app.getName(), app.getStatus()));
+        }
         return updated;
+    }
+
+    private boolean updateStatus(Application app, String requestedStatus) {
+        if (requestedStatus == null) {
+            return false;
+        }
+        ApplicationStatus status = statusOf(requestedStatus);
+        if (app.getStatus() == status) {
+            return false;
+        }
+        app.setStatus(status);
+        recordChange(app, StateChangeField.STATUS, status.name());
+        return true;
+    }
+
+    private void updateOwner(Application app, UpdateApplicationRequest req) {
+        if (!req.isOwnerIdSent()) {
+            return;
+        }
+        Staff owner = req.getOwnerId() == null
+            ? null
+            : staffRepo.findById(req.getOwnerId())
+                .orElseThrow(() -> new FieldValidationException("ownerId", "OWNER_UNKNOWN"));
+        String oldOwner = app.getOwner() != null ? app.getOwner().getId().toString() : null;
+        String newOwner = owner != null ? owner.getId().toString() : null;
+        app.setOwner(owner);
+        if (!Objects.equals(oldOwner, newOwner)) {
+            recordChange(app, StateChangeField.OWNER, newOwner);
+        }
+    }
+
+    private void updateDiscarded(Application app, Boolean discarded) {
+        if (discarded != null && discarded != (app.getDiscardedAt() != null)) {
+            app.setDiscardedAt(discarded ? StoredInstant.now() : null);
+            recordChange(app, StateChangeField.DISCARDED, discarded.toString());
+        }
     }
 
     @Transactional

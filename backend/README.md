@@ -31,6 +31,12 @@ The packages group code by feature. Within a feature, `web` handles HTTP,
 holds the domain model, and `config` contains configuration and seed data.
 The dashboard's request and response types live in `dashboard/dto`.
 
+`application` handles Applications submitted through the public form;
+`category` provides the form's available Categories. `dashboard` lets Staff
+members view and update those same Applications and Categories. `staff` holds
+the Staff accounts, `email` sends messages, and `demo` prepares presentation
+data. The shared `web` package handles errors and security.
+
 The application and dashboard service interfaces sit in their feature's root
 package; their implementations are package-private in `service`. This keeps
 controllers dependent on the service contract instead of its implementation.
@@ -137,6 +143,12 @@ The confirmation email an applicant gets on submit (`A8` in
 [`../docs/ASSUMPTIONS.md`](../docs/ASSUMPTIONS.md)) goes through
 [Resend](https://resend.com). `email/ResendEmailSender.java` calls their HTTP
 API directly — no SDK dependency, the API is one POST request.
+
+A changed Status also triggers an email after the database change commits
+(`A30`). Saving the same Status again, changing the Owner or editing notes does
+not trigger one. The wording and which transitions should send mail still need
+the association's approval. Mail failures are logged; there is no automatic
+retry or delivery guarantee, and a saved Status remains saved if sending fails.
 
 Without `RESEND_API_KEY` set, `email/NoopEmailSender.java` takes over
 automatically and logs the subject instead of sending the email. Local

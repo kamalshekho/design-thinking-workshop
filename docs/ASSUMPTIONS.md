@@ -579,7 +579,37 @@ desk.
   the lists and the Categories screen need a phone layout for every action. If
   nobody uses a phone, the phone layout is work spent for nothing.
 
+### A30 — An applicant is notified when the Status changes
+
+When staff change an Application's Status, the platform sends the applicant an
+email with the new Status after the change is saved. A repeated Status, an Owner
+change, and an edit to notes do not send a Status email. The Status labels and
+the process itself are proposals (`A9`), not an agreed communication policy.
+
+- **Confidence:** low — this is the team's proposed behaviour, not a client
+  statement (`C1`).
+- **Why it matters:** staff Status changes become external communication, and
+  each change consumes email capacity (`A23`).
+- **What breaks if wrong:** applicants may get premature, confusing or unwanted
+  updates. The association must decide which transitions should be sent and
+  approve the wording before real Applications use the feature.
+
 ---
+
+### A31 — A small local load test for the public Category list
+
+The presentation uses ten virtual users, each waiting one second between
+requests, for a short local test of the public Category list. The provisional
+acceptance thresholds are fewer than one percent failed HTTP requests, all
+response checks passing, and a 95th-percentile request duration below one
+second.
+
+- **Confidence:** low — these values are test choices, not measured traffic or
+  requirements from the association (`C1`).
+- **Why it matters:** they make the local demonstration repeatable and give its
+  result a clear interpretation.
+- **What breaks if wrong:** the result may be too lenient or too strict for
+  real traffic. It says nothing about production capacity, write paths or email.
 
 ## Open questions we cannot answer ourselves
 

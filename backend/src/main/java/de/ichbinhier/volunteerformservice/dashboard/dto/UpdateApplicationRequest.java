@@ -37,7 +37,7 @@ public class UpdateApplicationRequest {
     private Boolean discarded;
 
     @JsonIgnore
-    private final Set<String> fieldsSent = new LinkedHashSet<>();
+    private boolean ownerIdSent;
 
     @JsonIgnore
     private final Set<String> immutableFieldsSent = new LinkedHashSet<>();
@@ -50,12 +50,12 @@ public class UpdateApplicationRequest {
      */
     public void setOwnerId(UUID ownerId) {
         this.ownerId = ownerId;
-        this.fieldsSent.add("ownerId");
+        this.ownerIdSent = true;
     }
 
     @JsonIgnore
     public boolean isOwnerIdSent() {
-        return fieldsSent.contains("ownerId");
+        return ownerIdSent;
     }
 
     @JsonAnySetter

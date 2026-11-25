@@ -1,6 +1,7 @@
 package de.ichbinhier.volunteerformservice.email;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.HtmlUtils;
 
 import de.ichbinhier.volunteerformservice.application.domain.Application;
 
@@ -39,7 +40,8 @@ public class ConfirmationMailer {
                 <p>wir haben deine Bewerbung im Bereich &bdquo;%s&ldquo; erhalten. \
                 Wir melden uns bei dir, sobald es weitergeht.</p>
                 <p>Vielen Dank f&uuml;r dein Interesse!<br>Dein #ichbinhier-Team</p>
-                """.formatted(application.getName(), application.getCategory().getName());
+                """.formatted(HtmlUtils.htmlEscape(application.getName()),
+                        HtmlUtils.htmlEscape(application.getCategory().getName()));
 
         try {
             sender.send(application.getEmail(), subject, body);

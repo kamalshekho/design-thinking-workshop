@@ -310,13 +310,12 @@ the association has never confirmed.
 open-Applications panel excludes (`A13`). That rule lives in the dashboard; the
 backend needs no notion of it.
 
-**No status change sends anything to the applicant.** The only mail the platform
-sends is the confirmation on submission that
-[`../frontend/API.md`](../frontend/API.md) already requires. Everything after it
-is the staff member writing directly, from their own mail client. A dashboard
-that silently mails a rejection would put wording nobody in this team reviewed
-in front of an applicant, and would leave the staff member unsure whether it
-went out.
+**A changed Status triggers an email to the applicant** after the change is
+saved (`A30`). Repeating the current Status does not send another email. The
+email contains the new Status; it does not contain internal notes. The Status
+and its history remain saved if sending fails. A successful response therefore
+does not prove that an email arrived, and there is no automatic retry. The
+association still needs to approve the wording and the transitions to notify.
 
 ### PATCH /api/v1/staff/applications/{id}
 
