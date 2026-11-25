@@ -68,6 +68,31 @@ describe('filterApplications', () => {
     expect(result.map((entry) => entry.id)).toEqual(['seven-days']);
   });
 
+  it('counts the stale threshold in calendar days, ignoring the clock time', () => {
+    const now = new Date(2026, 10, 25, 11, 50);
+
+    const applications = [
+      application({
+        id: 'six-days-late-evening',
+        submittedAt: new Date(2026, 10, 19, 23, 0).toISOString(),
+      }),
+      application({
+        id: 'seven-days-late-evening',
+        submittedAt: new Date(2026, 10, 18, 23, 0).toISOString(),
+      }),
+    ];
+
+    const result = filterApplications(
+      applications,
+      { ...EMPTY_FILTERS, view: 'stale' },
+      now,
+    );
+
+    expect(result.map((entry) => entry.id)).toEqual([
+      'seven-days-late-evening',
+    ]);
+  });
+
   it('searches the applicant name and the email address, ignoring case', () => {
     const applications = [
       application({ id: 'by-name', name: 'Jonas Krüger' }),
