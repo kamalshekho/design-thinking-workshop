@@ -63,7 +63,9 @@ test('A29: applicant submits application and staff takes ownership and updates s
   await expect(applicantEntry).toBeVisible({ timeout: 15_000 });
   await applicantEntry.click();
 
-  const isNarrow = testInfo.project.name === 'chromium-320';
+  // ApplicationDetail opens as a drawer only from Tailwind's lg breakpoint
+  // (1024px); below it the detail replaces the list in place.
+  const isNarrow = (page.viewportSize()?.width ?? 0) < 1024;
 
   if (isNarrow) {
     const detail = page.getByRole('region', { name: 'Anfrage' });
