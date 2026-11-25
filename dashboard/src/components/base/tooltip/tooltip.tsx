@@ -61,12 +61,14 @@ export const Tooltip = ({
     'bottom left',
     'bottom end',
   ].includes(placement);
+
   const isTopOrBottomRight = [
     'top right',
     'top start',
     'bottom right',
     'bottom start',
   ].includes(placement);
+
   // Set negative cross offset for left and right placement to visually balance the tooltip.
   const calculatedCrossOffset = isTopOrBottomLeft
     ? -12

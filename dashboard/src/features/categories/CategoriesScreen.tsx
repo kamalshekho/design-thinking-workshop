@@ -133,6 +133,7 @@ export function CategoriesScreen({
         (category) =>
           matchesView(category, candidate) && matchesSearch(category, search),
       ).length;
+
     return {
       all: countView('all'),
       active: countView('active'),
@@ -141,6 +142,7 @@ export function CategoriesScreen({
   }, [categories, search]);
 
   const activeCount = categories.filter((category) => category.active).length;
+
   /** "Bisher nie ausgewählt" — a discarded Application was still a choice. */
   const unusedCount = categories.filter(
     (category) => (namedBy.get(category.id) ?? 0) === 0,

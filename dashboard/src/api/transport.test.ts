@@ -18,7 +18,9 @@ function fetchMock(response: Response) {
   const mock = vi.fn<(input: string, init?: RequestInit) => Promise<Response>>(
     () => Promise.resolve(response),
   );
+
   vi.stubGlobal('fetch', mock);
+
   return mock;
 }
 
@@ -48,6 +50,7 @@ describe('request', () => {
 
   it('sends a body as JSON and says so, and nothing when there is none', async () => {
     const withBody = fetchMock(respond({}));
+
     await request('POST', '/session', anyObjectSchema, {
       email: 'a@b.de',
       password: 'geheim',
@@ -55,6 +58,7 @@ describe('request', () => {
 
     const [, sent] = withBody.mock.calls[0] ?? [];
     expect(sent?.body).toBe('{"email":"a@b.de","password":"geheim"}');
+
     expect(sent?.headers).toMatchObject({
       'Content-Type': 'application/json',
     });
@@ -85,6 +89,7 @@ describe('request', () => {
     ).catch((thrown: unknown) => thrown);
 
     expect(failure).toBeInstanceOf(ApiProblem);
+
     if (failure instanceof ApiProblem) {
       expect(failure.status).toBe(200);
       expect(failure.code).toBeUndefined();
@@ -124,6 +129,7 @@ describe('request', () => {
     ).catch((thrown: unknown) => thrown);
 
     expect(failure).toBeInstanceOf(ApiProblem);
+
     if (!(failure instanceof ApiProblem)) {
       return;
     }
@@ -173,6 +179,7 @@ describe('request', () => {
     ).catch((thrown: unknown) => thrown);
 
     expect(failure).toBeInstanceOf(ApiProblem);
+
     if (failure instanceof ApiProblem) {
       expect(failure.status).toBe(502);
       expect(failure.code).toBeUndefined();

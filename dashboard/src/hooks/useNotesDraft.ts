@@ -61,8 +61,8 @@ export function notesValueFor(
  * cleared on success and only on success, and "did it land?" is the one
  * question this hook cannot answer for itself.
  */
-export function useNotesDraft(
-  save: (applicationId: string, text: string) => Promise<unknown>,
+export function useNotesDraft<Saved>(
+  save: (applicationId: string, text: string) => Promise<Saved>,
 ): NotesField {
   const [draft, setDraft] = useState<NotesDraft | null>(null);
 

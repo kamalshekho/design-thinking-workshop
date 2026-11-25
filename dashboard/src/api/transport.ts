@@ -45,7 +45,7 @@ const fieldProblemSchema = z.object({
 });
 
 const problemBodySchema = z.object({
-  code: z.optional(z.unknown()),
+  code: z.catch(z.optional(z.string()), undefined),
   errors: z.optional(z.array(z.unknown())),
 });
 
@@ -58,6 +58,7 @@ function fieldProblemsIn(
 
   return errors.flatMap((entry) => {
     const parsed = fieldProblemSchema.safeParse(entry);
+
     return parsed.success ? [parsed.data] : [];
   });
 }
@@ -83,7 +84,7 @@ async function problemFrom(response: Response): Promise<ApiProblem> {
 
   return new ApiProblem({
     status: response.status,
-    code: typeof body.code === 'string' ? body.code : undefined,
+    code: body.code,
     errors: fieldProblemsIn(body.errors),
     retryAfterSeconds: Number.isFinite(retryAfter) ? retryAfter : undefined,
   });
@@ -100,11 +101,11 @@ async function send(
     method,
     credentials: 'same-origin',
     cache: 'no-store',
-    headers: {
-      Accept: 'application/json',
-      ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
-    },
-    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    headers:
+      body === undefined
+        ? { Accept: 'application/json' }
+        : { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
 
   if (!response.ok) {

@@ -26,15 +26,19 @@ describe('Header', () => {
     );
 
     expect(screen.getByRole('img', { name: 'ichbinhier e.V.' })).toBeVisible();
+
     expect(screen.getByRole('link', { name: 'Über uns' })).toHaveAttribute(
       'href',
       'https://example.org/ueber-uns',
     );
+
     expect(screen.getByRole('link', { name: 'Spende' })).toHaveAttribute(
       'href',
       'https://example.org/spende',
     );
+
     expect(screen.getByRole('button', { name: 'Suche' })).toBeVisible();
+
     // The menu button is mobile-only — CSS hides it above the 640px
     // breakpoint, which is the width jsdom renders at in this test, so its
     // accessible name isn't computed; assert on the attribute directly.
@@ -45,6 +49,7 @@ describe('Header', () => {
 
   it('opens and closes the mobile navigation with an accessible control', async () => {
     const user = userEvent.setup();
+
     const { container } = render(
       <Header
         donateHref="https://example.org/spende"
@@ -61,6 +66,7 @@ describe('Header', () => {
     const menuButton = container.querySelector<HTMLButtonElement>(
       'button[aria-label="Menü öffnen"]',
     );
+
     if (!menuButton) throw new Error('Expected a mobile menu button');
 
     expect(menuButton).toHaveAttribute('aria-expanded', 'false');

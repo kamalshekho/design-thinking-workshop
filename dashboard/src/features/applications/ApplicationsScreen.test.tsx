@@ -29,6 +29,7 @@ function Host({ initial }: { initial?: Application[] } = {}) {
   const [applications, setApplications] = useState<Application[]>(
     () => initial ?? createMockApplications(NOW),
   );
+
   const [draft, setDraft] = useState<NotesField['draft']>(null);
 
   return (
@@ -66,6 +67,7 @@ describe('ApplicationsScreen', () => {
 
     expect(screen.getByText(de.applications.empty)).toBeInTheDocument();
     expect(screen.getByText(de.applications.emptyHint)).toBeInTheDocument();
+
     // The pager offered "Zurück | 1 | Weiter" under the empty state before.
     expect(
       screen.queryByRole('button', { name: de.pagination.next }),
@@ -122,6 +124,7 @@ describe('ApplicationsScreen', () => {
     );
 
     await user.click(screen.getByRole('button', { name: 'Filter' }));
+
     await user.selectOptions(
       screen.getByLabelText('Status'),
       screen.getByRole('option', { name: 'Neu' }),
@@ -145,6 +148,7 @@ describe('ApplicationsScreen', () => {
     render(<Host />);
 
     const name = () => within(screen.getByRole('grid')).getByText('Mara Weber');
+
     const closeButton = () =>
       screen.queryByRole('button', { name: de.detail.close });
 
@@ -157,6 +161,7 @@ describe('ApplicationsScreen', () => {
     await waitFor(() => {
       expect(closeButton()).not.toBeInTheDocument();
     });
+
     expect(name().closest('tr')?.className).not.toContain('row-rail');
   });
 
@@ -165,6 +170,7 @@ describe('ApplicationsScreen', () => {
     render(<Host />);
 
     const name = () => within(screen.getByRole('grid')).getByText('Mara Weber');
+
     const closeButton = () =>
       screen.queryByRole('button', { name: de.detail.close });
 
@@ -176,6 +182,7 @@ describe('ApplicationsScreen', () => {
     await waitFor(() => {
       expect(closeButton()).not.toBeInTheDocument();
     });
+
     expect(name().closest('tr')?.className).not.toContain('row-rail');
   });
 
@@ -184,6 +191,7 @@ describe('ApplicationsScreen', () => {
     render(<Host />);
 
     const grid = () => within(screen.getByRole('grid'));
+
     const closeButton = () =>
       screen.queryByRole('button', { name: de.detail.close });
 
@@ -191,9 +199,11 @@ describe('ApplicationsScreen', () => {
     await user.click(grid().getByText('Peter Schmitt'));
 
     expect(closeButton()).toBeInTheDocument();
+
     expect(
       grid().getByText('Peter Schmitt').closest('tr')?.className,
     ).toContain('row-rail');
+
     expect(
       grid().getByText('Mara Weber').closest('tr')?.className,
     ).not.toContain('row-rail');
@@ -220,6 +230,7 @@ describe('ApplicationsScreen', () => {
           name: new RegExp(de.detail.owner),
         }),
       );
+
       await user.click(screen.getByRole('option', { name: ownerName }));
     }
 
@@ -240,10 +251,11 @@ describe('ApplicationsScreen', () => {
     render(<Host />);
 
     const rowIds = () =>
-      screen
-        .getAllByRole('row')
-        .map((row) => row.getAttribute('row-id'))
-        .filter((id): id is string => id !== null);
+      screen.getAllByRole('row').flatMap((row) => {
+        const id = row.getAttribute('row-id');
+
+        return id === null ? [] : [id];
+      });
 
     const newestFirst = rowIds();
     await user.click(screen.getByRole('columnheader', { name: 'Eingegangen' }));
@@ -260,12 +272,15 @@ describe('ApplicationsScreen', () => {
       await user.click(
         within(screen.getByRole('grid')).getByText('Mara Weber'),
       );
+
       const page = screen.getByRole('region', { name: de.detail.title });
 
       await user.click(
         within(page).getByRole('button', { name: de.detail.takeOver }),
       );
+
       expect(within(page).getByText(de.detail.ownedByYou)).toBeInTheDocument();
+
       expect(
         within(page).queryByRole('button', { name: de.detail.takeOver }),
       ).not.toBeInTheDocument();
@@ -273,6 +288,7 @@ describe('ApplicationsScreen', () => {
       await user.click(
         within(page).getByRole('radio', { name: de.statuses.IN_REVIEW }),
       );
+
       expect(
         within(page).getByRole('radio', { name: de.statuses.IN_REVIEW }),
       ).toHaveAttribute('aria-checked', 'true');
@@ -280,6 +296,7 @@ describe('ApplicationsScreen', () => {
       await user.click(
         within(page).getByRole('button', { name: de.detail.backLabel }),
       );
+
       expect(
         screen.queryByRole('region', { name: de.detail.title }),
       ).not.toBeInTheDocument();

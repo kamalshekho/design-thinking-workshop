@@ -88,6 +88,7 @@ export function moveCategory(
 
   ids[index] = displaced;
   ids[target] = moved;
+
   return ids;
 }
 

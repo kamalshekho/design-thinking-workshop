@@ -39,16 +39,18 @@ Element.prototype.scrollIntoView = (): void => undefined;
  * query reports no match.
  */
 setViewportWidth(DESK_WIDTH);
+
 afterEach(() => {
   setViewportWidth(DESK_WIDTH);
 });
 
 function matchesQuery(query: string): boolean {
   const minWidth = /\(min-width:\s*(\d+)px\)/.exec(query)?.[1];
+
   return minWidth !== undefined && window.innerWidth >= Number(minWidth);
 }
 
-if (typeof window.matchMedia !== 'function') {
+if (typeof window.matchMedia === 'undefined') {
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     writable: true,

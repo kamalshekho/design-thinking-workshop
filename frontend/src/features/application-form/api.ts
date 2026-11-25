@@ -64,8 +64,9 @@ function buildApplicationRequest(
     name: values.name,
     email: values.email,
     weeklyTime: values.weeklyTime,
-    // Omitted rather than sent empty, so the backend stores null and not ""
-    ...(values.about.length > 0 ? { about: values.about } : {}),
+    // JSON.stringify drops an undefined key, so an empty answer is omitted
+    // rather than sent empty, and the backend stores null and not ""
+    about: values.about.length > 0 ? values.about : undefined,
     privacyConsent: true,
     consentTextVersion: CONSENT_TEXT_VERSION,
     website: values.website,
@@ -96,10 +97,12 @@ const categoriesResponseSchema = z.object({
 
 function readFieldErrors(body: unknown): ServerFieldError[] {
   const parsed = problemDetailSchema.safeParse(body);
+
   if (!parsed.success) return [];
 
   return parsed.data.errors.flatMap((entry): ServerFieldError[] => {
     const fieldError = fieldErrorSchema.safeParse(entry);
+
     return fieldError.success ? [fieldError.data] : [];
   });
 }
@@ -114,6 +117,7 @@ async function readBody(response: Response): Promise<unknown> {
 
 function readApplicationId(body: unknown): string | null {
   const parsed = applicationCreatedSchema.safeParse(body);
+
   return parsed.success ? parsed.data.applicationId : null;
 }
 
@@ -140,15 +144,19 @@ export async function submitApplication(
 
   if (response.status === 201) {
     const applicationId = readApplicationId(await readBody(response));
+
     if (applicationId !== null) return { status: 'success', applicationId };
+
     return { status: 'failed', code: 'INTERNAL_ERROR' };
   }
 
   if (response.status === 400) {
     const errors = readFieldErrors(await readBody(response));
+
     // A 400 the frontend cannot place under a field would leave the applicant
     // staring at an unchanged form, so it falls back to a general message.
     if (errors.length > 0) return { status: 'field-errors', errors };
+
     return { status: 'failed', code: 'INTERNAL_ERROR' };
   }
 
@@ -169,30 +177,41 @@ export type FetchCategoriesResult =
  */
 function readCategories(body: unknown): Category[] | null {
   const parsed = categoriesResponseSchema.safeParse(body);
+
   if (!parsed.success) return null;
 
   const result: Category[] = [];
   const seenIds = new Set<string>();
+
   for (const { id, label } of parsed.data.categories) {
     if (!isUuid(id)) {
       console.warn(`fetchCategories: category id is not a UUID: ${id}`);
+
       return null;
     }
+
     const trimmedLabel = label.trim();
+
     if (trimmedLabel.length === 0 || trimmedLabel.length > LABEL_MAX) {
       console.warn(
         `fetchCategories: category ${id} has an invalid label length: ${String(trimmedLabel.length)}`,
       );
+
       return null;
     }
+
     const normalizedId = id.toLowerCase();
+
     if (seenIds.has(normalizedId)) {
       console.warn(`fetchCategories: duplicate category id: ${id}`);
+
       return null;
     }
+
     seenIds.add(normalizedId);
     result.push({ id, label: trimmedLabel });
   }
+
   return result;
 }
 
@@ -218,7 +237,9 @@ export async function fetchCategories(
 
   const body: unknown = await response.json().catch(() => null);
   const categories = readCategories(body);
+
   if (categories === null) return { status: 'failed' };
+
   return { status: 'success', categories };
 }
 
@@ -240,6 +261,7 @@ export function reportRouteSelection(selection: RouteSelection): void {
     selection.type === 'fixed'
       ? { route: selection.route }
       : { route: 'CATEGORY', categoryId: selection.categoryId };
+
   void postJson(ROUTE_SELECTIONS_URL, body, { keepalive: true }).catch(
     () => undefined,
   );

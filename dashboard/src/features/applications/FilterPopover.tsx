@@ -60,6 +60,7 @@ export function FilterPopover({
 
     document.addEventListener('mousedown', handlePointerDown);
     document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
@@ -129,6 +130,7 @@ export function FilterPopover({
               value={filters.status ?? ''}
               onChange={(event) => {
                 const { value } = event.target;
+
                 if (value === '') {
                   onChange({ ...filters, status: null });
                 } else if (isApplicationStatus(value)) {

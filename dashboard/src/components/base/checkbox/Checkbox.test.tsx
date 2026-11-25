@@ -20,6 +20,7 @@ describe('Checkbox', () => {
     const checkbox = screen.getByRole('checkbox', {
       name: 'Eintrag auswählen',
     });
+
     expect(checkbox).not.toBeChecked();
 
     await user.click(checkbox);

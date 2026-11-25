@@ -9,6 +9,7 @@ export function toErrorText(
   content: Content,
 ): string | undefined {
   if (!message) return undefined;
+
   return isErrorCode(message) ? content.errors[message] : content.unknownError;
 }
 

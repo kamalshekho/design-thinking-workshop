@@ -30,6 +30,7 @@ export async function expectNoA11yViolations(
 
   if (results.violations.length > 0) {
     const details = results.violations.map(formatViolation).join('\n\n');
+
     throw new Error(
       `${String(results.violations.length)} accessibility violation(s):\n\n${details}`,
     );

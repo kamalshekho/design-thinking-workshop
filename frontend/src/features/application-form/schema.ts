@@ -52,6 +52,7 @@ export const formSchema = z
         path: ['route'],
         message: 'ROUTE_REQUIRED',
       });
+
       return;
     }
 
@@ -64,6 +65,7 @@ export const formSchema = z
         path: ['route'],
         message: 'CATEGORY_UNKNOWN',
       });
+
       return;
     }
 
@@ -136,8 +138,11 @@ export function asApplicationValues(
   values: FormValues,
 ): ApplicationValues | null {
   if (values.route === '' || isFixedRoute(values.route)) return null;
+
   if (values.weeklyTime === '') return null;
+
   if (!values.privacyConsent) return null;
+
   return {
     ...values,
     route: values.route,

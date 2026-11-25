@@ -44,14 +44,17 @@ describe('Footer', () => {
     expect(
       screen.getByRole('link', { name: 'Sprich mit uns' }),
     ).toHaveAttribute('href', 'https://example.org/kontakt');
+
     expect(screen.getByRole('link', { name: 'Impressum' })).toHaveAttribute(
       'href',
       'https://example.org/impressum',
     );
+
     expect(screen.getByRole('link', { name: 'Datenschutz' })).toHaveAttribute(
       'href',
       'https://example.org/datenschutz',
     );
+
     expect(screen.getByText('kontakt@example.org')).toBeVisible();
   });
 

@@ -53,6 +53,7 @@ export function optimisticList<T>(
       await queryClient.cancelQueries({ queryKey });
       const snapshot = queryClient.getQueryData<T[]>(queryKey);
       write(change);
+
       return { snapshot };
     },
 

@@ -16,6 +16,7 @@ type InputProps = InputHTMLAttributes<HTMLInputElement>;
  */
 export function Input({ className, ...inputProps }: InputProps) {
   const isInvalid = isAriaInvalid(inputProps['aria-invalid']);
+
   const classNames = cx(
     controlStyles.control,
     singleLineStyles.singleLine,

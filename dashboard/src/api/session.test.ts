@@ -7,7 +7,9 @@ function stub(response: Response) {
   const mock = vi.fn<(input: string, init?: RequestInit) => Promise<Response>>(
     () => Promise.resolve(response),
   );
+
   vi.stubGlobal('fetch', mock);
+
   return mock;
 }
 

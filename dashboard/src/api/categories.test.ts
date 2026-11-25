@@ -21,7 +21,9 @@ function answer(body: unknown, status = 200) {
             }),
       ),
   );
+
   vi.stubGlobal('fetch', mock);
+
   return mock;
 }
 
@@ -87,6 +89,7 @@ describe('the Category writes', () => {
     answer({ status: 409, code: 'CATEGORY_IN_USE' }, 409);
 
     await expect(deleteCategory(wire.id)).rejects.toBeInstanceOf(ApiProblem);
+
     await expect(deleteCategory(wire.id)).rejects.toMatchObject({
       code: 'CATEGORY_IN_USE',
     });

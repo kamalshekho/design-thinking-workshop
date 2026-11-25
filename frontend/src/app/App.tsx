@@ -11,6 +11,7 @@ function scrollToTop() {
 
 export function App() {
   const navItems = content.nav.items.map((label) => ({ label }));
+
   const footerContent = {
     contact: {
       title: content.footer.contact.title,

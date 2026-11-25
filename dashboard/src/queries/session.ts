@@ -42,6 +42,7 @@ const signInQuery = queryOptions({
       if (isUnauthenticated(failure)) {
         return NO_SIGN_IN;
       }
+
       throw failure;
     }
   },
@@ -99,6 +100,7 @@ export function useSignIn() {
     onSuccess: (staffMember) => {
       const previous = queryClient.getQueryData<SignIn>(queryKeys.signIn);
       const wasCovering = previous?.kind === 'expired';
+
       const resuming =
         wasCovering && previous.staffMember.id === staffMember.id;
 
@@ -126,6 +128,7 @@ export function useSignIn() {
  */
 export function useSignInFailure(...errors: unknown[]): SignInFailure | null {
   const failure = errors.find((error) => error !== null && error !== undefined);
+
   return failure === undefined ? null : { code: problemCode(failure) };
 }
 

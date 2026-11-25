@@ -38,11 +38,15 @@ function SparklineTooltipContent({
   if (!active || !payload?.length) {
     return null;
   }
+
   const point = payload[0];
+
   if (!point) {
     return null;
   }
+
   const label = point.payload?.label;
+
   return (
     <div className="border-sd-border bg-sd-popover text-sd-popover-foreground flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs shadow-md">
       {label && <span className="text-sd-muted-foreground">{label}</span>}

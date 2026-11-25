@@ -32,7 +32,9 @@ function renderSparkline(data: number[]): HTMLElement {
   const chart = container.querySelector<HTMLElement>(
     '[data-sparkline="trend"]',
   );
+
   expect(chart).not.toBeNull();
+
   return chart as HTMLElement;
 }
 
@@ -51,6 +53,7 @@ describe('Sparkline', () => {
     const chart = renderSparkline([0, 0, 1, 0, 0, 0, 0]);
 
     expect(chart).not.toHaveAttribute('data-flat');
+
     expect(
       chart.querySelector('.recharts-responsive-container'),
     ).not.toBeNull();

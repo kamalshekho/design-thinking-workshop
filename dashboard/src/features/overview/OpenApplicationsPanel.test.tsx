@@ -46,6 +46,7 @@ function application(overrides: Partial<Application> = {}): Application {
 function Host({ initial }: { initial: Application[] }) {
   const [applications, setApplications] = useState(initial);
   const [draft, setDraft] = useState<NotesField['draft']>(null);
+
   return (
     <OpenApplicationsPanel
       staffMemberId={mockStaffMember.id}
@@ -80,6 +81,7 @@ describe('OpenApplicationsPanel', () => {
     render(<Host initial={[application({ id: 'done', status: 'ACTIVE' })]} />);
 
     expect(screen.getByText(de.overview.openApplications.empty)).toBeVisible();
+
     expect(
       screen.getByText(de.overview.openApplications.emptyHint),
     ).toBeVisible();
@@ -91,6 +93,7 @@ describe('OpenApplicationsPanel', () => {
     // Controls over a list that is empty because the backend has none offer
     // to narrow nothing (issue #53).
     expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();
+
     expect(
       screen.queryByRole('button', {
         name: de.applications.discardSelected(0),
@@ -107,6 +110,7 @@ describe('OpenApplicationsPanel', () => {
     expect(
       await screen.findByText(de.overview.openApplications.noMatches),
     ).toBeVisible();
+
     expect(screen.getByRole('searchbox')).toBeVisible();
     expect(screen.getByText(de.filters.reset)).toBeVisible();
   });
@@ -138,6 +142,7 @@ describe('OpenApplicationsPanel', () => {
       const rows = screen
         .getAllByRole('row')
         .filter((row) => row.getAttribute('data-key'));
+
       expect(rows.map((row) => row.getAttribute('data-key'))).toEqual([
         'recent',
         'middle',
@@ -148,12 +153,14 @@ describe('OpenApplicationsPanel', () => {
 
   it('finds an Application by search that is outside the five-row cap', async () => {
     const user = userEvent.setup();
+
     const newerFive = Array.from({ length: 5 }, (_, index) =>
       application({
         id: `newer-${String(index)}`,
         submittedAt: `2026-09-0${String(index + 1)}T09:00:00.000Z`,
       }),
     );
+
     const applications = [
       ...newerFive,
       application({
@@ -177,6 +184,7 @@ describe('OpenApplicationsPanel', () => {
     await waitFor(() =>
       expect(screen.getByText('1 von 1 offenen Anfragen')).toBeInTheDocument(),
     );
+
     expect(screen.getByText('Jonas Krüger')).toBeInTheDocument();
   });
 
@@ -231,6 +239,7 @@ describe('OpenApplicationsPanel', () => {
 
   it('removes an Application from the panel once it becomes active, without closing the drawer', async () => {
     const user = userEvent.setup();
+
     render(
       <Host
         initial={[
@@ -252,12 +261,15 @@ describe('OpenApplicationsPanel', () => {
     await user.selectOptions(screen.getByLabelText('Status'), 'Aktiv');
 
     const grid = screen.getByRole('grid');
+
     await waitFor(() =>
       expect(within(grid).queryByText('Mara Weber')).not.toBeInTheDocument(),
     );
+
     expect(
       screen.getByRole('complementary', { name: 'Anfrage' }),
     ).toBeInTheDocument();
+
     expect(within(grid).getByText('Jonas Krüger')).toBeInTheDocument();
   });
 
@@ -277,6 +289,7 @@ describe('OpenApplicationsPanel', () => {
 
   it('discards a single Application from the row action, like Anfragen does', async () => {
     const user = userEvent.setup();
+
     render(
       <Host
         initial={[
@@ -287,9 +300,11 @@ describe('OpenApplicationsPanel', () => {
     );
 
     const grid = await screen.findByRole('grid');
+
     const row = within(grid)
       .getAllByRole('row')
       .find((candidate) => candidate.getAttribute('data-key') === 'a1');
+
     await user.click(
       within(row as HTMLElement).getByRole('button', {
         name: de.applications.discardOne('Mara Weber'),
@@ -299,11 +314,13 @@ describe('OpenApplicationsPanel', () => {
     await waitFor(() =>
       expect(within(grid).queryByText('Mara Weber')).not.toBeInTheDocument(),
     );
+
     expect(within(grid).getByText('Jonas Krüger')).toBeInTheDocument();
   });
 
   it('discards the checked Applications from the bulk action, like Anfragen does', async () => {
     const user = userEvent.setup();
+
     render(
       <Host
         initial={[
@@ -314,16 +331,20 @@ describe('OpenApplicationsPanel', () => {
     );
 
     const grid = await screen.findByRole('grid');
+
     const row = within(grid)
       .getAllByRole('row')
       .find((candidate) => candidate.getAttribute('data-key') === 'a2');
+
     await user.click(within(row as HTMLElement).getByRole('checkbox'));
 
     const bulkDiscard = screen.getByRole('button', {
       name: de.applications.discardSelected(1),
     });
+
     expect(bulkDiscard).toBeEnabled();
     await user.click(bulkDiscard);
+
     await user.click(
       within(
         screen.getByRole('alertdialog', {
@@ -335,6 +356,7 @@ describe('OpenApplicationsPanel', () => {
     await waitFor(() =>
       expect(within(grid).queryByText('Jonas Krüger')).not.toBeInTheDocument(),
     );
+
     expect(within(grid).getByText('Mara Weber')).toBeInTheDocument();
   });
 
@@ -346,12 +368,15 @@ describe('OpenApplicationsPanel', () => {
       screen.getByPlaceholderText('Name oder E-Mail suchen'),
       'Mara',
     );
+
     await user.click(screen.getByLabelText('Kategorie'));
+
     await user.click(
       await screen.findByRole('option', { name: 'Social Media' }),
     );
 
     await user.click(screen.getByLabelText('Zuständigkeit'));
+
     await user.click(
       await screen.findByRole('option', { name: 'Nicht zugewiesen' }),
     );

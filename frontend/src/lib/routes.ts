@@ -29,7 +29,9 @@ export type RouteOutcome = 'application' | 'community' | 'supporting-member';
 
 export function outcomeOf(value: string): RouteOutcome {
   if (value === 'COMMUNITY') return 'community';
+
   if (value === 'SUPPORTING_MEMBER') return 'supporting-member';
+
   return 'application';
 }
 

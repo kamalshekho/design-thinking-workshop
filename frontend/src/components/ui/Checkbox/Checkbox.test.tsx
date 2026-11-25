@@ -14,6 +14,7 @@ describe('Checkbox', () => {
     const checkbox = screen.getByRole('checkbox', {
       name: 'Ich stimme der Datenschutzerklärung zu.',
     });
+
     await user.click(checkbox);
 
     expect(checkbox).toBeChecked();

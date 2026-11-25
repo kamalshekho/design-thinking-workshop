@@ -87,10 +87,12 @@ export function OpenApplicationsPanel({
         .length > 0,
     [applications],
   );
+
   const matching = useMemo(
     () => selectOpenApplications(applications, filters),
     [applications, filters],
   );
+
   const visible = matching.slice(0, OPEN_APPLICATIONS_LIMIT);
 
   const viewAllHref = buildApplicationsHref({

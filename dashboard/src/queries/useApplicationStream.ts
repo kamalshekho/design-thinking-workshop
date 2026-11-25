@@ -85,6 +85,11 @@ const FAILURES_BEFORE_ASKING = 3;
  */
 const REOPEN_AFTER_MS = 5_000;
 
+/** Server-sent events carry text, the JSON that parseApplicationEvent reads. */
+function isTextMessage(message: Event): message is MessageEvent<string> {
+  return message instanceof MessageEvent && typeof message.data === 'string';
+}
+
 export type StreamConnection = {
   /** Whether the dashboard is currently receiving changes as they happen. */
   connected: boolean;
@@ -141,10 +146,12 @@ export function useApplicationStream({
     async function askWhetherSignedIn(): Promise<boolean> {
       try {
         await fetchSignedInStaffMember();
+
         return false;
       } catch (failure) {
         if (isUnauthenticated(failure)) {
           markSignInExpired(queryClient);
+
           return true;
         }
 
@@ -156,9 +163,11 @@ export function useApplicationStream({
       cancelGrace();
       failures = 0;
       setConnected(true);
+
       void queryClient.invalidateQueries({
         queryKey: queryKeys.applications,
       });
+
       void queryClient.invalidateQueries({
         queryKey: queryKeys.stateChanges,
       });
@@ -205,10 +214,7 @@ export function useApplicationStream({
      */
     const listeners = APPLICATION_EVENT_TYPES.map((type) => {
       const listener = (message: Event) => {
-        if (
-          !(message instanceof MessageEvent) ||
-          typeof message.data !== 'string'
-        ) {
+        if (!isTextMessage(message)) {
           return;
         }
 
@@ -228,15 +234,18 @@ export function useApplicationStream({
       };
 
       source.addEventListener(type, listener);
+
       return { type, listener };
     });
 
     return () => {
       cancelGrace();
       clearTimeout(reopen);
+
       for (const { type, listener } of listeners) {
         source.removeEventListener(type, listener);
       }
+
       source.close();
       /**
        * The connection this hook reported is gone with the source, so the

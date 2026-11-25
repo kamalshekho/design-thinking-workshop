@@ -129,6 +129,7 @@ export function ApplicationDrawer({
   const category = categories.find(
     (entry) => entry.id === application.categoryId,
   );
+
   const notesId = `application-notes-${application.id}`;
 
   useCloseOnEscape(onClose);
@@ -147,6 +148,7 @@ export function ApplicationDrawer({
     const timer = window.setTimeout(() => {
       setCopiedEmail(null);
     }, COPY_FEEDBACK_MS);
+
     return () => {
       window.clearTimeout(timer);
     };

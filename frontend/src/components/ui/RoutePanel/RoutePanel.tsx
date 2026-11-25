@@ -30,9 +30,11 @@ export function RoutePanel({
 }: RoutePanelProps) {
   const titleId = useId();
   const isCommunity = variant === 'community';
+
   const panelClassName = isCommunity
     ? styles.community
     : styles.supportingMember;
+
   const icon = isCommunity ? iconGroup : iconHeart;
   const buttonVariant = isCommunity ? 'route-blue' : 'route-purple';
 

@@ -72,6 +72,7 @@ describe('selectOpenApplications', () => {
         submittedAt: `2026-09-0${String(index + 1)}T09:00:00.000Z`,
       }),
     );
+
     const applications = [
       ...newerFive,
       application({

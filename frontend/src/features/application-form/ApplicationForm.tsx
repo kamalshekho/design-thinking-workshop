@@ -41,6 +41,7 @@ export function ApplicationForm() {
   });
 
   const categoriesState = useCategories();
+
   const categoriesById = useMemo(
     () =>
       new Map(
@@ -53,6 +54,7 @@ export function ApplicationForm() {
   const outcome = route === '' ? null : outcomeOf(route);
 
   useRouteAnalytics(route);
+
   const { onSubmit, confirmedEmail, isSubmitting, submitErrorCode } =
     useApplicationSubmit(
       setError,
@@ -70,8 +72,10 @@ export function ApplicationForm() {
   }
 
   const fieldProps = makeFieldProps(register, errors, content);
+
   const submitError =
     toErrorText(submitErrorCode ?? undefined, content) ?? null;
+
   const { error: routeError, ...routeControl } = fieldProps('route');
 
   return (

@@ -44,6 +44,7 @@ export const handlers = [
 
     // Idempotency: the same submissionId must not create a second application.
     const existing = seenSubmissionIds.get(body.submissionId);
+
     if (existing) {
       return HttpResponse.json({ applicationId: existing }, { status: 201 });
     }

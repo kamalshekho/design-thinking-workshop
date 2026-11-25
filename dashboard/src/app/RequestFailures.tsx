@@ -160,7 +160,7 @@ export function RequestFailures({ children }: { children: ReactNode }) {
   const [write, setWrite] = useState<RequestFailuresValue['write']>(null);
   const [dismissedAt, setDismissedAt] = useState(0);
 
-  const report = useCallback((raised: unknown) => {
+  const report = useCallback((raised: Error) => {
     if (isUnauthenticated(raised)) {
       return;
     }

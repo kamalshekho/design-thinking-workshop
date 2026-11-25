@@ -21,6 +21,7 @@ export type BadgeColors =
 
 type ExtractColorKeys<T> = T extends { styles: infer C } ? keyof C : never;
 type ExtractBadgeKeys<T> = keyof T;
+
 export type BadgeTypeToColorMap<T> = {
   [K in ExtractBadgeKeys<T>]: ExtractColorKeys<T[K]>;
 };

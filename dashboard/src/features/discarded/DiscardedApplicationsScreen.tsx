@@ -72,9 +72,11 @@ export function DiscardedApplicationsScreen({
   now,
 }: DiscardedApplicationsScreenProps) {
   const [search, setSearch] = useState('');
+
   const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(
     new Set(),
   );
+
   /**
    * Whether the bulk erase is waiting on its confirmation. A flag rather than
    * the ids: the dialog asks about the selection as it stands, and the bar
@@ -96,9 +98,11 @@ export function DiscardedApplicationsScreen({
   function forget(ids: ReadonlySet<string>): void {
     setSelectedIds((current) => {
       const next = new Set(current);
+
       for (const id of ids) {
         next.delete(id);
       }
+
       return next;
     });
   }

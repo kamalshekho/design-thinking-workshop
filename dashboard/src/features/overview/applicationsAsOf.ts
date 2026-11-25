@@ -47,11 +47,17 @@ function groupByApplication(
     const byField =
       byApplication.get(change.applicationId) ??
       new Map<StateChangeField, StateChange[]>();
+
     byField.set(change.field, [...(byField.get(change.field) ?? []), change]);
     byApplication.set(change.applicationId, byField);
   }
 
   return byApplication;
+}
+
+/** An `OWNER` row carries the new Owner's id, or null when it was cleared. */
+function isOwnerId(to: StateChange['to'] | undefined): to is string {
+  return typeof to === 'string';
 }
 
 /**
@@ -68,6 +74,7 @@ function valueAt(
   }
 
   const cutoff = asOf.getTime();
+
   const upTo = changes.filter(
     (change) => new Date(change.at).getTime() <= cutoff,
   );
@@ -98,7 +105,7 @@ function applicationAsOf(
   /** `to: null` is a cleared Owner, and no row at all means it never had one. */
   const ownerIdThen = !owner.changedAfter
     ? application.ownerId
-    : typeof owner.last?.to === 'string'
+    : isOwnerId(owner.last?.to)
       ? owner.last.to
       : null;
 
@@ -136,11 +143,9 @@ export function applicationsAsOf(
   const byApplication = groupByApplication(stateChanges);
   const cutoff = asOf.getTime();
 
-  return applications
-    .filter(
-      (application) => new Date(application.submittedAt).getTime() <= cutoff,
-    )
-    .map((application) =>
-      applicationAsOf(application, byApplication.get(application.id), asOf),
-    );
+  return applications.flatMap((application) =>
+    new Date(application.submittedAt).getTime() <= cutoff
+      ? [applicationAsOf(application, byApplication.get(application.id), asOf)]
+      : [],
+  );
 }

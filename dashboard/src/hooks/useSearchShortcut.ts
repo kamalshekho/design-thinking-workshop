@@ -17,6 +17,7 @@ export function useSearchShortcut(
     function handleKeyDown(event: KeyboardEvent): void {
       const isShortcut =
         (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k';
+
       if (isShortcut) {
         event.preventDefault();
         inputRef.current?.focus();
@@ -24,6 +25,7 @@ export function useSearchShortcut(
     }
 
     document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };

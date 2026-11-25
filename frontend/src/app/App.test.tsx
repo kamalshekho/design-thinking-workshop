@@ -12,13 +12,17 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { name: 'ichbinhier lebt vom Mitmachen.' }),
     ).toBeVisible();
+
     expect(screen.queryByRole('button', { name: 'EN' })).toBeNull();
+
     expect(
       within(screen.getByRole('banner')).queryAllByRole('link'),
     ).toHaveLength(0);
+
     expect(
       within(screen.getByRole('contentinfo')).queryAllByRole('link'),
     ).toHaveLength(0);
+
     expect(screen.getByText('kontakt@example.org')).toBeVisible();
 
     const routeSelect = screen.getByLabelText('Wie möchtest du uns helfen?');

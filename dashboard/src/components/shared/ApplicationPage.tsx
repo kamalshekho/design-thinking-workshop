@@ -48,14 +48,17 @@ export function ApplicationPage({
   staffMemberId,
 }: ApplicationPageProps) {
   const pageRef = useRef<HTMLDivElement>(null);
+
   const category = categories.find(
     (entry) => entry.id === application.categoryId,
   );
+
   const ownerName =
     application.ownerId === null
       ? null
       : (owners.find((owner) => owner.id === application.ownerId)?.name ??
         application.ownerId);
+
   const ownedByMe = application.ownerId === staffMemberId;
 
   useCloseOnEscape(onClose);
@@ -63,6 +66,7 @@ export function ApplicationPage({
   /** Another Application opens at its top, with the reading position on it. */
   useEffect(() => {
     const page = pageRef.current;
+
     if (page !== null) {
       page.scrollTop = 0;
       page.focus({ preventScroll: true });

@@ -14,10 +14,12 @@ const IMPLEMENTED_SCREENS: readonly Screen[] = [
   'categories',
   'discarded',
 ];
+
 const DEFAULT_SCREEN: Screen = 'applications';
 
 function subscribe(onChange: () => void) {
   window.addEventListener('hashchange', onChange);
+
   return () => {
     window.removeEventListener('hashchange', onChange);
   };
@@ -26,6 +28,7 @@ function subscribe(onChange: () => void) {
 function getSnapshot(): Screen {
   const hash = window.location.hash.slice(1).split('?')[0];
   const screen = IMPLEMENTED_SCREENS.find((candidate) => candidate === hash);
+
   return screen ?? DEFAULT_SCREEN;
 }
 

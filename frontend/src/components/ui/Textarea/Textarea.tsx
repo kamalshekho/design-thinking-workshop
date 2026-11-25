@@ -15,6 +15,7 @@ type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
  */
 export function Textarea({ className, ...textareaProps }: TextareaProps) {
   const isInvalid = isAriaInvalid(textareaProps['aria-invalid']);
+
   const classNames = cx(
     controlStyles.control,
     styles.textarea,

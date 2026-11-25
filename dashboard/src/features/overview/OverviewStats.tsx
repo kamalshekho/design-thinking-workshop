@@ -110,12 +110,15 @@ function weekdayLabelsFor(referenceDate: Date): string[] {
 
 function hrefFor(filters: Partial<ApplicationFilters>): string {
   const params = new URLSearchParams();
+
   if (filters.view) {
     params.set('view', filters.view);
   }
+
   if (filters.status) {
     params.set('status', filters.status);
   }
+
   return `#applications?${params.toString()}`;
 }
 

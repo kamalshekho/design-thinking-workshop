@@ -89,6 +89,7 @@ function useIsScrolled(): boolean {
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
+
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
@@ -119,6 +120,7 @@ export function Header({
   const isScrolled = useIsScrolled();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuId = useId();
+
   const headerClassName = cx(
     styles.header,
     isScrolled ? styles.scrolled : null,

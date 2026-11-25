@@ -199,6 +199,7 @@ export function ApplicationTable({
     () => new Map(categories.map((category) => [category.id, category.name])),
     [categories],
   );
+
   // The whole Owner, not just the name: the Zuständigkeit column also reads
   // the photo off it.
   const ownersById = useMemo(
@@ -233,6 +234,7 @@ export function ApplicationTable({
     return [...applications].sort((a, b) => {
       const first = getSortValue(a);
       const second = getSortValue(b);
+
       const result =
         typeof first === 'number' && typeof second === 'number'
           ? first - second
@@ -257,6 +259,7 @@ export function ApplicationTable({
   // new set is already page one, with no flash of a stale page.
   const [pagedApplications, setPagedApplications] =
     useState<readonly Application[]>(applications);
+
   if (pagedApplications !== applications) {
     setPagedApplications(applications);
     setPage(1);
@@ -264,6 +267,7 @@ export function ApplicationTable({
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
+
   const pageItems = useMemo(
     () =>
       paginated
@@ -277,6 +281,7 @@ export function ApplicationTable({
     () => pageItems.map((application) => application.id),
     [pageItems],
   );
+
   const selectedOnPage = useMemo(
     () => new Set(pageIds.filter((id) => selectedIds?.has(id))),
     [pageIds, selectedIds],
@@ -288,37 +293,41 @@ export function ApplicationTable({
         aria-label={ariaLabel}
         selectionMode={selectionEnabled ? 'multiple' : 'none'}
         selectionBehavior="toggle"
-        {...(selectionEnabled
-          ? {
-              selectedKeys: selectedOnPage,
-              onSelectionChange: (keys: Selection) => {
+        selectedKeys={selectionEnabled ? selectedOnPage : undefined}
+        onSelectionChange={
+          selectionEnabled
+            ? (keys: Selection) => {
                 const next = new Set(selectedIds ?? []);
+
                 // Re-derive this page's part of the selection from scratch,
                 // leaving ids checked on other pages untouched.
                 for (const id of pageIds) {
                   next.delete(id);
                 }
+
                 for (const key of keys === 'all' ? pageIds : keys) {
                   next.add(String(key));
                 }
+
                 onSelectedIdsChange?.(next);
-              },
-            }
-          : {})}
+              }
+            : undefined
+        }
         sortDescriptor={sortDescriptor}
         onSortChange={setSortDescriptor}
-        {...(onSelect
-          ? {
-              onRowAction: (key: Key) => {
+        onRowAction={
+          onSelect
+            ? (key: Key) => {
                 const application = applications.find(
                   (candidate) => candidate.id === String(key),
                 );
+
                 if (application) {
                   onSelect(application);
                 }
-              },
-            }
-          : {})}
+              }
+            : undefined
+        }
       >
         <TableHeader>
           <TableHead
@@ -361,23 +370,27 @@ export function ApplicationTable({
         <TableBody
           items={pageItems}
           dependencies={[activeId, sm, md, xl, xxl]}
-          {...(emptyState === undefined
-            ? {}
-            : { renderEmptyState: () => emptyState })}
+          renderEmptyState={
+            emptyState === undefined ? undefined : () => emptyState
+          }
         >
           {(application) => {
             const unassigned = unreadState && isUnassigned(application);
+
             const owner =
               application.ownerId === null
                 ? null
                 : (ownersById.get(application.ownerId) ?? null);
+
             const ownerName =
               application.ownerId === null
                 ? null
                 : (owner?.name ?? application.ownerId);
+
             const categoryName =
               categoryNames.get(application.categoryId) ??
               application.categoryId;
+
             // The second line under the name: below 640 px the Status and the
             // age, above it whichever of Kategorie and Zuständig has no
             // column yet.
@@ -527,10 +540,13 @@ export function ApplicationTable({
                           aria-label={action.label(application)}
                           onClick={(event) => {
                             event.stopPropagation();
+
                             if (action.confirm === undefined) {
                               action.onAction(application);
+
                               return;
                             }
+
                             setPendingAction({ action, application });
                           }}
                           className={cx(

@@ -111,6 +111,7 @@ export const PaginationRoot = ({
 
         // Insert ellipsis after the left range and add the last page
         items.push({ type: 'ellipsis', key: leftItemCount + 1 });
+
         items.push({
           type: 'page',
           value: total,
@@ -129,7 +130,9 @@ export const PaginationRoot = ({
           value: 1,
           isCurrent: page === 1,
         });
+
         items.push({ type: 'ellipsis', key: total - rightItemCount });
+
         rightRange.forEach((pageNum) =>
           items.push({
             type: 'page',
@@ -146,11 +149,13 @@ export const PaginationRoot = ({
           value: 1,
           isCurrent: page === 1,
         });
+
         // Insert left ellipsis after the first page
         items.push({ type: 'ellipsis', key: leftSiblingIndex - 1 });
 
         // Show a range of pages around the current page
         const middleRange = range(leftSiblingIndex, rightSiblingIndex);
+
         middleRange.forEach((pageNum) =>
           items.push({
             type: 'page',
@@ -161,6 +166,7 @@ export const PaginationRoot = ({
 
         // Insert right ellipsis and finally the last page
         items.push({ type: 'ellipsis', key: rightSiblingIndex + 1 });
+
         items.push({
           type: 'page',
           value: total,
@@ -242,6 +248,7 @@ const Trigger: FC<TriggerProps> = ({
   ariaLabel,
 }) => {
   const context = useContext(PaginationContext);
+
   if (!context) {
     throw new Error(
       'Pagination components must be used within a Pagination.Root',
@@ -330,6 +337,7 @@ export const PaginationItem = ({
   ariaLabel,
 }: PaginationItemProps) => {
   const context = useContext(PaginationContext);
+
   if (!context) {
     throw new Error(
       'Pagination components must be used within a <PaginationRoot />',
@@ -360,6 +368,7 @@ export const PaginationItem = ({
     </button>
   );
 };
+
 interface PaginationEllipsisProps {
   children?: ReactNode;
   style?: CSSProperties;
@@ -389,6 +398,7 @@ export const PaginationContextComponent: FC<
   PaginationContextComponentProps
 > = ({ children }) => {
   const context = useContext(PaginationContext);
+
   if (!context) {
     throw new Error(
       'Pagination components must be used within a PaginationRoot',

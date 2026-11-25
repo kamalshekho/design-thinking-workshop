@@ -27,6 +27,7 @@ function Host({
   applications?: readonly Application[];
 }) {
   const [categories, setCategories] = useState<Category[]>(mockCategories);
+
   return (
     <CategoriesScreen
       categories={categories}
@@ -57,9 +58,9 @@ function Host({
       }}
       onReorder={(orderedIds) => {
         setCategories((current) =>
-          orderedIds
-            .map((id) => current.find((category) => category.id === id))
-            .filter((category): category is Category => category !== undefined),
+          orderedIds.flatMap((id) =>
+            current.filter((category) => category.id === id),
+          ),
         );
       }}
       applications={applications}
@@ -69,11 +70,13 @@ function Host({
 
 /** The Categories on screen, top to bottom — the order the form would use. */
 function rowNames(): string[] {
-  return screen
-    .getAllByRole('button')
-    .map((button) => button.getAttribute('aria-label') ?? '')
-    .filter((label) => label.endsWith(' bearbeiten'))
-    .map((label) => label.replace(/ bearbeiten$/, ''));
+  return screen.getAllByRole('button').flatMap((button) => {
+    const label = button.getAttribute('aria-label') ?? '';
+
+    return label.endsWith(' bearbeiten')
+      ? [label.replace(/ bearbeiten$/, '')]
+      : [];
+  });
 }
 
 /** The three tabs carry a count in their label, so they are read by position. */
@@ -81,10 +84,13 @@ function tab(index: number): HTMLElement {
   const tabs = within(
     screen.getByRole('tablist', { name: de.categories.title }),
   ).getAllByRole('tab');
+
   const found = tabs[index];
+
   if (!found) {
     throw new Error(`No tab at index ${String(index)}`);
   }
+
   return found;
 }
 
@@ -110,10 +116,12 @@ describe('CategoriesScreen', () => {
     render(<Host />);
 
     await user.click(screen.getByRole('button', { name: de.categories.add }));
+
     await user.type(
       screen.getByRole('textbox', { name: /^Name/ }),
       'Veranstaltungen',
     );
+
     await user.click(
       screen.getByRole('button', { name: de.categories.dialog.create }),
     );
@@ -123,6 +131,7 @@ describe('CategoriesScreen', () => {
         name: de.categories.editOne('Veranstaltungen'),
       }),
     ).toBeInTheDocument();
+
     // Nothing has ever been filed under it, so it counts as unused.
     expect(screen.getByText(de.categories.usageCount(0))).toBeInTheDocument();
   });
@@ -132,10 +141,12 @@ describe('CategoriesScreen', () => {
     render(<Host />);
 
     await user.click(screen.getByRole('button', { name: de.categories.add }));
+
     await user.type(
       screen.getByRole('textbox', { name: /^Name/ }),
       'social media',
     );
+
     await user.click(
       screen.getByRole('button', { name: de.categories.dialog.create }),
     );
@@ -158,8 +169,10 @@ describe('CategoriesScreen', () => {
     const field = screen.getByRole('textbox', {
       name: /^Name/,
     });
+
     await user.clear(field);
     await user.type(field, 'Sonstiges');
+
     await user.click(
       screen.getByRole('button', { name: de.categories.dialog.save }),
     );
@@ -167,6 +180,7 @@ describe('CategoriesScreen', () => {
     expect(
       screen.getByRole('button', { name: de.categories.editOne('Sonstiges') }),
     ).toBeInTheDocument();
+
     expect(
       screen.queryByRole('button', {
         name: de.categories.editOne('Etwas anderes'),
@@ -235,9 +249,9 @@ describe('CategoriesScreen', () => {
     const applications = setDiscarded(
       createMockApplications(NOW),
       new Set(
-        createMockApplications(NOW)
-          .filter((application) => application.categoryId === 'legal')
-          .map((application) => application.id),
+        createMockApplications(NOW).flatMap((application) =>
+          application.categoryId === 'legal' ? [application.id] : [],
+        ),
       ),
       NOW.toISOString(),
     );
@@ -252,6 +266,7 @@ describe('CategoriesScreen', () => {
         name: de.categories.deleteOne('Rechtliche Unterstützung'),
       }),
     ).toBeDisabled();
+
     expect(screen.getByText(de.categories.usageCount(0))).toBeInTheDocument();
   });
 
@@ -260,10 +275,12 @@ describe('CategoriesScreen', () => {
     render(<Host />);
 
     await user.click(screen.getByRole('button', { name: de.categories.add }));
+
     await user.type(
       screen.getByRole('textbox', { name: /^Name/ }),
       'Veranstaltungen',
     );
+
     await user.click(
       screen.getByRole('button', { name: de.categories.dialog.create }),
     );
@@ -273,6 +290,7 @@ describe('CategoriesScreen', () => {
         name: de.categories.deleteOne('Veranstaltungen'),
       }),
     );
+
     await user.click(
       within(
         screen.getByRole('alertdialog', {
@@ -294,6 +312,7 @@ describe('CategoriesScreen', () => {
     render(<Host />);
 
     expect(screen.queryByRole('grid')).not.toBeInTheDocument();
+
     for (const name of [
       de.categories.editOne('Social Media'),
       de.categories.deleteOne('Social Media'),
@@ -305,6 +324,7 @@ describe('CategoriesScreen', () => {
     const toggle = screen.getByRole('switch', {
       name: de.categories.toggleOne('Social Media'),
     });
+
     await user.click(toggle);
     expect(toggle).not.toBeChecked();
   });
