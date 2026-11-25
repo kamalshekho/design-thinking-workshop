@@ -47,6 +47,10 @@ data only; do not enter real applicant details while presenting it.
 
 `docker compose down` to stop services, with `-v` to drop the database
 
+To browse the API in Swagger UI, start the stack with the `docs` profile; see
+[`backend/README.md`](./backend/README.md#api-documentation) for the command
+and the address.
+
 ## Documents
 
 | Document | What it holds |
@@ -58,6 +62,8 @@ data only; do not enter real applicant details while presenting it.
 | [`frontend/README.md`](./frontend/README.md) | The form's code conventions, component rules, and how a screen is ported from Figma |
 | [`frontend/DESIGN.md`](./frontend/DESIGN.md) | Design specification of the form — copy, states, tokens, Figma structure |
 | [`frontend/API.md`](./frontend/API.md) | What the form sends to the backend and what it needs back |
+| [`dashboard/API.md`](./dashboard/API.md) | What the staff dashboard sends to the backend and what it needs back |
+| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | Containers, ports, the proxy, and the rules of the REST API |
 | [`frontend/references/`](./frontend/references/) | Screenshots of the applicant form, one per UI state |
 | [`docs/adr/`](./docs/adr/) | Decisions that are hard to reverse, and why we took them |
 | [`AGENTS.md`](./AGENTS.md) | Conventions for writing in this repo |
