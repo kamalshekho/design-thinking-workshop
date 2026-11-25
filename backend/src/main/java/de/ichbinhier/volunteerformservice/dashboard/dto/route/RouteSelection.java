@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RouteSelection {
     private String route;
-    private int count;
+    private long count;
 }
 

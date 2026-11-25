@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class CategoryRouteSelection {
     private String categoryId;
     private String name;
-    private int count;
+    private long count;
 }
 
