@@ -76,6 +76,7 @@
   font-size: var(--wp--preset--font-size--small);
   font-weight: var(--font-weight-button);
   letter-spacing: var(--footer-donate-letter-spacing);
+  text-transform: uppercase;
   white-space: nowrap;
 }
 

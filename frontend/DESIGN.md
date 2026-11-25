@@ -327,6 +327,27 @@ Card padding              24px
 
 The form card is page content, not a modal.
 
+### 11a. Footer
+
+Source: the footer of the association's website (`ichbinhier.eu`).
+
+- **Kontakt** — title **Kontakt**, link **Sprich mit uns**, address lines
+  **Postfach 25588**, **10129 Berlin**, **info@ichbinhier.online**.
+- **Rechtliches** — title **Rechtliches**, links **Impressum** and
+  **Datenschutz**.
+- **Spende** — link **Spende hier**. Uppercasing is applied via CSS
+  (`text-transform: uppercase`), not in the string itself, so the visual
+  appearance stays identical.
+- **Copyright** — template **Copyright {Jahr} ichbinhier e.V. – Alle Rechte
+  vorbehalten.**, where `{Jahr}` is the current calendar year at render time.
+- **Back to top** — accessible label **Nach oben**.
+
+Destinations in the MVP: **Sprich mit uns**, **Impressum**, and **Spende hier**
+point to `#`; real destinations for those three links come later.
+**Datenschutz** is the exception and points to `links.privacyPolicy`
+(`https://www.ichbinhier.eu/datenschutz`, linked from the `ichbinhier.eu`
+homepage), the same URL used in field 6 (section 23).
+
 ---
 
 ## 12. Header
@@ -370,6 +391,12 @@ existing destination into the animated drawer; this is independent of the
 ---
 
 ## 13. Brand Strip / Halftone
+
+Tagline:
+
+**ichbinhier, damit Liebe lauter ist**
+
+Source: Hero Section in Figma and the association's website (`ichbinhier.eu`).
 
 Use:
 
@@ -671,6 +698,17 @@ These are intentionally excluded to protect conversion.
 
 ---
 
+# 25a. Honeypot Field
+
+A hidden anti-spam honeypot field (`API.md`) is present in the form markup for
+automated submissions and is not shown to applicants.
+
+Accessible label (team proposal, not confirmed by the association (`C1`)):
+
+**Dieses Feld bitte leer lassen**
+
+---
+
 # 26. Required Figma States
 
 Create 11 frames/variants.
@@ -828,6 +866,43 @@ Do not use a generic red form banner as the only explanation.
 
 Do not use color alone: error text must explicitly explain the issue.
 
+### Error copy
+
+Team proposal, not confirmed by the association (`C1`), except `EMAIL_REQUIRED`
+and `EMAIL_INVALID` which were already specified in section 20. Length limits
+in `NAME_TOO_LONG` (120) and `ABOUT_TOO_LONG` (2000) match [`API.md`](./API.md).
+
+| Code | Copy |
+| --- | --- |
+| `ROUTE_REQUIRED` | Bitte wähle aus, wie du uns helfen möchtest |
+| `CATEGORY_REQUIRED` | Bitte wähle aus, wie du uns helfen möchtest |
+| `CATEGORY_UNKNOWN` | Diese Auswahl kennen wir nicht — bitte wähle einen der Punkte aus der Liste |
+| `CATEGORY_UNAVAILABLE` | Dieser Bereich ist inzwischen nicht mehr verfügbar. Bitte wähle einen anderen Punkt aus der aktualisierten Liste. |
+| `NAME_REQUIRED` | Bitte sag uns, wie wir dich ansprechen sollen |
+| `NAME_TOO_LONG` | Bitte kürze deinen Namen auf 120 Zeichen |
+| `EMAIL_REQUIRED` | Bitte gib eine E-Mail-Adresse ein, an die wir dir antworten können |
+| `EMAIL_INVALID` | Bitte gib eine E-Mail-Adresse ein, an die wir dir antworten können |
+| `EMAIL_TOO_LONG` | Diese E-Mail-Adresse ist zu lang — bitte prüfe sie noch einmal |
+| `WEEKLY_TIME_REQUIRED` | Bitte wähle aus, wie viel Zeit du pro Woche einbringen kannst |
+| `WEEKLY_TIME_UNKNOWN` | Diese Auswahl kennen wir nicht — bitte wähle einen der Punkte aus der Liste |
+| `ABOUT_TOO_LONG` | Bitte kürze deinen Text auf 2000 Zeichen |
+| `CONSENT_REQUIRED` | Bitte bestätige die Einwilligung, damit wir deine Bewerbung speichern können |
+| `RATE_LIMITED` | Es kamen gerade sehr viele Bewerbungen an. Bitte versuche es in einer Minute noch einmal — deine Angaben bleiben stehen. |
+| `INTERNAL_ERROR` | Das Abschicken hat gerade nicht funktioniert. Bitte versuche es noch einmal — deine Angaben bleiben stehen. |
+| `unknownError` | Das Abschicken hat gerade nicht funktioniert. Bitte versuche es noch einmal — deine Angaben bleiben stehen. |
+
+Rules:
+
+- Single-line error messages end without a period, matching the example in
+  section 20. Multi-sentence messages use periods (`CATEGORY_UNAVAILABLE`,
+  `RATE_LIMITED`, `INTERNAL_ERROR`, `unknownError`, and the categories load
+  error message in section 33b).
+- `ROUTE_REQUIRED` and `CATEGORY_REQUIRED` share the same wording because the
+  applicant chooses route and category in the same field 1 and does not see the
+  distinction.
+- `unknownError` is shown for any backend error code the frontend does not
+  recognize (`API.md`) and uses the same wording as `INTERNAL_ERROR`.
+
 ---
 
 # 33. State 06 — Loading
@@ -835,6 +910,11 @@ Do not use color alone: error text must explicitly explain the issue.
 Button label:
 
 **Wird abgeschickt …**
+
+Screenreader status message (`role="status"` while submitting; team proposal,
+not confirmed by the association (`C1`)):
+
+**Deine Bewerbung wird abgeschickt.**
 
 Requirements:
 
@@ -852,6 +932,10 @@ Field 1 while `GET /api/v1/categories` is in flight (API.md). Not the same as
 State 06 — this happens once, on page open, before the applicant has touched
 anything.
 
+Copy (team proposal, not confirmed by the association (`C1`)):
+
+- Option: **Lädt …**
+
 Requirements:
 
 - field 1 shows a single disabled option in place of the placeholder ("Lädt
@@ -866,12 +950,18 @@ Requirements:
 
 A network failure or non-2xx response to `GET /api/v1/categories` (API.md).
 
+Copy (team proposal, not confirmed by the association (`C1`)):
+
+- Option: **Nicht verfügbar**
+- Error message: **Die Bereiche für Vereinsarbeit konnten nicht geladen werden. Bitte versuche es noch einmal.**
+- Button: **Erneut versuchen**
+
 Requirements:
 
 - field 1 stays disabled;
 - field 1 shows a single disabled option in place of the placeholder
-  ("Nicht verfügbar" — needs a copy review), instead of the normal option
-  list, the same way State 09 does for "Lädt …";
+  ("Nicht verfügbar"), instead of the normal option list, the same way State 09
+  does for "Lädt …";
 - an inline error message appears below field 1, stating the load failed and
   what to do — never colour alone (section 32);
 - a retry action (button) is offered next to the error message;
@@ -886,6 +976,13 @@ Requirements:
 `GET /api/v1/categories` succeeds with `{ "categories": [] }` — the
 association is not currently accepting Vereinsarbeit applications (API.md).
 This is a normal state, not an error.
+
+Copy (team proposal, not confirmed by the association (`C1`)):
+
+- Note: **Aktuell keine offenen Bereiche für Vereinsarbeit.**
+
+No extra sentence is added; the two fixed routes sit directly above the note in
+field 1.
 
 Requirements:
 

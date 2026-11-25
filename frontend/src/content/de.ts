@@ -8,10 +8,8 @@ import type { Content } from './types';
  * hold applicant-facing copy — that is what makes the copy reviewable against
  * DESIGN.md in one place.
  *
- * Wording marked "DESIGN.md" is specified and must not be edited without
- * editing DESIGN.md in the same commit (section 49). Wording marked "not yet
- * in DESIGN.md" was written for this implementation. Issue #148 collects its
- * copy review, so each mark points there and nowhere else.
+ * Wording here is specified in DESIGN.md and must not be edited without
+ * editing DESIGN.md in the same commit (section 49).
  */
 export const de = {
   /** DESIGN.md section 12 */
@@ -30,11 +28,7 @@ export const de = {
     logoAlt: 'ichbinhier e.V.',
   },
 
-  /**
-   * Not yet in DESIGN.md, see issue #148. The brand-strip tagline from the
-   * Figma Hero Section (section 13), distinct from the page.title heading
-   * below it.
-   */
+  /** DESIGN.md section 13 */
   hero: {
     tagline: 'ichbinhier, damit Liebe lauter ist',
   },
@@ -64,10 +58,7 @@ export const de = {
     SUPPORTING_MEMBER: 'Fördermitglied werden',
   } satisfies Record<FixedRoute, string>,
 
-  /**
-   * Not yet in DESIGN.md, see issue #148. Loading, error and empty states for
-   * field 1's backend-owned categories.
-   */
+  /** DESIGN.md sections 33a to 33c */
   categoriesField: {
     loadingOption: 'Lädt …',
     errorOption: 'Nicht verfügbar',
@@ -146,12 +137,7 @@ export const de = {
     closing: 'Vielen Dank für dein Interesse!',
   },
 
-  /**
-   * Field errors. Only EMAIL_REQUIRED and EMAIL_INVALID are specified
-   * (DESIGN.md section 20). The rest are not yet in DESIGN.md, see issue #148.
-   * Each one names what to do, never just that something is wrong (section 32
-   * forbids relying on colour alone).
-   */
+  /** DESIGN.md sections 20 and 32 */
   errors: {
     ROUTE_REQUIRED: 'Bitte wähle aus, wie du uns helfen möchtest',
     CATEGORY_REQUIRED: 'Bitte wähle aus, wie du uns helfen möchtest',
@@ -173,20 +159,22 @@ export const de = {
       'Diese Auswahl kennen wir nicht — bitte wähle einen der Punkte aus der Liste',
     ABOUT_TOO_LONG: 'Bitte kürze deinen Text auf 2000 Zeichen',
     CONSENT_REQUIRED:
-      'Ohne deine Einwilligung können wir deine Bewerbung nicht speichern',
+      'Bitte bestätige die Einwilligung, damit wir deine Bewerbung speichern können',
     RATE_LIMITED:
       'Es kamen gerade sehr viele Bewerbungen an. Bitte versuche es in einer Minute noch einmal — deine Angaben bleiben stehen.',
     INTERNAL_ERROR:
       'Das Abschicken hat gerade nicht funktioniert. Bitte versuche es noch einmal — deine Angaben bleiben stehen.',
   } satisfies Record<ErrorCode, string>,
 
-  /** Shown for any error code the frontend does not know (see API.md) */
+  /** DESIGN.md section 32 — fallback for any error code the frontend does not know (API.md) */
   unknownError:
     'Das Abschicken hat gerade nicht funktioniert. Bitte versuche es noch einmal — deine Angaben bleiben stehen.',
 
+  /** DESIGN.md sections 33 and 25a */
   a11y: {
-    /** Announced via role="status" while the submit request is in flight */
+    /** Announced via role="status" while the submit request is in flight (section 33) */
     submitting: 'Deine Bewerbung wird abgeschickt.',
+    /** Honeypot field label (section 25a) */
     honeypotLabel: 'Dieses Feld bitte leer lassen',
   },
 
@@ -243,25 +231,21 @@ export const de = {
     >,
   },
 
-  /**
-   * Not yet in DESIGN.md, see issue #148. Section 11 only names the footer as
-   * "existing site continuation" without wording, so this is ported from the
-   * live site's footer. The contact block and the copyright line hold
-   * placeholders rather than the association's details.
-   */
+  /** DESIGN.md section 11a */
   footer: {
     contact: {
       title: 'Kontakt',
       talkToUs: 'Sprich mit uns',
-      address: ['Musterstraße 1', '12345 Musterstadt', 'kontakt@example.org'],
+      address: ['Postfach 25588', '10129 Berlin', 'info@ichbinhier.online'],
     },
     legal: {
       title: 'Rechtliches',
       imprint: 'Impressum',
       privacy: 'Datenschutz',
     },
-    donateLabel: 'SPENDE HIER',
-    copyright: 'Copyright 2026 Musterverein e.V. – Alle Rechte vorbehalten.',
+    donateLabel: 'Spende hier',
+    copyright: (year: number) =>
+      `Copyright ${String(year)} ichbinhier e.V. – Alle Rechte vorbehalten.`,
     backToTopLabel: 'Nach oben',
   },
 } as const satisfies Content;

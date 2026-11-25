@@ -1,16 +1,17 @@
 /**
  * External destinations the form links to.
  *
- * None of these is confirmed with the association yet — they are the open
- * questions listed in ../../README.md. A wrong link here is worse than a
- * missing field, because the two bypass routes consist of nothing but their
- * link.
+ * Only `privacyPolicy` is taken from the live ichbinhier.eu website; the other
+ * destinations are not confirmed with the association yet (see Open questions
+ * in ../../README.md). A wrong link here is worse than a missing field, because
+ * the two bypass routes consist of nothing but their link.
  */
 export const links = {
   /**
-   * DESIGN.md section 23. Not yet the real privacy policy URL, see issue #148.
+   * DESIGN.md sections 11a and 23 — linked from the ichbinhier.eu homepage
+   * (HTTP 200).
    */
-  privacyPolicy: 'https://www.ichbinhier.eu/datenschutz/',
+  privacyPolicy: 'https://www.ichbinhier.eu/datenschutz',
   /** DESIGN.md section 28 — where a community member actually joins */
   communityGroup: 'https://www.ichbinhier.eu/engagement/',
   /** DESIGN.md section 35 — the supporting membership application */
