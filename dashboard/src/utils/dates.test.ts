@@ -2,11 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import { daysSince } from './dates';
 
-/**
- * Both dates are built from local time, because the answer depends on the
- * local date and Vitest pins no time zone. Every case gives the same result
- * under `TZ=UTC` and `TZ=Europe/Berlin`.
- */
 const NOW = new Date(2026, 8, 5, 12, 0);
 
 function localTimestamp(...parts: [number, number, number, number, number]) {

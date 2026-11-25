@@ -7,9 +7,12 @@
 
 export const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
-/** Days since the Unix epoch of a date's local calendar day, ignoring its clock time. */
+/**
+ * Days since the Unix epoch of a date's local calendar day, ignoring its clock
+ * time. `Date.UTC` knows no daylight-saving change, so every calendar day is
+ * exactly 24 hours long here.
+ */
 function localCalendarDay(date: Date): number {
-  // Date.UTC has no DST, so every calendar day maps to exactly 24 hours here.
   return (
     Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) /
     MILLISECONDS_PER_DAY

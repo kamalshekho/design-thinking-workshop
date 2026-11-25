@@ -68,7 +68,6 @@ describe('filterApplications', () => {
   });
 
   it('counts the stale threshold in calendar days, ignoring the clock time', () => {
-    // Local time, so the case holds in every time zone the suite runs in.
     const now = new Date(2026, 10, 25, 11, 50);
 
     const applications = [
