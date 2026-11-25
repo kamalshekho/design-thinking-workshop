@@ -180,12 +180,10 @@ test('A29: applicant submits application and staff takes ownership and updates s
   await expect(onboardingPage.getByText('4 von 4 erledigt')).toBeVisible();
   await onboardingPage.close();
 
-  // Dashboard updates live via SSE without reloading
   await expect(
     page.getByText('Onboarding: 4 von 4 Schritten'),
   ).toBeVisible({ timeout: 15_000 });
 
-  // Invalid onboarding link shows error page
   await page.goto(`${FORM_URL}/onboarding/invalid-link-does-not-exist`);
   await expect(
     page.getByText(
