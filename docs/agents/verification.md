@@ -11,7 +11,7 @@ dashboard), `backend/` (Spring Boot).
 
 - **Location**: `frontend/src/**/*.test.{ts,tsx}` and `dashboard/src/**/*.test.{ts,tsx}` (Vitest, React Testing Library, MSW); `backend/src/test/java` (JUnit, Spring Boot test slices, H2).
 - **Single file**: `npx vitest run <path>` inside `frontend/` or `dashboard/`.
-- **Full suite**: the steps of the app's job (`frontend` or `dashboard`) in `.github/workflows/ci.yml`, run inside the app folder: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm test`, `npm run build`, `npm run size`, plus `npm run stylelint` in `frontend/`. Backend: `./mvnw -B test` in `backend/`.
+- **Full suite**: `npm run check` inside `frontend/` or `dashboard/` runs the local steps of the app's CI job (`frontend` or `dashboard` in `.github/workflows/ci.yml`) plus the config-parity check of the `config` job, tests with coverage included. `npm run build` and `npm run size` run only in CI. Backend: `./mvnw -B test` in `backend/`.
 - **Property testing**: none installed.
 
 The backend needs JDK 25. Without one, run its suite in the Maven image:
