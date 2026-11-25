@@ -1,0 +1,20 @@
+# Runs the stack from the images the release workflow pushed to GitHub
+# Container Registry instead of building them from source:
+#
+#   IMAGE_TAG=sha-<commit> docker compose -f docker-compose.yml \
+#     -f deploy/compose.images.yml up --detach --wait
+#
+# IMAGE_TAG is either sha-<full commit> (pushed after the scan) or a release
+# tag such as v1.0.0 (added only after the end-to-end tests passed on it).
+services:
+  backend:
+    build: !reset null
+    image: ghcr.io/kamalshekho/design-thinking-workshop/backend:${IMAGE_TAG:?set IMAGE_TAG}
+
+  frontend:
+    build: !reset null
+    image: ghcr.io/kamalshekho/design-thinking-workshop/frontend:${IMAGE_TAG:?set IMAGE_TAG}
+
+  dashboard:
+    build: !reset null
+    image: ghcr.io/kamalshekho/design-thinking-workshop/dashboard:${IMAGE_TAG:?set IMAGE_TAG}
