@@ -37,10 +37,10 @@ describe('PaginationCardDefault', () => {
     await user.click(screen.getByRole('button', { name: 'Seite 4' }));
     expect(onPageChange).toHaveBeenCalledWith(4);
 
-    await user.click(screen.getByRole('button', { name: 'Previous Page' }));
+    await user.click(screen.getByRole('button', { name: 'Zurück' }));
     expect(onPageChange).toHaveBeenCalledWith(1);
 
-    await user.click(screen.getByRole('button', { name: 'Next Page' }));
+    await user.click(screen.getByRole('button', { name: 'Weiter' }));
     expect(onPageChange).toHaveBeenCalledWith(3);
   });
 });
