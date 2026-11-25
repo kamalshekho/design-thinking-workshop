@@ -1,0 +1,69 @@
+# A demo server, staging or production: one Azure VM with 1 GiB of memory and
+# 1 GiB of swap. Applied on top of docker-compose.yml and
+# deploy/compose.images.yml by deploy/deploy.sh; deploy/README.md lists the
+# .env the server needs. Relative paths resolve against the directory of
+# docker-compose.yml, the first file, so mounts name deploy/ explicitly.
+#
+# Caddy is the only service with host ports. It terminates TLS for the form and
+# the dashboard and gets their certificates from Let's Encrypt; HTTPS is not
+# optional, because the dashboard's sign-in cookie is always Secure.
+services:
+  db:
+    mem_limit: 192m
+
+  backend:
+    # Measured on 2026-11-25: about 280 MiB under the demo's load. A heap of
+    # half the limit leaves the rest for threads and metaspace; 60 % got the
+    # container OOM-killed under a stress run.
+    mem_limit: 512m
+    environment:
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=50
+      # No Mailpit on the server. Mail goes out through Resend when
+      # RESEND_API_KEY is set, and NoopEmailSender takes over otherwise.
+      SPRING_MAIL_HOST: ''
+      # Spring Boot would still check the empty mail host for
+      # /actuator/health and report the backend as down.
+      MANAGEMENT_HEALTH_MAIL_ENABLED: 'false'
+
+  frontend:
+    ports: !reset []
+    mem_limit: 64m
+    volumes:
+      - ./deploy/real-ip.conf:/etc/nginx/conf.d/real-ip.conf:ro
+
+  dashboard:
+    ports: !reset []
+    mem_limit: 64m
+    volumes:
+      - ./deploy/real-ip.conf:/etc/nginx/conf.d/real-ip.conf:ro
+
+  mailpit:
+    # Never started on the server: no `--profile mailpit` is ever passed.
+    profiles: [mailpit]
+
+  caddy:
+    image: docker.io/library/caddy:2.11.9-alpine@sha256:003a97808e781aa9f7e75cc2f43d34d461099031faf5e20faefb9f61126836f0
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      FORM_HOST: ${FORM_HOST:?set FORM_HOST in .env}
+      DASHBOARD_HOST: ${DASHBOARD_HOST:?set DASHBOARD_HOST in .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    # Measured at about 50 MiB right after it fetched both certificates, so
+    # 64 MiB left too little room for the next renewal.
+    mem_limit: 128m
+    depends_on:
+      - frontend
+      - dashboard
+    restart: unless-stopped
+
+volumes:
+  # Holds the certificates. Losing it means asking Let's Encrypt again, which
+  # is rate limited per domain.
+  caddy-data:
+  caddy-config:

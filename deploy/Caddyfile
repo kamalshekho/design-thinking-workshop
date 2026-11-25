@@ -1,0 +1,14 @@
+# TLS in front of the two nginx containers. Caddy sets X-Forwarded-For to the
+# address it sees and ignores what a client sends, because no trusted_proxies
+# is configured; real-ip.conf lets nginx take the address from there.
+#
+# The SSE stream needs no flush setting: Caddy flushes text/event-stream
+# responses as they arrive.
+
+{$FORM_HOST} {
+	reverse_proxy frontend:8080
+}
+
+{$DASHBOARD_HOST} {
+	reverse_proxy dashboard:8080
+}

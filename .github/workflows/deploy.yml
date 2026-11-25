@@ -1,0 +1,119 @@
+name: deploy
+run-name: deploy ${{ inputs.version }} to ${{ inputs.environment }}
+
+# Started by hand from the Actions tab: pick a release tag and an environment.
+# Only a tag release.yml finished can be deployed: the job checks that every
+# image under that tag carries a provenance attestation signed by release.yml.
+# Production takes only a version that was deployed to staging successfully
+# before; the run name above is what that check looks for.
+#
+# Each environment holds what the job needs to reach its server (see
+# deploy/README.md). The servers keep their own .env; no application secret
+# passes through this workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release tag, for example v1.0.0
+        required: true
+        type: string
+      environment:
+        description: Where to deploy
+        required: true
+        type: choice
+        options: [staging, production]
+        default: staging
+
+permissions: {}
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ vars.FORM_URL }}
+    permissions:
+      contents: read
+      packages: read
+      attestations: read
+      actions: read # lists earlier deploy runs for the staging check
+    env:
+      VERSION: ${{ inputs.version }}
+      TARGET: ${{ inputs.environment }}
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+
+    steps:
+      - name: Check the version
+        run: |
+          if [[ ! $VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::'$VERSION' is not a release tag such as v1.0.0"
+            exit 1
+          fi
+
+      - name: Check that staging runs this version
+        if: inputs.environment == 'production'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          passed="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow deploy.yml \
+            --status success --limit 200 --json displayTitle \
+            --jq "[.[] | select(.displayTitle == \"deploy $VERSION to staging\")] | length")"
+          if [ "$passed" -eq 0 ]; then
+            echo "::error::$VERSION has no successful deploy to staging yet"
+            exit 1
+          fi
+
+      # The Compose files and the deploy script come from the same tag as the
+      # images, so a later change on main cannot reach an older release.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ inputs.version }}
+          persist-credentials: false
+
+      - name: Verify the images came through release.yml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          for app in backend frontend dashboard; do
+            gh attestation verify "oci://ghcr.io/$GITHUB_REPOSITORY/$app:$VERSION" \
+              --repo "$GITHUB_REPOSITORY" \
+              --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml"
+          done
+
+      - name: Set up SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      # Each release gets its own directory, so deploy.sh can roll back to the
+      # previous release's files and not only its images. VERSION is expanded
+      # on this side on purpose: the first step allowed only a tag's characters.
+      - name: Copy the release files
+        run: |
+          release="dtw/releases/$VERSION"
+          # shellcheck disable=SC2029
+          ssh "deploy@$DEPLOY_HOST" "mkdir -p $release/deploy"
+          scp docker-compose.yml "deploy@$DEPLOY_HOST:$release/"
+          scp deploy/compose.images.yml deploy/compose.prod.yml deploy/Caddyfile \
+            deploy/real-ip.conf deploy/deploy.sh "deploy@$DEPLOY_HOST:$release/deploy/"
+
+      # The job's token lets the server pull the images; deploy.sh logs out
+      # again, and the token expires when this job ends.
+      - name: Deploy
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # shellcheck disable=SC2029
+          echo "$GH_TOKEN" | ssh "deploy@$DEPLOY_HOST" \
+            "GHCR_USER=$GITHUB_ACTOR dtw/releases/$VERSION/deploy/deploy.sh $VERSION"
+          echo "Deployed $VERSION to $TARGET" >> "$GITHUB_STEP_SUMMARY"

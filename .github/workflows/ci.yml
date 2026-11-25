@@ -5,6 +5,8 @@ on:
   pull_request:
   push:
     branches: [main]
+  # release.yml runs the same checks on a version tag before it builds images.
+  workflow_call:
 
 permissions:
   contents: read
@@ -19,11 +21,13 @@ jobs:
     permissions:
       contents: read
       pull-requests: read # the filter lists a pull request's files via the API
+    # A tag has no diff to filter, so on a tag every check runs, except e2e:
+    # release.yml runs it against the images it built instead.
     outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-      dashboard: ${{ steps.filter.outputs.dashboard }}
-      config: ${{ steps.filter.outputs.config }}
-      e2e: ${{ steps.filter.outputs.e2e }}
+      frontend: ${{ github.ref_type == 'tag' && 'true' || steps.filter.outputs.frontend }}
+      dashboard: ${{ github.ref_type == 'tag' && 'true' || steps.filter.outputs.dashboard }}
+      config: ${{ github.ref_type == 'tag' && 'true' || steps.filter.outputs.config }}
+      e2e: ${{ github.ref_type == 'tag' && 'false' || steps.filter.outputs.e2e }}
 
     steps:
       # https://github.com/dorny/paths-filter/blob/ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d/README.md?plain=1#L35-L45
@@ -31,7 +35,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+      - if: github.ref_type != 'tag'
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
         with:
           filters: |
