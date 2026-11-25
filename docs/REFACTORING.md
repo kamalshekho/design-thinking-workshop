@@ -3,7 +3,11 @@
 Dieses Dokument hält fest, welche Refactorings im Projekt umgesetzt sind und
 welche noch anstehen. Grundlage ist Issue #76. Jede Angabe aus #76 ist hier am
 Code nachgeprüft, Stand `origin/main` bei Commit `318b88e` am 10.11.2026. Wo
-#76 falsch lag, steht die Korrektur dabei.
+#76 falsch lag, steht die Korrektur dabei. Die Refactorings im Frontend ab
+`14ec1f0` und der Status der Kandidaten sind am 25.11.2026 auf `43c2a87`
+nachgeprüft. Für das Fachgespräch stellt
+[`REFACTORING-FRONTEND.md`](./REFACTORING-FRONTEND.md) drei davon ausführlich
+vor.
 
 Gemessen ist von Hand: Zeilen mit `wc -l`, Literale und Aufrufe mit `grep`,
 zyklomatische Komplexität durch Abzählen der Verzweigungen (`if`, `?:`, `&&`,
@@ -18,9 +22,12 @@ nicht gezählt, sondern geschätzt sind, sind als Schätzung markiert.
 | `a42d118` | `refactor(dashboard)` | Domänennamen und Enums des Dashboards an die API angeglichen | Rename Field | kein Entwurfsmuster | 109 Vorkommen von 5 alten Feldnamen in `dashboard/src` | 0 |
 | `a1a7d71` | `feat(email)` | Versand der Bestätigungsmail mit `EmailSender`, `NoopEmailSender`, `ResendEmailSender` | keine (Neuentwicklung) | Strategy, Null Object | entfällt | 1 Klasse kennt Resend |
 | `32a577e` | `feat(backend)` | Jeder Fehler als `application/problem+json` mit `code` | Replace Error Code with Exception, Replace Constructor with Factory Function, Extract Function | statische Fabrikmethoden | 10 Fehlerantworten ohne Body in 3 Controllern | 0 |
+| `14ec1f0` | `refactor(dashboard)` | 13 geteilte Module aus `features/applications` in geteilte Schichten | Move Function | Schichtenarchitektur (bulletproof-react) | 17 Importe von Feature zu Feature | 0 |
+| `0764e9f`, `ea757c9` | `refactor(frontend)`, `refactor(dashboard)` | Server-Antworten mit Zod und Werte mit Type Guards geprüft statt mit `as` umgewandelt | Substitute Algorithm | Schema-Validierung an der Systemgrenze | 24 Typumwandlungen (7 Formular, 17 Dashboard) | 0 |
+| `9c53480`, `c4d9484`, `07b46ec` | `refactor(dashboard)` | Gemeinsame Buttons, Dialoge und Escape-Hook statt Kopien | Extract Function | Komposition über Props, Custom Hook | 10 Klone laut `jscpd` auf `c3efba4` | 0 |
 
-Nur zwei der vier Commits sind Refactorings im engen Sinn. `a1a7d71` und
-`32a577e` tragen den Typ `feat` und ändern sichtbares Verhalten: das eine
+Von den ersten vier Commits sind nur zwei Refactorings im engen Sinn.
+`a1a7d71` und `32a577e` tragen den Typ `feat` und ändern sichtbares Verhalten: das eine
 verschickt neu eine Mail, das andere liefert neu einen Fehler-Body, wo vorher
 keiner war.
 
@@ -173,6 +180,46 @@ Korrekturen zu #76:
   Übergang von Rückgabewerten zu Exceptions ist Fowlers Replace Error Code with
   Exception aus der ersten Auflage.
 
+### `14ec1f0`: Geteilte Module in geteilte Schichten
+
+Übersicht, Aussortiert und Kategorien importierten Liste, Drawer, Suche und
+Filter direkt aus `features/applications`. Der Commit verschiebt 13 Module
+nach `components/shared`, `utils`, `hooks` und `queries`, nur die Importpfade
+ändern sich. `9231b34` und `fcea877` schreiben die Importrichtung danach mit
+`eslint-plugin-boundaries` fest
+([ADR-0008](./adr/0008-import-direction-checked-by-eslint-boundaries.md)).
+
+Gemessen mit `git grep` nach `from '@/features/applications` in den anderen
+drei Features: 17 Importe auf `14ec1f0^` (14 aus `overview`, 2 aus
+`discarded`, 1 aus `categories`), 0 auf `43c2a87`.
+
+### `0764e9f` und `ea757c9`: Zod statt `as`
+
+Das Formular las Server-Antworten mit `typeof`-Kaskaden und `as
+Record<string, unknown>`, das Dashboard wandelte Werte aus `<select>` und URL
+mit `as ApplicationStatus` um. Nachher prüft ein Zod-Schema jede Antwort, und
+ein Type Guard aus `domain` prüft jeden Wert. `c281ef6` verbietet `as` danach
+mit `consistent-type-assertions` und `assertionStyle: 'never'`.
+
+Gemessen am Diff, Zeilen mit einer Typumwandlung ohne `as const` und ohne
+Import-Alias: 7 entfernt in `0764e9f`, 17 in `ea757c9`, keine hinzu.
+
+### `9c53480`, `c4d9484` und `07b46ec`: Gemeinsame Teile statt Kopien
+
+`c3efba4` bringt `jscpd` mit Schwelle 0 ins Dashboard. Auf diesem Stand meldet
+es 10 Klone ab 50 Tokens. Sechs davon beseitigen die drei Commits:
+
+| Commit | Klone | Neues Teil | Zeilen entfernt |
+|---|---|---|---|
+| `9c53480` | 4, zwischen `ApplicationsScreen` und `OpenApplicationsPanel` | `DiscardSelectedButton`, `ApplicationActionOverlays` | 105 |
+| `c4d9484` | 1, zwischen `CategoriesTable` und `CategoryCards` | `CategoryEditDelete`, `CategoryIconButton` | 113 |
+| `07b46ec` | 1, zwischen `ApplicationDrawer` und `ApplicationPage` | `useCloseOnEscape` mit Test | 29 |
+
+Die übrigen vier Klone in den Kopien aus Untitled UI und in `OverviewScreen`
+beseitigen `00bfb60`, `39af75c`, `062c5c3` und `b5cc2fb`. Nachgezählt mit
+`jscpd` auf jedem Commit ab `c3efba4`: 10, 9, 8, 7, 6, 2, 1, 0. Auf `43c2a87`
+meldet `jscpd` im Dashboard 0 Klone.
+
 ## Kandidaten
 
 Alle Stellen existieren auf `origin/main`. Die Metrik "vorher" ist gemessen,
@@ -180,10 +227,10 @@ der Zielwert ist eine Schätzung aus #76.
 
 | # | Stelle | Problem | Vorschlag | Muster | Gemessen (vorher) | Ziel (Schätzung) | Status |
 |---|---|---|---|---|---|---|---|
-| C1 | `DashboardApplicationController.update()` | lange Methode, Controller greift direkt auf drei Repositories zu | `ApplicationStaffService` extrahieren | Service Layer | Komplexität 13, Methode 50 Zeilen, Klasse 182 Zeilen | Komplexität höchstens 4, Klasse ca. 100 Zeilen | offen |
+| C1 | `DashboardApplicationController.update()` | lange Methode, Controller greift direkt auf drei Repositories zu | `ApplicationStaffService` extrahieren | Service Layer | Komplexität 13, Methode 50 Zeilen, Klasse 182 Zeilen | Komplexität höchstens 4, Klasse ca. 100 Zeilen | umgesetzt (`506b239`), Controller 68 Zeilen, `update()` im Service Komplexität 4 |
 | C2 | `DashboardCategoryController` | Antwort zweimal gleich aufgebaut, N+1 in `reorder()` | `CategoryDto.of`, `findMaxDisplayOrder`, `saveAll` | Repository, Mapper | 17 SQL-Anweisungen in `reorder()` bei 5 Kategorien, 2 Kopien des Antwortaufbaus, 162 Zeilen | 2 SQL-Anweisungen | umgesetzt (#89), nachher 2 Anweisungen |
-| C3 | `application-table.tsx` | große Komponente, viele Hooks | `useTableSort`, `usePagination`, `useRowSelection`, `ApplicationRow` | Strategy, Container/Presenter | 557 Zeilen, 11 Hook-Aufrufe, `ApplicationTable` allein 374 Zeilen | unter 200 Zeilen | offen |
-| C4 | `ApplicationDrawer.tsx` | große Komponente, drei Effekte | `useDrawerA11y`, `useCopyToClipboard` | Custom Hook | 416 Zeilen, 3 `useEffect`, `ApplicationDrawer` allein 269 Zeilen | ca. 180 Zeilen | offen |
+| C3 | `application-table.tsx` | große Komponente, viele Hooks | `useTableSort`, `usePagination`, `useRowSelection`, `ApplicationRow` | Strategy, Container/Presenter | 557 Zeilen, 11 Hook-Aufrufe, `ApplicationTable` allein 374 Zeilen | unter 200 Zeilen | offen, auf `43c2a87` auf 629 Zeilen gewachsen, `ApplicationTable` 434 Zeilen |
+| C4 | `ApplicationDrawer.tsx` | große Komponente, drei Effekte | `useDrawerA11y`, `useCopyToClipboard` | Custom Hook | 416 Zeilen, 3 `useEffect`, `ApplicationDrawer` allein 269 Zeilen | ca. 180 Zeilen | teilweise umgesetzt (`07b46ec` `useCloseOnEscape`, `61ce369` `useCopyFeedback`), 302 Zeilen, 1 `useEffect` |
 | C5 | `frontend/src/features/application-form/api.ts` und `dashboard/src/api/transport.ts` | Decoder für Feldfehler aus `problem+json` und die Liste der `WeeklyTime`-Werte doppelt | gemeinsames Modul oder Contract-Test | Adapter | 2 Kopien des Decoders, 2 Kopien der `WeeklyTime`-Liste in TypeScript | 1 Kopie | offen |
 | C6 | `DemoSeeder.java` | Daten und Logik in einer Datei | Daten nach `DemoSeeds` oder YAML auslagern | Builder | 395 Zeilen, davon 153 Zeilen Daten (13 Einträge) | ca. 130 Zeilen pro Datei | offen |
 | C7 | Backend, Fehlercodes | Fehlercodes als String-Literale | `enum ErrorCode` | typsicheres Enum | 41 Literale für 31 verschiedene Codes, davon 5 in Controllern | 0 Literale außerhalb des Enums | offen |
@@ -289,8 +336,9 @@ Werte aus #76 von den hier gezählten ab, ohne dass #76 das Zählverfahren
 nennt. Keine Zahl wird bei einem neuen Commit automatisch neu
 erhoben, die Messwerte veralten also mit jedem Merge.
 
-Die Commit-Historie gibt wenig her. Von 64 Commits auf `origin/main` (ohne
-Merges) tragen 2 den Typ `refactor`. Zwei der vier hier aufgeführten
+Die Commit-Historie gab am 10.11.2026 wenig her. Von 64 Commits auf
+`origin/main` (ohne Merges) trugen 2 den Typ `refactor`. Am 25.11.2026 sind es
+44 von 342, die meisten aus der Aufräumrunde vom 24.11.2026. Zwei der vier hier aufgeführten
 Refactorings sind `feat`-Commits, die nebenbei Struktur verbessert und zugleich
 Verhalten geändert haben. Ein reines Refactoring, das Verhalten nachweislich
 gleich lässt und sich getrennt prüfen lässt, ist bisher die Ausnahme.
@@ -305,8 +353,10 @@ Automatisieren ließe sich die Messung so:
 - Im Dashboard und im Formular die ESLint-Regeln `complexity` und `max-lines`
   in `eslint.config.js` aufnehmen. Beide Projekte haben `npm run lint`, aber
   keine der beiden Regeln ist gesetzt.
-- `jscpd` über `frontend/src` und `dashboard/src` laufen lassen. Das findet
-  Kopien wie in C5 über Projektgrenzen hinweg.
+- `jscpd` läuft seit `7c321f5` und `c3efba4` in beiden Anwendungen mit
+  Schwelle 0, in `npm run check` und in CI. Es prüft jede Anwendung für sich.
+  Kopien über die Projektgrenze wie in C5 findet es so nicht, dafür müsste ein
+  Lauf beide `src`-Ordner zusammen prüfen.
 - Im Backend PMD mit den Regeln `CyclomaticComplexity` und `NcssCount` in die
   `pom.xml` aufnehmen. Bisher ist dort kein statisches Analysewerkzeug
   eingebunden.
@@ -314,5 +364,7 @@ Automatisieren ließe sich die Messung so:
   vergleichbar sind.
 
 Für C2 zählt ein Test in #89 die SQL-Anweisungen mit der Hibernate-Statistik.
-Das ist die erste Metrik in diesem
-Dokument, die ein Werkzeug erhebt und nicht ein Mensch.
+Das war die erste Metrik in diesem Dokument, die ein Werkzeug erhebt und nicht
+ein Mensch. Seitdem halten drei weitere Werkzeuge einen Zielwert von 0 in CI:
+`eslint-plugin-boundaries` für Importe von Feature zu Feature,
+`consistent-type-assertions` für `as` und `jscpd` für Klone.
