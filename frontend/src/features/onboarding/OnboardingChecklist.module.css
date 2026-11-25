@@ -1,0 +1,139 @@
+.title {
+  color: var(--color-primary);
+  line-height: 1.05;
+  font-size: var(--wp--preset--font-size--x-large);
+  margin-block: 0;
+  overflow-wrap: anywhere;
+}
+
+.intro {
+  color: var(--color-text);
+  line-height: 1.4;
+  font-size: var(--wp--preset--font-size--medium);
+  margin-block: var(--wp--preset--spacing--40) 0;
+}
+
+.statusText {
+  margin: 0;
+  font-size: var(--wp--preset--font-size--medium);
+  line-height: 1.4;
+}
+
+.rulesBox {
+  margin-top: var(--wp--preset--spacing--50);
+  padding: var(--wp--preset--spacing--50);
+  border-radius: var(--radius-panel);
+  background: var(--color-page-bg);
+}
+
+.sectionHeading {
+  margin: 0;
+  font-size: var(--wp--preset--font-size--medium);
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
+.rulesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wp--preset--spacing--30);
+  margin: var(--wp--preset--spacing--40) 0 0;
+  padding-left: var(--wp--preset--spacing--50);
+}
+
+.checklistHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--wp--preset--spacing--30);
+  margin-top: var(--wp--preset--spacing--60);
+  padding-bottom: var(--wp--preset--spacing--30);
+  border-bottom: var(--border-width-default) solid var(--color-divider);
+}
+
+.progress {
+  margin: 0;
+  font-size: var(--wp--preset--font-size--medium);
+  color: var(--color-secondary);
+}
+
+.alert {
+  margin: var(--wp--preset--spacing--40) 0 0;
+  padding: var(--wp--preset--spacing--30) var(--wp--preset--spacing--40);
+  border: var(--border-width-default) solid var(--color-error);
+  border-radius: var(--radius-control);
+  font-size: var(--wp--preset--font-size--small);
+  line-height: 1.4;
+  color: var(--color-error);
+}
+
+.stepList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wp--preset--spacing--40);
+  margin: var(--wp--preset--spacing--50) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stepItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--checkbox-gap);
+  padding: var(--wp--preset--spacing--40);
+  border: var(--border-width-default) solid var(--color-divider);
+  border-radius: var(--radius-panel);
+  background: var(--color-surface);
+}
+
+.checkbox {
+  position: relative;
+  flex: none;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  margin: 0;
+  accent-color: var(--color-secondary);
+  cursor: pointer;
+}
+
+.checkbox:focus-visible {
+  outline: var(--border-width-focus) solid var(--color-focus);
+  outline-offset: var(--border-width-focus);
+}
+
+.stepBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--wp--preset--spacing--20);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.stepLabel {
+  font-size: var(--wp--preset--font-size--medium);
+  line-height: 1.3;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.stepDescription {
+  margin: 0;
+  font-size: var(--wp--preset--font-size--small);
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+.stepLink {
+  align-self: flex-start;
+  font-size: var(--wp--preset--font-size--small);
+  color: var(--color-secondary);
+  text-underline-offset: var(--link-underline-offset);
+}
+
+@media (width <= 640px) {
+  .title {
+    font-size: var(--wp--preset--font-size--large);
+  }
+}

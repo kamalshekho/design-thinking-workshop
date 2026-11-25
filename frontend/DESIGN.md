@@ -959,6 +959,39 @@ It should clearly belong to the same routing system as the Aktionsgruppe panel.
 
 ---
 
+# 35a. State 09: Online Onboarding (`/onboarding/<token>`)
+
+Reached via the personal link in the acceptance email once a Staff member sets
+an Application's Status to `ACCEPTED`. The four rules and four checklist steps
+are our proposal (`A32`).
+
+- **Loading state:** `Deine Checkliste wird geladen …` (`role="status"`).
+- **Invalid link (404):** heading `Link nicht mehr gültig`, body
+  `Dieser Link ist nicht mehr gültig. Schreib uns an info@ichbinhier.online.`
+- **Load failure:** `Deine Checkliste konnte gerade nicht geladen werden. Bitte lade die Seite noch einmal.` (`role="alert"`).
+- **Save failure:** checkbox reverts to its previous state and shows
+  `Dein Haken konnte gerade nicht gespeichert werden. Bitte versuche es noch einmal.` (`role="alert"`).
+
+### Valid checklist
+
+Rendered inside the same `FormCard` surface as the form:
+
+- **Heading:** `Willkommen, <name>!`
+- **Intro:** `Schön, dass du dabei bist. Lies kurz unsere Regeln und hake die vier Schritte in deinem Tempo ab — jeder Haken wird sofort gespeichert.`
+- **Rules block (`Unsere Regeln`):**
+  - `Wir bleiben sachlich und respektvoll, auch wenn andere es nicht sind.`
+  - `Keine Beleidigungen, keine persönlichen Angriffe, keine Gerüchte.`
+  - `Gegenrede ist freiwillig. Niemand muss unter Druck schreiben, auch ein Like für einen guten Kommentar hilft.`
+  - `Achte auf deine eigenen Grenzen. Wenn dich etwas persönlich trifft, tritt einen Schritt zurück.`
+- **Checklist heading:** `Deine nächsten Schritte` with live progress text `<done> von 4 erledigt`.
+- **Four steps** (real `<input type="checkbox">` + `<label>`, external links open in a new tab with `rel="noopener noreferrer"` and do not toggle the checkbox):
+  1. `Unsere Regeln lesen und bestätigen` — `Ich habe die vier Grundregeln oben gelesen und halte mich daran.`
+  2. `Der #ichbinhier-Gruppe auf Facebook beitreten` — `Tritt unserer Aktionsgruppe auf Facebook bei, um dich mit anderen zu vernetzen.` Link `Zur #ichbinhier-Facebook-Gruppe` (`https://www.facebook.com/groups/718574178311688`).
+  3. `Level 1 im Digital Democracy Lab machen` — `„Leichter Einstieg in digitale Zivilcourage“ — kostenlos und im eigenen Tempo.` Link `Zum Digital Democracy Lab` (`https://www.ichbinhier.eu/bildung/digital-democracy-lab`).
+  4. `Kontakt speichern` — `Bei Fragen: info@ichbinhier.online. Für die Community: digitalcourage@ichbinhier.online.` Link `Kontaktseite von ichbinhier öffnen` (`https://www.ichbinhier.eu/kontakt`).
+
+---
+
 # 36. Form Controls
 
 Base:

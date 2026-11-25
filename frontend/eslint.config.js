@@ -40,11 +40,18 @@ export default tseslint.config(
     restrictedSyntaxRule: builtinRules.get('no-restricted-syntax'),
     globals,
     tsconfigRootDir: import.meta.dirname,
-    transportFiles: ['src/features/application-form/api.ts', 'src/lib/http.ts'],
+    transportFiles: [
+      'src/features/application-form/api.ts',
+      'src/features/onboarding/api.ts',
+      'src/lib/http.ts',
+    ],
     extraIgnores: ['storybook-static/**', 'public/mockServiceWorker.js'],
     extraTestFiles: ['src/mocks/**'],
-    // The form's transport layer still sits under features/ until it moves out.
-    tryStatementIgnores: ['src/features/application-form/api.ts'],
+    // Feature transport layers still sit under features/ until moved out.
+    tryStatementIgnores: [
+      'src/features/application-form/api.ts',
+      'src/features/onboarding/api.ts',
+    ],
   }),
 
   /* The import direction of ADR-0008, after the decision in issue #106:

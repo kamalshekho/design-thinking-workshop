@@ -1,4 +1,5 @@
 import type { ErrorCode } from '../lib/errorCodes';
+import type { OnboardingStepId } from '../lib/onboarding';
 import type { FixedRoute, WeeklyTime } from '../lib/routes';
 import type { Content } from './types';
 
@@ -187,6 +188,59 @@ export const de = {
     /** Announced via role="status" while the submit request is in flight */
     submitting: 'Deine Bewerbung wird abgeschickt.',
     honeypotLabel: 'Dieses Feld bitte leer lassen',
+  },
+
+  /** DESIGN.md section 36 — online onboarding checklist (`A32`) */
+  onboarding: {
+    loading: 'Deine Checkliste wird geladen …',
+    invalidTitle: 'Link nicht mehr gültig',
+    invalidBody:
+      'Dieser Link ist nicht mehr gültig. Schreib uns an info@ichbinhier.online.',
+    loadError:
+      'Deine Checkliste konnte gerade nicht geladen werden. Bitte lade die Seite noch einmal.',
+    saveError:
+      'Dein Haken konnte gerade nicht gespeichert werden. Bitte versuche es noch einmal.',
+    heading: (name: string) => `Willkommen, ${name}!`,
+    intro:
+      'Schön, dass du dabei bist. Lies kurz unsere Regeln und hake die vier Schritte in deinem Tempo ab — jeder Haken wird sofort gespeichert.',
+    rulesHeading: 'Unsere Regeln',
+    rules: [
+      'Wir bleiben sachlich und respektvoll, auch wenn andere es nicht sind.',
+      'Keine Beleidigungen, keine persönlichen Angriffe, keine Gerüchte.',
+      'Gegenrede ist freiwillig. Niemand muss unter Druck schreiben, auch ein Like für einen guten Kommentar hilft.',
+      'Achte auf deine eigenen Grenzen. Wenn dich etwas persönlich trifft, tritt einen Schritt zurück.',
+    ],
+    checklistHeading: 'Deine nächsten Schritte',
+    progress: (done: number, total: number) =>
+      `${String(done)} von ${String(total)} erledigt`,
+    steps: {
+      RULES: {
+        label: 'Unsere Regeln lesen und bestätigen',
+        description:
+          'Ich habe die vier Grundregeln oben gelesen und halte mich daran.',
+      },
+      COMMUNITY_GROUP: {
+        label: 'Der #ichbinhier-Gruppe auf Facebook beitreten',
+        description:
+          'Tritt unserer Aktionsgruppe auf Facebook bei, um dich mit anderen zu vernetzen.',
+        linkLabel: 'Zur #ichbinhier-Facebook-Gruppe',
+      },
+      DIGITAL_DEMOCRACY_LAB: {
+        label: 'Level 1 im Digital Democracy Lab machen',
+        description:
+          '„Leichter Einstieg in digitale Zivilcourage“ — kostenlos und im eigenen Tempo.',
+        linkLabel: 'Zum Digital Democracy Lab',
+      },
+      CONTACT: {
+        label: 'Kontakt speichern',
+        description:
+          'Bei Fragen: info@ichbinhier.online. Für die Community: digitalcourage@ichbinhier.online.',
+        linkLabel: 'Kontaktseite von ichbinhier öffnen',
+      },
+    } satisfies Record<
+      OnboardingStepId,
+      { label: string; description: string; linkLabel?: string }
+    >,
   },
 
   /**

@@ -20,6 +20,20 @@ export function postJson(
   });
 }
 
+/** PUTs a JSON body with the headers and timeout every endpoint needs. */
+export function putJson(
+  url: string,
+  body: unknown,
+  { timeoutMs = DEFAULT_TIMEOUT_MS }: PostJsonOptions = {},
+): Promise<Response> {
+  return fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+}
+
 interface GetJsonOptions {
   timeoutMs?: number;
   signal?: AbortSignal;
