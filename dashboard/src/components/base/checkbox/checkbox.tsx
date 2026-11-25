@@ -89,6 +89,7 @@ const CheckboxBase = ({
     </div>
   );
 };
+
 CheckboxBase.displayName = 'CheckboxBase';
 
 interface CheckboxProps extends AriaCheckboxFieldProps {
@@ -132,4 +133,5 @@ export const Checkbox = ({
     </AriaCheckboxField>
   );
 };
+
 Checkbox.displayName = 'Checkbox';

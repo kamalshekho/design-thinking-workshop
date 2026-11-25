@@ -47,7 +47,7 @@ export type RequestFailures = {
    * back, which is the point.
    */
   dismissedAt: number;
-  report: (failure: unknown) => void;
+  report: (failure: Error) => void;
   dismiss: () => void;
 };
 
@@ -66,12 +66,13 @@ export const RequestFailuresContext = createContext<RequestFailures>({
 });
 
 /** What a mutation calls from its `onError`. */
-export function useReportRequestFailure(): (failure: unknown) => void {
+export function useReportRequestFailure(): (failure: Error) => void {
   return useContext(RequestFailuresContext).report;
 }
 
 /** What the notice in the shell reads. */
 export function useRequestFailures(): Omit<RequestFailures, 'report'> {
   const { write, dismissedAt, dismiss } = useContext(RequestFailuresContext);
+
   return { write, dismissedAt, dismiss };
 }

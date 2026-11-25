@@ -95,6 +95,7 @@ export function ApplicationsScreen({
   const counts = useMemo((): Record<ApplicationView, number> => {
     const countView = (view: ApplicationView) =>
       filterApplications(applications, { ...filters, view }, now).length;
+
     return {
       all: countView('all'),
       unassigned: countView('unassigned'),

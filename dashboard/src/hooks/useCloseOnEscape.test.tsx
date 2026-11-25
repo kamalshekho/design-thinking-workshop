@@ -5,15 +5,18 @@ import { useCloseOnEscape } from './useCloseOnEscape';
 
 function press(key: string, { answered = false } = {}) {
   const event = new KeyboardEvent('keydown', { key, cancelable: true });
+
   if (answered) {
     event.preventDefault();
   }
+
   document.dispatchEvent(event);
 }
 
 describe('useCloseOnEscape', () => {
   it('closes on Escape', () => {
     const onClose = vi.fn();
+
     renderHook(() => {
       useCloseOnEscape(onClose);
     });
@@ -25,6 +28,7 @@ describe('useCloseOnEscape', () => {
 
   it('leaves an Escape that something inside has already answered', () => {
     const onClose = vi.fn();
+
     renderHook(() => {
       useCloseOnEscape(onClose);
     });
@@ -36,6 +40,7 @@ describe('useCloseOnEscape', () => {
 
   it('ignores every other key', () => {
     const onClose = vi.fn();
+
     renderHook(() => {
       useCloseOnEscape(onClose);
     });
@@ -47,6 +52,7 @@ describe('useCloseOnEscape', () => {
 
   it('stops listening once unmounted', () => {
     const onClose = vi.fn();
+
     const { unmount } = renderHook(() => {
       useCloseOnEscape(onClose);
     });

@@ -30,10 +30,12 @@ export function useApplicationActions({
 }: UseApplicationActionsOptions) {
   /** The Application the drawer shows, or `null` while it is closed. */
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
   /** The checkbox selection the bulk buttons act on, tracked across pages. */
   const [selectedIds, setSelectedIds] = useState<ReadonlySet<string>>(
     new Set(),
   );
+
   /**
    * Whether the bulk discard is waiting on its confirmation. The question is
    * asked in a dialog the screen renders, so this hook no longer decides
@@ -62,18 +64,22 @@ export function useApplicationActions({
   function forget(ids: ReadonlySet<string>): void {
     setSelectedIds((current) => {
       const next = new Set(current);
+
       for (const id of ids) {
         next.delete(id);
       }
+
       return next;
     });
   }
 
   function discard(ids: ReadonlySet<string>): void {
     onDiscard(ids);
+
     if (selectedId !== null && ids.has(selectedId)) {
       close();
     }
+
     forget(ids);
   }
 

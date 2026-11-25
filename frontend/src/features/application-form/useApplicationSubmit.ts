@@ -35,31 +35,37 @@ export function useApplicationSubmit(
     if (isSubmittingRef.current) return;
 
     const applicationValues = asApplicationValues(values);
+
     if (!applicationValues) return;
 
     if (!categoriesById.has(applicationValues.route)) {
       setError('route', { message: 'CATEGORY_UNKNOWN', type: 'validate' });
+
       return;
     }
 
     isSubmittingRef.current = true;
     setSubmitErrorCode(null);
     setIsSubmitting(true);
+
     const result = await submitApplication(
       applicationValues,
       submissionId.current,
     );
+
     isSubmittingRef.current = false;
     setIsSubmitting(false);
 
     if (result.status === 'success') {
       setConfirmedEmail(applicationValues.email);
+
       return;
     }
 
     if (result.status === 'field-errors') {
       for (const fieldError of result.errors) {
         const formField = formFieldFor(fieldError.field);
+
         if (!formField) continue;
         setError(formField, { message: fieldError.code, type: 'server' });
 
@@ -71,6 +77,7 @@ export function useApplicationSubmit(
           retryCategories();
         }
       }
+
       return;
     }
 

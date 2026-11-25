@@ -14,6 +14,7 @@ export function useCloseOnEscape(onClose: () => void): void {
     }
 
     document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };

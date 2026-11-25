@@ -11,6 +11,7 @@ function installControllableMatchMedia(initialWidth: number) {
 
   const matchesFor = (query: string) => {
     const minWidth = /\(min-width:\s*(\d+)px\)/.exec(query)?.[1];
+
     return minWidth !== undefined && width >= Number(minWidth);
   };
 
@@ -18,6 +19,7 @@ function installControllableMatchMedia(initialWidth: number) {
     window,
     'matchMedia',
   );
+
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     writable: true,
@@ -35,7 +37,7 @@ function installControllableMatchMedia(initialWidth: number) {
           _type: string,
           listener: EventListenerOrEventListenerObject,
         ) => {
-          if (typeof listener === 'function') {
+          if (!('handleEvent' in listener)) {
             listeners.add(listener);
           }
         },
@@ -43,7 +45,7 @@ function installControllableMatchMedia(initialWidth: number) {
           _type: string,
           listener: EventListenerOrEventListenerObject,
         ) => {
-          if (typeof listener === 'function') {
+          if (!('handleEvent' in listener)) {
             listeners.delete(listener);
           }
         },
@@ -57,11 +59,13 @@ function installControllableMatchMedia(initialWidth: number) {
   return {
     setWidth(nextWidth: number) {
       width = nextWidth;
+
       for (const [query, listeners] of listenersByQuery) {
         const event = {
           matches: matchesFor(query),
           media: query,
         } as MediaQueryListEvent;
+
         for (const listener of listeners) {
           listener(event);
         }
@@ -85,6 +89,7 @@ describe('useBreakpoint', () => {
 
   it('returns the current matchMedia state and updates on change events and size prop changes', () => {
     const media = installControllableMatchMedia(800);
+
     restoreMatchMedia = () => {
       media.restore();
     };
@@ -92,6 +97,7 @@ describe('useBreakpoint', () => {
     const initialProps: { size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' } = {
       size: 'md',
     };
+
     const { result, rerender } = renderHook(
       ({ size }: { size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' }) =>
         useBreakpoint(size),
@@ -103,6 +109,7 @@ describe('useBreakpoint', () => {
     act(() => {
       media.setWidth(600);
     });
+
     expect(result.current).toBe(false);
 
     rerender({ size: 'sm' });
@@ -111,6 +118,7 @@ describe('useBreakpoint', () => {
     act(() => {
       media.setWidth(640);
     });
+
     expect(result.current).toBe(true);
 
     rerender({ size: 'lg' });

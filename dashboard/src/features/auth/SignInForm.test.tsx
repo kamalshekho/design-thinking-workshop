@@ -27,6 +27,7 @@ async function submitCredentials(
   if (email !== '') {
     await user.type(field(de.auth.emailLabel), email);
   }
+
   if (password !== '') {
     await user.type(field(de.auth.passwordLabel), password);
   }
@@ -101,10 +102,12 @@ describe('SignInForm', () => {
     // Above the form, and above the field it deliberately does not blame.
     expect(alert.closest('form')).toBe(email.closest('form'));
     expect(email).not.toHaveAttribute('aria-invalid', 'true');
+
     expect(field(de.auth.passwordLabel)).not.toHaveAttribute(
       'aria-invalid',
       'true',
     );
+
     expect(screen.queryByText(/Konto/)).not.toBeInTheDocument();
   });
 
@@ -174,6 +177,7 @@ describe('SignInForm', () => {
   it('shows the password while the visibility toggle is on, and hides it again', async () => {
     const user = userEvent.setup();
     render(<SignInForm onSignIn={vi.fn()} />);
+
     const toggle = screen.getByRole('button', {
       name: de.fields.togglePassword,
     });
@@ -209,6 +213,7 @@ describe('SignInForm', () => {
     expect(
       screen.getByRole('heading', { name: de.auth.expiredTitle }),
     ).toBeInTheDocument();
+
     expect(screen.getByText(de.auth.expiredSubtitle)).toBeInTheDocument();
   });
 });

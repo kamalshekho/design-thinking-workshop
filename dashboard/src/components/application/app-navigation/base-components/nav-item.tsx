@@ -83,6 +83,7 @@ export const NavItemBase = ({
   );
 
   const isExternal = href?.startsWith('http') ?? false;
+
   const externalIcon = isExternal && (
     <Share04 className="text-fg-quaternary stroke-icon-bold size-4" />
   );

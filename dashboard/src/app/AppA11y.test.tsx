@@ -31,12 +31,15 @@ describe('App accessibility', () => {
 
   function seedDiscardedApplication(): string {
     const target = api.applications[0];
+
     if (target === undefined) {
       throw new Error('Expected at least one mock application');
     }
+
     api.applications = api.applications.map((row, index) =>
       index === 0 ? { ...row, discardedAt: REFERENCE_DATE.toISOString() } : row,
     );
+
     return target.name;
   }
 
@@ -165,6 +168,7 @@ describe('App accessibility', () => {
     it('has no axe violations with ConfirmDialog open for deleting a category', async () => {
       const user = userEvent.setup();
       const unusedName = 'Fundraising';
+
       api.categories = [
         ...api.categories,
         {
@@ -174,6 +178,7 @@ describe('App accessibility', () => {
           active: true,
         },
       ];
+
       await renderScreen('#categories');
 
       await user.click(

@@ -19,6 +19,7 @@ async function lintSnippet(
   const [result] = await eslint.lintText(code, {
     filePath: `${DASHBOARD_ROOT}/${filename}`,
   });
+
   return (result?.messages ?? []).filter((m) => m.ruleId === RULE_ID);
 }
 
@@ -35,6 +36,7 @@ describe(
       const messages = await lintSnippet(
         `export function Sample() { return <div className="${ARBITRARY_WIDTH}" />; }`,
       );
+
       expect(messages.length).toBeGreaterThan(0);
     });
 
@@ -42,6 +44,7 @@ describe(
       const messages = await lintSnippet(
         `export function Sample() { return <div className="${ARBITRARY_BREAKPOINT}" />; }`,
       );
+
       expect(messages.length).toBeGreaterThan(0);
     });
 
@@ -50,6 +53,7 @@ describe(
         `export const DRAWER_RESERVE = '${ARBITRARY_WIDTH}';`,
         'src/app/strip.ts',
       );
+
       expect(messages.length).toBeGreaterThan(0);
     });
 
@@ -58,6 +62,7 @@ describe(
         `export const drawerReserve = '${ARBITRARY_WIDTH}';`,
         'src/app/strip.ts',
       );
+
       expect(messages.length).toBeGreaterThan(0);
     });
 
@@ -65,6 +70,7 @@ describe(
       const messages = await lintSnippet(
         `export function Sample() { return <div className="${ARBITRARY_VAR_FALLBACK}" />; }`,
       );
+
       expect(messages.length).toBeGreaterThan(0);
     });
 
@@ -76,6 +82,7 @@ describe(
         );
       }`,
       );
+
       expect(messages).toEqual([]);
     });
   },

@@ -143,6 +143,7 @@ interface CommonProps {
 
 export interface ButtonProps
   extends CommonProps, Omit<AriaButtonProps, 'children' | 'className'> {}
+
 interface LinkProps
   extends CommonProps, Omit<AriaLinkProps, 'children' | 'className'> {
   href: NonNullable<AriaLinkProps['href']>;
@@ -167,6 +168,7 @@ export const Button: {
   const href = 'href' in props ? props.href : undefined;
 
   const isIcon = (IconLeading || IconTrailing) && !children;
+
   const isLinkType = ['link-gray', 'link-color', 'link-destructive'].includes(
     color,
   );

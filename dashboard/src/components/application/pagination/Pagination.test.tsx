@@ -20,6 +20,7 @@ describe('PaginationCardDefault', () => {
 
     const pageButtons = within(list).getAllByRole('button');
     expect(pageButtons.length).toBeGreaterThan(0);
+
     for (const button of pageButtons) {
       expect(button).not.toHaveAttribute('role', 'listitem');
       expect(button.parentElement?.tagName).toBe('LI');

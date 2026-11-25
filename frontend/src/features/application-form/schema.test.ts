@@ -11,6 +11,7 @@ import { emptyFormValues, formSchema } from './schema';
  */
 function codesFor(values: unknown): string[] {
   const result = formSchema.safeParse(values);
+
   return result.success
     ? []
     : result.error.issues.map((issue) => issue.message);
@@ -25,6 +26,7 @@ describe('form schema', () => {
 
   it('asks for nothing beyond the route on a bypass route', () => {
     expect(codesFor({ ...emptyFormValues, route: 'COMMUNITY' })).toEqual([]);
+
     expect(
       codesFor({ ...emptyFormValues, route: 'SUPPORTING_MEMBER' }),
     ).toEqual([]);

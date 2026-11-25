@@ -51,8 +51,8 @@ export function useCategories(): readonly Category[] {
  * `useMutation` blocks would repeat the invalidation and the reporting five
  * times.
  */
-function useCategoryWrite<Variables>(
-  write: (variables: Variables) => Promise<unknown>,
+function useCategoryWrite<Variables, Written>(
+  write: (variables: Variables) => Promise<Written>,
 ) {
   const queryClient = useQueryClient();
   const report = useReportRequestFailure();

@@ -19,6 +19,7 @@ describe('RoutePanel', () => {
     expect(
       screen.getByRole('heading', { name: 'Du bist sofort dabei.' }),
     ).toBeVisible();
+
     expect(
       screen.getByRole('link', { name: 'Zur Aktionsgruppe' }),
     ).toHaveAttribute('href', 'https://example.org/community');

@@ -18,9 +18,11 @@ describe('Field', () => {
     );
 
     const input = screen.getByLabelText('E-Mail');
+
     expect(input).toHaveAccessibleDescription(
       'Bitte prüfen Wir antworten dir hier',
     );
+
     expect(input).toHaveAttribute('aria-invalid', 'true');
   });
 

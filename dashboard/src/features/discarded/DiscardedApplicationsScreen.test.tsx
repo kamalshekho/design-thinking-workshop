@@ -81,6 +81,7 @@ describe('DiscardedApplicationsScreen', () => {
     const dialog = screen.getByRole('alertdialog', {
       name: de.discarded.confirmEraseOne('Mara Weber'),
     });
+
     expect(
       within(dialog).getByText(de.discarded.eraseWarning),
     ).toBeInTheDocument();
@@ -100,6 +101,7 @@ describe('DiscardedApplicationsScreen', () => {
     await user.click(
       screen.getByRole('button', { name: de.discarded.eraseOne('Mara Weber') }),
     );
+
     await user.click(
       within(screen.getByRole('alertdialog')).getByRole('button', {
         name: de.discarded.erase,
@@ -116,6 +118,7 @@ describe('DiscardedApplicationsScreen', () => {
     expect(
       screen.getByRole('button', { name: de.discarded.restore }),
     ).toBeDisabled();
+
     expect(
       screen.getByRole('button', { name: de.discarded.erase }),
     ).toBeDisabled();
@@ -127,9 +130,11 @@ describe('DiscardedApplicationsScreen', () => {
     expect(
       screen.getByRole('button', { name: de.discarded.restoreSelected(1) }),
     ).toBeEnabled();
+
     await user.click(
       screen.getByRole('button', { name: de.discarded.eraseSelected(1) }),
     );
+
     await user.click(
       within(
         screen.getByRole('alertdialog', {

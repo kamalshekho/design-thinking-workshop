@@ -122,6 +122,7 @@ export function SignInForm({
     if (check.ok) {
       setError(null);
       onSignIn(check.credentials);
+
       return;
     }
 

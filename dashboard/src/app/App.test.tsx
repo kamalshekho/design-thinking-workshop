@@ -34,8 +34,7 @@ describe('App', () => {
       .mocked(fetch)
       .mock.calls.filter(
         ([url, init]) =>
-          typeof url === 'string' &&
-          url.includes(path) &&
+          (url instanceof Request ? url.url : String(url)).includes(path) &&
           (init?.method ?? 'GET') === method,
       );
   }
@@ -48,6 +47,7 @@ describe('App', () => {
     expect(
       await screen.findByRole('heading', { name: de.auth.title }),
     ).toBeInTheDocument();
+
     expect(
       screen.queryByRole('navigation', { name: de.navigation.label }),
     ).not.toBeInTheDocument();
@@ -66,6 +66,7 @@ describe('App', () => {
     await renderSignedIn();
 
     await user.click(screen.getByRole('button', { name: de.account.menu }));
+
     await user.click(
       screen.getByRole('menuitem', { name: de.account.signOut }),
     );
@@ -74,6 +75,7 @@ describe('App', () => {
     expect(
       await screen.findByRole('heading', { name: de.auth.title }),
     ).toBeInTheDocument();
+
     expect(api.signedIn).toBe(false);
   });
 
@@ -83,6 +85,7 @@ describe('App', () => {
     expect(
       screen.getByRole('navigation', { name: de.navigation.label }),
     ).toBeInTheDocument();
+
     expect(
       screen.queryByText(de.overview.welcome(mockStaffMember.name)),
     ).not.toBeInTheDocument();
@@ -140,36 +143,46 @@ describe('App', () => {
     expect(toggle.closest('nav')).toBeInTheDocument();
     expect(toggle).toHaveClass('peer/toggle');
     expect(toggle).toHaveClass('lg:left-1/2', '-translate-x-1/2');
+
     expect(
       screen.getByRole('navigation', { name: de.navigation.label }),
     ).toHaveClass('lg:transition-[width]', 'duration-200');
+
     expect(
       screen.getByRole('link', { name: de.navigation.applications }),
     ).not.toHaveClass('lg:justify-center');
+
     expect(
       screen.getByRole('link', { name: de.navigation.applications }).lastChild,
     ).toHaveClass('lg:max-w-0', 'lg:[clip-path:inset(0_100%_0_0)]');
+
     expect(toggle).not.toHaveClass('bg-primary');
     expect(toggle).toHaveClass('hover:bg-primary_hover');
+
     expect(toggle.querySelector('svg')).toHaveClass(
       'lg:group-hover:opacity-100',
     );
+
     const compactWordmarks = Array.from(
       document.querySelectorAll('img[src="/Rectangle.png"]'),
     );
+
     const sidebarCompactWordmark = compactWordmarks.find((wordmark) =>
       wordmark.classList.contains('lg:opacity-100'),
     );
 
     expect(sidebarCompactWordmark).toHaveClass('opacity-0', 'lg:opacity-100');
+
     expect(
       sidebarCompactWordmark?.parentElement?.parentElement,
     ).not.toHaveClass('lg:opacity-0');
+
     expect(sidebarCompactWordmark?.parentElement?.parentElement).toHaveClass(
       'lg:left-1/2',
       'lg:-translate-x-1/2',
       'lg:peer-hover/toggle:opacity-0',
     );
+
     expect(screen.getByRole('button', { name: de.account.menu })).toHaveClass(
       'rounded-full',
     );
@@ -187,6 +200,7 @@ describe('App', () => {
     expect(
       screen.getByRole('link', { name: de.navigation.overview }),
     ).toHaveAttribute('aria-current', 'page');
+
     expect(
       screen.getByText(de.overview.welcome(mockStaffMember.name)),
     ).toBeInTheDocument();
@@ -209,6 +223,7 @@ describe('App', () => {
     const field = screen.getByRole('textbox', { name: /^Name/ });
     await user.clear(field);
     await user.type(field, 'Rechtsberatung');
+
     await user.click(
       screen.getByRole('button', { name: de.categories.dialog.save }),
     );
@@ -264,14 +279,17 @@ describe('App', () => {
         name: de.applications.discardOne('Mara Weber'),
       }),
     );
+
     await user.click(
       screen.getByRole('link', { name: de.navigation.discarded }),
     );
+
     await user.click(
       screen.getByRole('button', {
         name: de.discarded.eraseOne('Mara Weber'),
       }),
     );
+
     await user.click(
       within(screen.getByRole('alertdialog')).getByRole('button', {
         name: de.discarded.erase,
@@ -300,11 +318,13 @@ describe('App', () => {
     const overviewPanel = screen.getByRole('region', {
       name: de.overview.openApplications.title,
     });
+
     await waitFor(() =>
       expect(
         within(overviewPanel).getByText('Jonas Krüger'),
       ).toBeInTheDocument(),
     );
+
     await user.click(within(overviewPanel).getByText('Jonas Krüger'));
     await user.selectOptions(screen.getByLabelText('Status'), 'In Prüfung');
     await user.click(screen.getByRole('button', { name: de.detail.close }));
@@ -324,6 +344,7 @@ describe('App', () => {
       expect(screen.getByText('Jonas Krüger')).toBeInTheDocument(),
     );
   });
+
   /**
    * The writes, against the stubbed backend that really applies them
    * (`src/test/stubApi.ts`). What is worth a test here rather than in a
@@ -336,6 +357,7 @@ describe('App', () => {
       await renderSignedIn();
 
       await user.click(screen.getByText('Mara Weber'));
+
       await user.selectOptions(
         screen.getByLabelText(de.detail.status),
         de.statuses.IN_REVIEW,
@@ -344,6 +366,7 @@ describe('App', () => {
       await waitFor(() => {
         expect(calls('PATCH', '/staff/applications/')).toHaveLength(1);
       });
+
       expect(calls('PATCH', '/staff/applications/')[0]?.[1]?.body).toBe(
         '{"status":"IN_REVIEW"}',
       );
@@ -361,10 +384,12 @@ describe('App', () => {
       const owned = api.applications.find(
         (application) => application.ownerId !== null,
       );
+
       expect(owned).toBeDefined();
 
       await user.click(screen.getByText(owned!.name));
       await user.click(screen.getByRole('button', { name: de.detail.owner }));
+
       await user.click(
         screen.getByRole('option', { name: de.application.unassigned }),
       );
@@ -372,6 +397,7 @@ describe('App', () => {
       await waitFor(() => {
         expect(calls('PATCH', '/staff/applications/')).toHaveLength(1);
       });
+
       expect(calls('PATCH', '/staff/applications/')[0]?.[1]?.body).toBe(
         '{"ownerId":null}',
       );
@@ -383,14 +409,17 @@ describe('App', () => {
       await renderSignedIn();
 
       const rows = screen.getAllByRole('checkbox').slice(1, 3);
+
       for (const row of rows) {
         await user.click(row);
       }
+
       await user.click(
         screen.getByRole('button', {
           name: de.applications.discardSelected(2),
         }),
       );
+
       await user.click(
         within(
           screen.getByRole('alertdialog', {
@@ -402,6 +431,7 @@ describe('App', () => {
       await waitFor(() => {
         expect(calls('PATCH', '/staff/applications/')).toHaveLength(2);
       });
+
       expect(
         calls('PATCH', '/staff/applications/').map(([, init]) => init?.body),
       ).toEqual(['{"discarded":true}', '{"discarded":true}']);
@@ -427,9 +457,11 @@ describe('App', () => {
       expect(await screen.findByRole('alert')).toHaveTextContent(
         de.errors.codes.INTERNAL_ERROR,
       );
+
       await waitFor(() => {
         expect(screen.getByText('Mara Weber')).toBeInTheDocument();
       });
+
       expect(screen.getAllByRole('alert')).toHaveLength(1);
     });
 
@@ -440,6 +472,7 @@ describe('App', () => {
       api.writeFailure = { status: 500, code: 'INTERNAL_ERROR' };
 
       await user.click(screen.getByText('Mara Weber'));
+
       await user.type(
         screen.getByLabelText(de.detail.internalNotes),
         'Rückruf',
@@ -451,9 +484,11 @@ describe('App', () => {
         },
         { timeout: 3000 },
       );
+
       expect(calls('PATCH', '/staff/applications/')[0]?.[1]?.body).toBe(
         '{"internalNotes":"Rückruf"}',
       );
+
       expect(screen.getByLabelText(de.detail.internalNotes)).toHaveValue(
         'Rückruf',
       );
@@ -468,14 +503,17 @@ describe('App', () => {
           name: de.applications.discardOne('Mara Weber'),
         }),
       );
+
       await user.click(
         screen.getByRole('link', { name: de.navigation.discarded }),
       );
+
       await user.click(
         screen.getByRole('button', {
           name: de.discarded.eraseOne('Mara Weber'),
         }),
       );
+
       await user.click(
         within(screen.getByRole('alertdialog')).getByRole('button', {
           name: de.discarded.erase,
@@ -485,6 +523,7 @@ describe('App', () => {
       await waitFor(() => {
         expect(calls('DELETE', '/permanently')).toHaveLength(1);
       });
+
       expect(api.applications.some((row) => row.name === 'Mara Weber')).toBe(
         false,
       );
@@ -502,11 +541,14 @@ describe('App', () => {
       await user.click(
         screen.getByRole('link', { name: de.navigation.categories }),
       );
+
       await user.click(screen.getByRole('button', { name: de.categories.add }));
+
       await user.type(
         screen.getByRole('textbox', { name: /^Name/ }),
         'Fundraising',
       );
+
       await user.click(
         screen.getByRole('button', { name: de.categories.dialog.create }),
       );
@@ -514,7 +556,9 @@ describe('App', () => {
       await waitFor(() => {
         expect(calls('POST', '/staff/categories')).toHaveLength(1);
       });
+
       expect(await screen.findByText('Fundraising')).toBeInTheDocument();
+
       expect(
         api.categories.find((category) => category.name === 'Fundraising')?.id,
       ).toBeDefined();
@@ -530,6 +574,7 @@ describe('App', () => {
       await user.click(
         screen.getByRole('link', { name: de.navigation.categories }),
       );
+
       await user.click(
         screen.getByRole('button', {
           name: de.categories.moveUpOne(second!.name),
@@ -539,6 +584,7 @@ describe('App', () => {
       await waitFor(() => {
         expect(calls('PUT', '/staff/categories/order')).toHaveLength(1);
       });
+
       expect(calls('PUT', '/staff/categories/order')[0]?.[1]?.body).toContain(
         `["${second!.id}","${first!.id}"`,
       );
@@ -571,6 +617,7 @@ describe('App', () => {
       user: ReturnType<typeof userEvent.setup>,
     ): Promise<void> {
       await user.click(screen.getByText('Mara Weber'));
+
       await user.type(
         screen.getByLabelText(de.detail.internalNotes),
         'Rückruf',
@@ -600,14 +647,17 @@ describe('App', () => {
       const shell = screen.getByRole('navigation', {
         name: de.navigation.label,
       });
+
       expect(shell).toBeInTheDocument();
       expect(shell.closest('[inert]')).not.toBeNull();
+
       expect(screen.getByLabelText(de.detail.internalNotes)).toHaveValue(
         'Rückruf',
       );
 
       /** The cover is the sentence; the write notice does not repeat it. */
       expect(screen.queryByText(de.errors.general)).not.toBeInTheDocument();
+
       expect(
         screen.queryByText(de.dashboard.loadFailed),
       ).not.toBeInTheDocument();
@@ -634,6 +684,7 @@ describe('App', () => {
       expect(screen.getByLabelText(de.detail.internalNotes)).toHaveValue(
         'Rückruf',
       );
+
       expect(
         screen.getByRole('navigation', { name: de.navigation.label }),
       ).not.toHaveAttribute('inert');
@@ -666,6 +717,7 @@ describe('App', () => {
       expect(
         await screen.findByText(api.staffMember.email),
       ).toBeInTheDocument();
+
       expect(
         screen.queryByLabelText(de.detail.internalNotes),
       ).not.toBeInTheDocument();
@@ -691,6 +743,7 @@ describe('App', () => {
       expect(
         await screen.findByRole('heading', { name: de.auth.expiredTitle }),
       ).toBeInTheDocument();
+
       expect(calls('GET', '/me')).toHaveLength(asked + 1);
       expect(api.stream()?.closed).toBe(true);
     });
@@ -714,6 +767,7 @@ describe('App', () => {
       expect(
         await screen.findByRole('heading', { name: de.auth.expiredTitle }),
       ).toBeInTheDocument();
+
       expect(calls('GET', '/me')).toHaveLength(asked + 1);
     });
 
@@ -731,6 +785,7 @@ describe('App', () => {
       await waitFor(() => {
         expect(calls('GET', '/me')).toHaveLength(asked + 1);
       });
+
       expect(
         screen.queryByRole('heading', { name: de.auth.expiredTitle }),
       ).not.toBeInTheDocument();
@@ -739,6 +794,7 @@ describe('App', () => {
       api.signedIn = false;
 
       expect(calls('GET', '/me')).toHaveLength(asked + 1);
+
       expect(
         await screen.findByRole(
           'heading',
@@ -746,6 +802,7 @@ describe('App', () => {
           { timeout: 6_000 },
         ),
       ).toBeInTheDocument();
+
       expect(calls('GET', '/me')).toHaveLength(asked + 2);
     }, 8_000);
 
@@ -774,6 +831,7 @@ describe('App', () => {
       );
 
       expect(calls('GET', '/me')).toHaveLength(asked + 2);
+
       expect(
         screen.queryByRole('heading', { name: de.auth.expiredTitle }),
       ).not.toBeInTheDocument();
@@ -803,6 +861,7 @@ describe('App', () => {
         });
 
         expect(api.stream()).not.toBe(dropped);
+
         expect(
           screen.queryByRole('heading', { name: de.auth.expiredTitle }),
         ).not.toBeInTheDocument();
@@ -846,6 +905,7 @@ describe('App', () => {
       expect(
         await screen.findByRole('heading', { name: de.auth.expiredTitle }),
       ).toBeInTheDocument();
+
       expect(calls('GET', '/me')).toHaveLength(asked + 2);
     });
   });
@@ -863,6 +923,7 @@ describe('App', () => {
       user: ReturnType<typeof userEvent.setup>,
     ): Promise<void> {
       await user.click(screen.getByText('Mara Weber'));
+
       await user.type(
         screen.getByLabelText(de.detail.internalNotes),
         'Rückruf',
@@ -885,9 +946,11 @@ describe('App', () => {
       expect(
         await screen.findByText(de.dashboard.updateFailed),
       ).toBeInTheDocument();
+
       expect(screen.getByLabelText(de.detail.internalNotes)).toHaveValue(
         'Rückruf',
       );
+
       /** Two of them: the row is still in the list, and the drawer is open. */
       expect(screen.getAllByText('Mara Weber')).toHaveLength(2);
 
@@ -917,6 +980,7 @@ describe('App', () => {
           screen.queryByText(de.dashboard.updateFailed),
         ).not.toBeInTheDocument();
       });
+
       expect(calls('GET', '/staff/applications').length).toBeGreaterThan(asked);
     });
 
@@ -944,9 +1008,11 @@ describe('App', () => {
       expect(
         await screen.findByRole('heading', { name: de.auth.expiredTitle }),
       ).toBeInTheDocument();
+
       expect(screen.getByLabelText(de.detail.internalNotes)).toHaveValue(
         'Rückruf',
       );
+
       expect(
         screen.queryByText(de.dashboard.loadFailed),
       ).not.toBeInTheDocument();
@@ -971,17 +1037,20 @@ describe('App', () => {
 
       await user.click(screen.getByText('Mara Weber'));
       api.readFailure = { status: 502, code: 'BAD_GATEWAY' };
+
       act(() => {
         api.stream()?.fireOpen();
       });
 
       const sentence = await screen.findByText(de.dashboard.updateFailed);
+
       /** The drawer really is over the strip while that is read. */
       expect(
         screen.getByLabelText(de.detail.internalNotes),
       ).toBeInTheDocument();
 
       const retry = screen.getByRole('button', { name: de.dashboard.retry });
+
       const dismiss = screen.getByRole('button', {
         name: de.dashboard.dismissFailure,
       });
@@ -1041,6 +1110,7 @@ describe('App', () => {
       expect(
         screen.getByLabelText(de.detail.internalNotes),
       ).toBeInTheDocument();
+
       expect(marker).not.toBeNull();
       expect(marker).not.toHaveClass('justify-end');
       /** The hint is the half that says what to do, so it wraps rather than hides. */
@@ -1082,6 +1152,7 @@ describe('App', () => {
       expect(screen.queryByText('Ida Lindqvist')).not.toBeInTheDocument();
 
       const requests = vi.mocked(fetch).mock.calls.length;
+
       act(() => {
         api.stream()?.emit('application.created', submitted('Ida Lindqvist'));
       });

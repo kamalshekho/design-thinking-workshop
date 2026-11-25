@@ -57,6 +57,7 @@ const PageCounter = ({
           </span>
         );
       }
+
       return part;
     })}
   </>

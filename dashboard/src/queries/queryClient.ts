@@ -42,7 +42,7 @@ export function createQueryClient(): QueryClient {
    * until the caches do. They only ever run from a settled request, long after
    * this function has returned.
    */
-  function onError(failure: unknown): void {
+  function onError(failure: Error): void {
     if (isUnauthenticated(failure)) {
       markSignInExpired(client);
     }

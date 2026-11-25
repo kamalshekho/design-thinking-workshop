@@ -190,6 +190,7 @@ export function useEraseApplications() {
 
     onError: (failure) => {
       report(failure);
+
       void queryClient.invalidateQueries({
         queryKey: queryKeys.applications,
       });
@@ -213,6 +214,7 @@ export function useEraseApplications() {
  */
 async function allOrThrow<T>(requests: Promise<T>[]): Promise<T[]> {
   const results = await Promise.allSettled(requests);
+
   const failed = results.find(
     (result): result is PromiseRejectedResult => result.status === 'rejected',
   );

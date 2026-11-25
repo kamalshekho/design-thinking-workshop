@@ -34,6 +34,7 @@ describe('useNotesDraft', () => {
     act(() => {
       result.current.onChange('a1', 'Sch');
     });
+
     await pause(NOTES_DEBOUNCE_MS - 1);
 
     expect(save).not.toHaveBeenCalled();
@@ -52,6 +53,7 @@ describe('useNotesDraft', () => {
       act(() => {
         result.current.onChange('a1', text);
       });
+
       await pause(100);
     }
 
@@ -90,9 +92,11 @@ describe('useNotesDraft', () => {
     act(() => {
       result.current.onChange('a1', 'Rückruf');
     });
+
     await pause();
 
     expect(save).toHaveBeenCalledOnce();
+
     expect(result.current.draft).toEqual({
       applicationId: 'a1',
       text: 'Rückruf',
@@ -107,7 +111,9 @@ describe('useNotesDraft', () => {
     act(() => {
       result.current.onChange('a1', 'Rück');
     });
+
     await pause();
+
     act(() => {
       result.current.onChange('a1', 'Rückruf');
     });
@@ -126,11 +132,13 @@ describe('useNotesDraft', () => {
     act(() => {
       result.current.onChange('a1', 'Rückruf');
     });
+
     act(() => {
       result.current.onChange('a2', 'Warteliste');
     });
 
     expect(save).toHaveBeenCalledExactlyOnceWith('a1', 'Rückruf');
+
     expect(result.current.draft).toEqual({
       applicationId: 'a2',
       text: 'Warteliste',

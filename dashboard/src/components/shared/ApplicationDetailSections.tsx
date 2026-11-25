@@ -31,6 +31,7 @@ export function SectionLabel({
 }) {
   const className =
     'text-text-tertiary flex items-center gap-1.5 text-caption tracking-eyebrow font-semibold uppercase';
+
   const content = (
     <>
       {Icon ? <Icon className="size-3.5" aria-hidden="true" /> : null}

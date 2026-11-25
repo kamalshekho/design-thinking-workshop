@@ -15,16 +15,19 @@ async function pickRoute(label: string) {
   const select = screen.getByLabelText('Wie möchtest du uns helfen?');
   await waitFor(() => expect(select).not.toBeDisabled());
   await user.selectOptions(select, label);
+
   return user;
 }
 
 async function fillValidApplication(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText('Name'), 'Anna Müller');
   await user.type(screen.getByLabelText('E-Mail'), 'anna@example.de');
+
   await user.selectOptions(
     screen.getByLabelText('Zeit pro Woche'),
     '1–2 Stunden',
   );
+
   await user.click(
     screen.getByRole('checkbox', {
       name: /Ich bin damit einverstanden/,
@@ -41,9 +44,10 @@ describe('ApplicationForm', () => {
     const select = screen.getByLabelText('Wie möchtest du uns helfen?');
     await waitFor(() => expect(select).not.toBeDisabled());
 
-    const optionValues = Array.from(select.querySelectorAll('option'))
-      .filter((option) => option.value !== '')
-      .map((option) => option.value);
+    const optionValues = Array.from(select.querySelectorAll('option')).flatMap(
+      (option) => (option.value === '' ? [] : [option.value]),
+    );
+
     expect(optionValues).toEqual([
       'COMMUNITY',
       ...MOCK_CATEGORIES.map((category) => category.id),
@@ -64,6 +68,7 @@ describe('ApplicationForm', () => {
         screen.getByLabelText('Wie möchtest du uns helfen?'),
       ).not.toBeDisabled(),
     );
+
     await expectNoA11yViolations(container);
   });
 
@@ -72,6 +77,7 @@ describe('ApplicationForm', () => {
 
     expect(screen.getByText('Du bist sofort dabei.')).toBeVisible();
     expect(screen.queryByLabelText('Name')).not.toBeInTheDocument();
+
     expect(
       screen.queryByRole('button', { name: 'Bewerbung abschicken' }),
     ).not.toBeInTheDocument();
@@ -82,6 +88,7 @@ describe('ApplicationForm', () => {
 
     expect(screen.getByText('Du unterstützt uns direkt.')).toBeVisible();
     expect(screen.queryByLabelText('Name')).not.toBeInTheDocument();
+
     expect(
       screen.queryByRole('button', { name: 'Bewerbung abschicken' }),
     ).not.toBeInTheDocument();
@@ -94,6 +101,7 @@ describe('ApplicationForm', () => {
       name: (name) =>
         name.replaceAll('\u00AD', '') === 'Zum Fördermitgliedsantrag',
     });
+
     expect(link).toHaveTextContent('Zum Förder\u00ADmitglieds\u00ADantrag');
   });
 
@@ -104,9 +112,11 @@ describe('ApplicationForm', () => {
     expect(screen.getByLabelText('E-Mail')).toBeVisible();
     expect(screen.getByLabelText('Zeit pro Woche')).toBeVisible();
     expect(screen.getByLabelText('Erzähl uns kurz von dir')).toBeVisible();
+
     expect(
       screen.getByRole('checkbox', { name: /Ich bin damit einverstanden/ }),
     ).toBeVisible();
+
     expect(
       screen.getByRole('button', { name: 'Bewerbung abschicken' }),
     ).toBeVisible();
@@ -117,6 +127,7 @@ describe('ApplicationForm', () => {
 
     await user.type(screen.getByLabelText('Name'), 'Anna Müller');
     await user.type(screen.getByLabelText('E-Mail'), 'anna@');
+
     await user.click(
       screen.getByRole('button', { name: 'Bewerbung abschicken' }),
     );
@@ -130,6 +141,7 @@ describe('ApplicationForm', () => {
 
   it('explains missing privacy consent to assistive technology', async () => {
     const user = await pickRoute('Social Media');
+
     const checkbox = screen.getByRole('checkbox', {
       name: /Ich bin damit einverstanden/,
     });
@@ -143,6 +155,7 @@ describe('ApplicationForm', () => {
     expect(error).toHaveTextContent(
       'Ohne deine Einwilligung können wir deine Bewerbung nicht speichern',
     );
+
     expect(checkbox).toHaveAttribute('aria-invalid', 'true');
     expect(error).toHaveAttribute('id');
     expect(checkbox).toHaveAttribute('aria-describedby', error.id);
@@ -160,6 +173,7 @@ describe('ApplicationForm', () => {
     server.use(
       http.post('*/api/v1/applications', async () => {
         await delay(50);
+
         return HttpResponse.json({ applicationId: 'app-1' }, { status: 201 });
       }),
     );
@@ -184,6 +198,7 @@ describe('ApplicationForm', () => {
 
     expect(await screen.findByText('Deine Bewerbung ist da!')).toBeVisible();
     expect(screen.getByText('anna@example.de')).toBeVisible();
+
     expect(
       screen.queryByRole('button', { name: 'Bewerbung abschicken' }),
     ).not.toBeInTheDocument();
@@ -230,6 +245,7 @@ describe('ApplicationForm', () => {
         'Bitte versuche es noch einmal',
       );
     });
+
     expect(screen.getByLabelText('E-Mail')).toHaveValue('anna@example.de');
   });
 
@@ -252,9 +268,11 @@ describe('ApplicationForm', () => {
         'Bitte versuche es noch einmal',
       );
     });
+
     expect(
       screen.queryByText('Deine Bewerbung ist da!'),
     ).not.toBeInTheDocument();
+
     expect(screen.getByLabelText('E-Mail')).toHaveValue('anna@example.de');
   });
 
@@ -277,9 +295,11 @@ describe('ApplicationForm', () => {
         'Bitte versuche es noch einmal',
       );
     });
+
     expect(
       screen.queryByText('Deine Bewerbung ist da!'),
     ).not.toBeInTheDocument();
+
     expect(screen.getByLabelText('E-Mail')).toHaveValue('anna@example.de');
   });
 
@@ -302,9 +322,11 @@ describe('ApplicationForm', () => {
         'Bitte versuche es noch einmal',
       );
     });
+
     expect(
       screen.queryByText('Deine Bewerbung ist da!'),
     ).not.toBeInTheDocument();
+
     expect(screen.getByLabelText('E-Mail')).toHaveValue('anna@example.de');
   });
 
@@ -352,6 +374,7 @@ describe('ApplicationForm', () => {
         'Die Bereiche für Vereinsarbeit konnten nicht geladen werden. Bitte versuche es noch einmal.',
       ),
     ).toBeVisible();
+
     expect(screen.getByLabelText('Wie möchtest du uns helfen?')).toBeDisabled();
 
     server.use(
@@ -359,6 +382,7 @@ describe('ApplicationForm', () => {
         HttpResponse.json({ categories: MOCK_CATEGORIES }),
       ),
     );
+
     await user.click(screen.getByRole('button', { name: 'Erneut versuchen' }));
 
     await waitFor(() =>
@@ -382,11 +406,14 @@ describe('ApplicationForm', () => {
         'Aktuell keine offenen Bereiche für Vereinsarbeit.',
       ),
     ).toBeVisible();
+
     const select = screen.getByLabelText('Wie möchtest du uns helfen?');
     expect(select).not.toBeDisabled();
-    const optionValues = Array.from(select.querySelectorAll('option'))
-      .filter((option) => option.value !== '')
-      .map((option) => option.value);
+
+    const optionValues = Array.from(select.querySelectorAll('option')).flatMap(
+      (option) => (option.value === '' ? [] : [option.value]),
+    );
+
     expect(optionValues).toEqual(['COMMUNITY', 'SUPPORTING_MEMBER']);
   });
 
@@ -429,18 +456,22 @@ describe('ApplicationForm', () => {
 
   it('settles on exactly one correct category list under StrictMode double-invoke', async () => {
     let callCount = 0;
+
     server.use(
       http.get('*/api/v1/categories', async () => {
         callCount += 1;
+
         if (callCount === 1) {
           // The first (superseded) request resolves *after* the second one,
           // with a payload that must never win — proves the staleness guard
           // in useCategories, not just that the select ends up enabled.
           await delay(50);
+
           return HttpResponse.json({
             categories: [{ id: 'stale', label: 'Stale' }],
           });
         }
+
         return HttpResponse.json({ categories: MOCK_CATEGORIES });
       }),
     );
@@ -459,10 +490,12 @@ describe('ApplicationForm', () => {
       ...MOCK_CATEGORIES.map((category) => category.id),
       'SUPPORTING_MEMBER',
     ];
+
     const optionValues = () =>
-      Array.from(select.querySelectorAll('option'))
-        .filter((option) => option.value !== '')
-        .map((option) => option.value);
+      Array.from(select.querySelectorAll('option')).flatMap((option) =>
+        option.value === '' ? [] : [option.value],
+      );
+
     expect(optionValues()).toEqual(expectedOptionValues);
 
     // Let the delayed, superseded response resolve too, and confirm it never
@@ -484,6 +517,7 @@ describe('ApplicationForm', () => {
     await screen.findByText(
       'Die Bereiche für Vereinsarbeit konnten nicht geladen werden. Bitte versuche es noch einmal.',
     );
+
     expect(screen.getByLabelText('Wie möchtest du uns helfen?')).toBeDisabled();
   });
 

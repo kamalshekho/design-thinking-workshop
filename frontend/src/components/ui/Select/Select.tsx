@@ -19,6 +19,7 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
  */
 export function Select({ children, className, ...selectProps }: SelectProps) {
   const isInvalid = isAriaInvalid(selectProps['aria-invalid']);
+
   const classNames = cx(
     controlStyles.control,
     singleLineStyles.singleLine,

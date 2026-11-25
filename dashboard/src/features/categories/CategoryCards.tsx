@@ -52,6 +52,7 @@ export function CategoryCards({
             const position = allCategories.findIndex(
               (candidate) => candidate.id === category.id,
             );
+
             /** What blocks deletion, as in the table. */
             const blocking = namedBy.get(category.id) ?? 0;
 

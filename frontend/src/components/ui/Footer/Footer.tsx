@@ -44,6 +44,7 @@ interface FooterProps {
 export function Footer({ content, onBackToTop }: FooterProps) {
   const { contact, legal, donateLabel, donateHref, copyright, backToTopLabel } =
     content;
+
   const linkClassName = cx(styles.link, tapTargetStyles.tapTarget);
   const donateClassName = cx(styles.donateRow, tapTargetStyles.tapTarget);
 

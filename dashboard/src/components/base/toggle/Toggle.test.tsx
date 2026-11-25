@@ -45,6 +45,7 @@ describe('Toggle', () => {
     await user.click(
       screen.getByText('Neue Anfragen können diese Kategorie wählen.'),
     );
+
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -63,6 +64,7 @@ describe('Toggle', () => {
     const toggle = screen.getByRole('switch', {
       name: 'Social Media umschalten',
     });
+
     expect(toggle).toBeChecked();
 
     await user.click(toggle);

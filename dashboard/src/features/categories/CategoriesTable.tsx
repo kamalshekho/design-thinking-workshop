@@ -139,6 +139,7 @@ function CategoriesGrid({
             const position = allCategories.findIndex(
               (candidate) => candidate.id === category.id,
             );
+
             const isFirst = position <= 0;
             const isLast = position === allCategories.length - 1;
             const count = usage.get(category.id) ?? 0;

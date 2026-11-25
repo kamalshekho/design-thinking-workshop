@@ -31,8 +31,10 @@ export const useBreakpoint = (size: 'sm' | 'md' | 'lg' | 'xl' | '2xl') => {
       if (typeof window === 'undefined') {
         return () => undefined;
       }
+
       const breakpoint = window.matchMedia(query);
       breakpoint.addEventListener('change', onStoreChange);
+
       return () => {
         breakpoint.removeEventListener('change', onStoreChange);
       };

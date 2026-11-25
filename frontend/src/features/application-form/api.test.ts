@@ -56,6 +56,7 @@ describe('fetchCategories', () => {
 
   it('accepts a category label that is exactly 120 characters after trimming', async () => {
     const label = 'a'.repeat(120);
+
     server.use(
       http.get('*/api/v1/categories', () =>
         HttpResponse.json({
@@ -132,6 +133,7 @@ describe('fetchCategories', () => {
         }),
       ),
     );
+
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     await fetchCategories();

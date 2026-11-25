@@ -62,6 +62,7 @@ describe('applicationsAsOf', () => {
 
   it('reads a status back to what it was before a later change', () => {
     const applications = [application({ status: 'ACTIVE' })];
+
     const changes = [
       change({ at: '2026-09-02T09:00:00.000Z', to: 'IN_REVIEW' }),
       change({ at: '2026-09-05T09:00:00.000Z', to: 'ACTIVE' }),
@@ -83,6 +84,7 @@ describe('applicationsAsOf', () => {
 
   it('reads an Owner back to nobody before the Application was assigned', () => {
     const applications = [application({ ownerId: 'staff-2' })];
+
     const changes = [
       change({ at: '2026-09-05T09:00:00.000Z', field: 'OWNER', to: 'staff-2' }),
     ];
@@ -94,6 +96,7 @@ describe('applicationsAsOf', () => {
 
   it('reads a cleared Owner back to the Staff member who held it', () => {
     const applications = [application({ ownerId: null })];
+
     const changes = [
       change({ at: '2026-09-02T09:00:00.000Z', field: 'OWNER', to: 'staff-2' }),
       change({ at: '2026-09-05T09:00:00.000Z', field: 'OWNER', to: null }),
@@ -108,6 +111,7 @@ describe('applicationsAsOf', () => {
     const applications = [
       application({ discardedAt: '2026-09-05T09:00:00.000Z' }),
     ];
+
     const changes = [
       change({
         at: '2026-09-05T09:00:00.000Z',
@@ -123,6 +127,7 @@ describe('applicationsAsOf', () => {
 
   it('dates a restored Application by the row that discarded it', () => {
     const applications = [application({ discardedAt: null })];
+
     const changes = [
       change({
         at: '2026-09-02T09:00:00.000Z',
@@ -145,6 +150,7 @@ describe('applicationsAsOf', () => {
     const applications = [
       application({ status: 'ACTIVE', ownerId: 'staff-2' }),
     ];
+
     const changes = [
       change({ at: '2026-09-05T09:00:00.000Z', to: 'ACTIVE' }),
       change({ at: '2026-09-05T09:00:00.000Z', field: 'OWNER', to: 'staff-2' }),
@@ -161,6 +167,7 @@ describe('applicationsAsOf', () => {
       application({ id: 'a1', status: 'ACTIVE' }),
       application({ id: 'a2', status: 'WAITLISTED' }),
     ];
+
     const changes = [
       change({ applicationId: 'a1', at: '2026-09-05T09:00:00.000Z' }),
     ];
@@ -175,6 +182,7 @@ describe('applicationsAsOf', () => {
       application({ id: 'a1', status: 'ACTIVE', ownerId: 'staff-2' }),
       application({ id: 'a2', discardedAt: '2026-09-05T09:00:00.000Z' }),
     ];
+
     const changes = [
       change({ at: '2026-09-05T09:00:00.000Z', to: 'ACTIVE' }),
       change({

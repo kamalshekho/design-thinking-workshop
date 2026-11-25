@@ -20,8 +20,10 @@ describe('expectNoA11yViolations', () => {
 
   it('accepts a labelled control', async () => {
     const container = document.createElement('div');
+
     container.innerHTML =
       '<label for="a">E-Mail</label><input id="a" type="email" />';
+
     document.body.append(container);
 
     await expect(expectNoA11yViolations(container)).resolves.toBeUndefined();

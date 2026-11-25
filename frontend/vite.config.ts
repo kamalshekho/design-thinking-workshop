@@ -13,6 +13,7 @@ import { defineConfig, type Plugin } from 'vite';
  */
 function dropMockServiceWorker(): Plugin {
   let outDir = '';
+
   return {
     name: 'drop-mock-service-worker',
     apply: 'build',

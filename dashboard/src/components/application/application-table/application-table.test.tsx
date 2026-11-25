@@ -72,6 +72,7 @@ describe('ApplicationTable', () => {
     const rowFor = renderTable([
       application({ id: 'owned', ownerId: 'staff-1' }),
     ]);
+
     const row = rowFor('owned');
 
     expect(row).not.toHaveClass('bg-bg-unread');
@@ -87,6 +88,7 @@ describe('ApplicationTable', () => {
     const rowFor = renderTable([
       application({ id: 'owned', ownerId: 'staff-2' }),
     ]);
+
     const row = rowFor('owned');
 
     expect(row?.querySelector('img[data-avatar-img]')).toBeNull();
@@ -95,10 +97,11 @@ describe('ApplicationTable', () => {
 
   describe('columns by width (issue #109)', () => {
     function headers(): string[] {
-      return screen
-        .getAllByRole('columnheader')
-        .map((header) => header.textContent.trim())
-        .filter((text) => text !== '');
+      return screen.getAllByRole('columnheader').flatMap((header) => {
+        const text = header.textContent.trim();
+
+        return text === '' ? [] : [text];
+      });
     }
 
     it('shows every column at the desk except E-Mail and Verfügbarkeit', () => {
@@ -112,11 +115,13 @@ describe('ApplicationTable', () => {
         de.columns.owner,
         de.columns.actions,
       ]);
+
       expect(screen.getAllByRole('checkbox').length).toBeGreaterThan(0);
     });
 
     it('moves Kategorie and Zuständig under the name between 768 and 1279 px', () => {
       setViewportWidth(1024);
+
       const rowFor = renderTable([
         application({ id: 'owned', ownerId: 'staff-2' }),
       ]);
@@ -127,6 +132,7 @@ describe('ApplicationTable', () => {
         de.columns.submittedAt,
         de.columns.actions,
       ]);
+
       expect(rowFor('owned')).toHaveTextContent(
         'Social Media · Samuel Adeyemi',
       );
@@ -140,11 +146,13 @@ describe('ApplicationTable', () => {
       expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
       const row = rowFor('phone');
       expect(row).toBeDefined();
+
       expect(
         within(row as HTMLElement).getByText(
           `${de.statuses.NEW} · ${de.application.daysAgo(4)}`,
         ),
       ).toBeInTheDocument();
+
       expect(
         screen.queryByRole('button', { name: 'Mara Weber aussortieren' }),
       ).not.toBeInTheDocument();
@@ -183,6 +191,7 @@ describe('ApplicationTable', () => {
       screen
         .getAllByRole('row')
         .find((row) => row.getAttribute('data-key') === id);
+
     const firstRow = rowFor('a1');
     const secondRow = rowFor('a2');
     expect(firstRow).toBeDefined();
@@ -194,6 +203,7 @@ describe('ApplicationTable', () => {
     const secondCheckbox = within(secondRow as HTMLElement).getByRole(
       'checkbox',
     );
+
     secondCheckbox.focus();
     await user.keyboard(' ');
     expect(onSelectedIdsChange).toHaveBeenNthCalledWith(2, new Set(['a2']));

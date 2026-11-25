@@ -34,8 +34,10 @@ export function ApplicationFields({
   const consentErrorId = useId();
   const { error: nameError, ...nameControl } = fieldProps('name');
   const { error: emailError, ...emailControl } = fieldProps('email');
+
   const { error: weeklyTimeError, ...weeklyTimeControl } =
     fieldProps('weeklyTime');
+
   const { error: aboutError, ...aboutControl } = fieldProps('about');
 
   return (

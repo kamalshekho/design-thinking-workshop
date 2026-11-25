@@ -7,9 +7,11 @@ describe('cx', () => {
     expect(cx('text-sd-muted-foreground', 'text-2xs')).toBe(
       'text-sd-muted-foreground text-2xs',
     );
+
     expect(cx('text-tertiary', 'text-caption')).toBe(
       'text-tertiary text-caption',
     );
+
     expect(cx('text-secondary', 'text-body-sm')).toBe(
       'text-secondary text-body-sm',
     );
@@ -24,10 +26,13 @@ describe('cx', () => {
     expect(cx('ring-secondary', 'ring-hairline')).toBe(
       'ring-secondary ring-hairline',
     );
+
     expect(cx('ring-hairline', 'ring-1')).toBe('ring-1');
+
     expect(cx('outline-border-secondary', 'outline-hairline')).toBe(
       'outline-border-secondary outline-hairline',
     );
+
     expect(
       cx(
         'outline-border-secondary',
@@ -37,9 +42,11 @@ describe('cx', () => {
     ).toBe(
       'outline-border-secondary outline-hairline -outline-offset-hairline',
     );
+
     expect(cx('before:inset-hairline', 'before:inset-0')).toBe(
       'before:inset-0',
     );
+
     expect(cx('rounded-inner', 'rounded-full')).toBe('rounded-full');
   });
 });

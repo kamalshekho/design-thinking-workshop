@@ -12,7 +12,9 @@ function noContent() {
   const mock = vi.fn<(input: string, init?: RequestInit) => Promise<Response>>(
     () => Promise.resolve(new Response(null, { status: 204 })),
   );
+
   vi.stubGlobal('fetch', mock);
+
   return mock;
 }
 
@@ -26,7 +28,9 @@ function answer(body: unknown) {
         }),
       ),
   );
+
   vi.stubGlobal('fetch', mock);
+
   return mock;
 }
 
@@ -98,6 +102,7 @@ describe('fetchApplications', () => {
     );
 
     expect(failure).toBeInstanceOf(ApiProblem);
+
     if (failure instanceof ApiProblem) {
       expect(failure.status).toBe(200);
       expect(failure.code).toBeUndefined();

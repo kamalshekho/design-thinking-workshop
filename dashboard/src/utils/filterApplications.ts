@@ -76,9 +76,11 @@ export function matchesSearch(
   search: string,
 ): boolean {
   const term = search.trim().toLowerCase();
+
   if (term === '') {
     return true;
   }
+
   return (
     application.name.toLowerCase().includes(term) ||
     application.email.toLowerCase().includes(term)
@@ -93,9 +95,11 @@ export function matchesOwner(
   if (ownerId === undefined || ownerId === null) {
     return true;
   }
+
   if (ownerId === 'unassigned') {
     return application.ownerId === null;
   }
+
   return application.ownerId === ownerId;
 }
 
@@ -109,6 +113,7 @@ export function parseFiltersFromHash(
   hash: string,
 ): Partial<ApplicationFilters> {
   const queryIndex = hash.indexOf('?');
+
   if (queryIndex === -1) {
     return {};
   }
@@ -117,26 +122,31 @@ export function parseFiltersFromHash(
   const filters: Partial<ApplicationFilters> = {};
 
   const view = params.get('view');
+
   if (isApplicationView(view)) {
     filters.view = view;
   }
 
   const status = params.get('status');
+
   if (isApplicationStatus(status)) {
     filters.status = status;
   }
 
   const search = params.get('search');
+
   if (search !== null) {
     filters.search = search;
   }
 
   const categoryId = params.get('categoryId');
+
   if (categoryId !== null) {
     filters.categoryId = categoryId;
   }
 
   const ownerId = params.get('ownerId');
+
   if (ownerId !== null) {
     filters.ownerId = ownerId;
   }
@@ -157,24 +167,31 @@ export function buildApplicationsHref(
   filters: Partial<ApplicationFilters>,
 ): string {
   const params = new URLSearchParams();
+
   if (filters.view) {
     params.set('view', filters.view);
   }
+
   if (filters.status) {
     params.set('status', filters.status);
   }
+
   if (filters.search) {
     params.set('search', filters.search);
   }
+
   if (filters.categoryId) {
     params.set('categoryId', filters.categoryId);
   }
+
   if (filters.ownerId) {
     params.set('ownerId', filters.ownerId);
   }
+
   if (filters.excludeCompleted) {
     params.set('excludeCompleted', '1');
   }
+
   return `#applications?${params.toString()}`;
 }
 

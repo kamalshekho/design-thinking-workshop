@@ -10,6 +10,7 @@ export function useRouteAnalytics(route: string) {
   useEffect(() => {
     if (route === '' || route === reportedRoute.current) return;
     reportedRoute.current = route;
+
     reportRouteSelection(
       isFixedRoute(route)
         ? { type: 'fixed', route }

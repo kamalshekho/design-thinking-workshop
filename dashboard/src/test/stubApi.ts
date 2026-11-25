@@ -136,6 +136,19 @@ export type StubbedApi = {
   stream: () => StubEventSource | null;
 };
 
+/** The fields of a request body the stub reads. The client sends JSON. */
+interface StubRequestBody {
+  name?: string;
+  description?: string;
+  active?: boolean;
+  ids?: string[];
+  discarded?: boolean;
+}
+
+function isText(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -177,15 +190,14 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
   vi.stubGlobal(
     'fetch',
     vi.fn((input: string | URL | Request, init?: RequestInit) => {
-      const url = String(
-        typeof input === 'string' || input instanceof URL ? input : input.url,
-      );
+      const url = input instanceof Request ? input.url : String(input);
+
       const method = init?.method ?? 'GET';
 
-      const body = ((): Record<string, unknown> =>
-        typeof init?.body === 'string'
-          ? (JSON.parse(init.body) as Record<string, unknown>)
-          : {})();
+      const body = isText(init?.body)
+        ? (JSON.parse(init.body) as StubRequestBody)
+        : {};
+
       /** The path under `/api/v1/staff`, so a route reads as it does in `API.md`. */
       const path = url.slice(url.indexOf('/staff') + '/staff'.length);
 
@@ -195,12 +207,15 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
             problem(api.signInFailure.status, api.signInFailure.code),
           );
         }
+
         api.signedIn = true;
+
         return Promise.resolve(json(api.staffMember));
       }
 
       if (path === '/session' && method === 'DELETE') {
         api.signedIn = false;
+
         return Promise.resolve(NO_CONTENT());
       }
 
@@ -220,6 +235,7 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
             problem(api.signInCheckFailure.status, api.signInCheckFailure.code),
           );
         }
+
         return Promise.resolve(json(api.staffMember));
       }
 
@@ -254,6 +270,7 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
        * timestamp on the row, stamped here the way the server stamps it.
        */
       const patched = /^\/applications\/([^/]+)$/.exec(path);
+
       if (patched !== null && method === 'PATCH') {
         const id = patched[1];
         const application = api.applications.find((row) => row.id === id);
@@ -263,24 +280,27 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
         }
 
         const { discarded, ...edit } = body;
+
         const updated: Application = {
           ...application,
           ...(edit as Partial<Application>),
-          ...(discarded === undefined
-            ? {}
-            : {
-                discardedAt:
-                  discarded === true ? REFERENCE_DATE.toISOString() : null,
-              }),
+          discardedAt:
+            discarded === undefined
+              ? application.discardedAt
+              : discarded
+                ? REFERENCE_DATE.toISOString()
+                : null,
         };
 
         api.applications = api.applications.map((row) =>
           row.id === id ? updated : row,
         );
+
         return Promise.resolve(json(updated));
       }
 
       const erased = /^\/applications\/([^/]+)\/permanently$/.exec(path);
+
       if (erased !== null && method === 'DELETE') {
         const id = erased[1];
         const application = api.applications.find((row) => row.id === id);
@@ -294,9 +314,11 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
         }
 
         api.applications = api.applications.filter((row) => row.id !== id);
+
         api.changes = api.changes.filter(
           (change) => change.applicationId !== id,
         );
+
         return Promise.resolve(NO_CONTENT());
       }
 
@@ -308,18 +330,18 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
       if (path === '/categories' && method === 'POST') {
         const created: Category = {
           id: crypto.randomUUID(),
-          name: typeof body.name === 'string' ? body.name : '',
-          description:
-            typeof body.description === 'string' ? body.description : '',
+          name: body.name ?? '',
+          description: body.description ?? '',
           active: body.active !== false,
         };
 
         api.categories = [...api.categories, created];
+
         return Promise.resolve(json(created, 201));
       }
 
       if (path === '/categories/order' && method === 'PUT') {
-        const ids = body.ids as string[];
+        const ids = body.ids ?? [];
         const byId = new Map(api.categories.map((row) => [row.id, row]));
 
         if (
@@ -331,12 +353,15 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
 
         api.categories = ids.flatMap((id) => {
           const category = byId.get(id);
+
           return category === undefined ? [] : [category];
         });
+
         return Promise.resolve(json({ categories: api.categories }));
       }
 
       const category = /^\/categories\/([^/]+)$/.exec(path);
+
       if (category !== null) {
         const id = category[1];
         const existing = api.categories.find((row) => row.id === id);
@@ -347,9 +372,11 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
 
         if (method === 'PATCH') {
           const updated = { ...existing, ...(body as Partial<Category>) };
+
           api.categories = api.categories.map((row) =>
             row.id === id ? updated : row,
           );
+
           return Promise.resolve(json(updated));
         }
 
@@ -361,6 +388,7 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
           }
 
           api.categories = api.categories.filter((row) => row.id !== id);
+
           return Promise.resolve(NO_CONTENT());
         }
       }

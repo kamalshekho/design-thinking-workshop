@@ -153,11 +153,13 @@ export const Table = ({ className, size = 'md', ...props }: TableRootProps) => {
     </TableContext.Provider>
   );
 };
+
 Table.displayName = 'Table';
 
 export const TableBody = <T extends object>(props: AriaTableBodyProps<T>) => {
   return <AriaTableBody {...props} />;
 };
+
 TableBody.displayName = 'TableBody';
 
 interface TableHeaderProps<T extends object>
@@ -292,6 +294,7 @@ export const TableHead = ({
     </AriaColumn>
   );
 };
+
 TableHead.displayName = 'TableHead';
 
 interface TableRowProps<T extends object>
@@ -394,4 +397,5 @@ export const TableCell = ({
     </AriaCell>
   );
 };
+
 TableCell.displayName = 'TableCell';

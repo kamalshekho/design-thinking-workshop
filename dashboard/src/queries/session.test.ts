@@ -26,6 +26,7 @@ describe('useSignInFailure', () => {
     expect(signInFailure(new TypeError('Failed to fetch'))).toEqual({
       code: undefined,
     });
+
     expect(signInFailure(new Error('boom'))).toEqual({ code: undefined });
   });
 

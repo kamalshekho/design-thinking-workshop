@@ -12,6 +12,7 @@ import { App } from './App';
  */
 async function enableMocking(): Promise<void> {
   if (import.meta.env.PROD) return;
+
   if (import.meta.env.VITE_API_BASE_URL) return;
 
   const { worker } = await import('../mocks/browser');
@@ -19,6 +20,7 @@ async function enableMocking(): Promise<void> {
 }
 
 const container = document.getElementById('root');
+
 if (!container) throw new Error('Root element #root is missing');
 
 void enableMocking().then(() => {
