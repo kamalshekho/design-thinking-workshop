@@ -54,7 +54,9 @@ services:
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
       - caddy-config:/config
-    mem_limit: 64m
+    # Measured at about 50 MiB right after it fetched both certificates, so
+    # 64 MiB left too little room for the next renewal.
+    mem_limit: 128m
     depends_on:
       - frontend
       - dashboard
