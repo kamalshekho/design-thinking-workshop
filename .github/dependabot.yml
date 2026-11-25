@@ -41,6 +41,7 @@ updates:
           - eslint-plugin-check-file
           - '@stylistic/eslint-plugin'
           - '@vitest/coverage-v8'
+          - vitest
       minor-and-patch:
         applies-to: version-updates
         update-types: [minor, patch]

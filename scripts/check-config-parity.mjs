@@ -49,6 +49,7 @@ const SHARED_TOOLS = [
   'eslint-plugin-check-file',
   '@stylistic/eslint-plugin',
   '@vitest/coverage-v8',
+  'vitest',
 ];
 
 const APPS = ['frontend', 'dashboard'];
