@@ -20,8 +20,10 @@ import { isDeepStrictEqual } from 'node:util';
 
 /**
  * Tools both apps install. An issue that brings a plugin into both apps adds
- * it here. Tools only one app uses, such as prettier-plugin-tailwindcss,
- * Stylelint and Storybook, are not compared.
+ * it here and to the shared-tools group in .github/dependabot.yml, so that
+ * Dependabot bumps it in both apps in one pull request. Tools only one app
+ * uses, such as prettier-plugin-tailwindcss, Stylelint and Storybook, are not
+ * compared.
  */
 const SHARED_TOOLS = [
   'eslint',
