@@ -27,7 +27,8 @@
     "check:token-json": "node scripts/check-token-json.mjs",
     "knip": "knip",
     "knip:production": "knip --production",
-    "jscpd": "jscpd"
+    "jscpd": "jscpd",
+    "check": "npm run typecheck && npm run lint && npm run stylelint && npm run format:check && npm run check:tokens && npm run check:token-json && node ../scripts/check-config-parity.mjs && npm run knip && npm run knip:production && npm run jscpd && npm test -- --coverage"
   },
   "size-limit": [
     {

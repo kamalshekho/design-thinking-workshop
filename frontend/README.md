@@ -44,6 +44,7 @@ form is fully usable before the Java service exists.
 | `npm run knip` / `knip:production`    | Dead files, exports and dependencies                  |
 | `npm run jscpd`                       | Clones of 50+ tokens in production code               |
 | `npm test` / `test:watch`             | Vitest                                                |
+| `npm run check`                       | All checks and tests, run before a commit             |
 | `npm run storybook`                   | Component workbench on port 6006                      |
 | `npm run build-storybook`             | Static Storybook build                                |
 
