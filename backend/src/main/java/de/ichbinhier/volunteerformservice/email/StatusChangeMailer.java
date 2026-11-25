@@ -1,5 +1,7 @@
 package de.ichbinhier.volunteerformservice.email;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.util.HtmlUtils;
@@ -24,27 +26,14 @@ class StatusChangeMailer {
             sendAcceptanceEmail(change);
             return;
         }
-        String status = switch (change.status()) {
-            case NEW -> "Neu";
-            case IN_REVIEW -> "In Prüfung";
-            case INTRO_BOOKED -> "Info-Runde gebucht";
-            case ACCEPTED -> "Angenommen";
-            case ACTIVE -> "Aktiv";
-            case WAITLISTED -> "Warteliste";
-            case DECLINED -> "Abgelehnt";
-        };
         String body = """
                 <p>Hallo %s,</p>
                 <p>der Status deiner Bewerbung hat sich geändert.</p>
                 <p>Aktueller Status: <strong>%s</strong></p>
                 <p>Viele Grüße<br>Dein #ichbinhier-Team</p>
-                """.formatted(HtmlUtils.htmlEscape(change.name()), status);
-        try {
-            sender.send(change.email(), "Neuigkeiten zu deiner Bewerbung bei ichbinhier", body);
-            log.info("Status email handed to the sender for application {}", change.applicationId());
-        } catch (RuntimeException exception) {
-            log.warn("Status email failed for application {}", change.applicationId(), exception);
-        }
+                """.formatted(HtmlUtils.htmlEscape(change.name()), labelFor(change.status()));
+        deliver(change.applicationId(), change.email(),
+                "Neuigkeiten zu deiner Bewerbung bei ichbinhier", body, "Status");
     }
 
     private void sendAcceptanceEmail(ApplicationStatusChanged change) {
@@ -64,12 +53,29 @@ class StatusChangeMailer {
                 <p>Hinweis: Dieser Link ist persönlich für dich bestimmt. Bitte gib ihn nicht an andere weiter.</p>
                 <p>Viele Grüße<br>Dein #ichbinhier-Team</p>
                 """.formatted(HtmlUtils.htmlEscape(change.name()), escapedLink, escapedLink);
+        deliver(change.applicationId(), change.email(),
+                "Willkommen bei ichbinhier: deine nächsten Schritte", body, "Acceptance");
+    }
+
+    private void deliver(UUID applicationId, String toAddress, String subject, String body, String kind) {
         try {
-            sender.send(change.email(), "Willkommen bei ichbinhier: deine nächsten Schritte", body);
-            log.info("Acceptance email handed to the sender for application {}", change.applicationId());
+            sender.send(toAddress, subject, body);
+            log.info("{} email handed to the sender for application {}", kind, applicationId);
         } catch (RuntimeException exception) {
-            log.warn("Acceptance email failed for application {}", change.applicationId(), exception);
+            log.warn("{} email failed for application {}", kind, applicationId, exception);
         }
+    }
+
+    private static String labelFor(ApplicationStatus status) {
+        return switch (status) {
+            case NEW -> "Neu";
+            case IN_REVIEW -> "In Prüfung";
+            case INTRO_BOOKED -> "Info-Runde gebucht";
+            case ACCEPTED -> "Angenommen";
+            case ACTIVE -> "Aktiv";
+            case WAITLISTED -> "Warteliste";
+            case DECLINED -> "Abgelehnt";
+        };
     }
 
 }

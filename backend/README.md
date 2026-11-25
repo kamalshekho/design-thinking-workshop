@@ -114,7 +114,7 @@ account, since five staff members with no administrator would stay locked
 ## Demo data
 
 `demo/DemoSeeder.java` seeds a week that reads like a real one: thirteen
-Applications across the four Categories and all six statuses, some owned and
+Applications across the four Categories and all seven statuses, some owned and
 some not, six older than seven days, two discarded and one discarded and
 restored (`A21`). **It runs only under the `demo` profile** — the Categories and
 the staff accounts are platform data, while these Applications are a

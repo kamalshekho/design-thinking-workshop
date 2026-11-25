@@ -28,7 +28,6 @@ import de.ichbinhier.volunteerformservice.dashboard.dto.application.StateChangeD
 import de.ichbinhier.volunteerformservice.dashboard.dto.application.UpdateApplicationRequest;
 import de.ichbinhier.volunteerformservice.email.ApplicationStatusChanged;
 import de.ichbinhier.volunteerformservice.onboarding.OnboardingProperties;
-import de.ichbinhier.volunteerformservice.onboarding.OnboardingStep;
 import de.ichbinhier.volunteerformservice.onboarding.OnboardingTokens;
 import de.ichbinhier.volunteerformservice.onboarding.repository.OnboardingStepCompletionRepository;
 import de.ichbinhier.volunteerformservice.staff.domain.Staff;
@@ -131,13 +130,7 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
     }
 
     private OnboardingDto onboardingOf(Application app, int doneSteps) {
-        if (app.getOnboardingToken() == null) {
-            return null;
-        }
-        return new OnboardingDto(
-                onboardingProperties.linkFor(app.getOnboardingToken()),
-                doneSteps,
-                OnboardingStep.values().length);
+        return OnboardingDto.of(app, onboardingProperties, doneSteps);
     }
 
     private void updateOwner(Application app, UpdateApplicationRequest req) {

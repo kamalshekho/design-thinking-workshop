@@ -11,8 +11,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-// Sends transactional email via SMTP (Mailpit in local Compose) whenever
-// spring.mail.host is configured and no RESEND_API_KEY is set.
 @Component
 @Conditional(HasResendApiKey.SmtpConfigured.class)
 public class SmtpEmailSender implements EmailSender {

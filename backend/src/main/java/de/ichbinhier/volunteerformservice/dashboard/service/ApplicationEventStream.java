@@ -16,7 +16,6 @@ import de.ichbinhier.volunteerformservice.application.ApplicationSubmitted;
 import de.ichbinhier.volunteerformservice.dashboard.dto.application.ApplicationDto;
 import de.ichbinhier.volunteerformservice.dashboard.dto.application.OnboardingDto;
 import de.ichbinhier.volunteerformservice.onboarding.OnboardingProperties;
-import de.ichbinhier.volunteerformservice.onboarding.OnboardingStep;
 import de.ichbinhier.volunteerformservice.onboarding.OnboardingStepChanged;
 
 import lombok.RequiredArgsConstructor;
@@ -86,13 +85,8 @@ public class ApplicationEventStream {
 
     @EventListener
     void onboardingStepChanged(OnboardingStepChanged changed) {
-        String token = changed.application().getOnboardingToken();
-        OnboardingDto onboarding = token == null
-                ? null
-                : new OnboardingDto(
-                        onboardingProperties.linkFor(token),
-                        changed.doneSteps(),
-                        OnboardingStep.values().length);
+        OnboardingDto onboarding = OnboardingDto.of(
+                changed.application(), onboardingProperties, changed.doneSteps());
         send("application.updated", ApplicationDto.of(changed.application(), onboarding));
     }
 
