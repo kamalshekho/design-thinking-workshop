@@ -1,0 +1,29 @@
+# Overlay for a separate load-test stack next to the presenting one:
+#
+#   docker compose -p dtw-load -f docker-compose.yml -f load-test/compose.load.yml \
+#     --env-file <generated env> up -d --build --wait
+#
+# Own project name, own volume and own image tags, so a load run never writes
+# into the demo database or replaces the images the demo stack runs on. No
+# host ports: k6 runs in the stack's network and reaches frontend, dashboard
+# and backend by service name.
+#
+# Mail stays off: an empty SPRING_MAIL_HOST and an empty RESEND_API_KEY leave
+# NoopEmailSender in charge, so tens of thousands of test Applications send no
+# mail, not even to Mailpit. The load test therefore does not measure sending.
+services:
+  backend:
+    image: dtw-load-backend:local
+    environment:
+      SPRING_MAIL_HOST: ''
+      # Spring Boot still checks the mail server for /actuator/health when the
+      # host is empty, and would report the backend as down.
+      MANAGEMENT_HEALTH_MAIL_ENABLED: 'false'
+  frontend:
+    image: dtw-load-frontend:local
+    ports: !reset []
+  dashboard:
+    image: dtw-load-dashboard:local
+    ports: !reset []
+  mailpit:
+    ports: !reset []
