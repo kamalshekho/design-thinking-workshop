@@ -900,8 +900,8 @@ Rules:
 - `ROUTE_REQUIRED` and `CATEGORY_REQUIRED` share the same wording because the
   applicant chooses route and category in the same field 1 and does not see the
   distinction.
-- `unknownError` is shown for any backend error code the frontend does not
-  recognize (`API.md`) and uses the same wording as `INTERNAL_ERROR`.
+- `unknownError` is shown for any backend error code the applicant form does
+  not recognize (`API.md`) and uses the same wording as `INTERNAL_ERROR`.
 
 ---
 
@@ -953,7 +953,8 @@ A network failure or non-2xx response to `GET /api/v1/categories` (API.md).
 Copy (team proposal, not confirmed by the association (`C1`)):
 
 - Option: **Nicht verfügbar**
-- Error message: **Die Bereiche für Vereinsarbeit konnten nicht geladen werden. Bitte versuche es noch einmal.**
+- Error message: **Die Bereiche für Vereinsarbeit konnten nicht geladen werden.
+  Bitte versuche es noch einmal.**
 - Button: **Erneut versuchen**
 
 Requirements:

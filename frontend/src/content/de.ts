@@ -166,7 +166,7 @@ export const de = {
       'Das Abschicken hat gerade nicht funktioniert. Bitte versuche es noch einmal — deine Angaben bleiben stehen.',
   } satisfies Record<ErrorCode, string>,
 
-  /** DESIGN.md section 32 — fallback for any error code the frontend does not know (API.md) */
+  /** DESIGN.md section 32 — fallback for any error code the applicant form does not know (API.md) */
   unknownError:
     'Das Abschicken hat gerade nicht funktioniert. Bitte versuche es noch einmal — deine Angaben bleiben stehen.',
 
@@ -174,7 +174,6 @@ export const de = {
   a11y: {
     /** Announced via role="status" while the submit request is in flight (section 33) */
     submitting: 'Deine Bewerbung wird abgeschickt.',
-    /** Honeypot field label (section 25a) */
     honeypotLabel: 'Dieses Feld bitte leer lassen',
   },
 
