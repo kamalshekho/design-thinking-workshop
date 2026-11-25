@@ -163,13 +163,15 @@ regardless of whether the email itself was ever lost.
 
 ### A9 — The status flow
 
-`new, in review, intro booked, active, waitlisted, declined` is **our** model.
-The association's real process is unknown to us. *Categorised* is not a status:
-every Application always carries a Category, so it cannot mark a step in the
-flow (superseded, see the staff dashboard issue tracker).
+`new, in review, intro booked, accepted, active, waitlisted, declined` is
+**our** model. The association's real process is unknown to us. *Categorised* is
+not a status: every Application always carries a Category, so it cannot mark a
+step in the flow (superseded, see the staff dashboard issue tracker).
 
 - **Confidence:** low.
-- **Mitigation:** statuses are data rows, renameable without code changes.
+- **Note:** statuses are a Java enum (`ApplicationStatus`), not data rows;
+  renaming or adding a status requires a code change and updating the PostgreSQL
+  check constraint.
 
 ### A25 — Today's intake runs through one inbox, by hand, step by step
 
@@ -429,11 +431,12 @@ and no bcrypt comparison is run on its behalf.
 ### A21 — The demo week is thirteen invented Applications with their history
 
 What the dashboard is demonstrated on is a seeded week: thirteen Applications
-spread across the four Categories (`A7`) and all six statuses (`A9`), some
+spread across the four Categories (`A7`) and all seven statuses (`A9`), some
 owned and some not (`A14`), six of them older than seven days (`A19`), two
-discarded and one discarded and restored (`A16`) — each one carrying the State
-changes that lead to it, dated when they happened. It is seeded only under the
-`demo` profile, and the applicants are invented people at `example.org`.
+discarded and one discarded and restored (`A16`), and one accepted with started
+onboarding (`A32`) — each one carrying the State changes that lead to it, dated
+when they happened. It is seeded only under the `demo` profile, and the
+applicants are invented people at `example.org`.
 
 - **Confidence:** low — our invention throughout. Nothing says what a week at
   the association actually looks like; `A4` says we do not know the volume at
@@ -610,6 +613,32 @@ second.
   result a clear interpretation.
 - **What breaks if wrong:** the result may be too lenient or too strict for
   real traffic. It says nothing about production capacity, write paths or email.
+
+### A32 — The four onboarding steps are our proposal
+
+The association publishes no onboarding procedure of its own, and the current
+rules of its Facebook group are not public. The four rules and four checklist
+steps shown on `/onboarding/<token>` (reading and confirming the rules, joining
+the #ichbinhier Facebook group, completing Level 1 in the Digital Democracy Lab,
+and saving the association's contact addresses) are therefore our proposal,
+assembled from public sources: the ISD report (2018) on "Sachlichkeit und
+Respekt", the association's education overview
+(https://www.ichbinhier.eu/bildung/bildungsformate), the 2020 Telekom interview
+on "No pressure"
+(https://www.telekom.com/de/newsroom/aktuelles/news/2020/08/gemeinsam-gegen-hatespeech-die-sind-laut-aber-wir-sind-viele),
+the action group page (https://www.ichbinhier.eu/engagement/aktionsgruppe), the
+Digital Democracy Lab (https://www.ichbinhier.eu/bildung/digital-democracy-lab),
+and the contact page (https://www.ichbinhier.eu/kontakt).
+
+- **Confidence:** low — assembled from public pages, not confirmed by the
+  association (`C1`).
+- **Why it matters:** it lets an accepted applicant complete the first steps on
+  their own without spending staff time (`A1`).
+- **What breaks if wrong:** if the association has its own onboarding flow — for
+  example an individual conversation before joining the group, or different
+  group rules — the checklist asks applicants to do the wrong steps or skips a
+  required step. The four step IDs are fixed constants in code, so changing the
+  steps requires a code change.
 
 ## Open questions we cannot answer ourselves
 

@@ -336,6 +336,47 @@ There is deliberately no endpoint for reading the next intro session date. The
 category list is the only backend read the form needs in order to render and
 submit.
 
+## Online onboarding
+
+Public endpoints for `/onboarding/<token>`, no Sign-in required. Tokens are
+generated when an Application first enters `ACCEPTED` and stay valid while its
+Status is `ACCEPTED` or `ACTIVE` and `discardedAt` is `null`.
+
+### GET /api/onboarding/{token}
+
+Returns only the applicant's name and the four onboarding steps (`A32`):
+
+```json
+{
+  "name": "Tobias Hoffmann",
+  "steps": [
+    { "id": "RULES", "done": true },
+    { "id": "COMMUNITY_GROUP", "done": true },
+    { "id": "DIGITAL_DEMOCRACY_LAB", "done": false },
+    { "id": "CONTACT", "done": false }
+  ]
+}
+```
+
+No email address, Category or other Application field is returned. An unknown,
+inactive or discarded token answers `404` with `application/problem+json`
+(`code: "NOT_FOUND"`).
+
+### PUT /api/onboarding/{token}/steps/{stepId}
+
+Sets or clears one step (`RULES`, `COMMUNITY_GROUP`, `DIGITAL_DEMOCRACY_LAB`,
+`CONTACT`):
+
+```json
+{ "done": true }
+```
+
+Response: `200 OK` with the updated `{ name, steps }` payload above. Unknown
+`stepId` or missing `done` answers `400` (`VALIDATION_FAILED`); unknown,
+inactive or discarded token answers `404` (`NOT_FOUND`). Checking a step emits
+an `application.updated` SSE event to the dashboard without recording a State
+change.
+
 ## Configuration
 
 The frontend takes one build-time variable:

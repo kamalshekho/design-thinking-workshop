@@ -26,7 +26,7 @@ docker run --rm -v "$PWD/backend":/build -w /build -v ibh-m2:/root/.m2 \
 - **Start**: `docker compose up -d --build` from the root. It needs a `.env` copied from `.env.example` with `DB_PASSWORD` and `STAFF_1_PASSWORD` to `STAFF_5_PASSWORD` set. `SPRING_PROFILES_ACTIVE=demo` seeds the demo week of Applications into an empty database.
 - **Ready when**: `docker compose ps` shows `backend`, `frontend` and `dashboard` as `healthy`.
 - **Drive**: `playwright` for the form and the dashboard; `http` for the API, sent through the dashboard's nginx at `http://localhost:8082/api/v1/...`.
-- **URL or entry point**: form `http://localhost:8081`, dashboard `http://localhost:8082`. The backend publishes no port; both nginx containers proxy `/api` to it.
+- **URL or entry point**: form `http://localhost:8081`, dashboard `http://localhost:8082`, Mailpit `http://localhost:8025`. The backend publishes no port; both nginx containers proxy `/api` to it. To trigger an acceptance email, sign in to the dashboard, open an Application, and set its Status to `Angenommen`; the email with the personal `/onboarding/<token>` link arrives in Mailpit (`GET http://localhost:8025/api/v1/messages`).
 - **Test login**: dashboard Sign-in as `ashton.blackwell@ichbinhier.online` with `STAFF_1_PASSWORD` from `.env`.
 - **Setup**: none.
 - **Logs**: `docker compose logs -f <service>`.
