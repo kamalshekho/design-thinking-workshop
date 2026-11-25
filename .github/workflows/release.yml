@@ -17,13 +17,14 @@ permissions: {}
 
 jobs:
   checks:
-    uses: ./.github/workflows/ci.yml
+    # The '$/' self-repository form is newer than the actionlint pinned in ci.yml.
+    uses: ./.github/workflows/ci.yml # zizmor: ignore[self-repository]
     permissions:
       contents: read
       pull-requests: read
 
   backend:
-    uses: ./.github/workflows/backend.yml
+    uses: ./.github/workflows/backend.yml # zizmor: ignore[self-repository]
     permissions:
       contents: read
       # backend.yml asks for it to comment coverage on a pull request. A tag
