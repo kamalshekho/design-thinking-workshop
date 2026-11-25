@@ -12,50 +12,152 @@ diese Annahme (#198).
 
 ## Auf einen Blick
 
+Wir haben eine Testkopie der Anwendung so lange stärker belastet, bis etwas
+langsam wurde oder Fehler zeigte. Dann haben wir die Ursache behoben und
+denselben Test wiederholt.
+
 ```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 250, "nodeSpacing": 30, "rankSpacing": 45}}}%%
-flowchart TB
-    start["<b>Was wir geprüft haben</b><br/>Wir haben auf einer Testkopie der Anwendung sehr viele Nutzer gleichzeitig nachgestellt: Menschen, die sich bewerben, und Teammitglieder, die das Dashboard offen haben. Echte Daten waren nicht beteiligt, es wurden keine E-Mails verschickt."]
+---
+title: So haben wir die Belastbarkeit geprüft
+config:
+  theme: base
+  themeVariables:
+    fontSize: "15px"
+    primaryColor: "#eef3fb"
+    primaryBorderColor: "#3b6db3"
+    primaryTextColor: "#1b2f4d"
+    lineColor: "#5b6b7c"
+    edgeLabelBackground: "#ffffff"
+  flowchart:
+    wrappingWidth: 230
+    curve: basis
+---
+flowchart LR
+    %% One loop: load the copy, find what breaks, fix it, run the same test again.
+    start([Testkopie starten<br/>ohne echte Daten,<br/>ohne E-Mails])
+    load[Viele Nutzer gleichzeitig nachstellen]
+    check{Schnell und<br/>fehlerfrei?}
+    pass([Bestanden])
+    cause[Ursache suchen]
+    fix[Ursache beheben]
 
-    subgraph r1["1 · Bewerbung abschicken"]
-        direction LR
-        p1["<b>Gefunden</b><br/>Bei jeder neuen Bewerbung ging das System alle bisherigen Bewerbungen einzeln durch, wie beim Suchen in einem Ordner ohne Register. Je mehr Bewerbungen, desto langsamer."]
-        f1["<b>Behoben</b><br/>Ein Register, wie im Telefonbuch: Das System springt direkt zur richtigen Stelle."]
-        e1["<b>Ergebnis</b><br/>vorher: in Spitzenzeiten rund 4 Sekunden Wartezeit<br/>nachher: unter 0,01 Sekunden"]
-        p1 --> f1 --> e1
-    end
+    start --> load --> check
+    check -->|Ja| pass
+    check -->|"Nein: 3 Lücken,<br/>siehe unten"| cause
+    cause --> fix
+    fix -->|Test wiederholen| load
 
-    subgraph r2["2 · Dashboard öffnen"]
-        direction LR
-        p2["<b>Gefunden</b><br/>Für jede Anfrage wurde eine neue Leitung zum Server aufgebaut und danach weggeworfen. Bei viel Betrieb gingen die Leitungen aus."]
-        f2["<b>Behoben</b><br/>Die Leitungen bleiben offen und werden wiederverwendet."]
-        e2["<b>Ergebnis</b><br/>vorher: jede zweite Anfrage scheiterte<br/>nachher: keine Fehler"]
-        p2 --> f2 --> e2
-    end
+    classDef ok fill:#e8f6ec,stroke:#1e8449,color:#14482a
+    classDef bad fill:#fdecea,stroke:#c0392b,color:#6e1f17
+    classDef work fill:#fff7e0,stroke:#c9a227,color:#5a4508
+    class pass ok
+    class cause bad
+    class fix work
+```
 
-    subgraph r3["3 · Dashboard offen lassen"]
-        direction LR
-        p3["<b>Gefunden</b><br/>Für jedes offene Dashboard stellte der Server einen eigenen Helfer ab, der regelmäßig meldet: Die Verbindung steht noch. 1.000 offene Dashboards hielten 1.000 Helfer beschäftigt."]
-        f3["<b>Behoben</b><br/>Ein einziger Helfer meldet es allen Dashboards gleichzeitig."]
-        e3["<b>Ergebnis</b><br/>vorher: 1.000 Helfer für 1.000 Dashboards<br/>nachher: 1 Helfer, und der Server braucht ein Drittel weniger Speicher"]
-        p3 --> f3 --> e3
-    end
+Dabei kamen drei Lücken ans Licht. Jede Zeile liest sich von links nach rechts:
+die Situation, das Problem, die Lösung und das Ergebnis.
 
-    start --> r1
-    r1 ~~~ r2
-    r2 ~~~ r3
+```mermaid
+---
+title: "Lücke 1: Bewerbung abschicken"
+config:
+  theme: base
+  themeVariables:
+    fontSize: "15px"
+    primaryColor: "#eef3fb"
+    primaryBorderColor: "#3b6db3"
+    primaryTextColor: "#1b2f4d"
+    lineColor: "#5b6b7c"
+    edgeLabelBackground: "#ffffff"
+  flowchart:
+    wrappingWidth: 230
+    curve: basis
+---
+flowchart LR
+    %% Situation, problem, fix, result: read from left to right.
+    s([Viele Menschen schicken gleichzeitig eine Bewerbung ab])
+    p["<b>Problem</b><br/>Bei jeder neuen Bewerbung ging das System alle bisherigen Bewerbungen einzeln durch, wie die Suche in einem Ordner ohne Register. Je mehr Bewerbungen, desto langsamer."]
+    l["<b>Lösung</b><br/>Ein Register wie im Telefonbuch: Das System springt direkt zur richtigen Stelle."]
+    r(["<b>Ergebnis</b><br/>vorher: rund 4 Sekunden Wartezeit<br/>nachher: unter 0,01 Sekunden"])
+    s --> p --> l --> r
 
-    classDef intro fill:#eef3fb,stroke:#3b6db3,color:#1b2f4d
-    classDef found fill:#fdecea,stroke:#c0392b,color:#6e1f17
-    classDef fixed fill:#fff7e0,stroke:#c9a227,color:#5a4508
-    classDef result fill:#e8f6ec,stroke:#1e8449,color:#14482a
-    class start intro
-    class p1,p2,p3 found
-    class f1,f2,f3 fixed
-    class e1,e2,e3 result
-    style r1 fill:#fafbfc,stroke:#c3cbd3
-    style r2 fill:#fafbfc,stroke:#c3cbd3
-    style r3 fill:#fafbfc,stroke:#c3cbd3
+    classDef situation fill:#eef3fb,stroke:#3b6db3,color:#1b2f4d
+    classDef bad fill:#fdecea,stroke:#c0392b,color:#6e1f17
+    classDef work fill:#fff7e0,stroke:#c9a227,color:#5a4508
+    classDef ok fill:#e8f6ec,stroke:#1e8449,color:#14482a
+    class s situation
+    class p bad
+    class l work
+    class r ok
+```
+
+```mermaid
+---
+title: "Lücke 2: Dashboard öffnen"
+config:
+  theme: base
+  themeVariables:
+    fontSize: "15px"
+    primaryColor: "#eef3fb"
+    primaryBorderColor: "#3b6db3"
+    primaryTextColor: "#1b2f4d"
+    lineColor: "#5b6b7c"
+    edgeLabelBackground: "#ffffff"
+  flowchart:
+    wrappingWidth: 230
+    curve: basis
+---
+flowchart LR
+    %% Situation, problem, fix, result: read from left to right.
+    s([Viele Teammitglieder laden gleichzeitig das Dashboard])
+    p["<b>Problem</b><br/>Für jede Anfrage wurde eine neue Leitung zum Server aufgebaut und danach weggeworfen. Bei viel Betrieb gingen die Leitungen aus."]
+    l["<b>Lösung</b><br/>Die Leitungen bleiben offen und werden wiederverwendet."]
+    r(["<b>Ergebnis</b><br/>vorher: jede zweite Anfrage scheiterte<br/>nachher: keine Fehler"])
+    s --> p --> l --> r
+
+    classDef situation fill:#eef3fb,stroke:#3b6db3,color:#1b2f4d
+    classDef bad fill:#fdecea,stroke:#c0392b,color:#6e1f17
+    classDef work fill:#fff7e0,stroke:#c9a227,color:#5a4508
+    classDef ok fill:#e8f6ec,stroke:#1e8449,color:#14482a
+    class s situation
+    class p bad
+    class l work
+    class r ok
+```
+
+```mermaid
+---
+title: "Lücke 3: Dashboard offen lassen"
+config:
+  theme: base
+  themeVariables:
+    fontSize: "15px"
+    primaryColor: "#eef3fb"
+    primaryBorderColor: "#3b6db3"
+    primaryTextColor: "#1b2f4d"
+    lineColor: "#5b6b7c"
+    edgeLabelBackground: "#ffffff"
+  flowchart:
+    wrappingWidth: 230
+    curve: basis
+---
+flowchart LR
+    %% Situation, problem, fix, result: read from left to right.
+    s([1.000 Dashboards sind gleichzeitig offen])
+    p["<b>Problem</b><br/>Für jedes offene Dashboard stellte der Server einen eigenen Helfer ab, der regelmäßig meldet: Die Verbindung steht noch."]
+    l["<b>Lösung</b><br/>Ein einziger Helfer meldet es allen Dashboards gleichzeitig."]
+    r(["<b>Ergebnis</b><br/>vorher: 1.000 Helfer<br/>nachher: 1 Helfer, ein Drittel weniger Speicher"])
+    s --> p --> l --> r
+
+    classDef situation fill:#eef3fb,stroke:#3b6db3,color:#1b2f4d
+    classDef bad fill:#fdecea,stroke:#c0392b,color:#6e1f17
+    classDef work fill:#fff7e0,stroke:#c9a227,color:#5a4508
+    classDef ok fill:#e8f6ec,stroke:#1e8449,color:#14482a
+    class s situation
+    class p bad
+    class l work
+    class r ok
 ```
 
 ## Kurzfassung
