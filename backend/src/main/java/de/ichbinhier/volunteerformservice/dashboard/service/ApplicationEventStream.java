@@ -152,7 +152,7 @@ public class ApplicationEventStream {
      * every later heartbeat, so whatever one connection throws only drops that
      * connection.
      */
-    private void heartbeat() {
+    void heartbeat() {
         for (SseEmitter emitter : emitters) {
             try {
                 write(emitter, SseEmitter.event().comment("heartbeat"));
