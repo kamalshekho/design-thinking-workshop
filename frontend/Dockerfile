@@ -3,7 +3,7 @@
 # Build this image where the working tree is complete — the build copies
 # public/ as it exists on disk, and a fresh checkout does not carry everything
 # that belongs there.
-FROM docker.io/library/node:24-alpine AS build
+FROM docker.io/library/node:26-alpine AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
