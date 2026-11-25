@@ -12,8 +12,52 @@ diese Annahme (#198).
 
 ## Auf einen Blick
 
-Wir haben eine Testkopie der Anwendung so lange stärker belastet, bis etwas
-langsam wurde oder Fehler zeigte. Dann haben wir die Ursache behoben und
+Zuerst lief ein kleiner Test gegen das Formular. Er hat bestanden, war aber zu
+klein, um Grenzen zu finden.
+
+```mermaid
+---
+title: "Erster Test: Liste der Bereiche laden"
+config:
+  theme: base
+  themeVariables:
+    fontSize: "15px"
+    primaryColor: "#eef3fb"
+    primaryBorderColor: "#3b6db3"
+    primaryTextColor: "#1b2f4d"
+    lineColor: "#5b6b7c"
+    edgeLabelBackground: "#ffffff"
+  flowchart:
+    wrappingWidth: 230
+    curve: basis
+---
+flowchart LR
+    %% The first, small run with load-test/categories.js, from the screenshot of 25.11.2026.
+    s(["<b>Situation</b><br/>10 Nutzer öffnen 30 Sekunden lang immer wieder das Bewerbungsformular"])
+    t["<b>Geprüft</b><br/>Lädt das Formular die Liste der Bereiche, in denen man helfen kann? Kommt jede Antwort vollständig an?"]
+    c{"Alle Grenzen<br/>eingehalten?"}
+    r(["<b>Ergebnis: bestanden</b><br/>255 Anfragen, keine Fehler<br/>95 % der Antworten in unter 0,03 Sekunden<br/>erlaubt war 1 Sekunde"])
+    n["<b>Was er nicht zeigt</b><br/>Bei 8 Anfragen pro Sekunde war der Server kaum gefordert. Wo seine Grenzen liegen, blieb offen. Deshalb folgten die größeren Tests unten."]
+    s --> t --> c
+    c -->|Ja| r
+    r -.-> n
+
+    classDef situation fill:#eef3fb,stroke:#3b6db3,color:#1b2f4d
+    classDef ok fill:#e8f6ec,stroke:#1e8449,color:#14482a
+    classDef note fill:#f4f6f8,stroke:#8a96a3,color:#2b3540,stroke-dasharray:4 3
+    class s,t situation
+    class r ok
+    class n note
+```
+
+Technisch: `categories.js` ruft `GET /api/v1/categories` über nginx auf, mit
+10 virtuellen Nutzern und einer Sekunde Pause zwischen den Anfragen (`A31`).
+Der Lauf vom 25.11.2026 hatte 255 Anfragen, 8,4 Anfragen pro Sekunde, 0 %
+Fehler, alle 510 Prüfungen bestanden und p95 27,41 ms bei einer Schwelle von
+1 s. Das Beispiel in `README.md` stammt aus einem anderen Lauf (p95 15,94 ms).
+
+Danach haben wir eine Testkopie der Anwendung so lange stärker belastet, bis
+etwas langsam wurde oder Fehler zeigte. Dann haben wir die Ursache behoben und
 denselben Test wiederholt.
 
 ```mermaid
