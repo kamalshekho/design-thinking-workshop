@@ -1,9 +1,12 @@
 import { ESLint } from 'eslint';
 import { describe, expect, it } from 'vitest';
 
-const DASHBOARD_ROOT = new URL('../..', import.meta.url).pathname
-  .replace(/^\/@fs/, '')
-  .replace(/\/$/, '');
+// Vite rewrites `new URL('<literal>', import.meta.url)` into a served asset
+// URL, so the root is cut from this module's own path instead.
+const DASHBOARD_ROOT = new URL(import.meta.url).pathname.replace(
+  /\/src\/test\/[^/]+$/,
+  '',
+);
 
 const RULE_ID = 'better-tailwindcss/no-restricted-classes';
 
