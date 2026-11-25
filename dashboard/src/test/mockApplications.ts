@@ -63,10 +63,16 @@ export const mockOwners: Owner[] = [
 
 type Seed = Omit<
   Application,
-  'id' | 'submittedAt' | 'consentAt' | 'consentTextVersion' | 'discardedAt'
+  | 'id'
+  | 'submittedAt'
+  | 'consentAt'
+  | 'consentTextVersion'
+  | 'discardedAt'
+  | 'onboarding'
 > & {
   /** Whole days before the reference date the Application arrived. */
   daysAgo: number;
+  onboarding?: Application['onboarding'];
 };
 
 const seeds: Seed[] = [
@@ -110,11 +116,16 @@ const seeds: Seed[] = [
     email: 'tobias.hoffmann@example.org',
     categoryId: 'social-media',
     weeklyTime: 'HOURS_3_5',
-    status: 'INTRO_BOOKED',
+    status: 'ACCEPTED',
     ownerId: 'staff-2',
     about: 'Ich bin über Instagram auf euch gestoßen.',
-    internalNotes: 'Info-Runde am 12.09.',
+    internalNotes: 'Angenommen — Onboarding läuft.',
     daysAgo: 5,
+    onboarding: {
+      link: 'http://localhost:8081/onboarding/demo-onboarding-token',
+      doneSteps: 2,
+      totalSteps: 4,
+    },
   },
   {
     name: 'Aylin Demir',
@@ -167,7 +178,7 @@ const seeds: Seed[] = [
  * something to show whenever the prototype is opened.
  */
 export function createMockApplications(now: Date): Application[] {
-  return seeds.map(({ daysAgo, ...seed }, index) => {
+  return seeds.map(({ daysAgo, onboarding = null, ...seed }, index) => {
     const submittedAt = new Date(
       now.getTime() - daysAgo * MILLISECONDS_PER_DAY,
     ).toISOString();
@@ -181,6 +192,7 @@ export function createMockApplications(now: Date): Application[] {
       discardedAt: null,
       consentAt: submittedAt,
       consentTextVersion: '2026-09',
+      onboarding,
     };
   });
 }

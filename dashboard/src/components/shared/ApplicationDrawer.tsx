@@ -33,7 +33,7 @@
 
 import { Check, ChevronDown, Copy01, Mail01 } from '@untitledui/icons';
 import type { ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { STATUS_DOT_CLASSNAME } from '@/components/application/application-status/statusStyles';
 import { Button } from '@/components/base/buttons/button';
@@ -48,12 +48,14 @@ import {
 } from '@/domain/application';
 import type { Category } from '@/domain/category';
 import { useCloseOnEscape } from '@/hooks/useCloseOnEscape';
+import { useCopyFeedback } from '@/hooks/useCopyFeedback';
 import { cx } from '@/utils/cx';
 
 import {
   ConsentSection,
   MessageSection,
   NotesSection,
+  OnboardingSection,
   SectionLabel,
 } from './ApplicationDetailSections';
 import { CONTROL_CLASSNAME } from './controlStyles';
@@ -77,9 +79,6 @@ export type ApplicationDrawerProps = {
   notesValue: string;
   onNotesChange: (text: string) => void;
 };
-
-/** How long "Kopiert" stays on the copy button before it reverts. */
-const COPY_FEEDBACK_MS = 1800;
 
 const SELECT_CLASSNAME = cx(
   CONTROL_CLASSNAME,
@@ -118,12 +117,11 @@ export function ApplicationDrawer({
   notesValue,
   onNotesChange,
 }: ApplicationDrawerProps) {
-  /**
-   * The address that was copied, not a flag: opening another Application then
-   * shows the plain label again without an effect that resets it.
-   */
-  const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
-  const copied = copiedEmail === application.email;
+  const { copied, copy: copyEmail } = useCopyFeedback(application.email);
+
+  const { copied: copiedOnboarding, copy: copyOnboardingLink } =
+    useCopyFeedback(application.onboarding?.link ?? null);
+
   const panelRef = useRef<HTMLElement>(null);
 
   const category = categories.find(
@@ -138,26 +136,6 @@ export function ApplicationDrawer({
   useEffect(() => {
     panelRef.current?.focus({ preventScroll: true });
   }, [application.id]);
-
-  /** The copy confirmation reverts on its own, and never outlives the panel. */
-  useEffect(() => {
-    if (!copied) {
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      setCopiedEmail(null);
-    }, COPY_FEEDBACK_MS);
-
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [copied]);
-
-  function copyEmail(): void {
-    void navigator.clipboard.writeText(application.email);
-    setCopiedEmail(application.email);
-  }
 
   return (
     <aside
@@ -272,6 +250,8 @@ export function ApplicationDrawer({
                 onChange({ ownerId });
               }}
             />
+
+            <OnboardingSection application={application} />
           </div>
         </section>
 
@@ -285,7 +265,7 @@ export function ApplicationDrawer({
         <ConsentSection application={application} className="mt-7" />
       </div>
 
-      <div className="border-secondary bg-primary flex shrink-0 items-center gap-2 border-t px-6 py-4">
+      <div className="border-secondary bg-primary flex shrink-0 flex-wrap items-center gap-2 border-t px-6 py-4">
         <Button
           size="md"
           color="primary"
@@ -304,6 +284,18 @@ export function ApplicationDrawer({
         >
           {copied ? de.detail.copied : de.detail.copyMailShort}
         </Button>
+        {application.onboarding !== null ? (
+          <Button
+            size="md"
+            color="secondary"
+            aria-label={de.detail.copyOnboardingLink}
+            iconLeading={copiedOnboarding ? Check : Copy01}
+            onPress={copyOnboardingLink}
+            className="w-full"
+          >
+            {copiedOnboarding ? de.detail.copied : de.detail.copyOnboardingLink}
+          </Button>
+        ) : null}
       </div>
     </aside>
   );

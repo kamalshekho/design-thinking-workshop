@@ -280,6 +280,7 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
         }
 
         const { discarded, ...edit } = body;
+        const nextStatus = (edit as Partial<Application>).status;
 
         const updated: Application = {
           ...application,
@@ -290,6 +291,14 @@ export function stubApi(overrides: Partial<StubbedApi> = {}): StubbedApi {
               : discarded
                 ? REFERENCE_DATE.toISOString()
                 : null,
+          onboarding:
+            nextStatus === 'ACCEPTED' && application.onboarding === null
+              ? {
+                  link: `http://localhost:8081/onboarding/stub-${application.id}`,
+                  doneSteps: 0,
+                  totalSteps: 4,
+                }
+              : application.onboarding,
         };
 
         api.applications = api.applications.map((row) =>

@@ -34,6 +34,12 @@ import { request, requestNoContent } from './transport';
  * Exported because `queries/applicationEvents.ts` validates live-stream
  * events against the exact same schema (`API.md`).
  */
+const onboardingWireSchema = z.object({
+  link: z.string(),
+  doneSteps: z.number(),
+  totalSteps: z.number(),
+});
+
 export const applicationWireSchema = z.object({
   id: z.string(),
   categoryId: z.string(),
@@ -48,6 +54,7 @@ export const applicationWireSchema = z.object({
   consentAt: z.string(),
   consentTextVersion: z.string(),
   submittedAt: z.string(),
+  onboarding: z.nullable(onboardingWireSchema),
 });
 
 const applicationsResponseSchema = z.object({

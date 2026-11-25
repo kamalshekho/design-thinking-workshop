@@ -9,6 +9,7 @@ export const APPLICATION_STATUSES = [
   'NEW',
   'IN_REVIEW',
   'INTRO_BOOKED',
+  'ACCEPTED',
   'ACTIVE',
   'WAITLISTED',
   'DECLINED',
@@ -63,6 +64,12 @@ export type Owner = {
   name: string;
 };
 
+type ApplicationOnboarding = {
+  link: string;
+  doneSteps: number;
+  totalSteps: number;
+};
+
 export type Application = {
   id: string;
   name: string;
@@ -95,6 +102,8 @@ export type Application = {
   consentAt: string;
   /** Which wording of the consent text they agreed to, e.g. `2026-09`. */
   consentTextVersion: string;
+  /** Online onboarding link and progress once accepted, or `null` before then. */
+  onboarding: ApplicationOnboarding | null;
 };
 
 /**

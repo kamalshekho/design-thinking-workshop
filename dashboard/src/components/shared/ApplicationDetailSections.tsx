@@ -48,6 +48,27 @@ export function SectionLabel({
   );
 }
 
+/** Online onboarding progress once the Application has been accepted. */
+export function OnboardingSection({
+  application,
+  className,
+}: {
+  application: Application;
+  className?: string;
+}) {
+  if (application.onboarding === null) {
+    return null;
+  }
+
+  const { doneSteps, totalSteps } = application.onboarding;
+
+  return (
+    <p className={cx('text-secondary text-body-sm font-medium', className)}>
+      {de.detail.onboardingProgress(doneSteps, totalSteps)}
+    </p>
+  );
+}
+
 /** What the Applicant wrote about themselves. */
 export function MessageSection({
   application,

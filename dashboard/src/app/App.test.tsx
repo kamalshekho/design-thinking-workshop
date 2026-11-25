@@ -1143,6 +1143,7 @@ describe('App', () => {
         consentAt: at,
         consentTextVersion: '2026-09',
         submittedAt: at,
+        onboarding: null,
       };
     }
 

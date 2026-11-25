@@ -144,6 +144,10 @@
   --color-utility-blue-200: #b3cff5;
   --color-utility-blue-500: #6386af;
   --color-utility-blue-700: #1f4f9c;
+  --color-utility-sky-50: #e6f5fa;
+  --color-utility-sky-200: #aedbed;
+  --color-utility-sky-500: #2b82a6;
+  --color-utility-sky-700: #165e7d;
 
   /* BACKGROUND PROPERTY COLORS */
   --background-color-primary: var(--color-bg-primary);
