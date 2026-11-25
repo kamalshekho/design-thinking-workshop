@@ -6,6 +6,7 @@ import {
   pickFirstCategoryValue,
   signInAsStaff,
   STAFF_NAME,
+  waitForAcceptanceOnboardingUrl,
   waitForFormCategories,
 } from './helpers';
 
@@ -98,6 +99,19 @@ test('A29: applicant submits application and staff takes ownership and updates s
         .getByRole('radiogroup', { name: 'Status' })
         .getByRole('radio', { name: 'In Prüfung' }),
     ).toHaveAttribute('aria-checked', 'true');
+
+    const acceptedPatch = waitForApplicationPatch(page);
+    await reloadedDetail
+      .getByRole('radiogroup', { name: 'Status' })
+      .getByRole('radio', { name: 'Angenommen' })
+      .click();
+    await acceptedPatch;
+    await expect(
+      reloadedDetail.getByText('Onboarding: 0 von 4 Schritten'),
+    ).toBeVisible();
+    await expect(
+      reloadedDetail.getByRole('button', { name: 'Onboarding-Link kopieren' }),
+    ).toBeVisible();
   } else {
     const drawer = page.getByRole('complementary', { name: 'Anfrage' });
     await expect(drawer).toBeVisible();
@@ -124,6 +138,58 @@ test('A29: applicant submits application and staff takes ownership and updates s
     await expect(
       reloadedDrawer.getByRole('button', { name: /Zuständig/ }),
     ).toContainText(STAFF_NAME);
-    await expect(reloadedDrawer.getByLabel('Status')).toHaveValue('IN_REVIEW');
+    const reloadedStatus = reloadedDrawer.getByLabel('Status');
+    await expect(reloadedStatus).toHaveValue('IN_REVIEW');
+
+    const acceptedPatch = waitForApplicationPatch(page);
+    await reloadedStatus.selectOption('ACCEPTED');
+    await acceptedPatch;
+    await expect(
+      reloadedDrawer.getByText('Onboarding: 0 von 4 Schritten'),
+    ).toBeVisible();
+    await expect(
+      reloadedDrawer.getByRole('button', { name: 'Onboarding-Link kopieren' }),
+    ).toBeVisible();
   }
+
+  const onboardingUrl = await waitForAcceptanceOnboardingUrl(applicantEmail);
+  const onboardingPage = await page.context().newPage();
+  await onboardingPage.goto(onboardingUrl);
+
+  await expect(
+    onboardingPage.getByRole('heading', {
+      name: `Willkommen, ${applicantName}!`,
+    }),
+  ).toBeVisible({ timeout: 15_000 });
+  await expect(onboardingPage.getByText('0 von 4 erledigt')).toBeVisible();
+
+  const checkboxes = onboardingPage.getByRole('checkbox');
+  await expect(checkboxes).toHaveCount(4);
+
+  for (let i = 0; i < 4; i++) {
+    const stepPut = onboardingPage.waitForResponse(
+      (res) =>
+        res.request().method() === 'PUT' &&
+        res.url().includes('/api/onboarding/') &&
+        res.ok(),
+    );
+    await checkboxes.nth(i).check();
+    await stepPut;
+  }
+
+  await expect(onboardingPage.getByText('4 von 4 erledigt')).toBeVisible();
+  await onboardingPage.close();
+
+  // Dashboard updates live via SSE without reloading
+  await expect(
+    page.getByText('Onboarding: 4 von 4 Schritten'),
+  ).toBeVisible({ timeout: 15_000 });
+
+  // Invalid onboarding link shows error page
+  await page.goto(`${FORM_URL}/onboarding/invalid-link-does-not-exist`);
+  await expect(
+    page.getByText(
+      'Dieser Link ist nicht mehr gültig. Schreib uns an info@ichbinhier.online.',
+    ),
+  ).toBeVisible({ timeout: 15_000 });
 });
