@@ -25,6 +25,12 @@ import {
 
 import { request, requestNoContent } from './transport';
 
+const onboardingWireSchema = z.object({
+  link: z.string(),
+  doneSteps: z.number(),
+  totalSteps: z.number(),
+});
+
 /**
  * The wire shape, validated at the transport boundary. Field for field the
  * domain type, because issue #27 moved the dashboard's own names onto the
@@ -34,12 +40,6 @@ import { request, requestNoContent } from './transport';
  * Exported because `queries/applicationEvents.ts` validates live-stream
  * events against the exact same schema (`API.md`).
  */
-const onboardingWireSchema = z.object({
-  link: z.string(),
-  doneSteps: z.number(),
-  totalSteps: z.number(),
-});
-
 export const applicationWireSchema = z.object({
   id: z.string(),
   categoryId: z.string(),
