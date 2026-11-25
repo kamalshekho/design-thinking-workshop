@@ -93,10 +93,13 @@ export function ApplicationForm() {
             required
           >
             {(aria) => (
+              // Controlled so the field always shows `route`: every
+              // placeholder is disabled, and an uncontrolled select whose
+              // options swap on load falls back to the first enabled option.
               <Select
-                defaultValue=""
                 disabled={categoriesState.status !== 'loaded'}
                 required
+                value={route}
                 {...routeControl}
                 {...aria}
               >
