@@ -43,3 +43,61 @@ HTTP-Anfrage schlug fehl, und alle 510 Prüfungen bestanden. Das 95. Perzentil
 der Antwortzeit lag bei 15,94 Millisekunden. Die mittlere Anfragerate lag bei
 etwa 8,4 Anfragen pro Sekunde. Dieses Ergebnis gehört zu genau diesem lokalen
 Lauf und ist keine Zusage für einen produktiven Betrieb.
+
+## Stress- und Spike-Tests (#198)
+
+Drei weitere Skripte suchen die Grenzen der Anwendung. Die Ergebnisse stehen
+in [`RESULTS.md`](./RESULTS.md).
+
+| Skript | Was es misst |
+| --- | --- |
+| `form.js` | Kategorien laden, dann eine Bewerbung senden, jede mit neuer `submissionId` und neuer Adresse |
+| `dashboard.js` | Bewerbungsliste, Kategorien und Änderungen, wie das Dashboard sie lädt |
+| `events.js` | viele offene Live-Streams gleichzeitig, dazu eine Messung, ob lesende Anfragen schnell bleiben |
+
+`TEST_TYPE` wählt die Form der Last für `form.js` und `dashboard.js`:
+`smoke` (ein Nutzer, 30 s), `stress` (in vier Stufen bis `RATE` Iterationen
+pro Sekunde) oder `spike` (in 10 s von `RATE / 20` auf `RATE`). `events.js`
+nimmt stattdessen `STREAMS` (Zahl der Streams) und `HOLD` (wie lange jeder
+offen bleibt). Load und Soak fehlen, bis es eine Annahme zur erwarteten Last
+gibt.
+
+### Eigener Stack
+
+Diese Tests schreiben Zehntausende Bewerbungen. Sie laufen deshalb nie gegen
+den Demo-Stack, sondern gegen einen eigenen Stack mit eigener Datenbank, ohne
+Ports auf dem Rechner. Dafür eine eigene Env-Datei mit neuen Passwörtern
+außerhalb des Repos anlegen, mit leerem `RESEND_API_KEY` und
+`SPRING_PROFILES_ACTIVE=demo`, und dann:
+
+```sh
+docker compose -p dtw-load -f docker-compose.yml -f load-test/compose.load.yml \
+  --env-file ../load.env up -d --build --wait
+```
+
+`compose.load.yml` braucht Docker Compose 2.24 oder neuer (`!reset`).
+
+### Starten
+
+k6 läuft als Container im Netz des Stacks, eine Installation ist nicht nötig:
+
+```sh
+docker run --rm --network dtw-load_default -v "$PWD/load-test":/scripts:ro \
+  -e BASE_URL=http://backend:8080 -e TEST_TYPE=stress -e RATE=800 \
+  grafana/k6 run /scripts/form.js
+```
+
+- `form.js` gegen `http://backend:8080` misst das Backend. Gegen
+  `http://frontend:8080` greift die Grenze von nginx (zehn Bewerbungen pro
+  Adresse sofort, dann eine pro Minute); dafür `EXPECT_LIMIT=1` setzen, damit
+  429 als erwartete Antwort zählt.
+- `dashboard.js` und `events.js` laufen gegen `http://dashboard:8080` und
+  brauchen `STAFF_PASSWORD` (und optional `STAFF_EMAIL`) eines Teammitglieds
+  aus der Env-Datei des Stacks.
+
+Danach den Stack mit seinen Daten entfernen:
+
+```sh
+docker compose -p dtw-load -f docker-compose.yml -f load-test/compose.load.yml \
+  --env-file ../load.env down -v
+```

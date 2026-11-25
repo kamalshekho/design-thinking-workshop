@@ -3,7 +3,13 @@ package de.ichbinhier.volunteerformservice.dashboard.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.http.MediaType;
@@ -28,9 +34,14 @@ import lombok.RequiredArgsConstructor;
  *
  * <p>Requests are served by many threads, so the registry and the event
  * counter are touched concurrently, and two threads can reach the same
- * connection at once — a broadcast and that connection's own heartbeat. Hence
- * the copy-on-write registry, the atomic counter, and one lock per emitter
- * around the write itself.
+ * connection at once — a broadcast and the heartbeat. Hence the copy-on-write
+ * registry, the atomic counter, and one lock per emitter around the write
+ * itself.
+ *
+ * <p>One scheduler thread sends the heartbeat to every open connection. A
+ * thread per connection held a platform thread for each open dashboard: the
+ * load test in `load-test/RESULTS.md` measured 1,000 open streams as 1,244 JVM
+ * threads.
  */
 @Component
 @RequiredArgsConstructor
@@ -46,10 +57,25 @@ public class ApplicationEventStream {
 
     private final AtomicLong eventCounter = new AtomicLong();
 
+    private final ScheduledExecutorService heartbeats = Executors.newSingleThreadScheduledExecutor(
+            Thread.ofPlatform().name("dashboard-heartbeat").daemon().factory());
+
+    @PostConstruct
+    void startHeartbeats() {
+        heartbeats.scheduleAtFixedRate(this::heartbeat,
+                HEARTBEAT_INTERVAL_MILLIS, HEARTBEAT_INTERVAL_MILLIS, TimeUnit.MILLISECONDS);
+    }
+
+    @PreDestroy
+    void stopHeartbeats() {
+        heartbeats.shutdownNow();
+    }
+
     /**
      * A fresh connection, registered and kept alive by a comment heartbeat
      * every 20 seconds — which also makes a dead network visible in seconds
-     * rather than at the timeout.
+     * rather than at the timeout. The first heartbeat goes out at once, so the
+     * response headers reach the dashboard without waiting for an event.
      */
     public SseEmitter open() {
         SseEmitter emitter = new SseEmitter(CONNECTION_TIMEOUT_MILLIS);
@@ -59,7 +85,7 @@ public class ApplicationEventStream {
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError(failure -> emitters.remove(emitter));
 
-        Thread.ofPlatform().name("dashboard-heartbeat").daemon().start(() -> heartbeat(emitter));
+        write(emitter, SseEmitter.event().comment("heartbeat"));
         return emitter;
     }
 
@@ -121,16 +147,18 @@ public class ApplicationEventStream {
         }
     }
 
-    private void heartbeat(SseEmitter emitter) {
-        try {
-            while (emitters.contains(emitter)) {
-                if (!write(emitter, SseEmitter.event().comment("heartbeat"))) {
-                    return;
-                }
-                Thread.sleep(HEARTBEAT_INTERVAL_MILLIS);
+    /**
+     * Runs on the scheduler thread. An exception escaping here would cancel
+     * every later heartbeat, so whatever one connection throws only drops that
+     * connection.
+     */
+    private void heartbeat() {
+        for (SseEmitter emitter : emitters) {
+            try {
+                write(emitter, SseEmitter.event().comment("heartbeat"));
+            } catch (RuntimeException failure) {
+                emitters.remove(emitter);
             }
-        } catch (InterruptedException interrupted) {
-            Thread.currentThread().interrupt();
         }
     }
 
