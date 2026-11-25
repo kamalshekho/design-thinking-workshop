@@ -25,6 +25,12 @@ import {
 
 import { request, requestNoContent } from './transport';
 
+const onboardingWireSchema = z.object({
+  link: z.string(),
+  doneSteps: z.number(),
+  totalSteps: z.number(),
+});
+
 /**
  * The wire shape, validated at the transport boundary. Field for field the
  * domain type, because issue #27 moved the dashboard's own names onto the
@@ -48,6 +54,7 @@ export const applicationWireSchema = z.object({
   consentAt: z.string(),
   consentTextVersion: z.string(),
   submittedAt: z.string(),
+  onboarding: z.nullable(onboardingWireSchema),
 });
 
 const applicationsResponseSchema = z.object({

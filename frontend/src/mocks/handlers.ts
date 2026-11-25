@@ -11,6 +11,31 @@ import { http, HttpResponse } from 'msw';
 
 const seenSubmissionIds = new Map<string, string>();
 
+export const DEMO_ONBOARDING_TOKEN = 'demo-onboarding-token';
+export const INVALID_ONBOARDING_TOKEN = 'invalid-onboarding-token';
+
+function isBoolean(value: unknown): value is boolean {
+  return typeof value === 'boolean';
+}
+
+const onboardingStepsByToken = new Map<
+  string,
+  { name: string; steps: { id: string; done: boolean }[] }
+>([
+  [
+    DEMO_ONBOARDING_TOKEN,
+    {
+      name: 'Tobias Hoffmann',
+      steps: [
+        { id: 'RULES', done: true },
+        { id: 'COMMUNITY_GROUP', done: true },
+        { id: 'DIGITAL_DEMOCRACY_LAB', done: false },
+        { id: 'CONTACT', done: false },
+      ],
+    },
+  ],
+]);
+
 /** Stable ids so tests can assert against them without reading a response. */
 export const MOCK_CATEGORIES = [
   { id: '11111111-1111-4111-8111-111111111111', label: 'Social Media' },
@@ -59,7 +84,68 @@ export const handlers = [
     '*/api/v1/route-selections',
     () => new HttpResponse(null, { status: 202 }),
   ),
+
+  http.get('*/api/onboarding/:token', ({ params }) => {
+    const token = String(params.token);
+    const entry = onboardingStepsByToken.get(token);
+
+    if (!entry) {
+      return notFoundProblem();
+    }
+
+    return HttpResponse.json(entry);
+  }),
+
+  http.put(
+    '*/api/onboarding/:token/steps/:stepId',
+    async ({ params, request }) => {
+      const token = String(params.token);
+      const stepId = String(params.stepId);
+      const entry = onboardingStepsByToken.get(token);
+
+      if (!entry) {
+        return notFoundProblem();
+      }
+
+      const body = (await request.json()) as { done?: unknown };
+
+      if (!isBoolean(body.done)) {
+        return validationProblem([
+          { field: 'done', code: 'VALIDATION_FAILED' },
+        ]);
+      }
+
+      const stepExists = entry.steps.some((step) => step.id === stepId);
+
+      if (!stepExists) {
+        return validationProblem([{ field: 'stepId', code: 'STEP_UNKNOWN' }]);
+      }
+
+      const doneValue = body.done;
+
+      const updatedSteps = entry.steps.map((step) =>
+        step.id === stepId ? { ...step, done: doneValue } : step,
+      );
+
+      const updated = { ...entry, steps: updatedSteps };
+      onboardingStepsByToken.set(token, updated);
+
+      return HttpResponse.json(updated);
+    },
+  ),
 ];
+
+function notFoundProblem() {
+  return HttpResponse.json(
+    {
+      type: 'https://ichbinhier.eu/problems/not-found',
+      title: 'Not found',
+      status: 404,
+      code: 'NOT_FOUND',
+    },
+    { status: 404, headers: { 'Content-Type': 'application/problem+json' } },
+  );
+}
 
 /** A 400 shaped like RFC 9457, for exercising server-side field errors. */
 export function validationProblem(errors: { field: string; code: string }[]) {

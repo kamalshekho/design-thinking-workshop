@@ -117,3 +117,51 @@ test('dashboard screens pass axe accessibility checks', async ({
   ).toBeVisible();
   await auditPage(page, testInfo, 'dashboard-discarded');
 });
+
+test('onboarding page passes axe accessibility checks', async ({
+  page,
+}, testInfo) => {
+  await page.goto(`${FORM_URL}/onboarding/invalid-token-a11y`);
+  await expect(
+    page.getByText(
+      'Dieser Link ist nicht mehr gültig. Schreib uns an info@ichbinhier.online.',
+    ),
+  ).toBeVisible({ timeout: 15_000 });
+  await auditPage(page, testInfo, 'onboarding-invalid');
+
+  if (testInfo.project.name === 'webkit-375') {
+    return;
+  }
+
+  await signInAsStaff(page);
+  const appsRes = await page.request.get(
+    `${DASHBOARD_URL}/api/v1/staff/applications`,
+  );
+  expect(appsRes.ok()).toBe(true);
+  const { applications } = (await appsRes.json()) as {
+    applications: { id: string; onboarding: { link: string } | null }[];
+  };
+
+  let onboardingUrl = applications.find((app) => app.onboarding !== null)
+    ?.onboarding?.link;
+
+  if (!onboardingUrl && applications[0]) {
+    const patchRes = await page.request.patch(
+      `${DASHBOARD_URL}/api/v1/staff/applications/${applications[0].id}`,
+      { data: { status: 'ACCEPTED' } },
+    );
+    expect(patchRes.ok()).toBe(true);
+    const updated = (await patchRes.json()) as {
+      onboarding: { link: string } | null;
+    };
+    onboardingUrl = updated.onboarding?.link;
+  }
+
+  if (onboardingUrl) {
+    await page.goto(onboardingUrl);
+    await expect(
+      page.getByRole('heading', { name: /Willkommen,/ }),
+    ).toBeVisible({ timeout: 15_000 });
+    await auditPage(page, testInfo, 'onboarding-checklist');
+  }
+});

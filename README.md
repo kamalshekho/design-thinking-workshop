@@ -22,7 +22,10 @@ docker compose up -d --build
 ```
 
 The form is then on <http://localhost:8081>; the staff dashboard is on
-<http://localhost:8082>.
+<http://localhost:8082>. Mailpit catches outgoing emails locally at
+<http://localhost:8025>: set an Application's Status to **Angenommen** in the
+dashboard to trigger the acceptance email and open the personal onboarding link
+from Mailpit.
 
 The stack starts with no Applications. To present the dashboard with the
 seeded demo week (`A21`), turn the `demo` profile on when you start it:

@@ -3,6 +3,8 @@ import { Header } from '../components/ui/Header/Header';
 import { HeroSection } from '../components/ui/HeroSection/HeroSection';
 import { de as content } from '../content/de';
 import { ApplicationForm } from '../features/application-form/ApplicationForm';
+import { OnboardingChecklist } from '../features/onboarding/OnboardingChecklist';
+import { extractOnboardingToken } from '../lib/onboarding';
 import styles from './App.module.css';
 
 function scrollToTop() {
@@ -10,6 +12,7 @@ function scrollToTop() {
 }
 
 export function App() {
+  const onboardingToken = extractOnboardingToken(window.location.pathname);
   const navItems = content.nav.items.map((label) => ({ label }));
 
   const footerContent = {
@@ -40,7 +43,11 @@ export function App() {
       />
       <HeroSection tagline={content.hero.tagline} />
       <main className={styles.page}>
-        <ApplicationForm />
+        {onboardingToken !== null ? (
+          <OnboardingChecklist token={onboardingToken} />
+        ) : (
+          <ApplicationForm />
+        )}
       </main>
       <Footer content={footerContent} onBackToTop={scrollToTop} />
     </>

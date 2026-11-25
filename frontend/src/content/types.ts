@@ -1,4 +1,5 @@
 import type { ErrorCode } from '../lib/errorCodes';
+import type { OnboardingStepId } from '../lib/onboarding';
 import type { FixedRoute, WeeklyTime } from '../lib/routes';
 
 export interface Content {
@@ -42,6 +43,27 @@ export interface Content {
   errors: Record<ErrorCode, string>;
   unknownError: string;
   a11y: { submitting: string; honeypotLabel: string };
+  onboarding: {
+    loading: string;
+    invalidTitle: string;
+    invalidBody: string;
+    loadError: string;
+    saveError: string;
+    heading: (name: string) => string;
+    intro: string;
+    rulesHeading: string;
+    rules: readonly [string, string, string, string];
+    checklistHeading: string;
+    progress: (done: number, total: number) => string;
+    steps: Record<
+      OnboardingStepId,
+      {
+        label: string;
+        description: string;
+        linkLabel?: string;
+      }
+    >;
+  };
   footer: {
     contact: { title: string; talkToUs: string; address: readonly string[] };
     legal: { title: string; imprint: string; privacy: string };

@@ -30,6 +30,9 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       RESEND_FROM: ${RESEND_FROM:-}
+      SPRING_MAIL_HOST: ${SMTP_HOST:-mailpit}
+      SPRING_MAIL_PORT: ${SMTP_PORT:-1025}
+      ONBOARDING_BASE_URL: ${ONBOARDING_BASE_URL:-http://localhost:8081}
       # Empty unless asked for, so a stack starts with no Applications. Set it
       # to `demo` to seed the demo week of Applications (A21); README.md,
       # "Running the prototype", has the command.
@@ -86,6 +89,12 @@ services:
       retries: 5
     depends_on:
       - backend
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - '8025:8025'
     restart: unless-stopped
 
 volumes:

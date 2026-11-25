@@ -12,7 +12,13 @@
  * both close it, the same `onClose` the drawer calls.
  */
 
-import { ArrowLeft, Mail01, UserCheck01 } from '@untitledui/icons';
+import {
+  ArrowLeft,
+  Check,
+  Copy01,
+  Mail01,
+  UserCheck01,
+} from '@untitledui/icons';
 import { useEffect, useRef } from 'react';
 
 import { STATUS_DOT_CLASSNAME } from '@/components/application/application-status/statusStyles';
@@ -22,6 +28,7 @@ import { Dot } from '@/components/foundations/dot-icon';
 import { de } from '@/content/de';
 import { APPLICATION_STATUSES } from '@/domain/application';
 import { useCloseOnEscape } from '@/hooks/useCloseOnEscape';
+import { useCopyFeedback } from '@/hooks/useCopyFeedback';
 import { cx } from '@/utils/cx';
 import { initialsOf } from '@/utils/initials';
 
@@ -29,6 +36,7 @@ import {
   ConsentSection,
   MessageSection,
   NotesSection,
+  OnboardingSection,
   SectionLabel,
 } from './ApplicationDetailSections';
 import type { ApplicationDrawerProps } from './ApplicationDrawer';
@@ -48,6 +56,9 @@ export function ApplicationPage({
   staffMemberId,
 }: ApplicationPageProps) {
   const pageRef = useRef<HTMLDivElement>(null);
+
+  const { copied: copiedOnboarding, copy: copyOnboardingLink } =
+    useCopyFeedback(application.onboarding?.link ?? null);
 
   const category = categories.find(
     (entry) => entry.id === application.categoryId,
@@ -176,6 +187,7 @@ export function ApplicationPage({
               );
             })}
           </div>
+          <OnboardingSection application={application} className="mt-3" />
         </section>
 
         <MessageSection application={application} />
@@ -188,15 +200,31 @@ export function ApplicationPage({
       </article>
 
       <footer className="border-secondary bg-primary pb-safe-bottom fixed inset-x-0 bottom-0 flex border-t px-4 pt-3">
-        <Button
-          size="lg"
-          color="secondary"
-          href={`mailto:${application.email}`}
-          iconLeading={Mail01}
-          className="mx-auto w-full max-w-2xl"
-        >
-          {de.detail.writeMail}
-        </Button>
+        <div className="mx-auto flex w-full max-w-2xl flex-wrap gap-2">
+          <Button
+            size="lg"
+            color="secondary"
+            href={`mailto:${application.email}`}
+            iconLeading={Mail01}
+            className="flex-1"
+          >
+            {de.detail.writeMail}
+          </Button>
+          {application.onboarding !== null ? (
+            <Button
+              size="lg"
+              color="secondary"
+              aria-label={de.detail.copyOnboardingLink}
+              iconLeading={copiedOnboarding ? Check : Copy01}
+              onPress={copyOnboardingLink}
+              className="flex-1"
+            >
+              {copiedOnboarding
+                ? de.detail.copied
+                : de.detail.copyOnboardingLink}
+            </Button>
+          ) : null}
+        </div>
       </footer>
     </div>
   );

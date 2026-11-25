@@ -22,6 +22,7 @@ function application(overrides: Partial<Application> = {}): Application {
     consentAt: '2026-09-01T08:12:44Z',
     consentTextVersion: '2026-09',
     submittedAt: '2026-09-01T08:12:44Z',
+    onboarding: null,
     ...overrides,
   };
 }

@@ -26,6 +26,10 @@ import de.ichbinhier.volunteerformservice.application.repository.ApplicationRepo
 import de.ichbinhier.volunteerformservice.application.repository.StateChangeRepository;
 import de.ichbinhier.volunteerformservice.category.domain.Category;
 import de.ichbinhier.volunteerformservice.category.repository.CategoryRepository;
+import de.ichbinhier.volunteerformservice.onboarding.OnboardingStep;
+import de.ichbinhier.volunteerformservice.onboarding.OnboardingTokens;
+import de.ichbinhier.volunteerformservice.onboarding.domain.OnboardingStepCompletion;
+import de.ichbinhier.volunteerformservice.onboarding.repository.OnboardingStepCompletionRepository;
 import de.ichbinhier.volunteerformservice.staff.domain.Staff;
 import de.ichbinhier.volunteerformservice.staff.repository.StaffRepository;
 
@@ -139,14 +143,16 @@ public class DemoSeeder implements ApplicationRunner {
                     WeeklyTime.HOURS_3_5,
                     "Ich bin über Instagram auf euch gestoßen und möchte bei der Moderation"
                             + " helfen.",
-                    "Info-Runde in der nächsten Woche.",
+                    "Angenommen — Onboarding läuft.",
                     ago(5, 10),
                     // The Owner and the Status carry the same timestamp: one PATCH
                     // set both, and `API.md` writes one row per changed field.
                     List.of(
                             owner(4, 9, 2),
                             status(4, 9, ApplicationStatus.IN_REVIEW),
-                            status(1, 6, ApplicationStatus.INTRO_BOOKED))),
+                            status(2, 6, ApplicationStatus.INTRO_BOOKED),
+                            status(1, 6, ApplicationStatus.ACCEPTED)),
+                    List.of(OnboardingStep.RULES, OnboardingStep.COMMUNITY_GROUP)),
             new Seed(
                     "Nina Baumann",
                     "nina.baumann@example.org",
@@ -243,6 +249,8 @@ public class DemoSeeder implements ApplicationRunner {
 
     private final ApplicationRepository applications;
     private final StateChangeRepository stateChanges;
+    private final OnboardingStepCompletionRepository onboardingSteps;
+    private final OnboardingTokens onboardingTokens;
     private final CategoryRepository categories;
     private final StaffRepository staffMembers;
     private final EntityManager entityManager;
@@ -296,7 +304,14 @@ public class DemoSeeder implements ApplicationRunner {
                     : null;
 
             switch (step.field()) {
-                case STATUS -> application.setStatus(ApplicationStatus.valueOf(step.value()));
+                case STATUS -> {
+                    ApplicationStatus nextStatus = ApplicationStatus.valueOf(step.value());
+                    application.setStatus(nextStatus);
+                    if (nextStatus == ApplicationStatus.ACCEPTED
+                            && application.getOnboardingToken() == null) {
+                        application.setOnboardingToken(onboardingTokens.generate());
+                    }
+                }
                 case OWNER -> application.setOwner(owner);
                 case DISCARDED -> application.setDiscardedAt(
                         Boolean.parseBoolean(step.value()) ? at : null);
@@ -314,6 +329,16 @@ public class DemoSeeder implements ApplicationRunner {
 
         applications.save(application);
         stateChanges.saveAll(history);
+        if (!seed.completedOnboardingSteps().isEmpty()) {
+            List<OnboardingStepCompletion> completions = seed.completedOnboardingSteps().stream()
+                    .map(step -> OnboardingStepCompletion.builder()
+                            .application(application)
+                            .step(step)
+                            .completedAt(startedAt.minus(2, ChronoUnit.HOURS))
+                            .build())
+                    .toList();
+            onboardingSteps.saveAll(completions);
+        }
         backdate(application.getId(), submittedAt);
     }
 
@@ -380,7 +405,19 @@ public class DemoSeeder implements ApplicationRunner {
             String about,
             String internalNotes,
             int hoursAgo,
-            List<Step> steps) {
+            List<Step> steps,
+            List<OnboardingStep> completedOnboardingSteps) {
+        Seed(
+                String name,
+                String email,
+                int categoryIndex,
+                WeeklyTime weeklyTime,
+                String about,
+                String internalNotes,
+                int hoursAgo,
+                List<Step> steps) {
+            this(name, email, categoryIndex, weeklyTime, about, internalNotes, hoursAgo, steps, List.of());
+        }
     }
 
     /**

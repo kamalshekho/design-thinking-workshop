@@ -503,6 +503,7 @@ export const de = {
     NEW: 'Neu',
     IN_REVIEW: 'In Prüfung',
     INTRO_BOOKED: 'Info-Runde gebucht',
+    ACCEPTED: 'Angenommen',
     ACTIVE: 'Aktiv',
     WAITLISTED: 'Warteliste',
     DECLINED: 'Abgelehnt',
@@ -552,6 +553,9 @@ export const de = {
     copyMail: 'E-Mail-Adresse kopieren',
     /** The footer button's visible label; `copyMail` stays its accessible name. */
     copyMailShort: 'Kopieren',
+    copyOnboardingLink: 'Onboarding-Link kopieren',
+    onboardingProgress: (done: number, total: number) =>
+      `Onboarding: ${String(done)} von ${String(total)} Schritten`,
     copied: 'Kopiert',
     /** The phone page's way back; `backLabel` is its accessible name. */
     back: 'Anfragen',

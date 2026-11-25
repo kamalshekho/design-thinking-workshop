@@ -262,7 +262,8 @@ Every Application, including discarded ones.
       "discardedAt": null,
       "consentAt": "2026-09-01T08:12:44Z",
       "consentTextVersion": "2026-09",
-      "submittedAt": "2026-09-01T08:12:44Z"
+      "submittedAt": "2026-09-01T08:12:44Z",
+      "onboarding": null
     }
   ]
 }
@@ -283,6 +284,7 @@ Every Application, including discarded ones.
 | `consentAt`          | string         | server-stamped at submission                          |
 | `consentTextVersion` | string         | which wording the applicant agreed to                 |
 | `submittedAt`        | string         | when the form was submitted                           |
+| `onboarding`         | object \| null | `{ link, doneSteps, totalSteps }` once `ACCEPTED`     |
 
 `submissionId` is deliberately **not** exposed: it is the form's idempotency
 key and means nothing to a staff member.
@@ -295,27 +297,31 @@ An empty list is valid and means the dashboard shows its empty state.
 
 ### Status
 
-Six values, the flow `A9` proposes. `A9` holds them at low confidence and notes
-they must be renameable without a code change, so keep them as data rather than
-hard-coding behaviour on any one of them:
+Seven values, the flow `A9` proposes:
 
-`NEW`, `IN_REVIEW`, `INTRO_BOOKED`, `ACTIVE`, `WAITLISTED`, `DECLINED`
+`NEW`, `IN_REVIEW`, `INTRO_BOOKED`, `ACCEPTED`, `ACTIVE`, `WAITLISTED`, `DECLINED`
 
-**Any status may follow any other.** The drawer offers all six in one selector
+**Any status may follow any other.** The drawer offers all seven in one selector
 and the real process is unknown to us (`A9`), so the backend validates that the
 value exists and nothing more. Rejecting a transition would encode a process
 the association has never confirmed.
 
 `ACTIVE` and `DECLINED` are the two that mean "done", which is what Übersicht's
-open-Applications panel excludes (`A13`). That rule lives in the dashboard; the
-backend needs no notion of it.
+open-Applications panel excludes (`A13`). `ACCEPTED` counts as open because the
+applicant is still completing online onboarding (`A32`). That rule lives in the
+dashboard; the backend needs no notion of it.
 
 **A changed Status triggers an email to the applicant** after the change is
-saved (`A30`). Repeating the current Status does not send another email. The
-email contains the new Status; it does not contain internal notes. The Status
-and its history remain saved if sending fails. A successful response therefore
-does not prove that an email arrived, and there is no automatic retry. The
-association still needs to approve the wording and the transitions to notify.
+saved (`A30`). Repeating the current Status does not send another email.
+Transitioning to `ACCEPTED` generates a personal onboarding token (if none
+exists yet) and sends a dedicated acceptance email containing the personal
+`/onboarding/<token>` link. All other transitions send the general status email.
+When the applicant checks or unchecks a step on the onboarding page, the
+backend broadcasts `application.updated` on the live stream with the updated
+`onboarding.doneSteps` count and writes no State change. The Status and its
+history remain saved if sending fails. A successful response therefore does not
+prove that an email arrived, and there is no automatic retry. The association
+still needs to approve the wording and the transitions to notify.
 
 ### PATCH /api/v1/staff/applications/{id}
 

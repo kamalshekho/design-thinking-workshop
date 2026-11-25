@@ -104,8 +104,10 @@ an application.
 _Avoid_: Question, general mail
 
 **Onboarding**:
-Everything between an application arriving and the applicant becoming a
-volunteer — screening, the appointment, and introduction to the work.
+Everything between a staff member accepting an applicant and the applicant
+becoming a volunteer: the community rules and the first steps into the work.
+Starts when the Application's Status becomes _accepted_. Screening and the intro
+session come before it and are not part of it.
 _Avoid_: Intake, activation, signup
 
 **Sign-in**:

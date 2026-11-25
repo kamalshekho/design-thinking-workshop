@@ -15,4 +15,9 @@ export const links = {
   communityGroup: 'https://www.ichbinhier.eu/engagement/',
   /** DESIGN.md section 35 — the supporting membership application */
   supportingMembership: 'https://www.ichbinhier.eu/spende/',
+  /** DESIGN.md section 35a — onboarding steps (`A32`) */
+  onboardingFacebookGroup: 'https://www.facebook.com/groups/718574178311688',
+  onboardingDemocracyLab:
+    'https://www.ichbinhier.eu/bildung/digital-democracy-lab',
+  onboardingContact: 'https://www.ichbinhier.eu/kontakt',
 } as const;

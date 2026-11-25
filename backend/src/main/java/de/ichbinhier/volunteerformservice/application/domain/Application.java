@@ -111,4 +111,7 @@ public class Application {
     @Column(name = "discarded_at")
     private Instant discardedAt;
 
+    @Column(name = "onboarding_token", unique = true, length = 128)
+    private String onboardingToken;
+
 }
