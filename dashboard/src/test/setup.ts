@@ -50,18 +50,22 @@ function matchesQuery(query: string): boolean {
   return minWidth !== undefined && window.innerWidth >= Number(minWidth);
 }
 
+/** MediaQueryList without the deprecated addListener and removeListener. */
+type MediaQueryListMock = Omit<
+  MediaQueryList,
+  'addListener' | 'removeListener'
+>;
+
 if (typeof window.matchMedia === 'undefined') {
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     writable: true,
-    value: (query: string): MediaQueryList => ({
+    value: (query: string): MediaQueryListMock => ({
       matches: matchesQuery(query),
       media: query,
       onchange: null,
       addEventListener: () => undefined,
       removeEventListener: () => undefined,
-      addListener: () => undefined,
-      removeListener: () => undefined,
       dispatchEvent: () => false,
     }),
   });

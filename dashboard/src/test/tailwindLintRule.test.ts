@@ -1,9 +1,10 @@
 import { ESLint } from 'eslint';
 import { describe, expect, it } from 'vitest';
 
-const DASHBOARD_ROOT = new URL('../..', import.meta.url).pathname
-  .replace(/^\/@fs/, '')
-  .replace(/\/$/, '');
+const DASHBOARD_ROOT = new URL(import.meta.url).pathname.replace(
+  /\/src\/test\/[^/]+$/,
+  '',
+);
 
 const RULE_ID = 'better-tailwindcss/no-restricted-classes';
 
