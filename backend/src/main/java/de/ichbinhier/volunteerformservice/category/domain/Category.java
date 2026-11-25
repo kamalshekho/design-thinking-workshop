@@ -55,4 +55,12 @@ public class Category {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    /**
+     * How often applicants picked this Category on the form (`A5`). Read-only
+     * here: saving a Category must not write back a stale number, so only
+     * {@code CategoryRepository#incrementSelectionCount} changes it.
+     */
+    @Column(name = "selection_count", nullable = false, insertable = false, updatable = false)
+    private long selectionCount;
+
 }

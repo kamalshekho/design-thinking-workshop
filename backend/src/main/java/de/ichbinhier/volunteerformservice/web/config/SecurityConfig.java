@@ -49,6 +49,7 @@ public class SecurityConfig {
                             environment.acceptsProfiles(Profiles.of("docs"))))
                 .requestMatchers(HttpMethod.POST, "/api/v1/applications").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/route-selections").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/onboarding/*").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/onboarding/*/steps/*").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/staff/session").permitAll()
