@@ -14,14 +14,23 @@ applicant form.
 - [`dashboard/`](./dashboard/) — the staff dashboard: API contract, conventions, React project
 - [`docs/agents/verification.md`](./docs/agents/verification.md) — proving a change: test commands, starting and driving the stack, manual checks
 
+## Writing code
+
+- Before writing or reviewing code in `frontend/` or `dashboard/`, read
+  [`docs/STANDARD.md`](./docs/STANDARD.md).
+- Before changing `frontend/`, read
+  [`frontend/README.md`](./frontend/README.md).
+- Before changing `dashboard/`, read
+  [`dashboard/README.md`](./dashboard/README.md).
+- Before every commit, run `npm run check` in each app (`frontend/`,
+  `dashboard/`) the commit changes.
+
 ## Working on the frontend
 
-[`frontend/README.md`](./frontend/README.md) holds the porting workflow and
-what concerns the form alone. Three rules are worth naming here because they
-are easy to break from the outside:
+Two rules are worth naming here because they are easy to break from the
+outside and no check catches them:
 
 - applicant-facing German lives only in `frontend/src/content/de.ts`;
-- literal colours and sizes live only in `frontend/src/styles/tokens.css`;
 - the wording specified in `frontend/DESIGN.md` is not rewritten in passing —
   code and specification change in the same commit.
 
