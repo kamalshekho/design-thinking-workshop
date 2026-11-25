@@ -19,12 +19,15 @@ betrifft, und verweisen für alles andere hierher.
 ## Wo die Prüfungen laufen
 
 ESLint- und Stylelint-Regeln, die jede Datei für sich prüfen, laufen im
-pre-commit-Hook und in CI. `tsc` und `scripts/check-config-parity.mjs` laufen
-nur in CI. Ebenfalls nur in CI laufen in beiden Anwendungen `knip` und `jscpd`,
-im Applicant form dazu die Skripte für ungenutzte Tokens und den Abgleich von
+pre-commit-Hook und in CI. Nicht im Hook laufen `tsc`,
+`scripts/check-config-parity.mjs`, in beiden Anwendungen `knip` und `jscpd`, im
+Applicant form dazu die Skripte für ungenutzte Tokens und den Abgleich von
 `token.json` mit `tokens.css` und im Dashboard das Skript für
 `THIRD_PARTY_LICENSES`. Der Grund: lint-staged sieht nur die gestagten Dateien,
-und eine Prüfung über das ganze Projekt macht den Hook langsam.
+und eine Prüfung über das ganze Projekt macht den Hook langsam. Diese Prüfungen
+laufen in CI und lokal in `npm run check`, das dazu die Tests mit Vitest und
+Coverage ausführt. Welche Schritte `check` aufruft, steht in der `package.json`
+der Anwendung. `vite build`, `size-limit` und die E2E-Tests laufen nur in CI.
 
 Der Hook `.husky/pre-commit` ist für beide Anwendungen derselbe. Hat eine
 Anwendung gestagte Dateien, ruft er ihr lint-staged mit `.lintstagedrc.json`
