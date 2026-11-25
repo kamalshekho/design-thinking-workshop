@@ -19,12 +19,10 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
-    # The repo is public and uses no private CodeQL packs, so neither
-    # `actions: read` nor `packages: read` is needed:
     # https://github.com/actions/starter-workflows/blob/e3c451d60f119b71caebf13c98ac45da6e15b4b7/code-scanning/codeql.yml#L31-L40
     permissions:
       contents: read
-      security-events: write # upload the results to code scanning
+      security-events: write
 
     strategy:
       fail-fast: false
