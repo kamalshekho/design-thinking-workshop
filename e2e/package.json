@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "test": "playwright test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "screenshots": "playwright test --config playwright.screenshots.config.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
