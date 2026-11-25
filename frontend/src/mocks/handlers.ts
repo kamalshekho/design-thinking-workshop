@@ -90,18 +90,7 @@ export const handlers = [
     const entry = onboardingStepsByToken.get(token);
 
     if (!entry) {
-      return HttpResponse.json(
-        {
-          type: 'https://ichbinhier.eu/problems/not-found',
-          title: 'Not found',
-          status: 404,
-          code: 'NOT_FOUND',
-        },
-        {
-          status: 404,
-          headers: { 'Content-Type': 'application/problem+json' },
-        },
-      );
+      return notFoundProblem();
     }
 
     return HttpResponse.json(entry);
@@ -115,18 +104,7 @@ export const handlers = [
       const entry = onboardingStepsByToken.get(token);
 
       if (!entry) {
-        return HttpResponse.json(
-          {
-            type: 'https://ichbinhier.eu/problems/not-found',
-            title: 'Not found',
-            status: 404,
-            code: 'NOT_FOUND',
-          },
-          {
-            status: 404,
-            headers: { 'Content-Type': 'application/problem+json' },
-          },
-        );
+        return notFoundProblem();
       }
 
       const body = (await request.json()) as { done?: unknown };
@@ -156,6 +134,18 @@ export const handlers = [
     },
   ),
 ];
+
+function notFoundProblem() {
+  return HttpResponse.json(
+    {
+      type: 'https://ichbinhier.eu/problems/not-found',
+      title: 'Not found',
+      status: 404,
+      code: 'NOT_FOUND',
+    },
+    { status: 404, headers: { 'Content-Type': 'application/problem+json' } },
+  );
+}
 
 /** A 400 shaped like RFC 9457, for exercising server-side field errors. */
 export function validationProblem(errors: { field: string; code: string }[]) {

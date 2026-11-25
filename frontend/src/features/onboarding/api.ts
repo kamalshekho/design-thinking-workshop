@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
-import { getJson, putJson } from '../../lib/http';
+import {
+  getJson,
+  type JsonRequestResult,
+  putJson,
+  requestJson,
+} from '../../lib/http';
 import {
   ONBOARDING_STEP_IDS,
   type OnboardingStepId,
@@ -20,10 +25,7 @@ export interface OnboardingData {
   steps: OnboardingStepState[];
 }
 
-export type OnboardingApiResult =
-  | { status: 'success'; data: OnboardingData }
-  | { status: 'not-found' }
-  | { status: 'failed' };
+export type OnboardingApiResult = JsonRequestResult<OnboardingData>;
 
 const onboardingResponseSchema = z.object({
   name: z.string().min(1),
@@ -35,41 +37,16 @@ const onboardingResponseSchema = z.object({
   ),
 });
 
-async function runOnboardingRequest(
-  send: () => Promise<Response>,
-): Promise<OnboardingApiResult> {
-  let response: Response;
-
-  try {
-    response = await send();
-  } catch {
-    return { status: 'failed' };
-  }
-
-  if (response.status === 404) return { status: 'not-found' };
-
-  if (!response.ok) return { status: 'failed' };
-
-  try {
-    const body: unknown = await response.json();
-    const parsed = onboardingResponseSchema.safeParse(body);
-
-    return parsed.success
-      ? { status: 'success', data: parsed.data }
-      : { status: 'failed' };
-  } catch {
-    return { status: 'failed' };
-  }
-}
-
 export function fetchOnboarding(
   token: string,
   signal?: AbortSignal,
 ): Promise<OnboardingApiResult> {
-  return runOnboardingRequest(() =>
-    getJson(`${BASE_URL}/api/onboarding/${encodeURIComponent(token)}`, {
-      signal,
-    }),
+  return requestJson(
+    () =>
+      getJson(`${BASE_URL}/api/onboarding/${encodeURIComponent(token)}`, {
+        signal,
+      }),
+    onboardingResponseSchema,
   );
 }
 
@@ -78,10 +55,12 @@ export function updateOnboardingStep(
   stepId: OnboardingStepId,
   done: boolean,
 ): Promise<OnboardingApiResult> {
-  return runOnboardingRequest(() =>
-    putJson(
-      `${BASE_URL}/api/onboarding/${encodeURIComponent(token)}/steps/${encodeURIComponent(stepId)}`,
-      { done },
-    ),
+  return requestJson(
+    () =>
+      putJson(
+        `${BASE_URL}/api/onboarding/${encodeURIComponent(token)}/steps/${encodeURIComponent(stepId)}`,
+        { done },
+      ),
+    onboardingResponseSchema,
   );
 }

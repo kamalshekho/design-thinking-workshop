@@ -190,7 +190,7 @@ export const de = {
     honeypotLabel: 'Dieses Feld bitte leer lassen',
   },
 
-  /** DESIGN.md section 36 — online onboarding checklist (`A32`) */
+  /** DESIGN.md section 35a — online onboarding checklist (`A32`) */
   onboarding: {
     loading: 'Deine Checkliste wird geladen …',
     invalidTitle: 'Link nicht mehr gültig',
