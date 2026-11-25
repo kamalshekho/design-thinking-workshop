@@ -282,6 +282,7 @@ npm run dev
 | `npm run knip` / `knip:production` | Dead files, exports and dependencies      |
 | `npm run jscpd`                    | Clones of 50+ tokens in production code   |
 | `npm test` / `test:watch`          | Vitest                                    |
+| `npm run check`                    | All checks and tests, run before a commit |
 
 The dev server proxies `/api` to `http://localhost:8080`, so it wants the
 backend running on its default port (`backend/README.md`). Development is
