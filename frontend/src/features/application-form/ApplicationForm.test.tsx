@@ -392,6 +392,59 @@ describe('ApplicationForm', () => {
     );
   });
 
+  it('shows the route placeholder and no route panel once categories load', async () => {
+    render(<ApplicationForm />);
+
+    const select = screen.getByLabelText<HTMLSelectElement>(
+      'Wie möchtest du uns helfen?',
+    );
+
+    await waitFor(() => expect(select).not.toBeDisabled());
+
+    expect(select.selectedIndex).toBe(0);
+    expect(select.selectedOptions[0]).toHaveTextContent('Bitte wählen …');
+    expect(screen.queryByText('Du bist sofort dabei.')).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText('Du unterstützt uns direkt.'),
+    ).not.toBeInTheDocument();
+
+    expect(screen.queryByLabelText('Name')).not.toBeInTheDocument();
+  });
+
+  it('shows "Nicht verfügbar" after a load error and the placeholder again after a retry', async () => {
+    server.use(
+      http.get(
+        '*/api/v1/categories',
+        () => new HttpResponse(null, { status: 500 }),
+      ),
+    );
+
+    const user = userEvent.setup();
+    render(<ApplicationForm />);
+
+    await screen.findByRole('button', { name: 'Erneut versuchen' });
+
+    const select = screen.getByLabelText<HTMLSelectElement>(
+      'Wie möchtest du uns helfen?',
+    );
+
+    expect(select.selectedIndex).toBe(0);
+    expect(select.selectedOptions[0]).toHaveTextContent('Nicht verfügbar');
+
+    server.use(
+      http.get('*/api/v1/categories', () =>
+        HttpResponse.json({ categories: MOCK_CATEGORIES }),
+      ),
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Erneut versuchen' }));
+    await waitFor(() => expect(select).not.toBeDisabled());
+
+    expect(select.selectedIndex).toBe(0);
+    expect(select.selectedOptions[0]).toHaveTextContent('Bitte wählen …');
+  });
+
   it('keeps the two fixed routes selectable when the category list is empty', async () => {
     server.use(
       http.get('*/api/v1/categories', () =>
