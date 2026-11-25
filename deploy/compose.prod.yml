@@ -1,6 +1,8 @@
-# The demo server: one Azure VM with 1 GiB of memory and 1 GiB of swap.
-# Applied on top of docker-compose.yml and deploy/compose.images.yml; see
-# deploy/README.md for the command and the .env the server needs.
+# A demo server, staging or production: one Azure VM with 1 GiB of memory and
+# 1 GiB of swap. Applied on top of docker-compose.yml and
+# deploy/compose.images.yml by deploy/deploy.sh; deploy/README.md lists the
+# .env the server needs. Relative paths resolve against the directory of
+# docker-compose.yml, the first file, so mounts name deploy/ explicitly.
 #
 # Caddy is the only service with host ports. It terminates TLS for the form and
 # the dashboard and gets their certificates from Let's Encrypt; HTTPS is not
@@ -27,13 +29,13 @@ services:
     ports: !reset []
     mem_limit: 64m
     volumes:
-      - ./real-ip.conf:/etc/nginx/conf.d/real-ip.conf:ro
+      - ./deploy/real-ip.conf:/etc/nginx/conf.d/real-ip.conf:ro
 
   dashboard:
     ports: !reset []
     mem_limit: 64m
     volumes:
-      - ./real-ip.conf:/etc/nginx/conf.d/real-ip.conf:ro
+      - ./deploy/real-ip.conf:/etc/nginx/conf.d/real-ip.conf:ro
 
   mailpit:
     # Never started on the server: no `--profile mailpit` is ever passed.
@@ -49,7 +51,7 @@ services:
       FORM_HOST: ${FORM_HOST:?set FORM_HOST in .env}
       DASHBOARD_HOST: ${DASHBOARD_HOST:?set DASHBOARD_HOST in .env}
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
       - caddy-config:/config
     mem_limit: 64m

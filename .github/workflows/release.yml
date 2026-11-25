@@ -2,12 +2,13 @@ name: release
 
 # Turns a version tag into images in GitHub Container Registry:
 #
-#   lint and unit tests -> build -> scan -> push sha-<commit> -> e2e -> tag vX.Y.Z
+#   lint and unit tests -> build -> scan -> push sha-<commit> -> e2e
+#     -> tag vX.Y.Z and attest
 #
-# The version tag is added only by the last job, so an image tagged vX.Y.Z has
-# passed every step before it. deploy.yml relies on that and deploys nothing
-# else. The demo server is Arm (deploy/README.md), so the images are built for
-# linux/arm64 on an Arm runner.
+# The version tag and the attestation are added only by the last job, so an
+# image tagged vX.Y.Z has passed every step before it. deploy.yml relies on
+# that and deploys nothing else. The demo servers are Arm (deploy/README.md),
+# so the images are built for linux/arm64 on an Arm runner.
 on:
   push:
     tags: ['v*.*.*']
@@ -35,8 +36,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      id-token: write # signs the provenance attestation
-      attestations: write
     strategy:
       matrix:
         app: [backend, frontend, dashboard]
@@ -67,21 +66,11 @@ jobs:
           "$IMAGE:sha-$GITHUB_SHA"
 
       - name: Push
-        id: push
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
           docker push --quiet "$IMAGE:sha-$GITHUB_SHA"
-          digest="$(docker inspect --format '{{index .RepoDigests 0}}' "$IMAGE:sha-$GITHUB_SHA")"
-          echo "digest=${digest#*@}" >> "$GITHUB_OUTPUT"
-
-      - name: Attest build provenance
-        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-        with:
-          subject-name: ${{ env.IMAGE }}
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
 
   # The same end-to-end tests as the e2e job in ci.yml, run against the pushed
   # images instead of a build from source.
@@ -160,21 +149,36 @@ jobs:
         if: always()
         run: docker compose down -v
 
+  # Tags and signs only what passed every job above. The attestation is made
+  # for the digest the version tag points at, so deploy.yml's check means the
+  # image went through the whole pipeline, not just the build.
   promote:
     needs: e2e
     runs-on: ubuntu-latest
     permissions:
       packages: write
+      id-token: write # signs the provenance attestation
+      attestations: write
+    strategy:
+      matrix:
+        app: [backend, frontend, dashboard]
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}/${{ matrix.app }}
 
     steps:
-      # imagetools copies the manifest as it is, so the version tag points at
-      # the same digest the attestation was made for.
-      - name: Tag the tested images with the version
+      - name: Tag the tested image with the version
+        id: tag
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
-          for app in backend frontend dashboard; do
-            image="ghcr.io/$GITHUB_REPOSITORY/$app"
-            docker buildx imagetools create --tag "$image:$GITHUB_REF_NAME" "$image:sha-$GITHUB_SHA"
-          done
+          docker buildx imagetools create --tag "$IMAGE:$GITHUB_REF_NAME" "$IMAGE:sha-$GITHUB_SHA"
+          digest="$(docker buildx imagetools inspect "$IMAGE:$GITHUB_REF_NAME" --format '{{json .Manifest}}' | jq -r .digest)"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.tag.outputs.digest }}
+          push-to-registry: true
