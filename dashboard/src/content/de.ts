@@ -10,10 +10,7 @@ import type {
   ApplicationView,
   WeeklyTime,
 } from '@/domain/application';
-import {
-  INTERNAL_NOTES_MAX_LENGTH,
-  STALE_AFTER_DAYS,
-} from '@/domain/application';
+import { INTERNAL_NOTES_MAX_LENGTH } from '@/domain/application';
 import {
   CATEGORY_DESCRIPTION_MAX_LENGTH,
   CATEGORY_NAME_MAX_LENGTH,
@@ -474,8 +471,8 @@ export const de = {
 
   views: {
     all: 'Alle',
-    unassigned: 'Nicht zugewiesen',
-    stale: `Älter als ${String(STALE_AFTER_DAYS)} Tage`,
+    unassigned: 'Ohne Zuständigkeit',
+    stale: 'Lange offen',
   } satisfies Record<ApplicationView, string>,
 
   filters: {

@@ -8,7 +8,21 @@
  * with the same behaviour — the two screens had a tab strip each, identical
  * down to the class strings, and a colour or spacing change had to be made
  * twice.
+ *
+ * Below `sm` the strip can be wider than the screen. It scrolls, and the edge
+ * that hides a tab fades out so the cut reads as "more this way" (#207).
  */
+
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+
+import { cx } from '@/utils/cx';
+import { scrollEdges } from '@/utils/scrollEdges';
 
 type TabStripProps<TView extends string> = {
   /** Names the strip for a screen reader; the list the tabs filter. */
@@ -27,6 +41,59 @@ const TAB_CLASSNAME =
 const SELECTED_TAB_CLASSNAME =
   'border-fuut-purple text-primary outline-focus-ring z-10 shrink-0 border-b-2 whitespace-nowrap px-1 pt-2 pb-3 text-sm font-semibold focus-visible:outline-2';
 
+/**
+ * Tracks which edges of the strip hide a tab. Measured after every render, so
+ * a count that widens a tab is picked up, and again on scroll and resize.
+ */
+function useScrollEdges() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState({ start: false, end: false });
+
+  const measure = useCallback(() => {
+    const strip = ref.current;
+
+    if (!strip) return;
+    const next = scrollEdges(strip);
+
+    setEdges((previous) =>
+      previous.start === next.start && previous.end === next.end
+        ? previous
+        : next,
+    );
+  }, []);
+
+  useLayoutEffect(measure);
+
+  useEffect(() => {
+    const strip = ref.current;
+
+    if (!strip) return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(strip);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [measure]);
+
+  return { ref, edges, measure };
+}
+
+/**
+ * Scrolls the strip so a tab picked or focused by its visible half shows whole;
+ * Chrome leaves a partly visible tab where it is when Tab focuses it.
+ * `scrollLeft` rather than `scrollIntoView`, which would scroll the page too.
+ */
+function revealTab(strip: HTMLElement, tab: HTMLElement) {
+  const tabEnd = tab.offsetLeft + tab.offsetWidth;
+
+  if (tab.offsetLeft < strip.scrollLeft) {
+    strip.scrollLeft = tab.offsetLeft;
+  } else if (tabEnd > strip.scrollLeft + strip.clientWidth) {
+    strip.scrollLeft = tabEnd - strip.clientWidth;
+  }
+}
+
 export function TabStrip<TView extends string>({
   ariaLabel,
   views,
@@ -35,11 +102,26 @@ export function TabStrip<TView extends string>({
   current,
   onChange,
 }: TabStripProps<TView>) {
+  const { ref, edges, measure } = useScrollEdges();
+
+  useLayoutEffect(() => {
+    const strip = ref.current;
+    const tab = strip?.querySelector<HTMLElement>('[aria-selected="true"]');
+
+    if (strip && tab) revealTab(strip, tab);
+  }, [current, ref]);
+
   return (
     <div
+      ref={ref}
       role="tablist"
       aria-label={ariaLabel}
-      className="before:bg-border-secondary relative flex max-w-full gap-3 overflow-x-auto before:absolute before:inset-x-0 before:bottom-0 before:h-px"
+      onScroll={measure}
+      className={cx(
+        'before:bg-border-secondary relative flex max-w-full gap-3 overflow-x-auto before:absolute before:inset-x-0 before:bottom-0 before:h-px',
+        edges.start && 'mask-l-from-90%',
+        edges.end && 'mask-r-from-90%',
+      )}
     >
       {views.map((view) => {
         const selected = view === current;
@@ -52,6 +134,9 @@ export function TabStrip<TView extends string>({
             aria-selected={selected}
             onClick={() => {
               onChange(view);
+            }}
+            onFocus={(event) => {
+              if (ref.current) revealTab(ref.current, event.currentTarget);
             }}
             className={selected ? SELECTED_TAB_CLASSNAME : TAB_CLASSNAME}
           >

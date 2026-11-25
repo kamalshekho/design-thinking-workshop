@@ -39,10 +39,12 @@ Application erst ab 1024 px in einer Seitenleiste. Darunter ersetzt die
 Detailansicht die Liste. Der Test hatte die schmale Ansicht nur bei 320 px
 erwartet und wählt sie jetzt nach der Breite.
 
-Bei 375 px passen die drei Reiter der Anfragen-Liste nicht ganz auf den
-Bildschirm: der dritte, "Älter als 7 Tage", ist am rechten Rand abgeschnitten.
-Die Seite selbst ragt nicht über den Rand, das prüft der E2E-Test. Ob die
-Reiterleiste auf dem Handy gut bedienbar ist, ist noch nicht geprüft.
+Bei 320 und 375 px passen die drei Reiter der Anfragen-Liste nicht ganz auf
+den Bildschirm. Die Reiterleiste lässt sich waagerecht scrollen, und der Rand,
+hinter dem ein Reiter liegt, blendet aus (#207). Ein angeklickter oder per
+Tastatur erreichter Reiter rückt ganz ins Bild. Das prüft
+`e2e/tests/tab-strip.spec.ts` bei 320 px. Die Seite selbst ragt nicht über den
+Rand, das prüft der E2E-Test zur Barrierefreiheit.
 
 ## Screenshots
 
