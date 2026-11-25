@@ -36,10 +36,11 @@ interface FooterProps {
 }
 
 /**
- * Domain-free site footer matching the Figma Footer component.
+ * Domain-free site footer matching the Figma Footer component (DESIGN.md
+ * section 11a).
  *
- * Every destination is optional: without one, the item keeps its look but
- * leads nowhere, which is how the prototype shows it.
+ * Every destination is optional: without one, the item keeps its look without
+ * navigating.
  */
 export function Footer({ content, onBackToTop }: FooterProps) {
   const { contact, legal, donateLabel, donateHref, copyright, backToTopLabel } =

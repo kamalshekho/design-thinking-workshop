@@ -200,12 +200,6 @@ specified wording.
 Category labels are backend-owned data because staff members can maintain them
 (`A12`).
 
-Some strings, most error messages among them, were written for this
-implementation and are **not yet in `DESIGN.md`**. Their comment in `de.ts`
-starts with "Not yet in DESIGN.md, see issue #148". The copy review itself is
-tracked in [#148](https://github.com/kamalshekho/design-thinking-workshop/issues/148),
-so the code carries no review notes of its own.
-
 The applicant form is German only; the English version and its language switch
 were removed (`A22`). Backend-managed category labels are shown as the API
 returns them. The dashboard is a separate surface with German UI. Code and
@@ -353,17 +347,15 @@ Three consequences that are easy to forget:
 Blocking, in the sense that shipping without an answer means shipping something
 wrong:
 
-1. **The external URLs in `src/content/links.ts` are guesses** — the privacy
-   policy, where a community member actually joins, and the supporting
-   membership application. The two bypass routes consist of nothing but their
-   link, so a wrong URL breaks the majority route (`A5`). The header and
-   footer carry no destinations at all: the prototype shows their items
-   without links, and the footer's Kontakt block holds placeholder data.
-2. **Error copy beyond the email field is ours, not the specification's.** It
-   needs a review pass.
-3. **The consent text version (`2026-09`) needs a home** where a reader can
+1. **The external URLs in `src/content/links.ts` are guesses** — where a
+   community member actually joins, and the supporting membership application.
+   The two bypass routes consist of nothing but their link, so a wrong URL
+   breaks the majority route (`A5`). The header carries no destinations at all;
+   in the footer, Kontakt ("Sprich mit uns"), Impressum, and Spende point to
+   `#` in the MVP while Datenschutz links to `links.privacyPolicy`.
+2. **The consent text version (`2026-09`) needs a home** where a reader can
    resolve it to the exact wording.
-4. **The confirmation email does not exist yet.** The form's subheading and its
+3. **The confirmation email does not exist yet.** The form's subheading and its
    confirmation screen both promise it. Until the backend sends it, that
    promise is unbacked — and if it will not be ready, the copy has to change
    before the demo, not after.

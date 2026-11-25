@@ -2,6 +2,7 @@ import { Footer } from '../components/ui/Footer/Footer';
 import { Header } from '../components/ui/Header/Header';
 import { HeroSection } from '../components/ui/HeroSection/HeroSection';
 import { de as content } from '../content/de';
+import { links } from '../content/links';
 import { ApplicationForm } from '../features/application-form/ApplicationForm';
 import { OnboardingChecklist } from '../features/onboarding/OnboardingChecklist';
 import { extractOnboardingToken } from '../lib/onboarding';
@@ -19,15 +20,19 @@ export function App() {
     contact: {
       title: content.footer.contact.title,
       talkToUsLabel: content.footer.contact.talkToUs,
+      talkToUsHref: '#',
       address: [...content.footer.contact.address],
     },
     legal: {
       title: content.footer.legal.title,
       imprintLabel: content.footer.legal.imprint,
+      imprintHref: '#',
       privacyLabel: content.footer.legal.privacy,
+      privacyHref: links.privacyPolicy,
     },
     donateLabel: content.footer.donateLabel,
-    copyright: content.footer.copyright,
+    donateHref: '#',
+    copyright: content.footer.copyright(new Date().getFullYear()),
     backToTopLabel: content.footer.backToTopLabel,
   };
 

@@ -153,8 +153,12 @@ describe('ApplicationForm', () => {
     const error = await screen.findByRole('alert');
 
     expect(error).toHaveTextContent(
-      'Ohne deine Einwilligung können wir deine Bewerbung nicht speichern',
+      'Bitte bestätige die Einwilligung, damit wir deine Bewerbung speichern können',
     );
+
+    expect(
+      screen.getByRole('link', { name: 'Datenschutzerklärung' }),
+    ).toHaveAttribute('href', 'https://www.ichbinhier.eu/datenschutz');
 
     expect(checkbox).toHaveAttribute('aria-invalid', 'true');
     expect(error).toHaveAttribute('id');

@@ -10,26 +10,21 @@ function renderFooter(onBackToTop = vi.fn()) {
     <Footer
       content={{
         backToTopLabel: 'Nach oben',
-        copyright:
-          'Copyright 2026 Musterverein e.V. – Alle Rechte vorbehalten.',
-        donateHref: 'https://example.org/spende',
-        donateLabel: 'SPENDE HIER',
+        copyright: 'Copyright 2026 ichbinhier e.V. – Alle Rechte vorbehalten.',
+        donateHref: '#',
+        donateLabel: 'Spende hier',
         contact: {
           title: 'Kontakt',
           talkToUsLabel: 'Sprich mit uns',
-          talkToUsHref: 'https://example.org/kontakt',
-          address: [
-            'Musterstraße 1',
-            '12345 Musterstadt',
-            'kontakt@example.org',
-          ],
+          talkToUsHref: '#',
+          address: ['Postfach 25588', '10129 Berlin', 'info@ichbinhier.online'],
         },
         legal: {
           title: 'Rechtliches',
           imprintLabel: 'Impressum',
-          imprintHref: 'https://example.org/impressum',
+          imprintHref: '#',
           privacyLabel: 'Datenschutz',
-          privacyHref: 'https://example.org/datenschutz',
+          privacyHref: 'https://www.ichbinhier.eu/datenschutz',
         },
       }}
       onBackToTop={onBackToTop}
@@ -43,19 +38,24 @@ describe('Footer', () => {
 
     expect(
       screen.getByRole('link', { name: 'Sprich mit uns' }),
-    ).toHaveAttribute('href', 'https://example.org/kontakt');
+    ).toHaveAttribute('href', '#');
 
     expect(screen.getByRole('link', { name: 'Impressum' })).toHaveAttribute(
       'href',
-      'https://example.org/impressum',
+      '#',
     );
 
     expect(screen.getByRole('link', { name: 'Datenschutz' })).toHaveAttribute(
       'href',
-      'https://example.org/datenschutz',
+      'https://www.ichbinhier.eu/datenschutz',
     );
 
-    expect(screen.getByText('kontakt@example.org')).toBeVisible();
+    expect(screen.getByRole('link', { name: 'Spende hier' })).toHaveAttribute(
+      'href',
+      '#',
+    );
+
+    expect(screen.getByText('info@ichbinhier.online')).toBeVisible();
   });
 
   it('calls onBackToTop when the back-to-top button is pressed', async () => {

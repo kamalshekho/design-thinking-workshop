@@ -68,7 +68,7 @@ export interface Content {
     contact: { title: string; talkToUs: string; address: readonly string[] };
     legal: { title: string; imprint: string; privacy: string };
     donateLabel: string;
-    copyright: string;
+    copyright: (year: number) => string;
     backToTopLabel: string;
   };
 }

@@ -48,7 +48,9 @@ are backend-owned data that staff members maintain (`A12`); the initial set
 was seeded from the association's own public calls for volunteers (`A7`), but
 the backend — not the frontend — is the source of truth for which categories
 exist. A category always names Vereinsarbeit — community participation and
-supporting membership are routes, not categories.
+supporting membership are routes, not categories. The two UIs label it
+differently on purpose: the applicant form says "Bereich", which reads less
+like paperwork, and the staff dashboard says "Kategorie".
 _Avoid_: Department, area, tag, position
 
 **Route**:
