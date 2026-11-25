@@ -92,7 +92,7 @@ describe('ApplicationsScreen', () => {
       .getAllByRole('tab')
       .map((tab) => tab.textContent.replace(/\s+/g, ' ').trim());
 
-    expect(names).toEqual(['Alle8', 'Nicht zugewiesen3', 'Älter als 7 Tage4']);
+    expect(names).toEqual(['Alle8', 'Ohne Zuständigkeit3', 'Lange offen4']);
   });
 
   it('narrows the list when a Status is chosen', async () => {
@@ -117,7 +117,7 @@ describe('ApplicationsScreen', () => {
     const user = userEvent.setup();
     render(<Host />);
 
-    await user.click(screen.getByRole('tab', { name: /Nicht zugewiesen/ }));
+    await user.click(screen.getByRole('tab', { name: /Ohne Zuständigkeit/ }));
 
     await waitFor(() =>
       expect(screen.getByText('3 von 8 Anfragen')).toBeInTheDocument(),
