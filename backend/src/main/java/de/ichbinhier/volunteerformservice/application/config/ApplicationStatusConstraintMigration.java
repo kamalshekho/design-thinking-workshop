@@ -9,10 +9,8 @@ import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import de.ichbinhier.volunteerformservice.application.domain.ApplicationStatus;
@@ -28,14 +26,14 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@DependsOn("entityManagerFactory")
 @RequiredArgsConstructor
-public class ApplicationStatusConstraintMigration implements ApplicationRunner {
+public class ApplicationStatusConstraintMigration implements InitializingBean {
 
     private final DataSource dataSource;
 
     @Override
-    public void run(ApplicationArguments args) throws SQLException {
+    public void afterPropertiesSet() throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             String productName = connection.getMetaData().getDatabaseProductName();
             if (productName == null || !productName.toLowerCase(Locale.ROOT).contains("postgresql")) {

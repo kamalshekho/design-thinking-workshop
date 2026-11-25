@@ -100,10 +100,7 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
 
         appRepo.save(app);
 
-        int doneSteps = app.getOnboardingToken() == null
-                ? 0
-                : Math.toIntExact(onboardingSteps.countByApplicationId(app.getId()));
-        ApplicationDto updated = ApplicationDto.of(app, onboardingOf(app, doneSteps));
+        ApplicationDto updated = ApplicationDto.of(app, onboardingOf(app));
         stream.updated(updated);
         if (statusChanged) {
             events.publishEvent(new ApplicationStatusChanged(
@@ -127,6 +124,14 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
         }
         recordChange(app, StateChangeField.STATUS, status.name());
         return true;
+    }
+
+    private OnboardingDto onboardingOf(Application app) {
+        if (app.getOnboardingToken() == null) {
+            return null;
+        }
+        int doneSteps = Math.toIntExact(onboardingSteps.countByApplicationId(app.getId()));
+        return OnboardingDto.of(app, onboardingProperties, doneSteps);
     }
 
     private OnboardingDto onboardingOf(Application app, int doneSteps) {
@@ -165,10 +170,7 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
             throw ApiException.notDiscarded();
         }
 
-        int doneSteps = app.getOnboardingToken() == null
-                ? 0
-                : Math.toIntExact(onboardingSteps.countByApplicationId(app.getId()));
-        ApplicationDto erased = ApplicationDto.of(app, onboardingOf(app, doneSteps));
+        ApplicationDto erased = ApplicationDto.of(app, onboardingOf(app));
 
         onboardingSteps.deleteByApplicationId(id);
         changeRepo.deleteByApplicationId(id);

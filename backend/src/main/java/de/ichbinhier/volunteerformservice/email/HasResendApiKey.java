@@ -5,11 +5,11 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.util.StringUtils;
 
-// Priority of EmailSender implementations:
-// 1. ResendEmailSender when resend.api-key is non-blank (HasResendApiKey)
-// 2. SmtpEmailSender when resend.api-key is blank and spring.mail.host is non-blank (SmtpConfigured)
-// 3. NoopEmailSender when neither is configured (NoProvider)
-// Evaluating properties directly ensures exactly one EmailSender bean always exists.
+/**
+ * Selects exactly one {@link EmailSender} implementation by environment
+ * property precedence: Resend ({@code resend.api-key}) over SMTP
+ * ({@code spring.mail.host}) over {@link NoopEmailSender}.
+ */
 class HasResendApiKey implements Condition {
 
     @Override
