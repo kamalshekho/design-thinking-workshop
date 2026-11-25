@@ -27,6 +27,8 @@ import de.ichbinhier.volunteerformservice.application.repository.ApplicationRepo
 import de.ichbinhier.volunteerformservice.application.repository.StateChangeRepository;
 import de.ichbinhier.volunteerformservice.category.domain.Category;
 import de.ichbinhier.volunteerformservice.category.repository.CategoryRepository;
+import de.ichbinhier.volunteerformservice.onboarding.OnboardingTokens;
+import de.ichbinhier.volunteerformservice.onboarding.repository.OnboardingStepCompletionRepository;
 import de.ichbinhier.volunteerformservice.staff.domain.Staff;
 import de.ichbinhier.volunteerformservice.staff.repository.StaffRepository;
 
@@ -41,6 +43,10 @@ class DemoSeederIntegrationTest {
 
     @Autowired private StateChangeRepository stateChanges;
 
+    @Autowired private OnboardingStepCompletionRepository onboardingSteps;
+
+    @Autowired private OnboardingTokens onboardingTokens;
+
     @Autowired private CategoryRepository categories;
 
     @Autowired private StaffRepository staffMembers;
@@ -51,6 +57,7 @@ class DemoSeederIntegrationTest {
 
     @BeforeEach
     void reset() {
+        onboardingSteps.deleteAll();
         stateChanges.deleteAll();
         applications.deleteAll();
         categories.deleteAll();
@@ -191,7 +198,8 @@ class DemoSeederIntegrationTest {
 
     private List<Application> seed() {
         startedAt = Instant.now();
-        new DemoSeeder(applications, stateChanges, categories, staffMembers, entityManager)
+        new DemoSeeder(applications, stateChanges, onboardingSteps, onboardingTokens,
+                categories, staffMembers, entityManager)
                 .run(null);
         entityManager.flush();
         entityManager.clear();

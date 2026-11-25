@@ -14,12 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 // the Application's id, which is enough to find the row.
 @Slf4j
 @Component
-@Conditional(HasResendApiKey.NotSet.class)
+@Conditional(HasResendApiKey.NoProvider.class)
 public class NoopEmailSender implements EmailSender {
 
     @Override
     public void send(String toAddress, String subject, String htmlBody) {
-        log.info("Email not sent (no RESEND_API_KEY configured), subject={}", subject);
+        log.info("Email not sent (no RESEND_API_KEY or SMTP configured), subject={}", subject);
     }
 
 }

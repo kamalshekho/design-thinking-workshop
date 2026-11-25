@@ -26,6 +26,7 @@ public class ApplicationDto {
     private Instant consentAt;
     private String consentTextVersion;
     private Instant submittedAt;
+    private OnboardingDto onboarding;
 
     /**
      * The one mapping from an Application to its wire shape. The list endpoint
@@ -39,6 +40,10 @@ public class ApplicationDto {
      * session, so this is safe to call outside a transaction.
      */
     public static ApplicationDto of(Application application) {
+        return of(application, null);
+    }
+
+    public static ApplicationDto of(Application application, OnboardingDto onboarding) {
         ApplicationDto dto = new ApplicationDto();
         dto.setId(application.getId());
         dto.setCategoryId(application.getCategory().getId());
@@ -54,6 +59,7 @@ public class ApplicationDto {
         dto.setConsentAt(application.getConsentAt());
         dto.setConsentTextVersion(application.getConsentTextVersion());
         dto.setSubmittedAt(application.getSubmittedAt());
+        dto.setOnboarding(onboarding);
         return dto;
     }
 }

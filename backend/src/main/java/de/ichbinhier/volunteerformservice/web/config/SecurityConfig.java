@@ -49,6 +49,8 @@ public class SecurityConfig {
                             environment.acceptsProfiles(Profiles.of("docs"))))
                 .requestMatchers(HttpMethod.POST, "/api/v1/applications").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/onboarding/*").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/onboarding/*/steps/*").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/staff/session").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/staff/session").permitAll()
                 // For the container healthcheck; answers UP or DOWN and nothing else.

@@ -13,6 +13,8 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
 
     Optional<Application> findBySubmissionId(UUID submissionId);
 
+    Optional<Application> findByOnboardingToken(String onboardingToken);
+
     List<Application> findByEmailIgnoreCaseAndSubmittedAtAfterOrderBySubmittedAtAsc(String email, Instant since);
 
     List<Application> findAllByOrderBySubmittedAtDesc();

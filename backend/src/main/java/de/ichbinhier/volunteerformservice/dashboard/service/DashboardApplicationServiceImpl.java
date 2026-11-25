@@ -3,8 +3,10 @@ package de.ichbinhier.volunteerformservice.dashboard.service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -21,9 +23,14 @@ import de.ichbinhier.volunteerformservice.dashboard.DashboardApplicationService;
 import de.ichbinhier.volunteerformservice.dashboard.dto.application.ApplicationDto;
 import de.ichbinhier.volunteerformservice.dashboard.dto.application.ApplicationsResponse;
 import de.ichbinhier.volunteerformservice.dashboard.dto.application.ChangesResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.OnboardingDto;
 import de.ichbinhier.volunteerformservice.dashboard.dto.application.StateChangeDto;
 import de.ichbinhier.volunteerformservice.dashboard.dto.application.UpdateApplicationRequest;
 import de.ichbinhier.volunteerformservice.email.ApplicationStatusChanged;
+import de.ichbinhier.volunteerformservice.onboarding.OnboardingProperties;
+import de.ichbinhier.volunteerformservice.onboarding.OnboardingStep;
+import de.ichbinhier.volunteerformservice.onboarding.OnboardingTokens;
+import de.ichbinhier.volunteerformservice.onboarding.repository.OnboardingStepCompletionRepository;
 import de.ichbinhier.volunteerformservice.staff.domain.Staff;
 import de.ichbinhier.volunteerformservice.staff.repository.StaffRepository;
 import de.ichbinhier.volunteerformservice.web.ApiException;
@@ -38,12 +45,22 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
     private final ApplicationRepository appRepo;
     private final StaffRepository staffRepo;
     private final StateChangeRepository changeRepo;
+    private final OnboardingStepCompletionRepository onboardingSteps;
+    private final OnboardingProperties onboardingProperties;
+    private final OnboardingTokens onboardingTokens;
     private final ApplicationEventStream stream;
     private final ApplicationEventPublisher events;
 
     public ApplicationsResponse list() {
+        Map<UUID, Integer> doneByApp = onboardingSteps.countDoneByApplication().stream()
+                .collect(Collectors.toMap(
+                        OnboardingStepCompletionRepository.ApplicationStepCount::getApplicationId,
+                        row -> Math.toIntExact(row.getDoneCount())));
+
         List<ApplicationDto> apps = appRepo.findAllByOrderBySubmittedAtDesc().stream()
-            .map(ApplicationDto::of)
+            .map(app -> ApplicationDto.of(
+                    app,
+                    onboardingOf(app, doneByApp.getOrDefault(app.getId(), 0))))
             .toList();
 
         ApplicationsResponse response = new ApplicationsResponse();
@@ -84,11 +101,15 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
 
         appRepo.save(app);
 
-        ApplicationDto updated = ApplicationDto.of(app);
+        int doneSteps = app.getOnboardingToken() == null
+                ? 0
+                : Math.toIntExact(onboardingSteps.countByApplicationId(app.getId()));
+        ApplicationDto updated = ApplicationDto.of(app, onboardingOf(app, doneSteps));
         stream.updated(updated);
         if (statusChanged) {
             events.publishEvent(new ApplicationStatusChanged(
-                app.getId(), app.getEmail(), app.getName(), app.getStatus()));
+                app.getId(), app.getEmail(), app.getName(), app.getStatus(),
+                app.getOnboardingToken()));
         }
         return updated;
     }
@@ -102,8 +123,21 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
             return false;
         }
         app.setStatus(status);
+        if (status == ApplicationStatus.ACCEPTED && app.getOnboardingToken() == null) {
+            app.setOnboardingToken(onboardingTokens.generate());
+        }
         recordChange(app, StateChangeField.STATUS, status.name());
         return true;
+    }
+
+    private OnboardingDto onboardingOf(Application app, int doneSteps) {
+        if (app.getOnboardingToken() == null) {
+            return null;
+        }
+        return new OnboardingDto(
+                onboardingProperties.linkFor(app.getOnboardingToken()),
+                doneSteps,
+                OnboardingStep.values().length);
     }
 
     private void updateOwner(Application app, UpdateApplicationRequest req) {
@@ -138,8 +172,12 @@ class DashboardApplicationServiceImpl implements DashboardApplicationService {
             throw ApiException.notDiscarded();
         }
 
-        ApplicationDto erased = ApplicationDto.of(app);
+        int doneSteps = app.getOnboardingToken() == null
+                ? 0
+                : Math.toIntExact(onboardingSteps.countByApplicationId(app.getId()));
+        ApplicationDto erased = ApplicationDto.of(app, onboardingOf(app, doneSteps));
 
+        onboardingSteps.deleteByApplicationId(id);
         changeRepo.deleteByApplicationId(id);
         appRepo.deleteById(id);
 

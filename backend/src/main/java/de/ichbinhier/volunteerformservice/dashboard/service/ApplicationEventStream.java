@@ -14,6 +14,12 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import de.ichbinhier.volunteerformservice.application.ApplicationSubmitted;
 import de.ichbinhier.volunteerformservice.dashboard.dto.application.ApplicationDto;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.OnboardingDto;
+import de.ichbinhier.volunteerformservice.onboarding.OnboardingProperties;
+import de.ichbinhier.volunteerformservice.onboarding.OnboardingStep;
+import de.ichbinhier.volunteerformservice.onboarding.OnboardingStepChanged;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Every open dashboard's live stream, and the only place the three event types
@@ -28,11 +34,14 @@ import de.ichbinhier.volunteerformservice.dashboard.dto.application.ApplicationD
  * around the write itself.
  */
 @Component
+@RequiredArgsConstructor
 public class ApplicationEventStream {
 
     private static final long HEARTBEAT_INTERVAL_MILLIS = 20000;
 
     private static final long CONNECTION_TIMEOUT_MILLIS = 3600000;
+
+    private final OnboardingProperties onboardingProperties;
 
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
@@ -73,6 +82,18 @@ public class ApplicationEventStream {
     @EventListener
     void applicationCreated(ApplicationSubmitted submitted) {
         send("application.created", ApplicationDto.of(submitted.application()));
+    }
+
+    @EventListener
+    void onboardingStepChanged(OnboardingStepChanged changed) {
+        String token = changed.application().getOnboardingToken();
+        OnboardingDto onboarding = token == null
+                ? null
+                : new OnboardingDto(
+                        onboardingProperties.linkFor(token),
+                        changed.doneSteps(),
+                        OnboardingStep.values().length);
+        send("application.updated", ApplicationDto.of(changed.application(), onboarding));
     }
 
     /**

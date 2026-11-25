@@ -33,7 +33,8 @@ The dashboard's request and response types live in `dashboard/dto`, grouped
 by Application, Category, Staff member and route selection.
 
 `application` handles Applications submitted through the public form;
-`category` provides the form's available Categories. `dashboard` lets Staff
+`category` provides the form's available Categories; `onboarding` serves the
+public checklist endpoints and stores step completions. `dashboard` lets Staff
 members view and update those same Applications and Categories. `staff` holds
 the Staff accounts, `email` sends messages, and `demo` prepares presentation
 data. The shared `web` package handles errors and security.
@@ -150,15 +151,25 @@ The confirmation email an applicant gets on submit (`A8` in
 API directly — no SDK dependency, the API is one POST request.
 
 A changed Status also triggers an email after the database change commits
-(`A30`). Saving the same Status again, changing the Owner or editing notes does
-not trigger one. The wording and which transitions should send mail still need
-the association's approval. Mail failures are logged; there is no automatic
-retry or delivery guarantee, and a saved Status remains saved if sending fails.
+(`A30`). Moving an Application to `ACCEPTED` generates a personal onboarding
+token (preserved on later transitions) and sends the German acceptance email
+with the `/onboarding/<token>` link built from `onboarding.base-url`
+(`ONBOARDING_BASE_URL`, default `http://localhost:8081`). Saving the same Status
+again, changing the Owner or editing notes does not trigger an email. The
+wording and which transitions should send mail still need the association's
+approval. Mail failures are logged; there is no automatic retry or delivery
+guarantee, and a saved Status remains saved if sending fails.
 
-Without `RESEND_API_KEY` set, `email/NoopEmailSender.java` takes over
-automatically and logs the subject instead of sending the email. Local
-development and the test suite need nothing configured. No log line carries an
-applicant's address; the confirmation is logged with the Application's id.
+Three `EmailSender` implementations exist, with strict priority so exactly one
+bean is active:
+
+1. `email/ResendEmailSender.java` when `RESEND_API_KEY` is non-blank.
+2. `email/SmtpEmailSender.java` when `RESEND_API_KEY` is blank and
+   `spring.mail.host` (`SMTP_HOST`) is non-blank. `docker-compose.yml` runs
+   Mailpit (`http://localhost:8025`) and points the backend at it by default.
+3. `email/NoopEmailSender.java` when neither is configured (local Maven runs and
+   the test suite). It logs only the subject, never an applicant's address or
+   onboarding token.
 
 **To send real email:**
 
