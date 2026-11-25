@@ -34,11 +34,11 @@ config:
 ---
 flowchart LR
     %% The first, small run with load-test/categories.js, from the screenshot of 25.11.2026.
-    s(["👥 <b>Situation</b><br/>10 Nutzer öffnen 30 Sekunden lang immer wieder das Bewerbungsformular"])
-    t["📋 <b>Geprüft</b><br/>Lädt das Formular die Liste der Bereiche, in denen man helfen kann? Kommt jede Antwort vollständig an?"]
+    s(["<b>Situation</b><br/>10 Nutzer öffnen 30 Sekunden lang immer wieder das Bewerbungsformular"])
+    t["<b>Geprüft</b><br/>Lädt das Formular die Liste der Bereiche, in denen man helfen kann? Kommt jede Antwort vollständig an?"]
     c{"Alle Grenzen<br/>eingehalten?"}
-    r(["✅ <b>Ergebnis: bestanden</b><br/>255 Anfragen, keine Fehler<br/>95 % der Antworten in unter 0,03 Sekunden<br/>erlaubt war 1 Sekunde"])
-    n["ℹ️ <b>Was er nicht zeigt</b><br/>Bei 8 Anfragen pro Sekunde war der Server kaum gefordert. Wo seine Grenzen liegen, blieb offen. Deshalb folgten die größeren Tests."]
+    r(["<b>Ergebnis: bestanden</b><br/>255 Anfragen, keine Fehler<br/>95 % der Antworten in unter 0,03 Sekunden<br/>erlaubt war 1 Sekunde"])
+    n["<b>Was er nicht zeigt</b><br/>Bei 8 Anfragen pro Sekunde war der Server kaum gefordert. Wo seine Grenzen liegen, blieb offen. Deshalb folgten die größeren Tests."]
     s --> t --> c
     c -->|Ja| r
     r -.-> n
@@ -82,12 +82,12 @@ config:
 ---
 flowchart LR
     %% One loop: load the copy, find what breaks, fix it, run the same test again.
-    start(["🧪 Testkopie starten<br/>ohne echte Daten,<br/>ohne E-Mails"])
-    load["👥 Viele Nutzer gleichzeitig nachstellen, Last Stufe für Stufe erhöhen"]
+    start(["Testkopie starten<br/>ohne echte Daten,<br/>ohne E-Mails"])
+    load["Viele Nutzer gleichzeitig nachstellen, Last Stufe für Stufe erhöhen"]
     check{"Schnell und<br/>fehlerfrei?"}
-    pass(["✅ Bestanden"])
-    cause["🔍 Ursache suchen"]
-    fix["🔧 Ursache beheben"]
+    pass(["Bestanden"])
+    cause["Ursache suchen"]
+    fix["Ursache beheben"]
 
     start --> load --> check
     check -->|Ja| pass
@@ -130,16 +130,16 @@ config:
 ---
 flowchart TB
     %% Why the check exists, what went wrong, what changed, where it lives.
-    why["📨 <b>Warum der Server sucht</b><br/>Schutz vor Spam: höchstens 3 Bewerbungen pro E-Mail-Adresse in 24 Stunden. Vor jeder neuen Bewerbung fragt der Server die Datenbank: Wie viele kamen schon von dieser Adresse?"]
-    subgraph before["❌ Vorher"]
+    why["<b>Warum der Server sucht</b><br/>Schutz vor Spam: höchstens 3 Bewerbungen pro E-Mail-Adresse in 24 Stunden. Vor jeder neuen Bewerbung fragt der Server die Datenbank: Wie viele kamen schon von dieser Adresse?"]
+    subgraph before["Vorher"]
         direction TB
-        b1["🗄️ Die Datenbank hat kein Verzeichnis nach E-Mail-Adressen"] --> b2["📚 Sie liest alle Bewerbungen nacheinander: 74.899 Zeilen, 54 ms pro Prüfung"] --> b3["🚦 Viele Bewerbungen gleichzeitig stehen Schlange: rund 4 Sekunden Wartezeit"]
+        b1["Die Datenbank hat kein Verzeichnis nach E-Mail-Adressen"] --> b2["Sie liest alle Bewerbungen nacheinander: 74.899 Zeilen, 54 ms pro Prüfung"] --> b3["Viele Bewerbungen gleichzeitig stehen Schlange: rund 4 Sekunden Wartezeit"]
     end
-    subgraph after["✅ Nachher"]
+    subgraph after["Nachher"]
         direction TB
-        a1["📇 Ein Register, nach E-Mail-Adresse sortiert, wie im Telefonbuch"] --> a2["🎯 Die Datenbank springt direkt zur Adresse: 0,3 ms pro Prüfung"] --> a3["⚡ Antwort in unter 0,01 Sekunden, auch wenn immer mehr Bewerbungen dazukommen"]
+        a1["Ein Register, nach E-Mail-Adresse sortiert, wie im Telefonbuch"] --> a2["Die Datenbank springt direkt zur Adresse: 0,3 ms pro Prüfung"] --> a3["Antwort in unter 0,01 Sekunden, auch wenn immer mehr Bewerbungen dazukommen"]
     end
-    code["💻 <b>Im Code</b><br/>ApplicationEmailIndexMigration legt das Register beim Start des Servers an"]
+    code["<b>Im Code</b><br/>ApplicationEmailIndexMigration legt das Register beim Start des Servers an"]
     why --> before
     why --> after
     after -.- code
@@ -246,16 +246,16 @@ config:
 ---
 flowchart TB
     %% Why the check exists, what went wrong, what changed, where it lives.
-    why["🌐 <b>Wie eine Anfrage reist</b><br/>Browser → nginx → Server. nginx leitet jede Anfrage über eine Leitung zum Server weiter, wie eine Telefonzentrale."]
-    subgraph before["❌ Vorher"]
+    why["<b>Wie eine Anfrage reist</b><br/>Browser → nginx → Server. nginx leitet jede Anfrage über eine Leitung zum Server weiter, wie eine Telefonzentrale."]
+    subgraph before["Vorher"]
         direction TB
-        b1["☎️ Für jede Anfrage neu wählen und danach auflegen"] --> b2["⏳ Eine aufgelegte Leitung blockiert ihre Nummer noch 60 Sekunden"] --> b3["🚫 Ab 600 Anfragen pro Sekunde sind alle Nummern belegt: jede zweite Anfrage scheitert mit Fehler 502"]
+        b1["Für jede Anfrage neu wählen und danach auflegen"] --> b2["Eine aufgelegte Leitung blockiert ihre Nummer noch 60 Sekunden"] --> b3["Ab 600 Anfragen pro Sekunde sind alle Nummern belegt: jede zweite Anfrage scheitert mit Fehler 502"]
     end
-    subgraph after["✅ Nachher"]
+    subgraph after["Nachher"]
         direction TB
-        a1["📞 32 Leitungen bleiben offen und werden nicht aufgelegt"] --> a2["🔁 Die Anfragen laufen nacheinander über dieselben Leitungen"] --> a3["✅ 2.400 Anfragen pro Sekunde, keine Fehler, Antwort in 4 ms"]
+        a1["32 Leitungen bleiben offen und werden nicht aufgelegt"] --> a2["Die Anfragen laufen nacheinander über dieselben Leitungen"] --> a3["2.400 Anfragen pro Sekunde, keine Fehler, Antwort in 4 ms"]
     end
-    code["💻 <b>Im Code</b><br/>frontend/nginx.conf und dashboard/nginx.conf: upstream backend_api mit keepalive 32"]
+    code["<b>Im Code</b><br/>frontend/nginx.conf und dashboard/nginx.conf: upstream backend_api mit keepalive 32"]
     why --> before
     why --> after
     after -.- code
@@ -347,16 +347,16 @@ config:
 ---
 flowchart TB
     %% Why the check exists, what went wrong, what changed, where it lives.
-    why["🖥️ <b>Warum es Lebenszeichen gibt</b><br/>Ein offenes Dashboard hält eine Live-Verbindung, damit neue Bewerbungen sofort erscheinen. Alle 20 Sekunden schickt der Server ein Lebenszeichen 💓, damit die Verbindung nicht einschläft und geschlossene Tabs auffallen."]
-    subgraph before["❌ Vorher"]
+    why["<b>Warum es Lebenszeichen gibt</b><br/>Ein offenes Dashboard hält eine Live-Verbindung, damit neue Bewerbungen sofort erscheinen. Alle 20 Sekunden schickt der Server ein Lebenszeichen, damit die Verbindung nicht einschläft und geschlossene Tabs auffallen."]
+    subgraph before["Vorher"]
         direction TB
-        b1["👷 👷 👷 … Für jedes offene Dashboard ein eigener Helfer"] --> b2["😴 Jeder Helfer schläft 20 Sekunden, schickt ein Lebenszeichen und schläft wieder"] --> b3["📈 1.000 Dashboards brauchen 1.000 Helfer. Der Server hat insgesamt 1.244 Threads und braucht 740 MB Speicher"]
+        b1["Für jedes offene Dashboard ein eigener Helfer"] --> b2["Jeder Helfer schläft 20 Sekunden, schickt ein Lebenszeichen und schläft wieder"] --> b3["1.000 Dashboards brauchen 1.000 Helfer. Der Server hat insgesamt 1.244 Threads und braucht 740 MB Speicher"]
     end
-    subgraph after["✅ Nachher"]
+    subgraph after["Nachher"]
         direction TB
-        a1["👷 Ein einziger Helfer für den ganzen Server"] --> a2["🔁 Er geht alle 20 Sekunden die Liste aller offenen Dashboards durch"] --> a3["✅ Insgesamt 76 Threads und 507 MB Speicher"]
+        a1["Ein einziger Helfer für den ganzen Server"] --> a2["Er geht alle 20 Sekunden die Liste aller offenen Dashboards durch"] --> a3["Insgesamt 76 Threads und 507 MB Speicher"]
     end
-    code["💻 <b>Im Code</b><br/>ApplicationEventStream: ein gemeinsamer Zeitplan statt eines Helfers pro Verbindung"]
+    code["<b>Im Code</b><br/>ApplicationEventStream: ein gemeinsamer Zeitplan statt eines Helfers pro Verbindung"]
     why --> before
     why --> after
     after -.- code
