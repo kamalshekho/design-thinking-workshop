@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.ichbinhier.volunteerformservice.application.ApplicationRequest;
 import de.ichbinhier.volunteerformservice.application.ApplicationResponse;
-import de.ichbinhier.volunteerformservice.application.ApplicationService;
+import de.ichbinhier.volunteerformservice.application.ApplicationSubmissionService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,9 +24,9 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/applications")
 @RequiredArgsConstructor
-public class ApplicationController {
+public class ApplicationSubmissionController {
 
-    private final ApplicationService applications;
+    private final ApplicationSubmissionService applications;
 
     @Operation(summary = "Bewerbung absenden")
     @ApiResponse(responseCode = "201", description = "Bewerbung gespeichert oder bereits vorhanden")

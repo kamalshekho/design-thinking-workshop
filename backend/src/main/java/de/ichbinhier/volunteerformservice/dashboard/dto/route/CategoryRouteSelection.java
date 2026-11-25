@@ -1,6 +1,4 @@
-package de.ichbinhier.volunteerformservice.dashboard.dto;
-
-import java.util.UUID;
+package de.ichbinhier.volunteerformservice.dashboard.dto.route;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StaffResponse {
-    private UUID id;
+public class CategoryRouteSelection {
+    private String categoryId;
     private String name;
-    private String email;
+    private int count;
 }
 

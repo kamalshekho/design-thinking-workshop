@@ -2,10 +2,10 @@ package de.ichbinhier.volunteerformservice.dashboard;
 
 import java.util.UUID;
 
-import de.ichbinhier.volunteerformservice.dashboard.dto.ApplicationDto;
-import de.ichbinhier.volunteerformservice.dashboard.dto.ApplicationsResponse;
-import de.ichbinhier.volunteerformservice.dashboard.dto.ChangesResponse;
-import de.ichbinhier.volunteerformservice.dashboard.dto.UpdateApplicationRequest;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.ApplicationDto;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.ApplicationsResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.ChangesResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.UpdateApplicationRequest;
 
 public interface DashboardApplicationService {
     ApplicationsResponse list();

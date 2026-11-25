@@ -2,6 +2,6 @@ package de.ichbinhier.volunteerformservice.application;
 
 import java.util.UUID;
 
-public interface ApplicationService {
+public interface ApplicationSubmissionService {
     UUID submit(ApplicationRequest request);
 }

@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.ichbinhier.volunteerformservice.dashboard.DashboardApplicationService;
-import de.ichbinhier.volunteerformservice.dashboard.dto.ApplicationDto;
-import de.ichbinhier.volunteerformservice.dashboard.dto.ApplicationsResponse;
-import de.ichbinhier.volunteerformservice.dashboard.dto.ChangesResponse;
-import de.ichbinhier.volunteerformservice.dashboard.dto.UpdateApplicationRequest;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.ApplicationDto;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.ApplicationsResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.ChangesResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.UpdateApplicationRequest;
 
 import lombok.RequiredArgsConstructor;
 

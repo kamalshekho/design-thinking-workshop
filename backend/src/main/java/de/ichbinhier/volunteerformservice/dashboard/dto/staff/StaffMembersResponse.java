@@ -1,4 +1,4 @@
-package de.ichbinhier.volunteerformservice.dashboard.dto;
+package de.ichbinhier.volunteerformservice.dashboard.dto.staff;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChangesResponse {
-    private List<StateChangeDto> changes;
+public class StaffMembersResponse {
+    private List<StaffMemberResponse> members;
 }
 

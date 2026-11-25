@@ -1,4 +1,4 @@
-package de.ichbinhier.volunteerformservice.dashboard.dto;
+package de.ichbinhier.volunteerformservice.dashboard.dto.route;
 
 import java.util.List;
 

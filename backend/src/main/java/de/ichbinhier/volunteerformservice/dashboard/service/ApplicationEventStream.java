@@ -13,7 +13,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import de.ichbinhier.volunteerformservice.application.ApplicationSubmitted;
-import de.ichbinhier.volunteerformservice.dashboard.dto.ApplicationDto;
+import de.ichbinhier.volunteerformservice.dashboard.dto.application.ApplicationDto;
 
 /**
  * Every open dashboard's live stream, and the only place the three event types

@@ -10,7 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import de.ichbinhier.volunteerformservice.application.ApplicationRequest;
-import de.ichbinhier.volunteerformservice.application.ApplicationService;
+import de.ichbinhier.volunteerformservice.application.ApplicationSubmissionService;
 import de.ichbinhier.volunteerformservice.application.ApplicationSubmitted;
 import de.ichbinhier.volunteerformservice.application.config.ApplicationLimitProperties;
 import de.ichbinhier.volunteerformservice.application.domain.Application;
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-class ApplicationServiceImpl implements ApplicationService {
+class ApplicationSubmissionServiceImpl implements ApplicationSubmissionService {
 
     private final ApplicationRepository applications;
     private final CategoryRepository categories;

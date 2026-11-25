@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.ichbinhier.volunteerformservice.dashboard.dto.CategoryRouteSelection;
-import de.ichbinhier.volunteerformservice.dashboard.dto.RouteSelection;
-import de.ichbinhier.volunteerformservice.dashboard.dto.RouteSelectionsResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.route.CategoryRouteSelection;
+import de.ichbinhier.volunteerformservice.dashboard.dto.route.RouteSelection;
+import de.ichbinhier.volunteerformservice.dashboard.dto.route.RouteSelectionsResponse;
 
 import lombok.RequiredArgsConstructor;
 

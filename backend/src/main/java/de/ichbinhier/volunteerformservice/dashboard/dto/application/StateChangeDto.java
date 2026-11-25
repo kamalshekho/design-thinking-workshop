@@ -1,4 +1,4 @@
-package de.ichbinhier.volunteerformservice.dashboard.dto;
+package de.ichbinhier.volunteerformservice.dashboard.dto.application;
 
 import java.time.Instant;
 import java.util.UUID;

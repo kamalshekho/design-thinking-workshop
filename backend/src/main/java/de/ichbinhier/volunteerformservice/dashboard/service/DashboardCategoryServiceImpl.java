@@ -15,11 +15,11 @@ import de.ichbinhier.volunteerformservice.application.repository.ApplicationRepo
 import de.ichbinhier.volunteerformservice.category.domain.Category;
 import de.ichbinhier.volunteerformservice.category.repository.CategoryRepository;
 import de.ichbinhier.volunteerformservice.dashboard.DashboardCategoryService;
-import de.ichbinhier.volunteerformservice.dashboard.dto.CategoryDto;
-import de.ichbinhier.volunteerformservice.dashboard.dto.CreateCategoryRequest;
-import de.ichbinhier.volunteerformservice.dashboard.dto.DashboardCategoriesResponse;
-import de.ichbinhier.volunteerformservice.dashboard.dto.ReorderRequest;
-import de.ichbinhier.volunteerformservice.dashboard.dto.UpdateCategoryRequest;
+import de.ichbinhier.volunteerformservice.dashboard.dto.category.CategoryDto;
+import de.ichbinhier.volunteerformservice.dashboard.dto.category.CreateCategoryRequest;
+import de.ichbinhier.volunteerformservice.dashboard.dto.category.DashboardCategoriesResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.category.ReorderRequest;
+import de.ichbinhier.volunteerformservice.dashboard.dto.category.UpdateCategoryRequest;
 import de.ichbinhier.volunteerformservice.web.ApiException;
 import de.ichbinhier.volunteerformservice.web.FieldValidationException;
 

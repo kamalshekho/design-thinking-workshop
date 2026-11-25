@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.ichbinhier.volunteerformservice.dashboard.service.StaffAuthenticationService;
-import de.ichbinhier.volunteerformservice.dashboard.dto.LoginRequest;
-import de.ichbinhier.volunteerformservice.dashboard.dto.StaffMemberResponse;
-import de.ichbinhier.volunteerformservice.dashboard.dto.StaffMembersResponse;
-import de.ichbinhier.volunteerformservice.dashboard.dto.StaffResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.staff.LoginRequest;
+import de.ichbinhier.volunteerformservice.dashboard.dto.staff.StaffMemberResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.staff.StaffMembersResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.staff.StaffResponse;
 import de.ichbinhier.volunteerformservice.staff.domain.Staff;
 import de.ichbinhier.volunteerformservice.staff.repository.StaffRepository;
 import de.ichbinhier.volunteerformservice.web.ApiException;

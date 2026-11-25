@@ -29,13 +29,18 @@ runs on H2 and needs none of these variables.
 The packages group code by feature. Within a feature, `web` handles HTTP,
 `service` implements operations, `repository` reads and writes data, `domain`
 holds the domain model, and `config` contains configuration and seed data.
-The dashboard's request and response types live in `dashboard/dto`.
+The dashboard's request and response types live in `dashboard/dto`, grouped
+by Application, Category, Staff member and route selection.
 
 `application` handles Applications submitted through the public form;
 `category` provides the form's available Categories. `dashboard` lets Staff
 members view and update those same Applications and Categories. `staff` holds
 the Staff accounts, `email` sends messages, and `demo` prepares presentation
 data. The shared `web` package handles errors and security.
+
+`ApplicationSubmissionController` and `ApplicationSubmissionService` handle
+the public form submission. The `application/domain` model is also used by the
+dashboard, so the feature is named for the Application rather than the form.
 
 The application and dashboard service interfaces sit in their feature's root
 package; their implementations are package-private in `service`. This keeps

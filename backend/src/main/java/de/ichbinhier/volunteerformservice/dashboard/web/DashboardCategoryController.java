@@ -24,11 +24,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.ichbinhier.volunteerformservice.dashboard.DashboardCategoryService;
-import de.ichbinhier.volunteerformservice.dashboard.dto.CategoryDto;
-import de.ichbinhier.volunteerformservice.dashboard.dto.CreateCategoryRequest;
-import de.ichbinhier.volunteerformservice.dashboard.dto.DashboardCategoriesResponse;
-import de.ichbinhier.volunteerformservice.dashboard.dto.ReorderRequest;
-import de.ichbinhier.volunteerformservice.dashboard.dto.UpdateCategoryRequest;
+import de.ichbinhier.volunteerformservice.dashboard.dto.category.CategoryDto;
+import de.ichbinhier.volunteerformservice.dashboard.dto.category.CreateCategoryRequest;
+import de.ichbinhier.volunteerformservice.dashboard.dto.category.DashboardCategoriesResponse;
+import de.ichbinhier.volunteerformservice.dashboard.dto.category.ReorderRequest;
+import de.ichbinhier.volunteerformservice.dashboard.dto.category.UpdateCategoryRequest;
 
 import lombok.RequiredArgsConstructor;
 

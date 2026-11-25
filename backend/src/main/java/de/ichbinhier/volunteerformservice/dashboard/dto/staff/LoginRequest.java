@@ -1,4 +1,4 @@
-package de.ichbinhier.volunteerformservice.dashboard.dto;
+package de.ichbinhier.volunteerformservice.dashboard.dto.staff;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

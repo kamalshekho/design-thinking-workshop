@@ -28,7 +28,7 @@ public class ConfirmationMailer {
 
 
     // The Application is already committed by the time this runs (see
-    // ApplicationService.submit). A mail provider hiccup — a timeout, a bad
+    // ApplicationSubmissionService.submit). A mail provider hiccup — a timeout, a bad
     // key, Resend itself being down — must never turn into a 500 for an
     // applicant whose data is safely stored; it would look like the
     // submission failed and invite a duplicate attempt. So failures here are
