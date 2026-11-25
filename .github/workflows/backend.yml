@@ -10,6 +10,8 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/backend.yml'
+  # release.yml runs the backend tests on a version tag before it builds images.
+  workflow_call:
 
 permissions:
   contents: read
