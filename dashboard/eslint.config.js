@@ -1,5 +1,7 @@
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import js from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
+import { builtinRules } from 'eslint/use-at-your-own-risk';
 import betterTailwindcss from 'eslint-plugin-better-tailwindcss';
 import { getDefaultSelectors } from 'eslint-plugin-better-tailwindcss/defaults';
 import {
@@ -106,8 +108,12 @@ export default tseslint.config(
     sonarjs,
     eslintComments,
     checkFile,
+    stylistic,
+    restrictedSyntaxRule: builtinRules.get('no-restricted-syntax'),
     globals,
     tsconfigRootDir: import.meta.dirname,
+    runtimeTypeofIgnores: THIRD_PARTY_COPIES,
+    transportFiles: ['src/api/**'],
     styleBanIgnores: THIRD_PARTY_COPIES,
     filenameNamingIgnores: [...THIRD_PARTY_COPIES, ...THIRD_PARTY_COPY_TESTS],
   }),

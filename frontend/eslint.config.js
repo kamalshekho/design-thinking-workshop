@@ -1,5 +1,7 @@
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import js from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
+import { builtinRules } from 'eslint/use-at-your-own-risk';
 import boundaries from 'eslint-plugin-boundaries';
 import checkFile from 'eslint-plugin-check-file';
 import cssModules from 'eslint-plugin-css-modules';
@@ -34,8 +36,11 @@ export default tseslint.config(
     sonarjs,
     eslintComments,
     checkFile,
+    stylistic,
+    restrictedSyntaxRule: builtinRules.get('no-restricted-syntax'),
     globals,
     tsconfigRootDir: import.meta.dirname,
+    transportFiles: ['src/features/application-form/api.ts', 'src/lib/http.ts'],
     extraIgnores: ['storybook-static/**', 'public/mockServiceWorker.js'],
     extraTestFiles: ['src/mocks/**'],
     // The form's transport layer still sits under features/ until it moves out.

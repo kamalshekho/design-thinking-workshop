@@ -205,6 +205,91 @@ Prüfung: Zod-Schemas in beiden Anwendungen, eingeschaltet über die Tests in
 und `dashboard/src/queries/applicationEvents.test.ts`. Die Tests zeigen, dass
 eine Antwort mit falscher Form als Fehler ankommt und nicht als Daten.
 
+## Anti-Slop-Regeln
+
+Die Regeln dieses Abschnitts übernehmen den syntaktischen Teil von
+[dmmulroy/anti-slop](https://github.com/dmmulroy/anti-slop), einem Plugin für
+Oxlint. Wir nutzen ESLint, deshalb laufen sie als Selektoren: jede Regel ist
+eine eigene Kopie von `no-restricted-syntax` unter dem Namen
+`anti-slop/<regel>`. Ein `eslint-disable` und ein `off` nennen diesen Namen.
+
+Prüfung für den ganzen Abschnitt: `ANTI_SLOP_RULES` in `eslint.base.mjs`, in
+beiden Anwendungen eingeschaltet, im Hook und in den CI-Jobs `frontend` und
+`dashboard`. Die Selektoren prüfen die Syntax, nicht den aufgelösten Typ. Ein
+Alias wie `type Raw = unknown` versteckt das `unknown` dahinter, deshalb ist
+schon der Alias verboten.
+
+### Typen an Parametern, Rückgaben und Wörterbüchern
+
+Ein Parameter hat nicht den Typ `unknown` oder `object`, eine Funktion gibt
+nicht `unknown`, `Promise<unknown>` oder `PromiseLike<unknown>` zurück, und
+ein Typalias steht nicht für `unknown`. Ein Wörterbuch wie
+`Record<string, unknown>` oder `{ [key: string]: object }` nennt den Typ
+seiner Werte, `unknown`, `any`, `object` und `{}` gelten nicht.
+
+Ausgenommen sind ein Type Guard, der `unknown` annimmt, ein Parameter namens
+`cause` und eine generische Schranke wie `T extends Record<string, unknown>`.
+`unknown` als Parameter und Rückgabe ist außerdem in der Transportschicht und
+in Tests erlaubt, weil dort JSON vom Server ankommt, bevor ein Zod-Schema es
+prüft. Die Transportschicht ist im Applicant form
+`features/application-form/api.ts` und `lib/http.ts`, im Dashboard
+`src/api/`.
+
+Regeln: `anti-slop/no-unknown-parameters`, `anti-slop/no-object-parameters`,
+`anti-slop/no-unknown-returns`, `anti-slop/no-unknown-type-aliases` und
+`anti-slop/no-unsafe-dictionary-type`.
+
+### Kein `typeof` außerhalb eines Type Guards
+
+Ein Wert wird an der Grenze geparst oder in einem Type Guard eingeengt, nicht
+mit einem `typeof` mitten im Code. Ein Vergleich mit `'undefined'` bleibt
+erlaubt. Die Kopien aus Untitled UI und shadcn sind ausgenommen, weil die
+Render-Props von react-aria einen Wert oder eine Funktion annehmen und sie mit
+`typeof` unterscheiden.
+
+Regel: `anti-slop/no-runtime-typeof`. Die Ausnahme der Kopien steht als
+`runtimeTypeofIgnores` in `dashboard/eslint.config.js`.
+
+### Kein Mocking von Modulen
+
+Ein Test reicht eine Abhängigkeit als Parameter herein, statt ein Modul mit
+`vi.mock` oder `vi.doMock` zu ersetzen.
+
+Regel: `anti-slop/no-module-mocking`.
+
+### Reflect
+
+`Reflect.get` und `Reflect.apply` sind verboten. Eine Eigenschaft wird direkt
+gelesen, eine Funktion direkt aufgerufen.
+
+Regeln: `anti-slop/no-reflect-get` und `anti-slop/no-reflect-apply`.
+
+### Leerzeilen
+
+Eine Leerzeile steht zwischen mehrzeiligen Deklarationen, nach dem letzten
+Import, vor `return`, `throw` und jeder Kontrollstruktur und nach einem Block.
+Einzeilige Konstanten, Exporte und Typen und die Importe dürfen ohne
+Leerzeile aufeinander folgen.
+
+Prüfung: `@stylistic/padding-line-between-statements` in `eslint.base.mjs`,
+in beiden Anwendungen eingeschaltet, im Hook und in den CI-Jobs `frontend` und
+`dashboard`. `eslint --fix` setzt die fehlenden Leerzeilen, Prettier lässt sie
+stehen.
+
+### Was fehlt
+
+`no-known-value-widening`, `no-reduce-accumulator-copy` und
+`no-accumulating-spread` brauchen Typinformation oder den Vergleich zweier
+Variablen. Das kann kein Selektor, deshalb prüft sie keine Maschine.
+`no-array-filter-map`, `no-conditional-empty-object-spread` und
+`no-shape-in-symbol-names` sind bewusst aus. Sie prüfen Geschmack, keinen
+Fehler: zwei Durchläufe über ein kleines Array kosten nichts, und ein
+Schlüssel mit `undefined` ist nicht dasselbe wie ein fehlender Schlüssel.
+`no-chained-type-assertions`, `no-widen-then-assert` und
+`require-safety-comment-for-type-assertion` entfallen, weil
+[Kein `as`](#kein-as) jede Typumwandlung verbietet. In Tests ist `as` erlaubt,
+dort gelten sie also nicht.
+
 ## Fehler
 
 ### Vom Fehler zum Text

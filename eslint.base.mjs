@@ -21,6 +21,8 @@ export function sharedConfig({
   sonarjs,
   eslintComments,
   checkFile,
+  stylistic,
+  restrictedSyntaxRule,
   globals,
   tsconfigRootDir,
   extraIgnores = [],
@@ -28,7 +30,15 @@ export function sharedConfig({
   tryStatementIgnores = [],
   styleBanIgnores = [],
   filenameNamingIgnores = [],
+  runtimeTypeofIgnores = [],
+  transportFiles = [],
 }) {
+  const testFiles = [
+    'src/**/*.test.{ts,tsx}',
+    'src/test/**',
+    ...extraTestFiles,
+  ];
+
   const componentStyleBanIgnores = styleBanIgnores.filter(
     (pattern) =>
       pattern.startsWith('src/features/') ||
@@ -183,9 +193,110 @@ export function sharedConfig({
       },
     },
 
+    /* strictTypeChecked bans eval-like strings in setTimeout and new Function
+       through no-implied-eval, but not a direct eval(). A value returned from
+       a Promise executor is dropped, so returning one is a bug. */
+    {
+      rules: {
+        'no-eval': 'error',
+        'no-promise-executor-return': 'error',
+      },
+    },
+
+    /* Blank lines between declarations and around control flow, after the
+       require-readable-spacing rule of dmmulroy/anti-slop. Compact runs of
+       single-line bindings and of imports stay together. The fixer only
+       inserts blank lines, Prettier keeps them. */
+    {
+      files: ['**/*.{ts,tsx}'],
+      plugins: { '@stylistic': stylistic },
+      rules: {
+        '@stylistic/padding-line-between-statements': [
+          'error',
+          { blankLine: 'always', prev: 'import', next: '*' },
+          { blankLine: 'any', prev: 'import', next: 'import' },
+          {
+            blankLine: 'always',
+            prev: '*',
+            next: [...multilineDeclarations, 'multiline-expression'],
+          },
+          {
+            blankLine: 'always',
+            prev: [
+              ...multilineDeclarations,
+              'multiline-expression',
+              'block-like',
+            ],
+            next: '*',
+          },
+          {
+            blankLine: 'always',
+            prev: '*',
+            next: [
+              'if',
+              'for',
+              'while',
+              'do',
+              'switch',
+              'try',
+              'return',
+              'throw',
+            ],
+          },
+          { blankLine: 'any', prev: 'function-overload', next: 'function' },
+          {
+            blankLine: 'any',
+            prev: 'function-overload',
+            next: 'function-overload',
+          },
+        ],
+      },
+    },
+
+    {
+      files: ['**/*.{ts,tsx}'],
+      plugins: {
+        'anti-slop': {
+          rules: Object.fromEntries(
+            Object.keys(ANTI_SLOP_RULES).map((name) => [
+              name,
+              restrictedSyntaxRule,
+            ]),
+          ),
+        },
+      },
+      rules: Object.fromEntries(
+        Object.entries(ANTI_SLOP_RULES).map(([name, restriction]) => [
+          `anti-slop/${name}`,
+          ['error', restriction],
+        ]),
+      ),
+    },
+
+    /* Third-party copies keep the render props of react-aria, which take a
+       value or a function and tell them apart with typeof. */
+    ...(runtimeTypeofIgnores.length > 0
+      ? [
+          {
+            files: runtimeTypeofIgnores,
+            rules: { 'anti-slop/no-runtime-typeof': 'off' },
+          },
+        ]
+      : []),
+
+    /* The transport layer receives untyped JSON and hands it to a Zod schema,
+       and tests stub that JSON, so unknown is the honest type there. */
+    {
+      files: [...transportFiles, ...testFiles],
+      rules: {
+        'anti-slop/no-unknown-parameters': 'off',
+        'anti-slop/no-unknown-returns': 'off',
+      },
+    },
+
     /** Tests may assert on internals, use non-null assertions and type assertions. */
     {
-      files: ['src/**/*.test.{ts,tsx}', 'src/test/**', ...extraTestFiles],
+      files: testFiles,
       rules: {
         '@typescript-eslint/consistent-type-assertions': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
@@ -233,6 +344,22 @@ const reExportBan = [
   },
 ];
 
+/**
+ * The statements padding-line-between-statements surrounds with blank lines.
+ * Single-line bindings, exports and type aliases are left out so a run of
+ * them can stay compact.
+ */
+const multilineDeclarations = [
+  'multiline-const',
+  'multiline-let',
+  'multiline-export',
+  'multiline-type',
+  'function',
+  'class',
+  'interface',
+  'enum',
+];
+
 const styleBan = {
   selector: "JSXAttribute[name.name='style']",
   message: 'Use styles and design tokens instead of an inline style.',
@@ -242,4 +369,121 @@ const tryStatementBan = {
   selector: 'TryStatement',
   message:
     'Only the transport layer throws and catches. Do not use try/catch in features or components.',
+};
+
+/*
+ * The rules below port the syntactic part of dmmulroy/anti-slop, an Oxlint
+ * plugin, to selectors. Each runs as its own copy of the core
+ * no-restricted-syntax rule, so it reports, turns off and takes an
+ * eslint-disable under its anti-slop name. The selectors match syntax, not
+ * resolved types: an alias such as `type Raw = unknown` hides the `unknown` it
+ * names, which is why the alias itself is banned. no-known-value-widening and
+ * the reduce accumulator rules need type information and are left out
+ * (docs/STANDARD.md).
+ */
+
+/**
+ * Joins one alternative from each part into a selector and lists every
+ * combination. esquery anchors a `>` inside `:matches()` at the matched node
+ * rather than at the outer selector, so alternatives that contain `>` are
+ * spelled out instead of grouped.
+ */
+function anyOf(...parts) {
+  return parts
+    .reduce(
+      (prefixes, part) =>
+        prefixes.flatMap((prefix) =>
+          part.map((alternative) => `${prefix} ${alternative}`.trim()),
+        ),
+      [''],
+    )
+    .join(', ');
+}
+
+const FUNCTION_NODES =
+  ':matches(FunctionDeclaration, FunctionExpression, ArrowFunctionExpression, TSDeclareFunction, TSEmptyBodyFunctionExpression, TSFunctionType, TSMethodSignature, TSCallSignatureDeclaration, TSConstructorType)';
+
+const TYPE_PREDICATE = `${FUNCTION_NODES}[returnType.typeAnnotation.type='TSTypePredicate']`;
+
+/** A type predicate takes `unknown` by design, so it is left out. */
+const FUNCTION_LIKE = [
+  `${FUNCTION_NODES}:not([returnType.typeAnnotation.type='TSTypePredicate'])`,
+];
+
+/** `cause` is the conventional name for a caught error and may stay unknown. */
+const PARAM_TYPE = [
+  "> Identifier[name!='cause'] > TSTypeAnnotation",
+  '> RestElement > TSTypeAnnotation',
+  "> AssignmentPattern > Identifier.left[name!='cause'] > TSTypeAnnotation",
+];
+
+const RETURN_TYPE = ['> TSTypeAnnotation.returnType'];
+
+const LOOSE_VALUE =
+  ':matches(TSUnknownKeyword, TSAnyKeyword, TSObjectKeyword, TSTypeLiteral[members.length=0])';
+
+const ANTI_SLOP_RULES = {
+  'no-module-mocking': {
+    selector:
+      'CallExpression[callee.object.name=/^(vi|jest)$/][callee.property.name=/^(mock|doMock|unstable_mockModule)$/]',
+    message: 'Pass the dependency in instead of mocking a module.',
+  },
+  'no-reflect-get': {
+    selector: "MemberExpression[object.name='Reflect'][property.name='get']",
+    message: 'Read the property directly instead of through Reflect.get.',
+  },
+  'no-reflect-apply': {
+    selector: "MemberExpression[object.name='Reflect'][property.name='apply']",
+    message: 'Call the function directly instead of through Reflect.apply.',
+  },
+  /* typeof inside a type predicate is how a predicate checks, so it stays
+     allowed there, like the allowInTypeGuards option of anti-slop. A probe
+     against 'undefined' stays allowed too. */
+  'no-runtime-typeof': {
+    selector: `UnaryExpression[operator='typeof']:not([parent.right.type='Literal'][parent.right.value='undefined']):not([parent.left.type='Literal'][parent.left.value='undefined']):not(${TYPE_PREDICATE} UnaryExpression)`,
+    message:
+      'Parse the value at the boundary or narrow it in a type predicate instead of an ad hoc typeof.',
+  },
+  'no-unknown-parameters': {
+    selector: anyOf(FUNCTION_LIKE, PARAM_TYPE, [
+      '> TSUnknownKeyword',
+      '> TSUnionType > TSUnknownKeyword',
+    ]),
+    message: 'Name the type the parameter accepts instead of unknown.',
+  },
+  'no-object-parameters': {
+    selector: anyOf(FUNCTION_LIKE, PARAM_TYPE, [
+      '> TSObjectKeyword',
+      '> TSUnionType > TSObjectKeyword',
+    ]),
+    message: 'Name the type the parameter accepts instead of object.',
+  },
+  'no-unknown-returns': {
+    selector: anyOf(FUNCTION_LIKE, RETURN_TYPE, [
+      '> TSUnknownKeyword',
+      '> TSTypeReference[typeName.name=/^(Promise|PromiseLike)$/] > TSTypeParameterInstantiation > TSUnknownKeyword',
+    ]),
+    message: 'Name the type the function returns instead of unknown.',
+  },
+  'no-unknown-type-aliases': {
+    selector: anyOf(
+      ['TSTypeAliasDeclaration'],
+      ['> TSUnknownKeyword', '> TSUnionType > TSUnknownKeyword'],
+    ),
+    message:
+      'Use the type the alias stands for instead of an alias for unknown.',
+  },
+  /* A generic constraint such as `T extends Record<string, unknown>` stays
+     allowed. */
+  'no-unsafe-dictionary-type': {
+    selector: anyOf(
+      [
+        ":not(TSTypeParameter) > TSTypeReference[typeName.name='Record'] > TSTypeParameterInstantiation",
+        'TSIndexSignature > TSTypeAnnotation',
+      ],
+      [`> ${LOOSE_VALUE}`],
+    ),
+    message:
+      'Name the value type of the dictionary instead of unknown, any, object or {}.',
+  },
 };
