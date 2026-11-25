@@ -5,6 +5,12 @@ import { useBreakpoint } from './use-breakpoint';
 
 type Listener = (event: MediaQueryListEvent) => void;
 
+/** MediaQueryList without the deprecated addListener and removeListener. */
+type MediaQueryListMock = Omit<
+  MediaQueryList,
+  'addListener' | 'removeListener'
+>;
+
 function installControllableMatchMedia(initialWidth: number) {
   let width = initialWidth;
   const listenersByQuery = new Map<string, Set<Listener>>();
@@ -23,7 +29,7 @@ function installControllableMatchMedia(initialWidth: number) {
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     writable: true,
-    value: (query: string): MediaQueryList => {
+    value: (query: string): MediaQueryListMock => {
       const listeners = listenersByQuery.get(query) ?? new Set<Listener>();
       listenersByQuery.set(query, listeners);
 
@@ -49,8 +55,6 @@ function installControllableMatchMedia(initialWidth: number) {
             listeners.delete(listener);
           }
         },
-        addListener: () => undefined,
-        removeListener: () => undefined,
         dispatchEvent: () => false,
       };
     },
