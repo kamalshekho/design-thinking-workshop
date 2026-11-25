@@ -54,6 +54,27 @@ Run `./mvnw test` with Java 25. A `*Test` checks an isolated part, while an
 `ApplicationEndToEndTest` starts the backend on a local port and follows a
 submission through staff sign-in and review over HTTP. It does not run a browser.
 
+## Database schema
+
+Flyway owns the schema. Each change is a numbered SQL script in
+`src/main/resources/db/migration`, and Flyway runs the scripts a database has
+not seen yet when the backend starts. Hibernate runs with `ddl-auto=validate`:
+it changes nothing and stops the start if an entity and its table disagree.
+
+To change the schema, add the next script, such as
+`V3__add_route_selections.sql`, and change the entity in the same commit. Never edit a script that has already
+run somewhere: Flyway stores a checksum per script and refuses to start when
+one no longer matches. An enum stored as a string carries a check constraint
+with its allowed values, so a new constant needs a script that rebuilds that
+constraint, as `V2__align_enum_check_constraints.sql` does.
+
+`V1__initial_schema.sql` is the schema Hibernate created before Flyway came in.
+A database that already holds those tables gets recorded as version 1
+(`spring.flyway.baseline-on-migrate`), and only the later scripts run on it.
+
+The tests run the same scripts on H2, one in-memory database per Spring
+context, so `./mvnw test` fails when a script and the entities drift apart.
+
 ## API documentation
 
 Swagger UI describes the implemented HTTP endpoints and their request and

@@ -170,8 +170,9 @@ step in the flow (superseded, see the staff dashboard issue tracker).
 
 - **Confidence:** low.
 - **Note:** statuses are a Java enum (`ApplicationStatus`), not data rows;
-  renaming or adding a status requires a code change and updating the PostgreSQL
-  check constraint.
+  renaming or adding a status requires a code change and a Flyway script that
+  rebuilds the PostgreSQL check constraint (see `backend/README.md`, "Database
+  schema").
 
 ### A25 — Today's intake runs through one inbox, by hand, step by step
 
