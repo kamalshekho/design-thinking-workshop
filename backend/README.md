@@ -37,7 +37,10 @@ by Application, Category, Staff member and route selection.
 public checklist endpoints and stores step completions. `dashboard` lets Staff
 members view and update those same Applications and Categories. `staff` holds
 the Staff accounts, `email` sends messages, and `demo` prepares presentation
-data. The shared `web` package handles errors and security.
+data. `routeselection` counts which route applicants pick on the form (`A5`):
+one number per fixed route in `route_selection_counts` and one per Category in
+`categories.selection_count`. The shared `web` package handles errors and
+security.
 
 `ApplicationSubmissionController` and `ApplicationSubmissionService` handle
 the public form submission. The `application/domain` model is also used by the

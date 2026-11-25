@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import de.ichbinhier.volunteerformservice.dashboard.dto.route.CategoryRouteSelection;
 import de.ichbinhier.volunteerformservice.dashboard.dto.route.RouteSelection;
 import de.ichbinhier.volunteerformservice.dashboard.dto.route.RouteSelectionsResponse;
+import de.ichbinhier.volunteerformservice.routeselection.RouteSelections;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,15 +24,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RouteSelectionsController {
 
+    private final RouteSelections routeSelections;
+
     @Operation(summary = "Auswahlwege abrufen", security = @SecurityRequirement(name = "staffSession"))
     @GetMapping("/route-selections")
     ResponseEntity<RouteSelectionsResponse> list() {
-        List<RouteSelection> fixedRoutes = List.of(
-            new RouteSelection("COMMUNITY", 0),
-            new RouteSelection("SUPPORTING_MEMBER", 0)
-        );
+        RouteSelections.Tally tally = routeSelections.tally();
 
-        List<CategoryRouteSelection> categories = List.of();
+        List<RouteSelection> fixedRoutes = tally.fixedRoutes().stream()
+            .map(count -> new RouteSelection(count.getRoute().name(), count.getSelectionCount()))
+            .toList();
+        List<CategoryRouteSelection> categories = tally.categories().stream()
+            .map(category -> new CategoryRouteSelection(
+                category.getId().toString(), category.getName(), category.getSelectionCount()))
+            .toList();
 
         RouteSelectionsResponse response = new RouteSelectionsResponse();
         response.setFixedRoutes(fixedRoutes);

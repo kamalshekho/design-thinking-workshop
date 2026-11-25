@@ -228,9 +228,9 @@ The category UUID identifies backend-owned reference data, not a person. One
 counter per fixed route or category is the entire feature.
 
 A selection of an existing category is counted even if that category has been
-deactivated since the form loaded. An unknown `categoryId` is ignored. In both
-cases the endpoint answers `202`, because a broken counter must never affect an
-applicant.
+deactivated since the form loaded. An unknown `categoryId` is ignored, and so
+is an unknown `route`. In each case the endpoint answers `202`, because a broken
+counter must never affect an applicant.
 
 ### Why this endpoint is worth its cost
 
