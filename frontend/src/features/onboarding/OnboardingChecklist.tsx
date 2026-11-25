@@ -1,53 +1,14 @@
-import { useEffect, useState } from 'react';
-
 import { FormCard } from '../../components/ui/FormCard/FormCard';
 import tapTargetStyles from '../../components/ui/tapTarget.module.css';
 import { de as content } from '../../content/de';
 import { links } from '../../content/links';
 import { cx } from '../../lib/cx';
 import type { OnboardingStepId } from '../../lib/onboarding';
-import {
-  fetchOnboarding,
-  type OnboardingApiResult,
-  type OnboardingData,
-  updateOnboardingStep,
-} from './api';
 import styles from './OnboardingChecklist.module.css';
+import { useOnboarding } from './useOnboarding';
 
 interface OnboardingChecklistProps {
   token: string;
-}
-
-type PageState =
-  | { status: 'loading' }
-  | { status: 'ready'; data: OnboardingData }
-  | { status: 'not-found' }
-  | { status: 'failed' };
-
-function toPageState(result: OnboardingApiResult): PageState {
-  if (result.status === 'success') {
-    return { status: 'ready', data: result.data };
-  }
-
-  return { status: result.status };
-}
-
-function updateStepInState(
-  current: PageState,
-  stepId: OnboardingStepId,
-  done: boolean,
-): PageState {
-  if (current.status !== 'ready') return current;
-
-  return {
-    status: 'ready',
-    data: {
-      ...current.data,
-      steps: current.data.steps.map((step) =>
-        step.id === stepId ? { ...step, done } : step,
-      ),
-    },
-  };
 }
 
 const STEP_LINKS: Partial<Record<OnboardingStepId, string>> = {
@@ -57,68 +18,8 @@ const STEP_LINKS: Partial<Record<OnboardingStepId, string>> = {
 };
 
 export function OnboardingChecklist({ token }: OnboardingChecklistProps) {
-  const [pageState, setPageState] = useState<PageState>({ status: 'loading' });
-  const [saveError, setSaveError] = useState<string | null>(null);
-
-  const [savingStepIds, setSavingStepIds] = useState<
-    ReadonlySet<OnboardingStepId>
-  >(() => new Set());
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function load() {
-      setPageState({ status: 'loading' });
-
-      const result = await fetchOnboarding(token, controller.signal);
-
-      if (controller.signal.aborted) return;
-
-      setPageState(toPageState(result));
-    }
-
-    void load();
-
-    return () => {
-      controller.abort();
-    };
-  }, [token]);
-
-  async function handleToggle(stepId: OnboardingStepId, nextDone: boolean) {
-    setSaveError(null);
-    setSavingStepIds((current) => new Set(current).add(stepId));
-    setPageState((current) => updateStepInState(current, stepId, nextDone));
-
-    const result = await updateOnboardingStep(token, stepId, nextDone);
-
-    setSavingStepIds((current) => {
-      const next = new Set(current);
-      next.delete(stepId);
-
-      return next;
-    });
-
-    if (result.status === 'failed') {
-      setPageState((current) => updateStepInState(current, stepId, !nextDone));
-      setSaveError(content.onboarding.saveError);
-
-      return;
-    }
-
-    if (result.status === 'not-found') {
-      setPageState({ status: 'not-found' });
-
-      return;
-    }
-
-    const confirmed = result.data.steps.find((step) => step.id === stepId);
-
-    if (confirmed !== undefined) {
-      setPageState((current) =>
-        updateStepInState(current, stepId, confirmed.done),
-      );
-    }
-  }
+  const { pageState, saveFailed, savingStepIds, toggleStep } =
+    useOnboarding(token);
 
   if (pageState.status === 'loading') {
     return (
@@ -181,9 +82,9 @@ export function OnboardingChecklist({ token }: OnboardingChecklistProps) {
           </p>
         </div>
 
-        {saveError !== null ? (
+        {saveFailed ? (
           <p className={styles.alert} role="alert">
-            {saveError}
+            {content.onboarding.saveError}
           </p>
         ) : null}
 
@@ -201,7 +102,7 @@ export function OnboardingChecklist({ token }: OnboardingChecklistProps) {
                   disabled={savingStepIds.has(step.id)}
                   id={checkboxId}
                   onChange={(event) => {
-                    void handleToggle(step.id, event.target.checked);
+                    void toggleStep(step.id, event.target.checked);
                   }}
                   type="checkbox"
                 />

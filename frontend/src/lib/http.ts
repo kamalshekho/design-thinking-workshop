@@ -1,18 +1,18 @@
 const DEFAULT_TIMEOUT_MS = 15_000;
 
-interface PostJsonOptions {
+interface JsonRequestOptions {
   timeoutMs?: number;
   keepalive?: boolean;
 }
 
-/** POSTs a JSON body with the headers and timeout every endpoint needs. */
-export function postJson(
+function sendJson(
+  method: 'POST' | 'PUT',
   url: string,
   body: unknown,
-  { timeoutMs = DEFAULT_TIMEOUT_MS, keepalive }: PostJsonOptions = {},
+  { timeoutMs = DEFAULT_TIMEOUT_MS, keepalive }: JsonRequestOptions = {},
 ): Promise<Response> {
   return fetch(url, {
-    method: 'POST',
+    method,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(timeoutMs),
@@ -20,21 +20,25 @@ export function postJson(
   });
 }
 
+/** POSTs a JSON body with the headers and timeout every endpoint needs. */
+export function postJson(
+  url: string,
+  body: unknown,
+  options?: JsonRequestOptions,
+): Promise<Response> {
+  return sendJson('POST', url, body, options);
+}
+
 /** PUTs a JSON body with the headers and timeout every endpoint needs. */
 export function putJson(
   url: string,
   body: unknown,
-  { timeoutMs = DEFAULT_TIMEOUT_MS }: PostJsonOptions = {},
+  options?: JsonRequestOptions,
 ): Promise<Response> {
-  return fetch(url, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(timeoutMs),
-  });
+  return sendJson('PUT', url, body, options);
 }
 
-export interface JsonParser<T> {
+interface JsonParser<T> {
   safeParse(data: unknown): { success: true; data: T } | { success: false };
 }
 
