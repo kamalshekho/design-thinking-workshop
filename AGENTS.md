@@ -28,7 +28,7 @@ applicant form.
 ## Working on the frontend
 
 Two rules are worth naming here because they are easy to break from the
-outside and no check catches them:
+outside and no lint rule or script checks them yet:
 
 - applicant-facing German lives only in `frontend/src/content/de.ts`;
 - the wording specified in `frontend/DESIGN.md` is not rewritten in passing —
