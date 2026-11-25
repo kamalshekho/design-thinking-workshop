@@ -7,16 +7,26 @@
 
 export const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
+/** Days since the Unix epoch of a date's local calendar day, ignoring its clock time. */
+function localCalendarDay(date: Date): number {
+  // Date.UTC has no DST, so every calendar day maps to exactly 24 hours here.
+  return (
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) /
+    MILLISECONDS_PER_DAY
+  );
+}
+
 /**
- * Whole days between an ISO timestamp and a reference date. Never negative:
- * an Application stamped in the future — a clock skew, not a real case — reads
- * as "Heute" rather than as a negative age.
+ * Calendar days between the local date of an ISO timestamp and the local date
+ * of a reference date, in the browser's time zone. The clock time does not
+ * count: an Application from yesterday at 21:56 reads as one day old at 11:50
+ * today. A daylight-saving change in between does not shift the count. Never
+ * negative: an Application stamped in the future — a clock skew, not a real
+ * case — reads as "Heute" rather than as a negative age.
  */
 export function daysSince(timestamp: string, now: Date): number {
   return Math.max(
     0,
-    Math.floor(
-      (now.getTime() - new Date(timestamp).getTime()) / MILLISECONDS_PER_DAY,
-    ),
+    localCalendarDay(now) - localCalendarDay(new Date(timestamp)),
   );
 }
