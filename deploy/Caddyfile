@@ -5,10 +5,23 @@
 # The SSE stream needs no flush setting: Caddy flushes text/event-stream
 # responses as they arrive.
 
+# One shared login in front of both sites keeps the demo servers away from
+# strangers and crawlers. The dashboard's own staff sign-in still follows it.
+# The app signs in with a cookie, so the demo password is dropped here and
+# never reaches nginx or the backend.
+(demo_login) {
+	basic_auth {
+		{$BASIC_AUTH_USER} {$BASIC_AUTH_HASH}
+	}
+	request_header -Authorization
+}
+
 {$FORM_HOST} {
+	import demo_login
 	reverse_proxy frontend:8080
 }
 
 {$DASHBOARD_HOST} {
+	import demo_login
 	reverse_proxy dashboard:8080
 }

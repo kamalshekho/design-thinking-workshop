@@ -41,16 +41,20 @@ env_value() {
 }
 
 # Asks Caddy on this machine for each public page, so the check covers TLS,
-# both nginx containers, the backend and the database.
+# the demo login, both nginx containers, the backend and the database. The
+# login goes in through a config on a file descriptor, not the command line,
+# so it does not show up in the process list.
 smoke_test() {
-  local form dashboard url host
+  local form dashboard login url host
   form="$(env_value FORM_HOST)"
   dashboard="$(env_value DASHBOARD_HOST)"
+  login="$(env_value BASIC_AUTH_USER):$(env_value BASIC_AUTH_PASSWORD)"
   for url in "https://$form/" "https://$form/api/v1/categories" "https://$dashboard/"; do
     host="${url#https://}"
     host="${host%%/*}"
     if ! curl --fail --silent --show-error --output /dev/null --max-time 20 \
       --retry 6 --retry-delay 5 --retry-all-errors \
+      --config <(printf 'user = "%s"\n' "$login") \
       --resolve "$host:443:127.0.0.1" "$url"; then
       echo "smoke test failed: $url" >&2
       return 1

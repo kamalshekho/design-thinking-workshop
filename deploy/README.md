@@ -45,6 +45,11 @@ Swap) in Schweden, Ubuntu 24.04 mit Docker, beide in der Ressourcengruppe
 Let's Encrypt und leitet an die beiden nginx-Container weiter. HTTPS ist
 Pflicht, weil das Anmelde-Cookie des _Dashboard_ immer `Secure` ist.
 
+Vor beiden Seiten fragt Caddy nach einer gemeinsamen Demo-Anmeldung
+(HTTP Basic Auth), damit Fremde und Crawler draußen bleiben. Das _Dashboard_
+verlangt danach wie gewohnt die Anmeldung als _Staff member_. Auch wer den
+Link aus der Onboarding-E-Mail öffnet, braucht die Demo-Anmeldung.
+
 Auf jedem Server liegt unter `~/dtw` des Benutzers `deploy`:
 
 | Pfad | Inhalt |
@@ -81,6 +86,18 @@ im Repository, und die Images entstehen aus einem frischen Checkout.
 | `SPRING_PROFILES_ACTIVE` | `demo` für die Demo-Woche an _Applications_ (`A21`) |
 | `FORM_HOST` | Hostname des _Applicant form_ |
 | `DASHBOARD_HOST` | Hostname des _Dashboard_ |
+| `BASIC_AUTH_USER` | Benutzername der Demo-Anmeldung, zum Beispiel `demo` |
+| `BASIC_AUTH_PASSWORD` | Passwort der Demo-Anmeldung, zufällig; nur für den Smoke-Test von `deploy.sh` |
+| `BASIC_AUTH_HASH` | bcrypt-Hash desselben Passworts, **in einfachen Anführungszeichen** |
+
+Den Hash erzeugt Caddy selbst:
+
+```sh
+docker run --rm caddy:2.11.9-alpine caddy hash-password --plaintext '<Passwort>'
+```
+
+Ohne die einfachen Anführungszeichen liest Docker Compose die `$` im Hash als
+Variablen, und keine Anmeldung passt mehr.
 
 Die Hostnamen zeigen als A-Record auf die IP ihres Servers. Die DNS-Zone von
 `aegisdev.me` liegt bei DigitalOcean.
