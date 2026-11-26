@@ -50,6 +50,8 @@ services:
     environment:
       FORM_HOST: ${FORM_HOST:?set FORM_HOST in .env}
       DASHBOARD_HOST: ${DASHBOARD_HOST:?set DASHBOARD_HOST in .env}
+      BASIC_AUTH_USER: ${BASIC_AUTH_USER:?set BASIC_AUTH_USER in .env}
+      BASIC_AUTH_HASH: ${BASIC_AUTH_HASH:?set BASIC_AUTH_HASH in .env}
     volumes:
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
